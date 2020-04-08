@@ -22,29 +22,5 @@ namespace CustomMediaPlayer.Properties {
                 return defaultInstance;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("50")]
-        public double Volume {
-            get {
-                return ((double)(this["Volume"]));
-            }
-            set {
-                this["Volume"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool KeyHookOption {
-            get {
-                return ((bool)(this["KeyHookOption"]));
-            }
-            set {
-                this["KeyHookOption"] = value;
-            }
-        }
     }
 }

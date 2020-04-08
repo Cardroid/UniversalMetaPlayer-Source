@@ -14,18 +14,22 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using MahApps.Metro;
+using CustomMediaPlayer.Option.OptionPage.ViewModel;
 
 namespace CustomMediaPlayer.Option.OptionPage
 {
     public partial class ThemeOptionPage : UserControl
     {
+        public ThemeOptionPageViewModel ViewModel = new ThemeOptionPageViewModel();
         public ThemeOptionPage()
         {
             InitializeComponent();
 
-            // 배이스 컬러 동기화
-            this.Background = MainWindow.viewModel.BackgroundBrush;
-            MainWindow.viewModel.BackgroundColorChanged += (b) => { this.Background = b; };
+            this.DataContext = ViewModel;
+
+            // 배경색 동기화
+            this.Background = ((MainWindow)Application.Current.MainWindow).viewModel.BackgroundBrush;
+            ((MainWindow)Application.Current.MainWindow).viewModel.BackgroundColorChanged += (b) => { this.Background = b; };
 
             // 옵션 내용 설정
             AccentColor.Header = "전경색 설정";
@@ -36,24 +40,26 @@ namespace CustomMediaPlayer.Option.OptionPage
         {
             Button button = (Button)sender;
 
-            if (button.Tag.ToString().StartsWith("Base"))
-            { OptionSaveLoad.optionValue.BaseColor = button.Tag.ToString();
+            string accentColorstring = ThemeManager.Accents.ToString();
+            string baseColorstring = ThemeManager.AppThemes.ToString();
+            string backgroundcolorstring = @"#FF000000";
 
-                string colorstring = "Black";
+            if (button.Tag.ToString().StartsWith("Base"))
+            {
                 if (button.Tag.ToString() == "BaseDark")
-                    colorstring = @"#FF000000";
+                    backgroundcolorstring = @"#FF000000";
                 else if (button.Tag.ToString() == "BaseLight")
-                    colorstring = @"#FFFFFFFF";
-                // 메인 윈도우 배이스 컬러 변경
-                MainWindow.viewModel.BackgroundBrush = (Brush)(new BrushConverter().ConvertFromString(colorstring));
-                //MainWindow.viewModel.BackgroundBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString(colorstring));
+                    backgroundcolorstring = @"#FFFFFFFF";
+                baseColorstring = button.Tag.ToString();
+
+                // 메인 윈도우 배경색 변경
+                ((MainWindow)Application.Current.MainWindow).viewModel.BackgroundBrush = (Brush)(new BrushConverter().ConvertFromString(backgroundcolorstring));
             }
-            else
-            { OptionSaveLoad.optionValue.AccentColor = button.Tag.ToString(); }
+            else { accentColorstring = button.Tag.ToString(); }
 
             ThemeManager.ChangeAppStyle(Application.Current,
-                ThemeManager.GetAccent(OptionSaveLoad.optionValue.AccentColor),
-                ThemeManager.GetAppTheme(OptionSaveLoad.optionValue.BaseColor));
+                ThemeManager.GetAccent(accentColorstring),
+                ThemeManager.GetAppTheme(baseColorstring));
         }
     }
 }

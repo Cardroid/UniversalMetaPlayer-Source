@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
 
 using CustomMediaPlayer.Option;
@@ -19,11 +20,13 @@ namespace CustomMediaPlayer
     {
         public event PropertyChangedEventHandler PropertyChanged;
         internal void Notify(string propName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-        }
+        { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName)); }
+
+        private MainWindow mainWindow => (MainWindow)Application.Current.MainWindow; // 메인윈도우 참조 (코드 가독성을 위함)
+
 
         // 전채 재생시간 (단일 파일)
+        public bool DurationViewStatus;
         private TimeSpan totaltime;
         public TimeSpan totalTime
         {
@@ -34,9 +37,9 @@ namespace CustomMediaPlayer
         {
             get
             {
-                if (audioFileStream == null) // 오류 방지용
+                if (NowPlayStream == null) // 오류 방지용
                     return MainWindow.Utility.TimeSpanStringConverter(TimeSpan.Zero);
-                if (OptionSaveLoad.optionValue.DurationViewStatus.Value)
+                if (DurationViewStatus)
                     return MainWindow.Utility.TimeSpanStringConverter(totalTime); // 전채 시간
                 else
                     return "-" + MainWindow.Utility.TimeSpanStringConverter(totalTime - currentPostion); // 남은 시간
@@ -54,20 +57,40 @@ namespace CustomMediaPlayer
         {
             get
             {
-                if (audioFileStream == null) // 오류 방지용
+                if (NowPlayStream == null) // 오류 방지용
                     return 0;
                 return currentPostion.TotalMilliseconds;
             }
             set
-            { audioFileStream.CurrentTime = TimeSpan.FromMilliseconds(value); }
+            { NowPlayStream.CurrentTime = TimeSpan.FromMilliseconds(value); }
         }
         public string CurrentPostionstring
         {
             get
             {
-                if (audioFileStream == null) // 오류 방지용
+                if (NowPlayStream == null) // 오류 방지용
                     return MainWindow.Utility.TimeSpanStringConverter(TimeSpan.Zero);
                 return MainWindow.Utility.TimeSpanStringConverter(currentPostion);
+            }
+        }
+
+        // 반복재생
+        private int repeatplayoption;
+        public int RepeatPlayOption
+        {
+            get { return repeatplayoption; }
+            set
+            {
+                repeatplayoption = value;
+                // 반복 아이콘 설정
+                var RepeatIcon = new PackIconControl() { Width = 20, Height = 20 };
+                if (repeatplayoption == 0) // 반복 안함
+                { RepeatIcon.Kind = PackIconMaterialKind.RepeatOff; }
+                else if (repeatplayoption == 1) // 한 곡 반복
+                { RepeatIcon.Kind = PackIconMaterialKind.RepeatOnce; }
+                else if(repeatplayoption == 2) // 전채 반복
+                { RepeatIcon.Kind = PackIconMaterialKind.Repeat; }
+                mainWindow.RepeatButton.Content = RepeatIcon;
             }
         }
 
@@ -85,7 +108,6 @@ namespace CustomMediaPlayer
                 {
                     volume = value;
                     volumestring = volume.ToString() + "%";
-                    OptionSaveLoad.optionValue.Volume = volume;
                     if(volume != 0)
                         BeforeVolume = volume;
                     mediaPlayer.Volume = volume / 100f;
@@ -117,8 +139,8 @@ namespace CustomMediaPlayer
             return Icon;
         }
 
-        // 배이스 컬러 관련 이벤트와 프로퍼티 정의
-        #region 배이스 컬러 관련
+        // 배경색 관련 이벤트와 프로퍼티 정의
+        #region 배경색 관련
         public delegate void BackgroundColorChangedHandler(Brush brush);
         public event BackgroundColorChangedHandler BackgroundColorChanged;
         private Brush backgroundbrush;
@@ -128,7 +150,6 @@ namespace CustomMediaPlayer
             set
             {
                 backgroundbrush = value;
-                OptionSaveLoad.optionValue.BackgroundColor = backgroundbrush.ToString();
                 if (BackgroundColorChanged != null)
                     BackgroundColorChanged.Invoke(backgroundbrush);
                 Notify("BackgroundBrush");

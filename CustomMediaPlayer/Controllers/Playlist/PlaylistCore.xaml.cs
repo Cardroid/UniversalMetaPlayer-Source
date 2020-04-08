@@ -21,9 +21,9 @@ namespace CustomMediaPlayer.Controllers.Playlist
         {
             InitializeComponent();
 
-            // 배이스 컬러 동기화
-            this.Background = MainWindow.viewModel.BackgroundBrush;
-            MainWindow.viewModel.BackgroundColorChanged += (b) => { this.Background = b; };
+            // 배경색 동기화
+            this.Background = ((MainWindow)Application.Current.MainWindow).viewModel.BackgroundBrush;
+            ((MainWindow)Application.Current.MainWindow).viewModel.BackgroundColorChanged += (b) => { this.Background = b; };
         }
     }
 }

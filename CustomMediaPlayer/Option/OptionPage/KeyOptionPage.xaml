@@ -19,7 +19,8 @@
             <CheckBox
                 x:Name="KeyHookOptionCheckbox"
                 HorizontalAlignment="Center"
-                VerticalAlignment="Center" />
+                VerticalAlignment="Center"
+                IsChecked="{Binding KeyHookOption}"/>
         </WrapPanel>
     </WrapPanel>
 </UserControl>

@@ -26,6 +26,7 @@
             x:Name="Mainlogo"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
+            Source="{Binding LogoImage}"
             Grid.Column="0"
             Grid.Row="0"/>
         <StackPanel

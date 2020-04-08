@@ -199,6 +199,10 @@
       <DependentUpon>KeyOptionPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Option\OptionCore.cs" />
+    <Compile Include="Option\OptionPage\ViewModel\AboutPageViewModel.cs" />
+    <Compile Include="Option\OptionPage\ViewModel\ThemeOptionPageViewModel.cs" />
+    <Compile Include="Option\OptionPage\ViewModel\KeyOptionPageViewModel.cs" />
+    <Compile Include="Option\OptionPage\ViewModel\BasicPageViewModel.cs" />
     <Compile Include="Option\OptionSaveLoad.cs" />
     <Compile Include="Option\OptionWindow.xaml.cs">
       <DependentUpon>OptionWindow.xaml</DependentUpon>
@@ -218,7 +222,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="MainMediaPlayer.cs" />
-    <Compile Include="Utility\NowPlayInfo.cs" />
+    <Compile Include="Core\MediaInfo.cs" />
     <Compile Include="Utility\RegistryEditer.cs" />
     <Compile Include="Utility\Utility.cs" />
     <Page Include="Controllers\Playlist\PlaylistCore.xaml">

@@ -27,9 +27,9 @@ namespace CustomMediaPlayer.Controllers
 
             //Reset();
 
-            // 배이스 컬러 동기화
-            this.Background = MainWindow.viewModel.BackgroundBrush;
-            MainWindow.viewModel.BackgroundColorChanged += (b) => { this.Background = b; };
+            // 배경색 동기화
+            this.Background = ((MainWindow)Application.Current.MainWindow).viewModel.BackgroundBrush;
+            ((MainWindow)Application.Current.MainWindow).viewModel.BackgroundColorChanged += (b) => { this.Background = b; };
 
             // 헤더 및 설명 초기화
             ExplanationGroup.Header = "기본정보";
@@ -45,7 +45,7 @@ namespace CustomMediaPlayer.Controllers
             MediaImage.MouseDown += (s, e) => 
             {
                 if (e.LeftButton == MouseButtonState.Pressed)
-                    Process.Start(@"https://www.google.com/search?q=" + nowPlayInfo.Title);
+                    Process.Start(@"https://www.google.com/search?q=" + NowPlayMediaInfo.Title);
             };
         }
 
@@ -53,11 +53,11 @@ namespace CustomMediaPlayer.Controllers
         {
             #region 정보 라벨 초기화
 
-            MediaImage.Source = nowPlayInfo.AlbumImage;
+            MediaImage.Source = NowPlayMediaInfo.AlbumImage;
 
-            SongTitleLabel.Content  = "곡 제목 : "       + nowPlayInfo.Title;
-            AlbumTitleLabel.Content = "엘범 제목 : "     + nowPlayInfo.AlbumTitle;
-            ArtistNameLabel.Content = "아티스트 이름 : " + nowPlayInfo.ArtistName;
+            SongTitleLabel.Content  = "곡 제목 : "       + NowPlayMediaInfo.Title;
+            AlbumTitleLabel.Content = "엘범 제목 : "     + NowPlayMediaInfo.AlbumTitle;
+            ArtistNameLabel.Content = "아티스트 이름 : " + NowPlayMediaInfo.ArtistName;
             #endregion
         }
     }

@@ -9,14 +9,14 @@ using System.Windows.Media.Imaging;
 
 using NAudio.Wave;
 
-namespace CustomMediaPlayer.Utility
+namespace CustomMediaPlayer.Core
 {
-    public class NowPlayInfo
+    public class MediaInfo
     {
         private TagLib.File Fileinfo;
         private TagLib.Tag FileTag;
 
-        public NowPlayInfo(FileInfo File)
+        public MediaInfo(FileInfo File)
         {
             FileName = File.Name;
             LocalLocation = File.DirectoryName;

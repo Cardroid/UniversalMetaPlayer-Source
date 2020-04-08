@@ -20,6 +20,7 @@ namespace CustomMediaPlayer
     public partial class OptionWindow : MetroWindow
     {
         public static Hooking hooking = new Hooking(); // 후킹 설정
+        public MainWindow mainWindow => (MainWindow)Application.Current.MainWindow;
 
         public OptionWindow()
         {
@@ -42,9 +43,9 @@ namespace CustomMediaPlayer
             this.Loaded += (s, e) => {
                 
                 // 메인 윈도우의 위치, 크기 가져오기
-                double MainLeft = ((MainWindow)Application.Current.MainWindow).Left;
-                double MainWidth = ((MainWindow)Application.Current.MainWindow).Width;
-                double MainTop = ((MainWindow)Application.Current.MainWindow).Top;
+                double MainLeft = mainWindow.Left;
+                double MainWidth = mainWindow.Width;
+                double MainTop = mainWindow.Top;
                 //double MainHeight = ((MainWindow)Application.Current.MainWindow).Height;
 
                 double PosOver = SystemParameters.WorkArea.Width - (MainLeft + MainWidth + this.Width);
