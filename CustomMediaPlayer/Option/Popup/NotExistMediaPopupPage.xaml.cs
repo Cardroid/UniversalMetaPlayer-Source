@@ -23,11 +23,11 @@ namespace CustomMediaPlayer.Option.Popup
             InitializeComponent();
 
             // 배경색 동기화
-            this.Background = ((MainWindow)Application.Current.MainWindow).viewModel.BackgroundBrush;
-            ((MainWindow)Application.Current.MainWindow).viewModel.BackgroundColorChanged += (b) => { this.Background = b; };
+            this.Background = ((MainWindow)Application.Current.MainWindow).ViewModel.BackgroundBrush;
+            ((MainWindow)Application.Current.MainWindow).ViewModel.BackgroundColorChanged += (b) => { this.Background = b; };
 
             // 전경색 동기화
-            this.BorderBrush = (Brush)ThemeManager.Accents;
+            this.BorderBrush = ThemeManager.DetectAppStyle().Item2.Resources["AccentColorBrush"] as SolidColorBrush;
 
             ContentsLabel.Content = "재생 중인 미디어가 없습니다.";
         }

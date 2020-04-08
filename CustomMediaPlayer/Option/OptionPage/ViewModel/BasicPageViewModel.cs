@@ -8,7 +8,7 @@ namespace CustomMediaPlayer.Option.OptionPage.ViewModel
 {
     public class BasicPageViewModel
     {
-        public bool MediaOpeningPlayOption;
-        public bool LastSongSaveOption;
+        public bool MediaOpeningPlayOption { get { return MainWindow.Optioncore.MediaOpeningPlayOption; } set { MainWindow.Optioncore.MediaOpeningPlayOption = value; } }
+        public bool LastSongSaveOption { get { return MainWindow.Optioncore.LastSongSaveOption; } set { MainWindow.Optioncore.LastSongSaveOption = value; } }
     }
 }

@@ -5,21 +5,23 @@ using System.Windows.Data;
 
 namespace CustomMediaPlayer.Option
 {
-    public class OptionCore : IMultiValueConverter
+    public class OptionCore
     {
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        private bool keyhookoption;
+        public bool KeyHookOption
         {
-            // first value is selected menu item, second value is selected option item
-            if (values != null && values.Length > 1)
+            get { return keyhookoption; }
+            set
             {
-                return values[0] ?? values[1];
+                keyhookoption = value;
+                if (keyhookoption)
+                    OptionWindow.hooking.Start();
+                else
+                    OptionWindow.hooking.Stop();
             }
-            return null;
         }
-
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-        {
-            return targetTypes.Select(t => Binding.DoNothing).ToArray();
-        }
+        public bool MediaOpeningPlayOption;
+        public bool DurationViewStatus;
+        public bool LastSongSaveOption;
     }
 }

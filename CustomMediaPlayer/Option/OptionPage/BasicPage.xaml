@@ -14,11 +14,13 @@
         Margin="5">
         <CheckBox
             x:Name="MediaOpeningPlayCheckbox"
+            IsChecked="{Binding MediaOpeningPlayOption}"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Margin="0,0,5,0"/>
         <CheckBox
             x:Name="LastSongSaveCheckbox"
+            IsChecked="{Binding LastSongSaveOption}"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"/>
     </WrapPanel>

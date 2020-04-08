@@ -37,10 +37,20 @@ namespace CustomMediaPlayer
         private DispatcherTimer ticks = new DispatcherTimer();
         public static ImageSource LogoImage = new BitmapImage(new Uri(@"Resources\IconCustomMusicPlayer.png", UriKind.Relative));
         public static Utility.Utility Utility = new Utility.Utility();
-        public OptionWindow Optionwindow;
-        public MainWindowViewModel viewModel;
+        public static OptionCore Optioncore = new OptionCore();
+        public MainWindowViewModel ViewModel;
+
+        private bool StopButtonActive = false;
 
         // 느슨한 참조로 초기화 (메모리 누수 방지)
+        #region 옵션 창 OptionWindow
+        private static WeakReference weakreferenceoptionwindow;
+        public static OptionWindow Optionwindow
+        {
+            get { return (weakreferenceoptionwindow != null) ? weakreferenceoptionwindow.Target as OptionWindow : null; }
+            set { weakreferenceoptionwindow = new WeakReference(value); }
+        }
+        #endregion
         #region 미디어 정보 창 MediaInfoWindow
         private static WeakReference weakreferencemediaInfoWindow;
         public static Controllers.MediaInfoWindow MediaInfowindow
@@ -56,18 +66,9 @@ namespace CustomMediaPlayer
         {
             InitializeComponent();
 
-            // 저장 클래스 초기화 및 저장 값 로드
-            var optionSaveLoad = new OptionSaveLoad();
-            optionSaveLoad.Load();
-
             #region 초기설정
             // DataContext 설정
-            viewModel = (MainWindowViewModel)this.DataContext;
-            //this.DataContext = new MainWindowViewModel();
-
-            // 옵션창 숨김
-            Optionwindow = new OptionWindow();
-            Optionwindow.Visibility = Visibility.Collapsed;
+            ViewModel = (MainWindowViewModel)this.DataContext;
 
             // 미구현 기능 차단
             PreviousButton.IsEnabled = false;
@@ -101,24 +102,24 @@ namespace CustomMediaPlayer
                 if (e.Delta > 0)
                 {
                     if (Math.Abs(e.Delta) > 120)
-                        viewModel.Volume += 4;
-                    viewModel.Volume += 1;
+                        ViewModel.Volume += 4;
+                    ViewModel.Volume += 1;
                 }
                 else if (e.Delta < 0)
                 {
                     if (Math.Abs(e.Delta) > 120)
-                        viewModel.Volume -= 4;
-                    viewModel.Volume -= 1;
+                        ViewModel.Volume -= 4;
+                    ViewModel.Volume -= 1;
                 }
             };
 
             // 볼륨 뮤트 버튼
             VolumeMuteButton.Click += (s, e) =>
             {
-                if (viewModel.Volume > 0)
-                    viewModel.Volume = 0;
+                if (ViewModel.Volume > 0)
+                    ViewModel.Volume = 0;
                 else
-                    viewModel.Volume = viewModel.BeforeVolume;
+                    ViewModel.Volume = ViewModel.BeforeVolume;
             };
 
             // 미디어 이미지
@@ -128,7 +129,14 @@ namespace CustomMediaPlayer
             TotalTimeLabel.MouseDown += (s, e) =>
             {
                 if (e.ChangedButton == MouseButton.Left)
-                { viewModel.DurationViewStatus = !viewModel.DurationViewStatus; }
+                { Optioncore.DurationViewStatus = !Optioncore.DurationViewStatus; }
+            };
+
+            // 저장 클래스 초기화 및 저장 값 로드
+            this.Loaded += (s, e) =>
+            {
+                var optionSaveLoad = new OptionSaveLoad();
+                optionSaveLoad.Load();
             };
 
             // 커서 설정
@@ -243,8 +251,11 @@ namespace CustomMediaPlayer
         private void MediaPlayer_PlaybackStopped(object sender, StoppedEventArgs e)
         {
             NowPlayStream.CurrentTime = TimeSpan.Zero;
-            if (viewModel.RepeatPlayOption == (int)RepeatStatus.Once)
+            if (ViewModel.RepeatPlayOption == (int)RepeatStatus.Once && !StopButtonActive)
+            {
                 mediaPlayer.Play(); // 한곡 반복 설정
+                StopButtonActive = false;
+            }
             MediaPlayer_PlayStateChange();
         }
 
@@ -346,22 +357,24 @@ namespace CustomMediaPlayer
                     { mediaPlayer.Play(); }
                     break;
                 case MediaControl.StopButton:
-                    mediaPlayer.Pause();
-                    NowPlayStream.CurrentTime = TimeSpan.Zero;
+                    StopButtonActive = true;
+                    mediaPlayer.Stop();
                     break;
                 case MediaControl.RepeatButton:
-                    if (viewModel.RepeatPlayOption == (int)RepeatStatus.Off)
-                    { viewModel.RepeatPlayOption = (int)RepeatStatus.Once; }
-                    else if (viewModel.RepeatPlayOption == (int)RepeatStatus.Once)
-                    { viewModel.RepeatPlayOption = (int)RepeatStatus.All; }
-                    else if (viewModel.RepeatPlayOption == (int)RepeatStatus.All)
-                    { viewModel.RepeatPlayOption = (int)RepeatStatus.Off; }
+                    if (ViewModel.RepeatPlayOption == (int)RepeatStatus.Off)
+                    { ViewModel.RepeatPlayOption = (int)RepeatStatus.Once; }
+                    else if (ViewModel.RepeatPlayOption == (int)RepeatStatus.Once)
+                    { ViewModel.RepeatPlayOption = (int)RepeatStatus.All; }
+                    else if (ViewModel.RepeatPlayOption == (int)RepeatStatus.All)
+                    { ViewModel.RepeatPlayOption = (int)RepeatStatus.Off; }
                     break;
                 case MediaControl.SettingButton:
-                    Optionwindow.Visibility = Visibility.Visible;
+                    if (Optionwindow == null)
+                        Optionwindow = new OptionWindow();
+                    Optionwindow.Show();
                     Optionwindow.WindowState = WindowState.Normal;
                     Optionwindow.Activate();
-                    Optionwindow.Closing += (SWs, SWe) => { var optionSaveLoad = new OptionSaveLoad(); optionSaveLoad.Save(); Optionwindow.Visibility = Visibility.Visible; };
+                    Optionwindow.Closing += (SWs, SWe) => { Optionwindow = null; };
                     break;
                 case MediaControl.MediaInfoButton:
                     if (NowPlayMediaInfo == null)
@@ -395,8 +408,8 @@ namespace CustomMediaPlayer
         {
             if (NowPlayStream != null)
             {
-                viewModel.currentPostion = NowPlayStream.CurrentTime;
-                viewModel.totalTime = NowPlayMediaInfo.Duration;
+                ViewModel.CurrentPostion = NowPlayStream.CurrentTime;
+                ViewModel.totalTime = NowPlayMediaInfo.Duration;
             }
         }
 

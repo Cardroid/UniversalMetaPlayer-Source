@@ -35,8 +35,10 @@ namespace CustomMediaPlayer
                 // 미디어 길이 표시 라벨 너비 초기화
                 ((MainWindow)Application.Current.MainWindow).TotalTimeLabel.Width = (MainWindow.Utility.MeasureString(MainWindow.Utility.TimeSpanStringConverter(NowPlayMediaInfo.Duration))).Width;
                 mediaPlayer.Init(NowPlayStream);
+                if (MainWindow.Optioncore.MediaOpeningPlayOption)
+                    mediaPlayer.Play();
                 ((MainWindow)Application.Current.MainWindow).MediaPlayer_PlayStateChange();
-                AudioFileOpen.Invoke(nowplayfile);
+                AudioFileOpen?.Invoke(nowplayfile);
             }
         }
         #endregion

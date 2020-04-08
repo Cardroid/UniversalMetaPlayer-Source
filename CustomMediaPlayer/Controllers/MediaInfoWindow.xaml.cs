@@ -28,8 +28,8 @@ namespace CustomMediaPlayer.Controllers
             //Reset();
 
             // 배경색 동기화
-            this.Background = ((MainWindow)Application.Current.MainWindow).viewModel.BackgroundBrush;
-            ((MainWindow)Application.Current.MainWindow).viewModel.BackgroundColorChanged += (b) => { this.Background = b; };
+            this.Background = ((MainWindow)Application.Current.MainWindow).ViewModel.BackgroundBrush;
+            ((MainWindow)Application.Current.MainWindow).ViewModel.BackgroundColorChanged += (b) => { this.Background = b; };
 
             // 헤더 및 설명 초기화
             ExplanationGroup.Header = "기본정보";

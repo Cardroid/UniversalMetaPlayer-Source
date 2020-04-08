@@ -21,10 +21,11 @@
             x:Name="AccentColor"
             Grid.Row="0">
             <WrapPanel
+                x:Name="AccentColorGroup"
                 Orientation="Horizontal"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Top">
-                <Button
+                <!--<Button
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Tag="Red"
@@ -78,7 +79,7 @@
                     Background="SeaGreen"
                     Style="{DynamicResource SquareButtonStyle}"
                     Margin="0,0,5,0"
-                    Click="ColorButton_Click" />
+                    Click="ColorButton_Click" />-->
             </WrapPanel>
         </GroupBox>
         <GroupBox

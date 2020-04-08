@@ -15,8 +15,8 @@ namespace CustomMediaPlayer.Option.OptionPage
             this.DataContext = ViewModel;
 
             // 배경색 동기화
-            this.Background = ((OptionWindow)Application.Current.MainWindow).mainWindow.viewModel.BackgroundBrush;
-            ((OptionWindow)Application.Current.MainWindow).mainWindow.viewModel.BackgroundColorChanged += (b) => { this.Background = b; };
+            this.Background = ((MainWindow)Application.Current.MainWindow).ViewModel.BackgroundBrush;
+            ((MainWindow)Application.Current.MainWindow).ViewModel.BackgroundColorChanged += (b) => { this.Background = b; };
 
             #region 옵션 내용 및 툴팁 초기화
             MediaOpeningPlayCheckbox.Content = "미디어 자동 재생";

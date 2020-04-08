@@ -22,7 +22,6 @@ namespace CustomMediaPlayer.Option
         public static string SaveFilePath { get { return Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData, Environment.SpecialFolderOption.Create) + @"\Finitio\CustomMediaPlayer\"; } }
         public static string SaveFileName { get { return $"UserSet.json"; } }
         private MainWindow mainWindow => (MainWindow)Application.Current.MainWindow;
-        private object optionPage => mainWindow.Optionwindow.HamburgerMenuControl.Content;
 
         public void Save()
         {
@@ -33,16 +32,20 @@ namespace CustomMediaPlayer.Option
             {
                 OptionValue optionValue = new OptionValue();
 
-                optionValue.KeyHooking = ((KeyOptionPage)optionPage).ViewModel.KeyHookOption;
-                optionValue.MediaOpeningPlay = ((BasicPage)optionPage).ViewModel.MediaOpeningPlayOption;
-                optionValue.RepeatOption = mainWindow.viewModel.RepeatPlayOption;
-                optionValue.Volume = mainWindow.viewModel.Volume;
-                optionValue.AccentColor = ThemeManager.Accents.ToString();
-                optionValue.BaseColor = ThemeManager.AppThemes.ToString();
-                optionValue.BackgroundColor = mainWindow.viewModel.BackgroundBrush.ToString();
-                optionValue.LastMediaSave = ((BasicPage)optionPage).ViewModel.LastSongSaveOption;
-                optionValue.LastMediaPath = MainMediaPlayer.NowPlayFile.FullName ?? null;
-                optionValue.LastMediaPostion = MainMediaPlayer.NowPlayStream.CurrentTime.TotalMilliseconds;
+                optionValue.KeyHooking = MainWindow.Optioncore.KeyHookOption;
+                optionValue.MediaOpeningPlay = MainWindow.Optioncore.MediaOpeningPlayOption;
+                optionValue.DurationViewStatus = MainWindow.Optioncore.DurationViewStatus;
+                optionValue.RepeatOption = mainWindow.ViewModel.RepeatPlayOption;
+                optionValue.Volume = mainWindow.ViewModel.Volume;
+                optionValue.AccentColor = ThemeManager.DetectAppStyle().Item2.Name;
+                optionValue.BaseColor = ThemeManager.DetectAppStyle().Item1.Name;
+                optionValue.BackgroundColor = mainWindow.ViewModel.BackgroundBrush.ToString();
+                optionValue.LastMediaSave = MainWindow.Optioncore.LastSongSaveOption;
+                if (MainMediaPlayer.NowPlayStream != null && MainWindow.Optioncore.LastSongSaveOption)
+                {
+                    optionValue.LastMediaPath = MainMediaPlayer.NowPlayFile.FullName ?? null;
+                    optionValue.LastMediaPostion = MainMediaPlayer.NowPlayStream.CurrentTime.TotalMilliseconds;
+                }
                 optionValue.Version = version;
 
                 var JsonObj = JsonConvert.SerializeObject(optionValue, Formatting.Indented);
@@ -66,37 +69,37 @@ namespace CustomMediaPlayer.Option
             // 옵션 로드
             //try
             //{
-            ((KeyOptionPage)optionPage).ViewModel.KeyHookOption = optionValue.KeyHooking;
-            ((BasicPage)optionPage).ViewModel.MediaOpeningPlayOption = optionValue.MediaOpeningPlay;
-            mainWindow.viewModel.RepeatPlayOption = optionValue.RepeatOption;
-            mainWindow.viewModel.Volume = optionValue.Volume;
-            ((BasicPage)optionPage).ViewModel.LastSongSaveOption = optionValue.LastMediaSave;
+            MainWindow.Optioncore.KeyHookOption = optionValue.KeyHooking;
+            MainWindow.Optioncore.MediaOpeningPlayOption = optionValue.MediaOpeningPlay;
+            mainWindow.ViewModel.RepeatPlayOption = optionValue.RepeatOption;
+            mainWindow.ViewModel.Volume = optionValue.Volume;
+            MainWindow.Optioncore.LastSongSaveOption = optionValue.LastMediaSave;
             //}
             //catch { }
 
             // 테마 로드
-            //try 
-            //{ 
-            ThemeManager.ChangeAppStyle(Application.Current, ThemeManager.GetAccent(optionValue.AccentColor), ThemeManager.GetAppTheme(optionValue.BaseColor));
-            mainWindow.viewModel.BackgroundBrush = (Brush)(new BrushConverter().ConvertFromString(optionValue.BackgroundColor));
-            //}
-            //catch 
-            //{
-            //    ThemeManager.ChangeAppStyle(Application.Current, ThemeManager.GetAccent(DefaultValue.AccentColor), ThemeManager.GetAppTheme(DefaultValue.BaseColor));
-            //    mainWindow.viewModel.BackgroundBrush = (Brush)(new BrushConverter().ConvertFromString(DefaultValue.BackgroundColor));
-            //}
+            try
+            {
+                ThemeManager.ChangeAppStyle(Application.Current, ThemeManager.GetAccent(optionValue.AccentColor), ThemeManager.GetAppTheme(optionValue.BaseColor));
+                mainWindow.ViewModel.BackgroundBrush = new BrushConverter().ConvertFromString(optionValue.BackgroundColor) as Brush;
+            }
+            catch
+            {
+                ThemeManager.ChangeAppStyle(Application.Current, ThemeManager.GetAccent(DefaultValue.AccentColor), ThemeManager.GetAppTheme(DefaultValue.BaseColor));
+                mainWindow.ViewModel.BackgroundBrush = new BrushConverter().ConvertFromString(DefaultValue.BackgroundColor) as Brush;
+            }
 
             // 마지막 미디어 로드
 
-            //try
-            //{
-            if (optionValue.LastMediaSave && !(Environment.GetCommandLineArgs().Length > 1))
+            try
             {
-                MainMediaPlayer.NowPlayFile = new FileInfo(optionValue.LastMediaPath);
-                MainMediaPlayer.NowPlayStream.CurrentTime = TimeSpan.FromMilliseconds(optionValue.LastMediaPostion);
+                if (optionValue.LastMediaSave && !(Environment.GetCommandLineArgs().Length > 1))
+                {
+                    MainMediaPlayer.NowPlayFile = new FileInfo(optionValue.LastMediaPath);
+                    MainMediaPlayer.NowPlayStream.CurrentTime = TimeSpan.FromMilliseconds(optionValue.LastMediaPostion);
+                }
             }
-            //}
-            //catch { mainWindow.MainPopup.Child = new Popup.SaveMediaFileErrorPopupPage(); mainWindow.MainPopup.IsOpen = true; }
+            catch { mainWindow.MainPopup.Child = new Popup.SaveMediaFileErrorPopupPage(); mainWindow.MainPopup.IsOpen = true; }
         }
     }
 

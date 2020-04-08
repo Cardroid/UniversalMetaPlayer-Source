@@ -21,27 +21,50 @@ namespace CustomMediaPlayer.Option.OptionPage
     public partial class ThemeOptionPage : UserControl
     {
         public ThemeOptionPageViewModel ViewModel = new ThemeOptionPageViewModel();
+
         public ThemeOptionPage()
         {
             InitializeComponent();
 
             this.DataContext = ViewModel;
 
+            foreach (var color in ThemeManager.Accents)
+            {
+                Button button = new ThemeButtonTemplate(color);
+                button.Click += ColorButton_Click;
+                AccentColorGroup.Children.Add(button);
+            }
             // 배경색 동기화
-            this.Background = ((MainWindow)Application.Current.MainWindow).viewModel.BackgroundBrush;
-            ((MainWindow)Application.Current.MainWindow).viewModel.BackgroundColorChanged += (b) => { this.Background = b; };
+            this.Background = ((MainWindow)Application.Current.MainWindow).ViewModel.BackgroundBrush;
+            ((MainWindow)Application.Current.MainWindow).ViewModel.BackgroundColorChanged += (b) => { this.Background = b; };
 
             // 옵션 내용 설정
             AccentColor.Header = "전경색 설정";
             BaseColor.Header = "배경색 설정";
         }
 
+        private class ThemeButtonTemplate : Button
+        {
+            public ThemeButtonTemplate(Accent color)
+            {
+                this.HorizontalAlignment = HorizontalAlignment.Center;
+                this.VerticalAlignment = VerticalAlignment.Center;
+                this.Style = Application.Current.FindResource("SquareButtonStyle") as Style;
+                this.Content = "        ";
+                this.Tag = color.Name;
+                this.Background = new SolidColorBrush((Color)color.Resources["AccentColor"]);
+                this.Margin = new Thickness(2.5);
+            }
+        }
+
         private void ColorButton_Click(object sender, RoutedEventArgs e)
         {
             Button button = (Button)sender;
 
-            string accentColorstring = ThemeManager.Accents.ToString();
-            string baseColorstring = ThemeManager.AppThemes.ToString();
+            var CurrentTheme = ThemeManager.DetectAppStyle();
+
+            Accent accentColorstring = CurrentTheme.Item2;
+            AppTheme baseColorstring = CurrentTheme.Item1;
             string backgroundcolorstring = @"#FF000000";
 
             if (button.Tag.ToString().StartsWith("Base"))
@@ -50,16 +73,14 @@ namespace CustomMediaPlayer.Option.OptionPage
                     backgroundcolorstring = @"#FF000000";
                 else if (button.Tag.ToString() == "BaseLight")
                     backgroundcolorstring = @"#FFFFFFFF";
-                baseColorstring = button.Tag.ToString();
+                baseColorstring = ThemeManager.GetAppTheme(button.Tag.ToString());
 
                 // 메인 윈도우 배경색 변경
-                ((MainWindow)Application.Current.MainWindow).viewModel.BackgroundBrush = (Brush)(new BrushConverter().ConvertFromString(backgroundcolorstring));
+                ((MainWindow)Application.Current.MainWindow).ViewModel.BackgroundBrush = new BrushConverter().ConvertFromString(backgroundcolorstring) as Brush;
             }
-            else { accentColorstring = button.Tag.ToString(); }
+            else { accentColorstring = ThemeManager.GetAccent(button.Tag.ToString()); }
 
-            ThemeManager.ChangeAppStyle(Application.Current,
-                ThemeManager.GetAccent(accentColorstring),
-                ThemeManager.GetAppTheme(baseColorstring));
+            ThemeManager.ChangeAppStyle(Application.Current, accentColorstring, baseColorstring);
         }
     }
 }

@@ -26,7 +26,7 @@ namespace CustomMediaPlayer
 
 
         // 전채 재생시간 (단일 파일)
-        public bool DurationViewStatus;
+        public bool DurationViewStatus =>  MainWindow.Optioncore.DurationViewStatus;
         private TimeSpan totaltime;
         public TimeSpan totalTime
         {
@@ -42,13 +42,13 @@ namespace CustomMediaPlayer
                 if (DurationViewStatus)
                     return MainWindow.Utility.TimeSpanStringConverter(totalTime); // 전채 시간
                 else
-                    return "-" + MainWindow.Utility.TimeSpanStringConverter(totalTime - currentPostion); // 남은 시간
+                    return "-" + MainWindow.Utility.TimeSpanStringConverter(totalTime - currentpostion); // 남은 시간
             }
         }
 
         // 현재 재생위치
         private TimeSpan currentpostion;
-        public TimeSpan currentPostion
+        public TimeSpan CurrentPostion
         {
             get { return currentpostion; }
             set { currentpostion = value; Notify("CurrentPostiondouble"); Notify("CurrentPostionstring"); }
@@ -59,7 +59,7 @@ namespace CustomMediaPlayer
             {
                 if (NowPlayStream == null) // 오류 방지용
                     return 0;
-                return currentPostion.TotalMilliseconds;
+                return currentpostion.TotalMilliseconds;
             }
             set
             { NowPlayStream.CurrentTime = TimeSpan.FromMilliseconds(value); }
@@ -70,7 +70,7 @@ namespace CustomMediaPlayer
             {
                 if (NowPlayStream == null) // 오류 방지용
                     return MainWindow.Utility.TimeSpanStringConverter(TimeSpan.Zero);
-                return MainWindow.Utility.TimeSpanStringConverter(currentPostion);
+                return MainWindow.Utility.TimeSpanStringConverter(currentpostion);
             }
         }
 
@@ -82,6 +82,8 @@ namespace CustomMediaPlayer
             set
             {
                 repeatplayoption = value;
+                if (repeatplayoption < 0 || repeatplayoption > 3)
+                    repeatplayoption = 0;
                 // 반복 아이콘 설정
                 var RepeatIcon = new PackIconControl() { Width = 20, Height = 20 };
                 if (repeatplayoption == 0) // 반복 안함

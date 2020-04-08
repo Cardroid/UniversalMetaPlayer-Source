@@ -19,8 +19,8 @@ namespace CustomMediaPlayer.Option.OptionPage
 
             #region 초기 설정
             // 배경색 동기화
-            this.Background = ((MainWindow)Application.Current.MainWindow).viewModel.BackgroundBrush;
-            ((MainWindow)Application.Current.MainWindow).viewModel.BackgroundColorChanged += (b) => { this.Background = b; };
+            this.Background = ((MainWindow)Application.Current.MainWindow).ViewModel.BackgroundBrush;
+            ((MainWindow)Application.Current.MainWindow).ViewModel.BackgroundColorChanged += (b) => { this.Background = b; };
 
             // 옵션 내용 설정
             KeyHookOptionCheckbox.Content = "원격 키보드 단축키 설정";

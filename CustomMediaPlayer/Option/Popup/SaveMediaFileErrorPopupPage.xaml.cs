@@ -23,11 +23,11 @@ namespace CustomMediaPlayer.Option.Popup
             InitializeComponent();
 
             // 배경색 동기화
-            this.Background = ((MainWindow)Application.Current.MainWindow).viewModel.BackgroundBrush;
-            ((MainWindow)Application.Current.MainWindow).viewModel.BackgroundColorChanged += (b) => { this.Background = b; };
+            this.Background = ((MainWindow)Application.Current.MainWindow).ViewModel.BackgroundBrush;
+            ((MainWindow)Application.Current.MainWindow).ViewModel.BackgroundColorChanged += (b) => { this.Background = b; };
 
             // 전경색 동기화
-            this.BorderBrush = (Brush)ThemeManager.Accents;
+            this.BorderBrush = ThemeManager.DetectAppStyle().Item2.Resources["AccentColorBrush"] as SolidColorBrush;
 
             ContentsLabel.Content = "저장된 미디어 정보로 미디어 파일을 불러올 수 없습니다.";
         }
