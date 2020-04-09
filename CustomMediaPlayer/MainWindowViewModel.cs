@@ -19,7 +19,7 @@ namespace CustomMediaPlayer
     public class MainWindowViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        internal void Notify(string propName)
+        private void Notify(string propName)
         { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName)); }
 
         private MainWindow mainWindow => (MainWindow)Application.Current.MainWindow; // 메인윈도우 참조 (코드 가독성을 위함)

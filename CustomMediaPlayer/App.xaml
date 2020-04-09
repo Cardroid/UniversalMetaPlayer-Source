@@ -21,8 +21,42 @@
                     Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Green.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <Style
+                x:Key="WindowStyle"
+                TargetType="{x:Type Controls:MetroWindow}">
+                <Setter
+                    Property="FontFamily"
+                    Value="/CustomMediaPlayer;component/lib/Font/#NanumGothicOTF" />
+            </Style>       
+            <Style
+                x:Key="ControlStyle"
+                TargetType="{x:Type Control}">
+                <Setter
+                    Property="FontFamily"
+                    Value="/CustomMediaPlayer;component/lib/Font/#NanumGothicOTF" />
+            </Style>
+            <Style
+                x:Key="ButtonStyle"
                 TargetType="{x:Type Button}"
-                BasedOn="{StaticResource {x:Type Button}}">
+                BasedOn="{StaticResource ControlStyle}">
+                <Setter
+                    Property="Controls:ButtonHelper.PreserveTextCase"
+                    Value="True" />
+            </Style>
+            <Style
+                x:Key="MetroCircleButtonStyle"
+                TargetType="{x:Type Button}"
+                BasedOn="{DynamicResource MetroCircleButtonStyle}">
+                <Setter
+                    Property="FontFamily"
+                    Value="/CustomMediaPlayer;component/lib/Font/#NanumGothicOTF" />
+                <Setter
+                    Property="Controls:ButtonHelper.PreserveTextCase"
+                    Value="False" />
+            </Style>
+            <Style
+                x:Key="MetroFlatButton"
+                TargetType="{x:Type Button}"
+                BasedOn="{StaticResource MetroFlatButton}">
                 <Setter
                     Property="Controls:ButtonHelper.PreserveTextCase"
                     Value="True" />

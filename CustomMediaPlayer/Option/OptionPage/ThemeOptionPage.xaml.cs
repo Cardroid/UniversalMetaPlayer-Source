@@ -20,20 +20,18 @@ namespace CustomMediaPlayer.Option.OptionPage
 {
     public partial class ThemeOptionPage : UserControl
     {
-        public ThemeOptionPageViewModel ViewModel = new ThemeOptionPageViewModel();
-
         public ThemeOptionPage()
         {
             InitializeComponent();
 
-            this.DataContext = ViewModel;
-
+            // 모든 전경색을 지원
             foreach (var color in ThemeManager.Accents)
             {
                 Button button = new ThemeButtonTemplate(color);
                 button.Click += ColorButton_Click;
                 AccentColorGroup.Children.Add(button);
             }
+
             // 배경색 동기화
             this.Background = ((MainWindow)Application.Current.MainWindow).ViewModel.BackgroundBrush;
             ((MainWindow)Application.Current.MainWindow).ViewModel.BackgroundColorChanged += (b) => { this.Background = b; };
@@ -52,6 +50,7 @@ namespace CustomMediaPlayer.Option.OptionPage
                 this.Style = Application.Current.FindResource("SquareButtonStyle") as Style;
                 this.Content = "        ";
                 this.Tag = color.Name;
+                this.ToolTip = color.Name;
                 this.Background = new SolidColorBrush((Color)color.Resources["AccentColor"]);
                 this.Margin = new Thickness(2.5);
             }

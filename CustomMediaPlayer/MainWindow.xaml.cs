@@ -86,8 +86,35 @@ namespace CustomMediaPlayer
             {
                 switch (e.Key)
                 {
+                    case Key.Escape:
+                        this.Close();
+                        break;
                     case Key.Space:
-                        MediaController_Click(PlayPauseButton,new RoutedEventArgs());
+                        MediaController_Click(PlayPauseButton, new RoutedEventArgs());
+                        break;
+                    case Key.P:
+                        MediaController_Click(StopButton, new RoutedEventArgs());
+                        break;
+                    case Key.Down:
+                    case Key.VolumeDown:
+                        ViewModel.Volume--;
+                        break;
+                    case Key.Up:
+                    case Key.VolumeUp:
+                        ViewModel.Volume++;
+                        break;
+                    case Key.M:
+                    case Key.VolumeMute:
+                        if (ViewModel.Volume == 0)
+                            ViewModel.Volume = ViewModel.BeforeVolume;
+                        else
+                            ViewModel.Volume = 0;
+                        break;
+                    case Key.Right:
+                        ProgressSlider.Value += ProgressSlider.Maximum / 100;
+                        break;
+                    case Key.Left:
+                        ProgressSlider.Value -= ProgressSlider.Maximum / 100;
                         break;
                 }
             };
@@ -312,7 +339,7 @@ namespace CustomMediaPlayer
         #endregion
 
         // 미디어 컨트롤러 버튼 처리
-        private void MediaController_Click(object sender, RoutedEventArgs e)
+        public void MediaController_Click(object sender, RoutedEventArgs e)
         {
             var button = MediaControl.Null;
             var _button = (Button)sender;

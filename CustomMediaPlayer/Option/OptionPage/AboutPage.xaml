@@ -42,19 +42,50 @@
             Orientation="Vertical"
             HorizontalAlignment="Center"
             VerticalAlignment="Bottom"
+            Margin="0,5,0,5"
             Grid.Column="0"
             Grid.Row="1">
-        <!--더 많은 기능 추가 예정-->
-        <Label
-            x:Name="ComingSoon"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Bottom"
-            Content="      ComingSoon &#10;기능 추가 예정입니다" />
-        <Label
-            x:Name="VersionLabel"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Bottom"
-            Content="Version : 1.0.0.0"/>
+            <!--더 많은 기능 추가 예정-->
+            <Label
+                x:Name="ComingSoon"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Bottom"
+                Padding="0,0,0,5"
+                Content="     ComingSoon &#10;기능 추가 예정입니다" />
+            <Label
+                x:Name="CoreVersionTitleLabel"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Bottom"
+                Padding="0"
+                Content="CoreVersion" />
+            <Label
+                x:Name="CoreVersionLabel"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Bottom"
+                Padding="0"
+                Content="{Binding CoreVersion}"/>
+            <Label
+                x:Name="FileVersionTitleLabel"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Bottom"
+                Padding="0"
+                Content="FileVersion" />
+            <Label
+                x:Name="FileVersionLabel"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Bottom"
+                Padding="0"
+                Content="{Binding FileVersion}"/>
         </StackPanel>
     </Grid>
 </UserControl>

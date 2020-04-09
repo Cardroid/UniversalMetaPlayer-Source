@@ -7,7 +7,6 @@ using System.Windows.Input;
 
 using Gma.System.MouseKeyHook;
 using System.Windows;
-using static CustomMediaPlayer.MainMediaPlayer;
 
 namespace CustomMediaPlayer
 {
@@ -17,6 +16,7 @@ namespace CustomMediaPlayer
     public class Hooking
     {
         private static IKeyboardMouseEvents keyboardMouseEvents;
+        private MainWindow MainWindow => (MainWindow)Application.Current.MainWindow;
 
         // 키보드 누를떄 후킹
         private void KeyboardMouseEvents_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
@@ -24,17 +24,10 @@ namespace CustomMediaPlayer
             switch (e.KeyData)
             {
                 case System.Windows.Forms.Keys.MediaPlayPause:
-                    if (mediaPlayer.PlaybackState == NAudio.Wave.PlaybackState.Playing)
-                    {
-                        mediaPlayer.Pause();
-                    }
-                    else
-                    {
-                        mediaPlayer.Play();
-                    }
+                    MainWindow.MediaController_Click(MainWindow.PlayPauseButton, new RoutedEventArgs());
                     break;
                 case System.Windows.Forms.Keys.MediaStop:
-                    mediaPlayer.Stop();
+                    MainWindow.MediaController_Click(MainWindow.StopButton, new RoutedEventArgs());
                     break;
             }
             ((MainWindow)Application.Current.MainWindow).MediaPlayer_PlayStateChange();

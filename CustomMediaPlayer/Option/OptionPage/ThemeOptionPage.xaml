@@ -5,7 +5,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:CustomMediaPlayer"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    FontFamily="NanumGothic">
 
     <Grid
         HorizontalAlignment="Stretch"
@@ -25,61 +26,7 @@
                 Orientation="Horizontal"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Top">
-                <!--<Button
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Tag="Red"
-                    Content="       "
-                    Background="Red"
-                    Style="{DynamicResource SquareButtonStyle}"
-                    Margin="0,0,5,0"
-                    Click="ColorButton_Click" />
-                <Button
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Tag="Green"
-                    Content="       "
-                    Background="Green"
-                    Style="{DynamicResource SquareButtonStyle}"
-                    Margin="0,0,5,0"
-                    Click="ColorButton_Click" />
-                <Button
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Tag="Blue"
-                    Content="       "
-                    Background="Blue"
-                    Style="{DynamicResource SquareButtonStyle}"
-                    Margin="0,0,5,0"
-                    Click="ColorButton_Click" />
-                <Button
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Tag="Purple"
-                    Content="       "
-                    Background="Purple"
-                    Style="{DynamicResource SquareButtonStyle}"
-                    Margin="0,0,5,0"
-                    Click="ColorButton_Click" />
-                <Button
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Tag="Lime"
-                    Content="       "
-                    Background="Lime"
-                    Foreground="Black"
-                    Style="{DynamicResource SquareButtonStyle}"
-                    Margin="0,0,5,0"
-                    Click="ColorButton_Click" />
-                <Button
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Tag="Emerald"
-                    Content="       "
-                    Background="SeaGreen"
-                    Style="{DynamicResource SquareButtonStyle}"
-                    Margin="0,0,5,0"
-                    Click="ColorButton_Click" />-->
+                <!--테마 버튼이 여기에 추가됨-->
             </WrapPanel>
         </GroupBox>
         <GroupBox
@@ -94,6 +41,7 @@
                     Content="       "
                     Background="White"
                     Foreground="Black"
+                    ToolTip="White"
                     Style="{DynamicResource SquareButtonStyle}"
                     Margin="0,0,5,0"
                     Click="ColorButton_Click" />
@@ -102,6 +50,7 @@
                     Content="       "
                     Background="Black"
                     Foreground="White"
+                    ToolTip="Black"
                     Style="{DynamicResource SquareButtonStyle}"
                     Click="ColorButton_Click" />
             </StackPanel>

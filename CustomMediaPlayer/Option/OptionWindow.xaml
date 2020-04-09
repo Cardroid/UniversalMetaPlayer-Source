@@ -10,7 +10,7 @@
     x:Class="CustomMediaPlayer.OptionWindow"
     Title="CustomMediaPlayer - Option"
     mc:Ignorable="d"
-    FontFamily="NanumGothic"
+    Style="{StaticResource WindowStyle}"
     WindowStartupLocation="CenterOwner"
     TitleCharacterCasing="Normal"
     Background="Black"

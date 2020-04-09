@@ -27,7 +27,6 @@ namespace CustomMediaPlayer.Option
         {
             if (!Directory.Exists(SaveFilePath))
                 Directory.CreateDirectory(SaveFilePath);
-            var version = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
             try
             {
                 OptionValue optionValue = new OptionValue();
@@ -46,7 +45,6 @@ namespace CustomMediaPlayer.Option
                     optionValue.LastMediaPath = MainMediaPlayer.NowPlayFile.FullName ?? null;
                     optionValue.LastMediaPostion = MainMediaPlayer.NowPlayStream.CurrentTime.TotalMilliseconds;
                 }
-                optionValue.Version = version;
 
                 var JsonObj = JsonConvert.SerializeObject(optionValue, Formatting.Indented);
 
@@ -61,7 +59,6 @@ namespace CustomMediaPlayer.Option
             try
             {
                 string Jsonstring = File.ReadAllText(SaveFilePath + SaveFileName);
-
                 optionValue = JsonConvert.DeserializeObject<OptionValue>(Jsonstring);
             }
             catch { optionValue = DefaultValue; }
@@ -89,8 +86,7 @@ namespace CustomMediaPlayer.Option
                 mainWindow.ViewModel.BackgroundBrush = new BrushConverter().ConvertFromString(DefaultValue.BackgroundColor) as Brush;
             }
 
-            // 마지막 미디어 로드
-
+            // 저장된 미디어 로드
             try
             {
                 if (optionValue.LastMediaSave && !(Environment.GetCommandLineArgs().Length > 1))
@@ -116,6 +112,7 @@ namespace CustomMediaPlayer.Option
         public bool LastMediaSave = false;
         public string LastMediaPath = null;
         public double LastMediaPostion = 0;
-        public string Version = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
+        public string CoreVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        public string FileVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
     }
 }

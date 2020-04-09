@@ -32,6 +32,9 @@ namespace CustomMediaPlayer
             this.Background = ((MainWindow)Application.Current.MainWindow).ViewModel.BackgroundBrush;
             ((MainWindow)Application.Current.MainWindow).ViewModel.BackgroundColorChanged += (b) => { this.Background = b; };
 
+            // 포커스 설정
+            this.Focusable = false;
+
             // 옵션 타이틀 설정
             AboutOptionPageButton.ToolTip = "프로그램 정보";
             BasicOptionPageButton.ToolTip = "기본 설정";
@@ -44,6 +47,7 @@ namespace CustomMediaPlayer
             ThemeOptionPageButton.Tag = ButtonDistinction.ThemeOption;
 
             // 초기 페이지 설정
+            Contents.Header = "기본 설정";
             Contents.Content = new BasicPage();
             CurrentPage = AboutOptionPageButton.ToolTip.ToString();
 
@@ -74,19 +78,20 @@ namespace CustomMediaPlayer
             switch (button.Tag)
             {
                 case ButtonDistinction.About:
+                    Contents.Header = button.ToolTip;
                     Contents.Content = new AboutPage();
                     break;
                 case ButtonDistinction.BasicOption:
+                    Contents.Header = button.ToolTip;
                     Contents.Content = new BasicPage();
                     break;
                 case ButtonDistinction.KeyOption:
+                    Contents.Header = button.ToolTip;
                     Contents.Content = new KeyOptionPage();
                     break;
                 case ButtonDistinction.ThemeOption:
+                    Contents.Header = button.ToolTip;
                     Contents.Content = new ThemeOptionPage();
-                    break;
-                default:
-                    Contents.Content = new BasicPage();
                     break;
             }
         }

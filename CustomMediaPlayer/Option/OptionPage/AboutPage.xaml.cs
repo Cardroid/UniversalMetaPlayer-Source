@@ -22,9 +22,6 @@ namespace CustomMediaPlayer.Option.OptionPage
             ((MainWindow)Application.Current.MainWindow).ViewModel.BackgroundColorChanged += (b) => { this.Background = b; };
 
             Mainlogo.Stretch = System.Windows.Media.Stretch.Fill;
-
-            // 현재 버전 표시
-            VersionLabel.Content = "Version : " + Assembly.GetExecutingAssembly().GetName().Version.ToString();
         }
     }
 }
