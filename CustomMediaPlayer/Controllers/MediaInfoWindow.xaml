@@ -13,8 +13,8 @@
     SnapsToDevicePixels="True"
     WindowStartupLocation="CenterScreen"
     TitleCharacterCasing="Normal"
-    Height="400"
-    Width="600">
+    Style="{StaticResource WindowStyle}"
+    SizeToContent="WidthAndHeight">
 
     <Grid
         HorizontalAlignment="Stretch"
@@ -33,7 +33,8 @@
             Source="{Binding nowPlayInfo.AlbumImage, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type CustomMediaPlayer:MainWindow}}}" />
         <GroupBox
             x:Name="ExplanationGroup"
-            Style="{StaticResource MetroGroupBox}"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
             Grid.Column="1">
             <StackPanel
                 Orientation="Vertical"

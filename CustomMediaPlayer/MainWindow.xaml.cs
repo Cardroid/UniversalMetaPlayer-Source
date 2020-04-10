@@ -29,6 +29,7 @@ using NAudio.Wave;
 using static CustomMediaPlayer.MainMediaPlayer;
 using CustomMediaPlayer.Option.Popup;
 using System.Globalization;
+using CustomMediaPlayer.Controllers.PlayList;
 
 namespace CustomMediaPlayer
 {
@@ -38,22 +39,31 @@ namespace CustomMediaPlayer
         public static ImageSource LogoImage = new BitmapImage(new Uri(@"Resources\IconCustomMusicPlayer.png", UriKind.Relative));
         public static Utility.Utility Utility = new Utility.Utility();
         public static OptionCore Optioncore = new OptionCore();
+        public PlayListCore PlayList = new PlayListCore();
         public MainWindowViewModel ViewModel;
 
         private bool StopButtonActive = false;
 
         // 느슨한 참조로 초기화 (메모리 누수 방지)
-        #region 옵션 창 OptionWindow
+        #region 옵션 창 Optionwindow
         private static WeakReference weakreferenceoptionwindow;
-        public static OptionWindow Optionwindow
+        public OptionWindow Optionwindow
         {
             get { return (weakreferenceoptionwindow != null) ? weakreferenceoptionwindow.Target as OptionWindow : null; }
             set { weakreferenceoptionwindow = new WeakReference(value); }
         }
         #endregion
-        #region 미디어 정보 창 MediaInfoWindow
+        #region 플래이리스트 창 PlayListwindow
+        private static WeakReference weakreferenceplaylistwindow;
+        public PlayListWindow PlayListwindow
+        {
+            get { return (weakreferenceplaylistwindow != null) ? weakreferenceplaylistwindow.Target as PlayListWindow : null; }
+            set { weakreferenceplaylistwindow = new WeakReference(value); }
+        }
+        #endregion
+        #region 미디어 정보 창 MediaInfowindow
         private static WeakReference weakreferencemediaInfoWindow;
-        public static Controllers.MediaInfoWindow MediaInfowindow
+        public Controllers.MediaInfoWindow MediaInfowindow
         {
             get { return (weakreferencemediaInfoWindow != null) ? weakreferencemediaInfoWindow.Target as Controllers.MediaInfoWindow : null; }
             set { weakreferencemediaInfoWindow = new WeakReference(value); }
@@ -74,8 +84,7 @@ namespace CustomMediaPlayer
             PreviousButton.IsEnabled = false;
             NextButton.IsEnabled = false;
             ShuffleButton.IsEnabled = false;
-            MediaListButton.IsEnabled = false;
-            TotalDurationLabel.IsEnabled = false;
+            TotalDurationLabel.IsEnabled = false; 
             TotalDurationLabel.Visibility = Visibility.Collapsed;
 
             // 팝업 화면 종료이벤트 발생시 초기화
@@ -408,13 +417,13 @@ namespace CustomMediaPlayer
                     {
                         MainPopup.Child = new NotExistMediaPopupPage();
                         MainPopup.IsOpen = true;
-                        return;
+                        break;
                     }
                     if (MediaInfowindow != null)
                     {
                         MediaInfowindow.Activate();
                         MediaInfowindow.WindowState = WindowState.Normal;
-                        return;
+                        break;
                     }
                     if (MediaInfowindow == null)
                     {
@@ -422,6 +431,21 @@ namespace CustomMediaPlayer
                         MediaInfowindow.Show();
                         MediaInfowindow.Closing += (MIs, MIe) =>
                         { MediaInfowindow = null; };
+                    }
+                    break;
+                case MediaControl.MediaListButton:
+                    if (PlayListwindow != null)
+                    {
+                        PlayListwindow.Activate();
+                        PlayListwindow.WindowState = WindowState.Normal;
+                        break;
+                    }
+                    if (PlayListwindow == null)
+                    {
+                        PlayListwindow = new PlayListWindow();
+                        PlayListwindow.Show();
+                        PlayListwindow.Closing += (MIs, MIe) =>
+                        { PlayListwindow = null; };
                     }
                     break;
             }

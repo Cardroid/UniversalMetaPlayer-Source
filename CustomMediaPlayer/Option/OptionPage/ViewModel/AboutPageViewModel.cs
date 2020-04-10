@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -10,8 +11,12 @@ using System.Windows.Media;
 
 namespace CustomMediaPlayer.Option.OptionPage.ViewModel
 {
-    public class AboutPageViewModel
+    public class AboutPageViewModel : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void Notify(string propName)
+        { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName)); }
+
         public ImageSource LogoImage { get { return MainWindow.LogoImage; } }
 
         // 버전 표시

@@ -10,16 +10,17 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MahApps.Metro.Controls;
 
-namespace CustomMediaPlayer.Controllers.Playlist
+namespace CustomMediaPlayer.Controllers.PlayList
 {
-    public partial class PlaylistCore : UserControl
+    public partial class PlayListWindow : MetroWindow
     {
-        public PlaylistCore()
+        public PlayListWindow()
         {
             InitializeComponent();
+            FrameContent.Navigate(new PlayListPage());
 
             // 배경색 동기화
             this.Background = ((MainWindow)Application.Current.MainWindow).ViewModel.BackgroundBrush;

@@ -7,9 +7,7 @@
     xmlns:local="clr-namespace:CustomMediaPlayer.Option.Popup"
     mc:Ignorable="d"
     BorderThickness="3"
-    BorderBrush="DarkGreen"
-    ScrollViewer.VerticalScrollBarVisibility="Auto"
-    Background="Black">
+    Style="{StaticResource ControlStyle}">
 
     <StackPanel
         Orientation="Vertical"

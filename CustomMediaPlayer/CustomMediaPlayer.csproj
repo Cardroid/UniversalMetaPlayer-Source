@@ -188,10 +188,17 @@
     <Compile Include="Controllers\MediaInfoWindow.xaml.cs">
       <DependentUpon>MediaInfoWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controllers\Playlist\PlaylistCore.xaml.cs">
-      <DependentUpon>PlaylistCore.xaml</DependentUpon>
+    <Compile Include="Controllers\Playlist\PlayListRightClickMenu.xaml.cs">
+      <DependentUpon>PlayListRightClickMenu.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controllers\Playlist\PlaylistViewModel.cs" />
+    <Compile Include="Controllers\Playlist\PlayListCore.cs" />
+    <Compile Include="Controllers\Playlist\PlayListPage.xaml.cs">
+      <DependentUpon>PlayListPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controllers\Playlist\PlayListViewModel.cs" />
+    <Compile Include="Controllers\Playlist\PlayListWindow.xaml.cs">
+      <DependentUpon>PlayListWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MainWindowViewModel.cs" />
     <Compile Include="Option\OptionPage\BasicPage.xaml.cs">
       <DependentUpon>BasicPage.xaml</DependentUpon>
@@ -228,7 +235,15 @@
     <Compile Include="Core\MediaInfo.cs" />
     <Compile Include="Utility\RegistryEditer.cs" />
     <Compile Include="Utility\Utility.cs" />
-    <Page Include="Controllers\Playlist\PlaylistCore.xaml">
+    <Page Include="Controllers\Playlist\PlayListRightClickMenu.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controllers\Playlist\PlayListPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controllers\Playlist\PlayListWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -24,6 +24,10 @@ namespace CustomMediaPlayer.Option.OptionPage
         {
             InitializeComponent();
 
+            // 배경색 동기화
+            this.Background = ((MainWindow)Application.Current.MainWindow).ViewModel.BackgroundBrush;
+            ((MainWindow)Application.Current.MainWindow).ViewModel.BackgroundColorChanged += (b) => { this.Background = b; };
+
             // 모든 전경색을 지원
             foreach (var color in ThemeManager.Accents)
             {
@@ -31,10 +35,6 @@ namespace CustomMediaPlayer.Option.OptionPage
                 button.Click += ColorButton_Click;
                 AccentColorGroup.Children.Add(button);
             }
-
-            // 배경색 동기화
-            this.Background = ((MainWindow)Application.Current.MainWindow).ViewModel.BackgroundBrush;
-            ((MainWindow)Application.Current.MainWindow).ViewModel.BackgroundColorChanged += (b) => { this.Background = b; };
 
             // 옵션 내용 설정
             AccentColor.Header = "전경색 설정";

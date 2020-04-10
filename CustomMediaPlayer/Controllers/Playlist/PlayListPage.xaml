@@ -1,0 +1,53 @@
+﻿<UserControl
+    x:Class="CustomMediaPlayer.Controllers.PlayList.PlayListPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    xmlns:local="clr-namespace:CustomMediaPlayer.Controllers.PlayList"
+    mc:Ignorable="d"
+    BorderThickness="3"
+    Style="{StaticResource ControlStyle}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition
+                Height="Auto" />
+            <RowDefinition
+                Height="*" />
+        </Grid.RowDefinitions>
+        <Popup
+            x:Name="PlayListRightClickMenu"
+            PopupAnimation="Scroll"
+            StaysOpen="False"
+            Placement="Mouse"
+            Focusable="True">
+        </Popup>
+        <StackPanel
+            Orientation="Horizontal"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Grid.Row="0">
+        </StackPanel>
+        <ListView
+            x:Name="PlayList"
+            BorderThickness="0,1,0,0"
+            BorderBrush="{Binding BorderBrush}"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            HorizontalContentAlignment="Stretch"
+            ItemsSource="{Binding PlayList}"
+            Grid.Row="1">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn
+                        x:Name="Title"
+                        Width="100"
+                        DisplayMemberBinding="{Binding Title}" />
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </Grid>
+</UserControl>
