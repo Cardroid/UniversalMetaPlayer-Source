@@ -18,23 +18,23 @@ namespace CustomMediaPlayer.Controllers.PlayList
 {
     public partial class PlayListRightClickMenu : UserControl
     {
-        private PlayListPage PlayListPage => (PlayListPage)((MainWindow)Application.Current.MainWindow).PlayListwindow.FrameContent.Content;
+        private PlayListPage PlayListPage => (PlayListPage)MainWindow.PlayListwindow.PlayListFrame.Content;
 
         public PlayListRightClickMenu()
         {
             InitializeComponent();
 
             // 배경색 동기화
-            this.Background = ((MainWindow)Application.Current.MainWindow).ViewModel.BackgroundBrush;
-            ((MainWindow)Application.Current.MainWindow).ViewModel.BackgroundColorChanged += (b) => { this.Background = b; };
+            this.Background = ((MainWindow)System.Windows.Application.Current.MainWindow).ViewModel.BackgroundBrush;
+            ((MainWindow)System.Windows.Application.Current.MainWindow).ViewModel.BackgroundColorChanged += (b) => { this.Background = b; };
             
             // 전경색 동기화
             this.BorderBrush = ThemeManager.DetectAppStyle().Item2.Resources["AccentColorBrush"] as SolidColorBrush;
 
             AddButton.Content = "추가";
-            AddButton.ToolTip = "플래이리스트에 미디어를 추가 합니다.";
+            AddButton.ToolTip = "플레이리스트에 미디어를 추가 합니다.";
             RemoveButton.Content = "삭제";
-            RemoveButton.ToolTip = "플래이리스트에서 선택된 미디어를 삭제 합니다.";
+            RemoveButton.ToolTip = "플레이리스트에서 선택된 미디어를 삭제 합니다.";
 
             // 선택한 아이템(음악)이 없으면 삭제 버튼 비활성화
             this.Loaded += (s, e) => { RemoveButton.IsEnabled = PlayListPage.PlayList.SelectedItems.Count == 0 ? false : true; };

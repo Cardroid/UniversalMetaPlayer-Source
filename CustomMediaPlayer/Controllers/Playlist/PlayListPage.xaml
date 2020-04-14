@@ -1,53 +1,143 @@
 ﻿<UserControl
-    x:Class="CustomMediaPlayer.Controllers.PlayList.PlayListPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:dd="urn:gong-wpf-dragdrop"
     xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:local="clr-namespace:CustomMediaPlayer.Controllers.PlayList"
+    xmlns:Utility="clr-namespace:CustomMediaPlayer.Utility"
+    x:Class="CustomMediaPlayer.Controllers.PlayList.PlayListPage"
     mc:Ignorable="d"
-    BorderThickness="3"
-    Style="{StaticResource ControlStyle}">
+    BorderThickness="{Binding BorderThickness}"
+    BorderBrush="{Binding BorderBrush}"
+    HorizontalAlignment="Stretch"
+    VerticalAlignment="Stretch">
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition
-                Height="Auto" />
-            <RowDefinition
-                Height="*" />
-        </Grid.RowDefinitions>
-        <Popup
-            x:Name="PlayListRightClickMenu"
-            PopupAnimation="Scroll"
-            StaysOpen="False"
-            Placement="Mouse"
-            Focusable="True">
-        </Popup>
-        <StackPanel
-            Orientation="Horizontal"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch"
-            Grid.Row="0">
-        </StackPanel>
-        <ListView
-            x:Name="PlayList"
-            BorderThickness="0,1,0,0"
-            BorderBrush="{Binding BorderBrush}"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch"
-            HorizontalContentAlignment="Stretch"
-            ItemsSource="{Binding PlayList}"
-            Grid.Row="1">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn
-                        x:Name="Title"
-                        Width="100"
-                        DisplayMemberBinding="{Binding Title}" />
-                </GridView>
-            </ListView.View>
-        </ListView>
-    </Grid>
+    <!--xmlns:lvhd="clr-namespace:Itenso.Windows.Controls.ListViewLayout;assembly=Itenso.Windows.Controls.ListViewLayout"-->
+
+    <UserControl.Resources>
+        <Utility:TimeSpanStringConverter
+            x:Key="TimeSpanStringConverter" />
+        <Utility:Utility
+            x:Key="Utility" />
+    </UserControl.Resources>
+    
+    <UserControl.Style>
+        <StaticResource
+            ResourceKey="ControlStyle" />
+    </UserControl.Style>
+
+    <UserControl.DataContext>
+        <local:PlayListPageViewModel />
+    </UserControl.DataContext>
+
+    <GroupBox
+        HorizontalContentAlignment="Stretch"
+        VerticalContentAlignment="Stretch"
+        Style="{StaticResource MetroGroupBox}"
+        BorderThickness="0"
+        BorderBrush="{Binding BorderBrush}"
+        Padding="0">
+        <GroupBox.Header>
+            <TextBlock
+                x:Name="PlayListName"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Text="{Binding PlayListName}"
+                FontSize="16" />
+        </GroupBox.Header>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition
+                    Height="Auto" />
+                <RowDefinition
+                    Height="*" />
+                <RowDefinition
+                    Height="Auto" />
+            </Grid.RowDefinitions>
+            <Popup
+                x:Name="PlayListRightClickMenu"
+                PopupAnimation="Scroll"
+                StaysOpen="False"
+                Placement="Mouse"
+                Focusable="True" />
+            <StackPanel
+                Orientation="Horizontal"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Grid.Row="0" />
+            <ListView
+                x:Name="PlayList"
+                BorderBrush="{Binding BorderBrush}"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                ItemsSource="{Binding PlayList}"
+                dd:DragDrop.IsDragSource="True"
+                dd:DragDrop.IsDropTarget="True"
+                dd:DragDrop.SelectDroppedItems="True"
+                dd:DragDrop.DragDirectlySelectedOnly="False"
+                dd:DragDrop.DragHandler="{Binding}"
+                dd:DragDrop.DropHandler="{Binding}"
+                SelectedItem="{Binding SelectItem}"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                Grid.Row="1"
+                AllowDrop="True">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn
+                            x:Name="ID"
+                            Width="40">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Label
+                                        x:Name="ID"
+                                        Grid.Column="0"
+                                        Content="{Binding ID}"
+                                        FlowDirection="RightToLeft"
+                                        HorizontalContentAlignment="Right" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn
+                            x:Name="Title"
+                            Width="40">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Label
+                                        x:Name="Title"
+                                        Grid.Column="1"
+                                        Content="{Binding Title}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn
+                            x:Name="Duration"
+                            Width="40">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Label
+                                        x:Name="Duration"
+                                        Grid.Column="2"
+                                        Content="{Binding Duration, Converter={StaticResource TimeSpanStringConverter}, Mode=OneWay}"
+                                        FlowDirection="RightToLeft"
+                                        HorizontalContentAlignment="Right" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            <Label
+                x:Name="ProgressLabel"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                HorizontalContentAlignment="Left"
+                VerticalContentAlignment="Center"
+                Content="{Binding ProgressLabel}"
+                Grid.Row="2" />
+        </Grid>
+    </GroupBox>
 </UserControl>

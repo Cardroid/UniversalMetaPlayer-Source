@@ -20,11 +20,11 @@ namespace CustomMediaPlayer.Controllers.PlayList
         public PlayListWindow()
         {
             InitializeComponent();
-            FrameContent.Navigate(new PlayListPage());
+            PlayListFrame.Navigate(new PlayListPage());
 
             // 배경색 동기화
-            this.Background = ((MainWindow)Application.Current.MainWindow).ViewModel.BackgroundBrush;
-            ((MainWindow)Application.Current.MainWindow).ViewModel.BackgroundColorChanged += (b) => { this.Background = b; };
+            this.Background = ((MainWindow)System.Windows.Application.Current.MainWindow).ViewModel.BackgroundBrush;
+            ((MainWindow)System.Windows.Application.Current.MainWindow).ViewModel.BackgroundColorChanged += (b) => { this.Background = b; };
         }
     }
 }

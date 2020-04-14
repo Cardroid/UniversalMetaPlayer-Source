@@ -16,7 +16,7 @@ namespace CustomMediaPlayer
     public class Hooking
     {
         private static IKeyboardMouseEvents keyboardMouseEvents;
-        private MainWindow MainWindow => (MainWindow)Application.Current.MainWindow;
+        private MainWindow MainWindow => (MainWindow)System.Windows.Application.Current.MainWindow;
 
         // 키보드 누를떄 후킹
         private void KeyboardMouseEvents_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
@@ -30,7 +30,7 @@ namespace CustomMediaPlayer
                     MainWindow.MediaController_Click(MainWindow.StopButton, new RoutedEventArgs());
                     break;
             }
-            ((MainWindow)Application.Current.MainWindow).MediaPlayer_PlayStateChange();
+            ((MainWindow)System.Windows.Application.Current.MainWindow).MediaPlayer_PlayStateChange();
         }
 
         // 중복 시작이 관계없는 메서드

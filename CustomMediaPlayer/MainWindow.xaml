@@ -1,6 +1,5 @@
 ﻿<Controls:MetroWindow
     x:Class="CustomMediaPlayer.MainWindow"
-    Title="CustomMediaPlayer"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -16,7 +15,7 @@
     TitleCharacterCasing="Normal"
     Height="400"
     Width="600"
-    Icon="Resources/iconCustomMusicPlayer.ico">
+    Icon="Resources/IconCustomMusicPlayer.ico">
 
     <Controls:MetroWindow.DataContext>
         <local:MainWindowViewModel />
@@ -67,7 +66,8 @@
             <Image
                 x:Name="MediaImage"
                 HorizontalAlignment="Stretch"
-                VerticalAlignment="Center"
+                VerticalAlignment="Stretch"
+                Stretch="Fill"
                 Grid.Column="0" />
             <StackPanel
                 Orientation="Vertical"
@@ -95,7 +95,7 @@
                     VerticalContentAlignment="Center" />
             </StackPanel>
         </Grid>
-        <!--플래이어 컨트롤-->
+        <!--플레이어 컨트롤-->
         <Grid
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
@@ -204,10 +204,10 @@
                     Width="50"
                     Height="50" />
                 <Button
-                    x:Name="MediaInfoButton"
+                    x:Name="MediaListButton"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    Content="{iconPacks:Material Kind=InformationVariant, Width=20, Height=20}"
+                    Content="{iconPacks:BoxIcons Kind=SolidPlayList, Width=20, Height=20}"
                     Style="{DynamicResource MahApps.Metro.Styles.MetroCircleButtonStyle}"
                     Margin="20,0,0,0"
                     Width="50"
@@ -217,14 +217,6 @@
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Content="{iconPacks:Material Kind=Settings, Width=20, Height=20}"
-                    Style="{DynamicResource MahApps.Metro.Styles.MetroCircleButtonStyle}"
-                    Width="50"
-                    Height="50" />
-                <Button
-                    x:Name="MediaListButton"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Content="{iconPacks:BoxIcons Kind=SolidPlayList, Width=20, Height=20}"
                     Style="{DynamicResource MahApps.Metro.Styles.MetroCircleButtonStyle}"
                     Width="50"
                     Height="50" />
@@ -281,7 +273,7 @@
                 </StackPanel>
             </Grid>
         </Grid>
-        <!--플래이어 컨트롤 END-->
+        <!--플레이어 컨트롤 END-->
     </Grid>
 </Controls:MetroWindow>
     

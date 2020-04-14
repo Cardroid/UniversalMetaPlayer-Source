@@ -60,6 +60,9 @@
     <Reference Include="Gma.System.MouseKeyHook, Version=5.6.130.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MouseKeyHook.5.6.0\lib\net40\Gma.System.MouseKeyHook.dll</HintPath>
     </Reference>
+    <Reference Include="GongSolutions.WPF.DragDrop, Version=2.0.0.0, Culture=neutral, PublicKeyToken=91f1945125b7a587, processorArchitecture=MSIL">
+      <HintPath>..\packages\gong-wpf-dragdrop.2.2.0\lib\net47\GongSolutions.WPF.DragDrop.dll</HintPath>
+    </Reference>
     <Reference Include="Instances, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Instances.1.5.0\lib\netstandard2.0\Instances.dll</HintPath>
     </Reference>
@@ -185,18 +188,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Controllers\MediaInfoWindow.xaml.cs">
-      <DependentUpon>MediaInfoWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controllers\Playlist\PlayListRightClickMenu.xaml.cs">
+    <Compile Include="Controllers\PlayList\Menu\PlayListRightClickMenu.xaml.cs">
       <DependentUpon>PlayListRightClickMenu.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controllers\Playlist\PlayListCore.cs" />
-    <Compile Include="Controllers\Playlist\PlayListPage.xaml.cs">
+    <Compile Include="Controllers\PlayList\PlayListCore.cs" />
+    <Compile Include="Controllers\PlayList\PlayListPage.xaml.cs">
       <DependentUpon>PlayListPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controllers\Playlist\PlayListViewModel.cs" />
-    <Compile Include="Controllers\Playlist\PlayListWindow.xaml.cs">
+    <Compile Include="Controllers\PlayList\PlayListSaveLoad.cs" />
+    <Compile Include="Controllers\PlayList\ViewModel\PlayListViewModel.cs" />
+    <Compile Include="Controllers\PlayList\Window\PlayListWindow.xaml.cs">
       <DependentUpon>PlayListWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindowViewModel.cs" />
@@ -217,15 +218,13 @@
     <Compile Include="Option\OptionWindow.xaml.cs">
       <DependentUpon>OptionWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Option\Popup\SaveMediaFileErrorPopupPage.xaml.cs">
-      <DependentUpon>SaveMediaFileErrorPopupPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Option\Popup\NotExistMediaPopupPage.xaml.cs">
-      <DependentUpon>NotExistMediaPopupPage.xaml</DependentUpon>
+    <Compile Include="Option\Popup\MainWindowPopupPage.xaml.cs">
+      <DependentUpon>MainWindowPopupPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Option\OptionPage\ThemeOptionPage.xaml.cs">
       <DependentUpon>ThemeOptionPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utility\Converter.cs" />
     <Compile Include="Utility\Hooking.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
@@ -235,23 +234,19 @@
     <Compile Include="Core\MediaInfo.cs" />
     <Compile Include="Utility\RegistryEditer.cs" />
     <Compile Include="Utility\Utility.cs" />
-    <Page Include="Controllers\Playlist\PlayListRightClickMenu.xaml">
+    <Page Include="Controllers\PlayList\Menu\PlayListRightClickMenu.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controllers\Playlist\PlayListPage.xaml">
+    <Page Include="Controllers\PlayList\PlayListPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controllers\Playlist\PlayListWindow.xaml">
+    <Page Include="Controllers\PlayList\Window\PlayListWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="MainWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controllers\MediaInfoWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -271,11 +266,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Option\Popup\SaveMediaFileErrorPopupPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Option\Popup\NotExistMediaPopupPage.xaml">
+    <Page Include="Option\Popup\MainWindowPopupPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -309,6 +300,9 @@
     <EmbeddedResource Include="lib\Font\NanumGothicBold.otf" />
     <EmbeddedResource Include="lib\Font\NanumGothicExtraBold.otf" />
     <EmbeddedResource Include="lib\Font\NanumGothicLight.otf" />
+    <None Include="FodyWeavers.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="lib\Font\ng.ttf" />
     <None Include="lib\Font\ngBold.ttf" />
     <None Include="packages.config" />
@@ -363,6 +357,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Downloader\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\IconnoteCustomMusicPlayer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="FodyWeavers.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Fody.6.0.0\build\Fody.targets" Condition="Exists('..\packages\Fody.6.0.0\build\Fody.targets')" />

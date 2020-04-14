@@ -12,11 +12,12 @@
     Style="{StaticResource WindowStyle}"
     WindowStartupLocation="CenterOwner"
     TitleCharacterCasing="Normal"
+    ResizeMode="NoResize"
     Width="600"
     Height="800">
 
     <Frame
-        x:Name="FrameContent"
+        x:Name="PlayListFrame"
         HorizontalAlignment="Stretch"
         VerticalAlignment="Stretch"
         NavigationUIVisibility="Hidden"

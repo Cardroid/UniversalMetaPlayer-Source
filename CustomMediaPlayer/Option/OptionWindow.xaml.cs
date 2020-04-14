@@ -21,7 +21,7 @@ namespace CustomMediaPlayer
     public partial class OptionWindow : MetroWindow
     {
         public static Hooking hooking = new Hooking(); // 후킹 설정
-        public MainWindow mainWindow => (MainWindow)Application.Current.MainWindow;
+        public MainWindow mainWindow => (MainWindow)System.Windows.Application.Current.MainWindow;
         public string CurrentPage { get; private set; }
 
         public OptionWindow()
@@ -29,8 +29,8 @@ namespace CustomMediaPlayer
             InitializeComponent();
 
             // 배이스 컬러 동기화
-            this.Background = ((MainWindow)Application.Current.MainWindow).ViewModel.BackgroundBrush;
-            ((MainWindow)Application.Current.MainWindow).ViewModel.BackgroundColorChanged += (b) => { this.Background = b; };
+            this.Background = ((MainWindow)System.Windows.Application.Current.MainWindow).ViewModel.BackgroundBrush;
+            ((MainWindow)System.Windows.Application.Current.MainWindow).ViewModel.BackgroundColorChanged += (b) => { this.Background = b; };
 
             // 포커스 설정
             this.Focusable = false;

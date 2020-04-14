@@ -22,8 +22,7 @@ namespace CustomMediaPlayer
         private void Notify(string propName)
         { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName)); }
 
-        private MainWindow mainWindow => (MainWindow)Application.Current.MainWindow; // 메인윈도우 참조 (코드 가독성을 위함)
-
+        private MainWindow mainWindow => (MainWindow)System.Windows.Application.Current.MainWindow; // 메인윈도우 참조 (코드 가독성을 위함)
 
         // 전채 재생시간 (단일 파일)
         public bool DurationViewStatus =>  MainWindow.Optioncore.DurationViewStatus;
@@ -33,16 +32,17 @@ namespace CustomMediaPlayer
             get { return totaltime; }
             set { totaltime = value; Notify("TotalTimestring"); }
         }
+
         public string TotalTimestring
         {
             get
             {
-                if (NowPlayStream == null) // 오류 방지용
-                    return MainWindow.Utility.TimeSpanStringConverter(TimeSpan.Zero);
+                if (NowPlayAudioStream == null) // 오류 방지용
+                    return Utility.Utility.TimeSpanStringConverter(TimeSpan.Zero);
                 if (DurationViewStatus)
-                    return MainWindow.Utility.TimeSpanStringConverter(totalTime); // 전채 시간
+                    return Utility.Utility.TimeSpanStringConverter(totalTime); // 전채 시간
                 else
-                    return "-" + MainWindow.Utility.TimeSpanStringConverter(totalTime - currentpostion); // 남은 시간
+                    return "-" + Utility.Utility.TimeSpanStringConverter(totalTime - currentpostion); // 남은 시간
             }
         }
 
@@ -57,20 +57,20 @@ namespace CustomMediaPlayer
         {
             get
             {
-                if (NowPlayStream == null) // 오류 방지용
+                if (NowPlayAudioStream == null) // 오류 방지용
                     return 0;
                 return currentpostion.TotalMilliseconds;
             }
             set
-            { NowPlayStream.CurrentTime = TimeSpan.FromMilliseconds(value); }
+            { NowPlayAudioStream.CurrentTime = TimeSpan.FromMilliseconds(value); }
         }
         public string CurrentPostionstring
         {
             get
             {
-                if (NowPlayStream == null) // 오류 방지용
-                    return MainWindow.Utility.TimeSpanStringConverter(TimeSpan.Zero);
-                return MainWindow.Utility.TimeSpanStringConverter(currentpostion);
+                if (NowPlayAudioStream == null) // 오류 방지용
+                    return Utility.Utility.TimeSpanStringConverter(TimeSpan.Zero);
+                return Utility.Utility.TimeSpanStringConverter(currentpostion);
             }
         }
 

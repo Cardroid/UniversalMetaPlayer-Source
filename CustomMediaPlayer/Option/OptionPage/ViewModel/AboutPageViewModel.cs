@@ -17,7 +17,7 @@ namespace CustomMediaPlayer.Option.OptionPage.ViewModel
         private void Notify(string propName)
         { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName)); }
 
-        public ImageSource LogoImage { get { return MainWindow.LogoImage; } }
+        public ImageSource LogoImage { get { return Utility.Utility.LogoImage; } }
 
         // 버전 표시
         public string CoreVersion { get { return Assembly.GetExecutingAssembly().GetName().Version.ToString(); } }

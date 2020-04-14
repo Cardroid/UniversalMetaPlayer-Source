@@ -25,8 +25,8 @@ namespace CustomMediaPlayer.Option.OptionPage
             InitializeComponent();
 
             // 배경색 동기화
-            this.Background = ((MainWindow)Application.Current.MainWindow).ViewModel.BackgroundBrush;
-            ((MainWindow)Application.Current.MainWindow).ViewModel.BackgroundColorChanged += (b) => { this.Background = b; };
+            this.Background = ((MainWindow)System.Windows.Application.Current.MainWindow).ViewModel.BackgroundBrush;
+            ((MainWindow)System.Windows.Application.Current.MainWindow).ViewModel.BackgroundColorChanged += (b) => { this.Background = b; };
 
             // 모든 전경색을 지원
             foreach (var color in ThemeManager.Accents)
@@ -47,7 +47,7 @@ namespace CustomMediaPlayer.Option.OptionPage
             {
                 this.HorizontalAlignment = HorizontalAlignment.Center;
                 this.VerticalAlignment = VerticalAlignment.Center;
-                this.Style = Application.Current.FindResource("SquareButtonStyle") as Style;
+                this.Style = System.Windows.Application.Current.FindResource("SquareButtonStyle") as Style;
                 this.Content = "        ";
                 this.Tag = color.Name;
                 this.ToolTip = color.Name;
@@ -75,11 +75,11 @@ namespace CustomMediaPlayer.Option.OptionPage
                 baseColorstring = ThemeManager.GetAppTheme(button.Tag.ToString());
 
                 // 메인 윈도우 배경색 변경
-                ((MainWindow)Application.Current.MainWindow).ViewModel.BackgroundBrush = new BrushConverter().ConvertFromString(backgroundcolorstring) as Brush;
+                ((MainWindow)System.Windows.Application.Current.MainWindow).ViewModel.BackgroundBrush = new BrushConverter().ConvertFromString(backgroundcolorstring) as Brush;
             }
             else { accentColorstring = ThemeManager.GetAccent(button.Tag.ToString()); }
 
-            ThemeManager.ChangeAppStyle(Application.Current, accentColorstring, baseColorstring);
+            ThemeManager.ChangeAppStyle(System.Windows.Application.Current, accentColorstring, baseColorstring);
         }
     }
 }

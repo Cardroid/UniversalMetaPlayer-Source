@@ -92,6 +92,7 @@
             VerticalAlignment="Stretch"
             DataContext="{Binding CurrentPage, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:OptionWindow}}}"
             BorderThickness="1,1,0,0"
+            Focusable="False"
             Grid.Column="1"
             Padding="0" />
     </Grid>

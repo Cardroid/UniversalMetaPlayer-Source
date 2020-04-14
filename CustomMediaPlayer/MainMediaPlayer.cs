@@ -13,35 +13,36 @@ namespace CustomMediaPlayer
 {
     public static class MainMediaPlayer
     {
-        public static IWavePlayer mediaPlayer = new WaveOut(); //메인 플래이어
+        public static IWavePlayer mediaPlayer = new WaveOut(); //메인 플레이어
 
         #region 현재 열린 파일 관련
-        public delegate void AudioFileEventHandler(FileInfo audioFile);
+        public delegate void AudioFileEventHandler(MediaFullInfo audioFile);
         public static event AudioFileEventHandler AudioFileOpen;
-        public static AudioFileReader NowPlayStream { private set; get; }
-        public static MediaInfo NowPlayMediaInfo;
-        private static FileInfo nowplayfile;
-        public static FileInfo NowPlayFile
+        public delegate void NowPlayMediaCursorChangeHandler(int id);
+        public static event NowPlayMediaCursorChangeHandler NowPlayMediaCursorChange;
+        
+        public static AudioFileReader NowPlayAudioStream { get; private set; }
+        private static MediaFullInfo nowplaymedia;
+        public static MediaFullInfo NowPlayMedia
         {
             get
-            { return nowplayfile; }
+            { return nowplaymedia; }
             set
             {
                 mediaPlayer.Stop();
-                NowPlayStream = null;
-                nowplayfile = value;
-                NowPlayMediaInfo = new MediaInfo(nowplayfile);
-                NowPlayStream = new AudioFileReader(nowplayfile.FullName);
+                NowPlayAudioStream = null;
+                nowplaymedia = value;
+                NowPlayAudioStream = new AudioFileReader(nowplaymedia.FileFullName);
                 // 미디어 길이 표시 라벨 너비 초기화
-                ((MainWindow)Application.Current.MainWindow).TotalTimeLabel.Width = (MainWindow.Utility.MeasureString(MainWindow.Utility.TimeSpanStringConverter(NowPlayMediaInfo.Duration))).Width;
-                mediaPlayer.Init(NowPlayStream);
+                ((MainWindow)System.Windows.Application.Current.MainWindow).TotalTimeLabel.Width = (Utility.Utility.MeasureString(Utility.Utility.TimeSpanStringConverter(NowPlayMedia.Duration))).Width;
+                mediaPlayer.Init(NowPlayAudioStream);
                 if (MainWindow.Optioncore.MediaOpeningPlayOption)
                     mediaPlayer.Play();
-                ((MainWindow)Application.Current.MainWindow).MediaPlayer_PlayStateChange();
-                AudioFileOpen?.Invoke(nowplayfile);
+                ((MainWindow)System.Windows.Application.Current.MainWindow).MediaPlayer_PlayStateChange();
+                AudioFileOpen?.Invoke(nowplaymedia);
+                NowPlayMediaCursorChange?.Invoke(nowplaymedia.ID);
             }
         }
         #endregion
-
     }
 }

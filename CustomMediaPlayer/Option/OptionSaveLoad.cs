@@ -14,6 +14,7 @@ using MahApps.Metro;
 using Newtonsoft.Json.Linq;
 using CustomMediaPlayer.Option.OptionPage;
 using System.Windows.Media;
+using CustomMediaPlayer.Controllers.PlayList;
 
 namespace CustomMediaPlayer.Option
 {
@@ -21,7 +22,7 @@ namespace CustomMediaPlayer.Option
     {
         public static string SaveFilePath { get { return Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData, Environment.SpecialFolderOption.Create) + @"\Finitio\CustomMediaPlayer\"; } }
         public static string SaveFileName { get { return $"UserSet.json"; } }
-        private MainWindow mainWindow => (MainWindow)Application.Current.MainWindow;
+        private MainWindow mainWindow => (MainWindow)System.Windows.Application.Current.MainWindow;
 
         public void Save()
         {
@@ -29,21 +30,25 @@ namespace CustomMediaPlayer.Option
                 Directory.CreateDirectory(SaveFilePath);
             try
             {
-                OptionValue optionValue = new OptionValue();
-
-                optionValue.KeyHooking = MainWindow.Optioncore.KeyHookOption;
-                optionValue.MediaOpeningPlay = MainWindow.Optioncore.MediaOpeningPlayOption;
-                optionValue.DurationViewStatus = MainWindow.Optioncore.DurationViewStatus;
-                optionValue.RepeatOption = mainWindow.ViewModel.RepeatPlayOption;
-                optionValue.Volume = mainWindow.ViewModel.Volume;
-                optionValue.AccentColor = ThemeManager.DetectAppStyle().Item2.Name;
-                optionValue.BaseColor = ThemeManager.DetectAppStyle().Item1.Name;
-                optionValue.BackgroundColor = mainWindow.ViewModel.BackgroundBrush.ToString();
-                optionValue.LastMediaSave = MainWindow.Optioncore.LastSongSaveOption;
-                if (MainMediaPlayer.NowPlayStream != null && MainWindow.Optioncore.LastSongSaveOption)
+                OptionValue optionValue = new OptionValue
                 {
-                    optionValue.LastMediaPath = MainMediaPlayer.NowPlayFile.FullName ?? null;
-                    optionValue.LastMediaPostion = MainMediaPlayer.NowPlayStream.CurrentTime.TotalMilliseconds;
+                    KeyHooking = MainWindow.Optioncore.KeyHookOption,
+                    MediaOpeningPlay = MainWindow.Optioncore.MediaOpeningPlayOption,
+                    DurationViewStatus = MainWindow.Optioncore.DurationViewStatus,
+                    RepeatOption = mainWindow.ViewModel.RepeatPlayOption,
+                    Volume = mainWindow.ViewModel.Volume,
+                    AccentColor = ThemeManager.DetectAppStyle().Item2.Name,
+                    BaseColor = ThemeManager.DetectAppStyle().Item1.Name,
+                    BackgroundColor = mainWindow.ViewModel.BackgroundBrush.ToString(),
+                    LastMediaSave = MainWindow.Optioncore.LastSongSaveOption
+                };
+                if (MainMediaPlayer.NowPlayAudioStream != null && MainWindow.Optioncore.LastSongSaveOption)
+                {
+                    optionValue.LastMediaPath = MainMediaPlayer.NowPlayMedia.FileFullName ?? null;
+                    if (optionValue.LastMediaPath != null)
+                        optionValue.LastMediaPostion = MainMediaPlayer.NowPlayAudioStream.CurrentTime.TotalMilliseconds;
+                    else
+                        optionValue.LastMediaPostion = 0;
                 }
 
                 var JsonObj = JsonConvert.SerializeObject(optionValue, Formatting.Indented);
@@ -54,48 +59,74 @@ namespace CustomMediaPlayer.Option
         }
         public void Load()
         {
-            OptionValue optionValue;
             OptionValue DefaultValue = new OptionValue();
-            try
+            OptionValue optionValue;
+            if (File.Exists(SaveFilePath + SaveFileName))
             {
-                string Jsonstring = File.ReadAllText(SaveFilePath + SaveFileName);
-                optionValue = JsonConvert.DeserializeObject<OptionValue>(Jsonstring);
+                try
+                {
+                    string Jsonstring = File.ReadAllText(SaveFilePath + SaveFileName);
+                    optionValue = JsonConvert.DeserializeObject<OptionValue>(Jsonstring);
+                }
+                catch { optionValue = DefaultValue; }
             }
-            catch { optionValue = DefaultValue; }
+            else { optionValue = DefaultValue; }
+
+            // 로드 오류시
+            if (optionValue == null)
+                optionValue = DefaultValue;
 
             // 옵션 로드
-            //try
-            //{
             MainWindow.Optioncore.KeyHookOption = optionValue.KeyHooking;
             MainWindow.Optioncore.MediaOpeningPlayOption = optionValue.MediaOpeningPlay;
             mainWindow.ViewModel.RepeatPlayOption = optionValue.RepeatOption;
             mainWindow.ViewModel.Volume = optionValue.Volume;
             MainWindow.Optioncore.LastSongSaveOption = optionValue.LastMediaSave;
-            //}
-            //catch { }
 
             // 테마 로드
             try
             {
-                ThemeManager.ChangeAppStyle(Application.Current, ThemeManager.GetAccent(optionValue.AccentColor), ThemeManager.GetAppTheme(optionValue.BaseColor));
+                ThemeManager.ChangeAppStyle(System.Windows.Application.Current, ThemeManager.GetAccent(optionValue.AccentColor), ThemeManager.GetAppTheme(optionValue.BaseColor));
                 mainWindow.ViewModel.BackgroundBrush = new BrushConverter().ConvertFromString(optionValue.BackgroundColor) as Brush;
             }
             catch
             {
-                ThemeManager.ChangeAppStyle(Application.Current, ThemeManager.GetAccent(DefaultValue.AccentColor), ThemeManager.GetAppTheme(DefaultValue.BaseColor));
+                ThemeManager.ChangeAppStyle(System.Windows.Application.Current, ThemeManager.GetAccent(DefaultValue.AccentColor), ThemeManager.GetAppTheme(DefaultValue.BaseColor));
                 mainWindow.ViewModel.BackgroundBrush = new BrushConverter().ConvertFromString(DefaultValue.BackgroundColor) as Brush;
             }
+
+            // 플레이리스트 로드
+            try
+            {
+                PlayListLoad playListLoad = new PlayListLoad("PlayList.json");
+                playListLoad.Load();
+            }
+            catch { Debug.WriteLine("불러오기 오류"); }
 
             // 저장된 미디어 로드
             try
             {
                 if (optionValue.LastMediaSave && !(Environment.GetCommandLineArgs().Length > 1))
                 {
-                    MainMediaPlayer.NowPlayFile = new FileInfo(optionValue.LastMediaPath);
-                    MainMediaPlayer.NowPlayStream.CurrentTime = TimeSpan.FromMilliseconds(optionValue.LastMediaPostion);
+                    var media = new Core.MediaInfo(optionValue.LastMediaPath);
+                    if (!MainWindow.PlayList.Playlist.Contains(media))
+                    {
+                        MainWindow.PlayList.Playlist.Add(ref media);
+                    }
+                    else
+                    {
+                        media.ID = MainWindow.PlayList.Playlist.IndexOf(media);
+                    }
+                    MainMediaPlayer.NowPlayMedia = new Core.MediaFullInfo(media);
+                    MainMediaPlayer.NowPlayAudioStream.CurrentTime = TimeSpan.FromMilliseconds(optionValue.LastMediaPostion);
                 }
             }
-            catch { mainWindow.MainPopup.Child = new Popup.SaveMediaFileErrorPopupPage(); mainWindow.MainPopup.IsOpen = true; }
+            catch
+            {
+                // 저장된 미디어 정보 오류
+                mainWindow.MainPopup.Child = new Popup.MainWindowPopupPage(Popup.PopupContents.SaveMediaFileLoadError);
+                mainWindow.MainPopup.IsOpen = true;
+            }
         }
     }
 

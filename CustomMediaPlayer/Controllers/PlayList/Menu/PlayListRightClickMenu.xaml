@@ -5,26 +5,32 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     mc:Ignorable="d"
-    BorderThickness="3"
-    Style="{StaticResource ControlStyle}">
+    BorderThickness="2"
+    Style="{StaticResource ControlStyle}"
+    Width="180">
 
     <StackPanel
         Orientation="Vertical"
         HorizontalAlignment="Stretch"
-        VerticalAlignment="Stretch"
-        Margin="5">
+        VerticalAlignment="Stretch">
         <Button
             x:Name="AddButton"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
+            HorizontalContentAlignment="Left"
+            VerticalContentAlignment="Center"
             BorderThickness="0"
+            Padding="30,0,0,0"
             Style="{StaticResource SquareButtonStyle}" 
             Click="Button_Click"/>
         <Button
             x:Name="RemoveButton"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
+            HorizontalContentAlignment="Left"
+            VerticalContentAlignment="Center"
             BorderThickness="0"
+            Padding="30,0,0,0"
             Style="{StaticResource SquareButtonStyle}" 
             Click="Button_Click"/>
     </StackPanel>

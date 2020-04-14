@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Media;
-
+using System.Windows.Media.Imaging;
 using MahApps.Metro.Controls;
 using Microsoft.Win32;
 
@@ -15,8 +17,11 @@ namespace CustomMediaPlayer.Utility
 {
     public class Utility
     {
+        public static ImageSource LogoImage = new BitmapImage(new Uri(@"Resources\IconCustomMusicPlayer.png", UriKind.Relative));
+        public static ImageSource LogoNoteImage = new BitmapImage(new Uri(@"Resources\IconnoteCustomMusicPlayer.png", UriKind.Relative));
+
         // / 관리자 권한 여부 확인
-        public bool IsAdministrator()
+        public static bool IsAdministrator()
         {
             WindowsIdentity identity = WindowsIdentity.GetCurrent();
             if (null != identity)
@@ -27,7 +32,12 @@ namespace CustomMediaPlayer.Utility
             return false;
         }
 
-        public string TimeSpanStringConverter(TimeSpan value)
+        /// <summary>
+        /// 시간을 지동으로 문자열로 변환합니다,
+        /// </summary>
+        /// <param name="value">시간으로 바꿀 TimeSpan</param>
+        /// <returns>문자열</returns>
+        public static string TimeSpanStringConverter(TimeSpan value)
         {
             if (value == TimeSpan.Zero)
                 return "00:00";
@@ -39,14 +49,19 @@ namespace CustomMediaPlayer.Utility
                 return value.ToString(@"mm\:ss");
             return "00:00";
         }
-
-        public Size MeasureString(string text)
+        
+        /// <summary>
+        /// 매개변수 문자열의 그래픽 사이즈를 반환합니다
+        /// </summary>
+        /// <param name="text">문자열</param>
+        /// <returns>Size</returns>
+        public static Size MeasureString(string text)
         {
             var formattedText = new FormattedText(text,
                 CultureInfo.CurrentCulture,
                 FlowDirection.LeftToRight,
-                new Typeface(((MainWindow)Application.Current.MainWindow).FontFamily, ((MainWindow)Application.Current.MainWindow).FontStyle, ((MainWindow)Application.Current.MainWindow).FontWeight, ((MainWindow)Application.Current.MainWindow).FontStretch),
-                ((MainWindow)Application.Current.MainWindow).FontSize,
+                new Typeface(((MainWindow)System.Windows.Application.Current.MainWindow).FontFamily, ((MainWindow)System.Windows.Application.Current.MainWindow).FontStyle, ((MainWindow)System.Windows.Application.Current.MainWindow).FontWeight, ((MainWindow)System.Windows.Application.Current.MainWindow).FontStretch),
+                ((MainWindow)System.Windows.Application.Current.MainWindow).FontSize,
                 Brushes.Black,
                 new NumberSubstitution(),
                 1);
@@ -129,6 +144,18 @@ namespace CustomMediaPlayer.Utility
                 filestring[i] = filelist[i];
             }
             return filestring;
+        }
+
+        /// <summary>
+        /// 파일이름으로 지원하는 미디어 파일인지 확인합니다.
+        /// </summary>
+        /// <param name="filename">파일이름</param>
+        /// <returns>bool 타입</returns>
+        public static bool IsMedia(string filename)
+        {   // 옵션추가가능 
+            // 강력한 파일 검사, 일반 파일검사
+            string[] MediaExtensions = { ".mp3", ".wav", ".flac" }; // 추가가능
+            return MediaExtensions.Contains(Path.GetExtension(filename), StringComparer.OrdinalIgnoreCase);
         }
     }
 }
