@@ -18,7 +18,6 @@ using CustomMediaPlayer.Core;
 using MahApps.Metro;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
-using Microsoft.Win32;
 
 namespace CustomMediaPlayer.Controllers.PlayList
 {
@@ -95,7 +94,8 @@ namespace CustomMediaPlayer.Controllers.PlayList
                 if (this.PlayList.SelectedItem != null)
                 {
                     MainMediaPlayer.mediaPlayer.Stop();
-                    MainMediaPlayer.NowPlayAudioStream.Dispose();
+                    if (MainMediaPlayer.NowPlayAudioStream != null)
+                        MainMediaPlayer.NowPlayAudioStream.Dispose();
                     try
                     {
                         MainMediaPlayer.NowPlayMedia = new MediaFullInfo((MediaInfo)this.PlayList.SelectedItem);

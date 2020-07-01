@@ -18,7 +18,7 @@ namespace CustomMediaPlayer.Controllers.PlayList
 {
     public partial class PlayListRightClickMenu : UserControl
     {
-        private PlayListPage PlayListPage => (PlayListPage)MainWindow.PlayListwindow.PlayListFrame.Content;
+        private PlayListPage PlayListPage => (PlayListPage)((MainWindow)System.Windows.Application.Current.MainWindow).PlayListwindow.PlayListFrame.Content;
 
         public PlayListRightClickMenu()
         {

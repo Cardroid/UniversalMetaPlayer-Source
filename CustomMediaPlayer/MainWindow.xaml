@@ -166,8 +166,8 @@
                     x:Name="RepeatButton"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    Content="{iconPacks:Material Kind=RepeatOff, Width=20, Height=20}"
                     Style="{DynamicResource MahApps.Metro.Styles.MetroCircleButtonStyle}"
+                    Content="{Binding RepeatPlayOptionIcon}"
                     Margin="0,0,20,0"
                     Width="50"
                     Height="50" />
@@ -269,7 +269,7 @@
                     <Label
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Content="{Binding volumestring}" />
+                        Content="{Binding Volumestring}" />
                 </StackPanel>
             </Grid>
         </Grid>

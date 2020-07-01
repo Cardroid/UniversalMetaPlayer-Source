@@ -18,7 +18,7 @@ namespace CustomMediaPlayer.Option.Popup
 {
     public partial class MainWindowPopupPage : UserControl
     {
-        public MainWindowPopupPage(PopupContents popupContents)
+        public MainWindowPopupPage(PopupContents popupContents, string errormessage = "")
         {
             InitializeComponent();
 
@@ -28,12 +28,14 @@ namespace CustomMediaPlayer.Option.Popup
 
             // 전경색 동기화
             this.BorderBrush = ThemeManager.DetectAppStyle().Item2.Resources["AccentColorBrush"] as SolidColorBrush;
+            this.MessageBorder.BorderBrush = this.BorderBrush;
 
             switch (popupContents)
             {
 #if DEBUG
                 case PopupContents.DebugMode:
                     ContentsLabel.Content = "본 프로그램은 테스트를 위해 제작되었습니다.\n사용에 문제가 발생할 수 있습니다.";
+                    errormessage = "Debug Mode";
                     break;
 #endif
                 case PopupContents.NowMediaFileNotToExist:
@@ -45,7 +47,18 @@ namespace CustomMediaPlayer.Option.Popup
                 case PopupContents.FileOpenError:
                     ContentsLabel.Content = "파일을 열 수 없습니다.";
                     break;
+                case PopupContents.PlayListLoadError:
+                    ContentsLabel.Content = "플레이리스트를 불러올 수 없습니다.";
+                    break;
+                case PopupContents.Error:
+                default:
+                    ContentsLabel.Content = "오류가 발생했습니다.";
+                    break;
             }
+            if (string.IsNullOrWhiteSpace(errormessage))
+                this.MessageBorder.Visibility = Visibility.Collapsed;
+            else
+                this.ErrorMessageLabel.Content = errormessage;
         }
     }
 
@@ -54,8 +67,10 @@ namespace CustomMediaPlayer.Option.Popup
 #if DEBUG
         DebugMode,
 #endif
+        Error,
         NowMediaFileNotToExist,
         SaveMediaFileLoadError,
-        FileOpenError
+        FileOpenError,
+        PlayListLoadError
     }
 }

@@ -8,7 +8,7 @@ using Microsoft.Win32;
 
 namespace CustomMediaPlayer.Utility
 {
-    class RegistryEditer
+    public class RegistryEditer
     {
         public static void FileConnect()
         {

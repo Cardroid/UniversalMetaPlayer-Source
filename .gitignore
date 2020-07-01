@@ -1,6 +1,7 @@
 /**/bin/
 /**/obj/
-/**/ffmpeg/*
+/**/ffmpeg/
+/**/TestMusic/
 
 #
 # NOTE! Don't add files that are generated in specific

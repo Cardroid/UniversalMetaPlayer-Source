@@ -18,5 +18,14 @@
             x:Name="ContentsLabel"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"/>
+        <Border
+            x:Name="MessageBorder"
+            BorderThickness="1"
+            Margin="1">
+            <Label
+                x:Name="ErrorMessageLabel"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch" />
+        </Border>
     </StackPanel>
 </UserControl>
