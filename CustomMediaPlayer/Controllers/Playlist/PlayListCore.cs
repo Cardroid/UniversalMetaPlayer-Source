@@ -14,11 +14,11 @@ namespace CustomMediaPlayer.Controllers.PlayList
 {
   public class PlayListCore
   {
-    private PlayListInfo playlist = new PlayListInfo();
+    private PlayListInfo _Playlist = new PlayListInfo();
     public PlayListInfo Playlist
     {
-      get { return playlist; }
-      set { playlist = value; }
+      get => _Playlist;
+      set => _Playlist = value;
     }
   }
 

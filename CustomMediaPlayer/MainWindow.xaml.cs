@@ -26,7 +26,6 @@ using MahApps.Metro.IconPacks;
 using NYoutubeDL;
 using NYoutubeDL.Models;
 using NAudio.Wave;
-using static CustomMediaPlayer.MainMediaPlayer;
 using CustomMediaPlayer.Option.Popup;
 using System.Globalization;
 using CustomMediaPlayer.Controllers.PlayList;
@@ -69,133 +68,132 @@ namespace CustomMediaPlayer
 
       this.Loaded += (NUs, NUe) =>
       {
-              #region 초기설정
-              // DataContext 설정
-              ViewModel = (MainWindowViewModel)this.DataContext;
+        #region 초기설정
+        // DataContext 설정
+        ViewModel = (MainWindowViewModel)this.DataContext;
 
-              // 타이틀 설정
+        // 타이틀 설정
 #if DEBUG
-              this.Title = "TestVersion - CustomMediaPlayer";
+        this.Title = "TestVersion - CustomMediaPlayer";
 
-              // 디버그 모드일 경우
-              MainPopup.Child = new MainWindowPopupPage(PopupContents.DebugMode);
-        MainPopup.IsOpen = true;
+        // 디버그 모드일 경우
+        MainPopup.Child = new MainWindowPopupPage(PopupContents.DebugMode);
 #else
-            this.Title = "CustomMediaPlayer";
+        this.Title = "CustomMediaPlayer";
 #endif
 
-              // 미구현 기능 차단
-              PreviousButton.IsEnabled = false;
+        // 미구현 기능 차단
+        PreviousButton.IsEnabled = false;
         NextButton.IsEnabled = false;
         ShuffleButton.IsEnabled = false;
         TotalDurationLabel.IsEnabled = false;
         TotalDurationLabel.Visibility = Visibility.Collapsed;
 
-              // 팝업 화면 종료이벤트 발생시 초기화
-              MainPopup.Closed += (s, e) => { MainPopup.Child = null; };
+        // 팝업 화면 종료이벤트 발생시 초기화
+        MainPopup.Closed += (s, e) => { MainPopup.Child = null; };
 
-              // 단축키 설정
-              this.KeyDown += (s, e) =>
-              {
-            switch (e.Key)
-            {
-              case Key.Escape:
-                this.Close();
-                break;
-              case Key.Space:
-                MediaController_Click(PlayPauseButton, new RoutedEventArgs());
-                break;
-              case Key.P:
-                MediaController_Click(StopButton, new RoutedEventArgs());
-                break;
-              case Key.Down:
-              case Key.VolumeDown:
-                ViewModel.Volume--;
-                break;
-              case Key.Up:
-              case Key.VolumeUp:
-                ViewModel.Volume++;
-                break;
-              case Key.M:
-              case Key.VolumeMute:
-                if (ViewModel.Volume == 0)
-                  ViewModel.Volume = ViewModel.BeforeVolume;
-                else
-                  ViewModel.Volume = 0;
-                break;
-              case Key.Right:
-                ProgressSlider.Value += ProgressSlider.Maximum / 100;
-                break;
-              case Key.Left:
-                ProgressSlider.Value -= ProgressSlider.Maximum / 100;
-                break;
-            }
-          };
+        // 단축키 설정
+        this.KeyDown += (s, e) =>
+        {
+          switch (e.Key)
+          {
+            case Key.Escape:
+              this.Close();
+              break;
+            case Key.Space:
+              MediaController_Click(PlayPauseButton, new RoutedEventArgs());
+              break;
+            case Key.P:
+              MediaController_Click(StopButton, new RoutedEventArgs());
+              break;
+            case Key.Down:
+            case Key.VolumeDown:
+              ViewModel.Volume--;
+              break;
+            case Key.Up:
+            case Key.VolumeUp:
+              ViewModel.Volume++;
+              break;
+            case Key.M:
+            case Key.VolumeMute:
+              if (ViewModel.Volume == 0)
+                ViewModel.Volume = ViewModel.BeforeVolume;
+              else
+                ViewModel.Volume = 0;
+              break;
+            case Key.Right:
+              ProgressSlider.Value += ProgressSlider.Maximum / 100;
+              break;
+            case Key.Left:
+              ProgressSlider.Value -= ProgressSlider.Maximum / 100;
+              break;
+          }
+        };
 
-              // 볼륨
-              VolumeSlider.Maximum = 100.0;
+        // 볼륨
+        VolumeSlider.Maximum = 100.0;
         VolumeSlider.Minimum = 0.0;
 
-              // 마우스 휠을 사용한 볼륨조절
-              this.MouseWheel += (s, e) =>
-              {
-            if (e.Delta > 0)
-            {
-              if (Math.Abs(e.Delta) > 120)
-                ViewModel.Volume += 4;
-              ViewModel.Volume += 1;
-            }
-            else if (e.Delta < 0)
-            {
-              if (Math.Abs(e.Delta) > 120)
-                ViewModel.Volume -= 4;
-              ViewModel.Volume -= 1;
-            }
-          };
+        // 마우스 휠을 사용한 볼륨조절
+        this.MouseWheel += (s, e) =>
+        {
+          if (e.Delta > 0)
+          {
+            if (Math.Abs(e.Delta) > 120)
+              ViewModel.Volume += 4;
+            ViewModel.Volume += 1;
+          }
+          else if (e.Delta < 0)
+          {
+            if (Math.Abs(e.Delta) > 120)
+              ViewModel.Volume -= 4;
+            ViewModel.Volume -= 1;
+          }
+        };
 
-              // 볼륨 뮤트 버튼
-              VolumeMuteButton.Click += (s, e) =>
-              {
-            if (ViewModel.Volume > 0)
-              ViewModel.Volume = 0;
-            else
-              ViewModel.Volume = ViewModel.BeforeVolume;
-          };
+        // 볼륨 뮤트 버튼
+        VolumeMuteButton.Click += (s, e) =>
+        {
+          if (ViewModel.Volume > 0)
+            ViewModel.Volume = 0;
+          else
+            ViewModel.Volume = ViewModel.BeforeVolume;
+        };
 
-              // 미디어 이미지
-              MediaImage.Source = Utility.Utility.LogoNoteImage;
+        // 미디어 이미지
+        MediaImage.Source = Utility.Utility.LogoNoteImage;
 
-              // 남은 시간 <-> 전체 시간 전환
-              TotalTimeLabel.MouseDown += (s, e) =>
-              {
-            if (e.ChangedButton == MouseButton.Left)
-            { Optioncore.DurationViewStatus = !Optioncore.DurationViewStatus; }
-          };
+        // 남은 시간 <-> 전체 시간 전환
+        TotalTimeLabel.MouseDown += (s, e) =>
+        {
+          if (e.ChangedButton == MouseButton.Left)
+          { Optioncore.DurationViewStatus = !Optioncore.DurationViewStatus; }
+        };
 
-              // 커서 설정
-              PreviousButton.MouseEnter += (s, e) => { this.Cursor = Cursors.Hand; };
-        PlayPauseButton.MouseEnter += (s, e) => { this.Cursor = Cursors.Hand; };
-        StopButton.MouseEnter += (s, e) => { this.Cursor = Cursors.Hand; };
-        NextButton.MouseEnter += (s, e) => { this.Cursor = Cursors.Hand; };
-        ShuffleButton.MouseEnter += (s, e) => { this.Cursor = Cursors.Hand; };
-        RepeatButton.MouseEnter += (s, e) => { this.Cursor = Cursors.Hand; };
-        SettingButton.MouseEnter += (s, e) => { this.Cursor = Cursors.Hand; };
-        MediaListButton.MouseEnter += (s, e) => { this.Cursor = Cursors.Hand; };
+        // 커서 설정
+        PreviousButton.MouseEnter += CursorChangeHand;
+        PlayPauseButton.MouseEnter += CursorChangeHand;
+        StopButton.MouseEnter += CursorChangeHand;
+        NextButton.MouseEnter += CursorChangeHand;
+        ShuffleButton.MouseEnter += CursorChangeHand;
+        RepeatButton.MouseEnter += CursorChangeHand;
+        SettingButton.MouseEnter += CursorChangeHand;
+        MediaListButton.MouseEnter += CursorChangeHand;
 
-        PreviousButton.MouseLeave += (s, e) => { this.Cursor = Cursors.Arrow; };
-        PlayPauseButton.MouseLeave += (s, e) => { this.Cursor = Cursors.Arrow; };
-        StopButton.MouseLeave += (s, e) => { this.Cursor = Cursors.Arrow; };
-        NextButton.MouseLeave += (s, e) => { this.Cursor = Cursors.Arrow; };
-        ShuffleButton.MouseLeave += (s, e) => { this.Cursor = Cursors.Arrow; };
-        RepeatButton.MouseLeave += (s, e) => { this.Cursor = Cursors.Arrow; };
-        SettingButton.MouseLeave += (s, e) => { this.Cursor = Cursors.Arrow; };
-        MediaListButton.MouseLeave += (s, e) => { this.Cursor = Cursors.Arrow; };
+        PreviousButton.MouseLeave += CursorChangeArrow;
+        PlayPauseButton.MouseLeave += CursorChangeArrow;
+        StopButton.MouseLeave += CursorChangeArrow;
+        NextButton.MouseLeave += CursorChangeArrow;
+        ShuffleButton.MouseLeave += CursorChangeArrow;
+        RepeatButton.MouseLeave += CursorChangeArrow;
+        SettingButton.MouseLeave += CursorChangeArrow;
+        MediaListButton.MouseLeave += CursorChangeArrow;
 
-        TotalTimeLabel.MouseEnter += (s, e) => { this.Cursor = Cursors.Hand; };
-        TotalTimeLabel.MouseLeave += (s, e) => { this.Cursor = Cursors.Arrow; };
+        TotalTimeLabel.MouseEnter += CursorChangeHand;
+        TotalTimeLabel.MouseLeave += CursorChangeArrow;
 
-              // 포커스 설정
-              PreviousButton.Focusable = false;
+        // 포커스 설정
+        PreviousButton.Focusable = false;
         PlayPauseButton.Focusable = false;
         StopButton.Focusable = false;
         NextButton.Focusable = false;
@@ -207,21 +205,21 @@ namespace CustomMediaPlayer
         ProgressSlider.Focusable = false;
         VolumeSlider.Focusable = false;
         VolumeMuteButton.Focusable = false;
-              #endregion
+        #endregion
 
-              #region 이벤트 연결
-              // 메인 윈도우
-              this.Closing += MediaPlayer_Closing;
+        #region 이벤트 연결
+        // 메인 윈도우
+        this.Closing += MediaPlayer_Closing;
 
-              // 미디어 플레이어
-              mediaPlayer.PlaybackStopped += MediaPlayer_PlaybackStopped;
-        AudioFileOpen += MediaPlayer_OpenStateChange;
+        // 미디어 플레이어
+        MainMediaPlayer.PlaybackStopped += MediaPlayer_PlaybackStopped;
+        MainMediaPlayer.AudioFileOpen += MediaPlayer_OpenStateChange;
 
-              // 미디어 컨트롤러
-              ProgressSlider.ValueChanged += ProgressSlider_ValueChanged;
+        // 미디어 컨트롤러
+        ProgressSlider.ValueChanged += ProgressSlider_ValueChanged;
 
-              // 버튼 클릭 이벤트 연결
-              PreviousButton.Click += MediaController_Click;
+        // 버튼 클릭 이벤트 연결
+        PreviousButton.Click += MediaController_Click;
         PlayPauseButton.Click += MediaController_Click;
         StopButton.Click += MediaController_Click;
         NextButton.Click += MediaController_Click;
@@ -229,12 +227,12 @@ namespace CustomMediaPlayer
         RepeatButton.Click += MediaController_Click;
         SettingButton.Click += MediaController_Click;
         MediaListButton.Click += MediaController_Click;
-              #endregion
+        #endregion
 
-              #region 툴팁 설정
+        #region 툴팁 설정
 
-              // 버튼
-              PreviousButton.ToolTip = "Previous / 이전 곡";
+        // 버튼
+        PreviousButton.ToolTip = "Previous / 이전 곡";
         PlayPauseButton.ToolTip = "Play / 재생";
         StopButton.ToolTip = "Stop / 정지";
         NextButton.ToolTip = "Next / 다음 곡";
@@ -243,10 +241,10 @@ namespace CustomMediaPlayer
         SettingButton.ToolTip = "Option / 설정";
         MediaListButton.ToolTip = "Media List / 미디어 목록";
 
-              // 볼륨
-              VolumeSlider.ToolTip = "Volume / 볼륨";
-              #endregion
-            };
+        // 볼륨
+        VolumeSlider.ToolTip = "Volume / 볼륨";
+        #endregion
+      };
 
       // 저장 클래스 초기화 및 저장 값 로드
       this.Loaded += (s, e) =>
@@ -264,51 +262,54 @@ namespace CustomMediaPlayer
             PlayList.Playlist.Add(new MediaInfo(media));
           }
         }
-              //else
-              //    NowPlayMedia = new Core.MediaInfo(new FileInfo(@"D:\Dif\Music\달의하루-염라_Karma.mp3"));
-            };
+        //else
+        //    NowPlayMedia = new Core.MediaInfo(new FileInfo(@"D:\Dif\Music\달의하루-염라_Karma.mp3"));
+      };
     }
 
     #region 미디어 관련
     /// <summary>
     /// 파일 열림 상태 변경 이벤트
     /// </summary>
-    private void MediaPlayer_OpenStateChange(Core.MediaFullInfo File)
+    private void MediaPlayer_OpenStateChange(MediaFullInfo File)
     {
       #region 컨트롤러 초기화
-      ProgressSlider.Maximum = NowPlayMedia.Duration.TotalMilliseconds;
+      ProgressSlider.Maximum = MainMediaPlayer.NowPlayMedia.Duration.TotalMilliseconds;
       //TotalTimeLabel.Content = nowPlayInfo.Duration.ToString(@"mm\:ss");
       ticks.Interval = TimeSpan.FromMilliseconds(1);
       ticks.Tick += Ticks_Tick;
       ticks.Start();
 
-      MediaImage.Source = NowPlayMedia.AlbumImage;
+      MediaImage.Source = MainMediaPlayer.NowPlayMedia.AlbumImage;
 
-      SongTitleLabel.Content = NowPlayMedia.Title;
-      AlbumTitleLabel.Content = NowPlayMedia.AlbumTitle;
-      ArtistNameLabel.Content = NowPlayMedia.ArtistName;
+      SongTitleLabel.Content = MainMediaPlayer.NowPlayMedia.Title;
+      AlbumTitleLabel.Content = MainMediaPlayer.NowPlayMedia.AlbumTitle;
+      ArtistNameLabel.Content = MainMediaPlayer.NowPlayMedia.ArtistName;
       #endregion
     }
+
     /// <summary>
     /// 재생 종료 이벤트
     /// </summary>
     private void MediaPlayer_PlaybackStopped(object sender, StoppedEventArgs e)
     {
-      NowPlayAudioStream.CurrentTime = TimeSpan.Zero;
+      MainMediaPlayer.NowPlayAudioStream.CurrentTime = TimeSpan.Zero;
       if (ViewModel.RepeatPlayOption == (int)RepeatOption.Once && !StopButtonActive)
       {
-        mediaPlayer.Play(); // 한곡 반복 설정
+        MainMediaPlayer.Play(); // 한곡 반복 설정
         StopButtonActive = false;
       }
       MediaPlayer_PlayStateChange();
     }
 
-    // 상태 따른 UI 업데이트
+    /// <summary>
+    /// 상태 따른 UI 업데이트
+    /// </summary>
     public void MediaPlayer_PlayStateChange()
     {
       // 플레이 버튼 아이콘 설정
       var PlayPauseIcon = new PackIconControl() { Width = 30, Height = 30 };
-      if (mediaPlayer.PlaybackState == PlaybackState.Playing)
+      if (MainMediaPlayer.PlaybackState == PlaybackState.Playing)
       {
         PlayPauseButton.ToolTip = "Pause / 일시정지";
         PlayPauseIcon.Kind = PackIconMaterialKind.Pause;
@@ -362,6 +363,9 @@ namespace CustomMediaPlayer
     }
     #endregion
 
+    public void CursorChangeArrow(object _, MouseEventArgs _e) => this.Cursor = Cursors.Arrow;
+    public void CursorChangeHand(object _, MouseEventArgs _e) => this.Cursor = Cursors.Hand;
+
     // 미디어 컨트롤러 버튼 처리
     public void MediaController_Click(object sender, RoutedEventArgs e)
     {
@@ -387,10 +391,10 @@ namespace CustomMediaPlayer
         button = MediaControl.MediaListButton;
       #endregion
 
-      if (NowPlayAudioStream == null && !(button == MediaControl.SettingButton) && !(button == MediaControl.MediaListButton))
+      if (MainMediaPlayer.NowPlayAudioStream == null && !(button == MediaControl.SettingButton) && !(button == MediaControl.MediaListButton))
       {
         // 미디어가 안 열렸을 경우
-        MainPopup.Child = new MainWindowPopupPage(PopupContents.NowMediaFileNotToExist);
+        MainPopup.Child = new MainWindowPopupPage(PopupContents.StreamIsNull);
         MainPopup.IsOpen = true;
         return;
       }
@@ -400,15 +404,15 @@ namespace CustomMediaPlayer
         case MediaControl.Null:
           return;
         case MediaControl.PlayPauseButton:
-          if (mediaPlayer.PlaybackState == PlaybackState.Playing)
-          { mediaPlayer.Pause(); }
+          if (MainMediaPlayer.PlaybackState == PlaybackState.Playing)
+          { MainMediaPlayer.Pause(); }
           else
-          { mediaPlayer.Play(); }
+          { MainMediaPlayer.Play(); }
           break;
         case MediaControl.StopButton:
           StopButtonActive = true;
-          NowPlayAudioStream.CurrentTime = TimeSpan.Zero;
-          mediaPlayer.Stop();
+          MainMediaPlayer.NowPlayAudioStream.CurrentTime = TimeSpan.Zero;
+          MainMediaPlayer.Stop();
           break;
         case MediaControl.RepeatButton:
           if (ViewModel.RepeatPlayOption == (int)RepeatOption.OFF)
@@ -450,10 +454,10 @@ namespace CustomMediaPlayer
     // 틱 마다 미디어 진행 상황 동기화
     private void Ticks_Tick(object sender, EventArgs e)
     {
-      if (NowPlayAudioStream != null)
+      if (MainMediaPlayer.NowPlayAudioStream != null)
       {
-        ViewModel.CurrentPostion = NowPlayAudioStream.CurrentTime;
-        ViewModel.totalTime = NowPlayMedia.Duration;
+        ViewModel.CurrentPostion = MainMediaPlayer.NowPlayAudioStream.CurrentTime;
+        ViewModel.TotalTime = MainMediaPlayer.NowPlayMedia.Duration;
       }
     }
 
@@ -464,20 +468,45 @@ namespace CustomMediaPlayer
       {
         // 진행 슬라이더를 클릭 또는 드래그 하여 미디어 재생 위치 변경
         ViewModel.CurrentPostion = TimeSpan.FromMilliseconds(e.NewValue);
-        NowPlayAudioStream.CurrentTime = ViewModel.CurrentPostion;
+        MainMediaPlayer.NowPlayAudioStream.CurrentTime = ViewModel.CurrentPostion;
       }
     }
     #endregion
 
     #region 윈도우 관련
-    // 메인 윈도우
+    private DateTime ErrorCount = DateTime.MinValue;
+
+    // 메인 윈도우 종료
     private void MediaPlayer_Closing(object sender, CancelEventArgs e)
     {
-      OptionWindow.hooking.Stop();
-      mediaPlayer.Stop();
+      MainMediaPlayer.Stop();
+
+      // 현재 옵션 저장
       var optionSaveLoad = new OptionSaveLoad();
-      optionSaveLoad.Save();
-      PlayListSave.Save(PlayList.Playlist);
+      if (!optionSaveLoad.Save())
+      {
+        if (DateTime.Now - ErrorCount > TimeSpan.FromSeconds(10))
+        {
+          this.MainPopup.Child = new MainWindowPopupPage(PopupContents.SaveError, "Option Save Error");
+          e.Cancel = true;
+          ErrorCount = DateTime.Now;
+          return;
+        }
+      }
+
+      // 플래이리스트 저장
+      try { PlayListSave.Save(PlayList.Playlist); }
+      catch (Exception ex)
+      {
+        if (DateTime.Now - ErrorCount > TimeSpan.FromSeconds(10))
+        {
+          this.MainPopup.Child = new MainWindowPopupPage(PopupContents.SaveError, $"Playlist Save Error : {ex.Message}");
+          e.Cancel = true;
+          ErrorCount = DateTime.Now;
+          return;
+        }
+      }
+      OptionWindow.hooking.Stop();
       System.Windows.Application.Current.Shutdown();
     }
 
@@ -496,6 +525,5 @@ namespace CustomMediaPlayer
       this.IgnoreTaskbarOnMaximize = false;
     }
     #endregion
-
   }
 }

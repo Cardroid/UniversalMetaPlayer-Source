@@ -97,7 +97,7 @@
         </Grid>
         <!--플레이어 컨트롤-->
         <Grid
-            HorizontalAlignment="Center"
+            HorizontalAlignment="Stretch"
             VerticalAlignment="Center"
             Grid.Column="0"
             Grid.Row="1"
@@ -147,6 +147,7 @@
                     VerticalContentAlignment="Center"
                     HorizontalContentAlignment="Center"
                     Content="{Binding TotalTimestring}"
+                    Padding="0,0,2,0"
                     Grid.Column="2" />
             </Grid>
             <StackPanel

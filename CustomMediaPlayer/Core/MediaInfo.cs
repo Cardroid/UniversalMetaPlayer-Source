@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 namespace CustomMediaPlayer.Core
 {
   /// <summary>
-  /// 미디어의 정보
+  /// 미디어의 기본 정보
   /// </summary>
   public class MediaInfo
   {
@@ -20,12 +20,11 @@ namespace CustomMediaPlayer.Core
     {
       if (string.IsNullOrWhiteSpace(filefullpath))
         return;
-      FileName = Path.GetFileName(filefullpath);
       FileFullName = filefullpath;
 
       using (var Fileinfo = TagLib.File.Create(FileFullName))
       {
-        Title = Fileinfo.Tag.Title ?? FileName;
+        Title = Fileinfo.Tag.Title ?? Path.GetFileName(filefullpath);
         Duration = Fileinfo.Properties.Duration;
       }
     }
@@ -36,17 +35,13 @@ namespace CustomMediaPlayer.Core
     /// </summary>
     public int ID { get; set; }
     /// <summary>
-    /// 파일의 이름
-    /// </summary>
-    public string FileName { get; private set; } = null;
-    /// <summary>
     /// 파일의 위치
     /// </summary>
-    public string FileFullName { get; private set; } = null;
+    public string FileFullName { get; set; } = null;
     /// <summary>
     /// 타이틀
     /// </summary>
-    public string Title { get; private set; } = null;
+    public string Title { get; set; } = null;
     /// <summary>
     /// 미디어의 총 재생시간
     /// </summary>
@@ -58,21 +53,24 @@ namespace CustomMediaPlayer.Core
       string[] Properties = { mediaInfo.Title, mediaInfo.FileFullName };
       return Properties;
     }
-    public static bool Deserialize(string[] Properties, out MediaInfo mediaInfo)
+    public static bool Deserialize(string mediafullpath, out MediaInfo mediaInfo)
     {
-      mediaInfo = null;
-      if (Properties.Length > 0)
+      if (!string.IsNullOrWhiteSpace(mediafullpath))
+        try
+        {
+          mediaInfo = new MediaInfo(mediafullpath);
+          return true;
+        }
+        catch
+        {
+          mediaInfo = new MediaInfo(null);
+          return false;
+        }
+      else
       {
-        if (!string.IsNullOrWhiteSpace(Properties[1]))
-          try
-          {
-            mediaInfo = new MediaInfo(Properties[1]);
-            return true;
-          }
-          catch
-          { return false; }
+        mediaInfo = new MediaInfo(null);
+        return false;
       }
-      return false;
     }
   }
 

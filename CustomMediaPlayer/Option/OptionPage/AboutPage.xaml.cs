@@ -4,24 +4,25 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+
 using CustomMediaPlayer.Option.OptionPage.ViewModel;
 
 namespace CustomMediaPlayer.Option.OptionPage
 {
-    public partial class AboutPage : UserControl
+  public partial class AboutPage : UserControl
+  {
+    public AboutPageViewModel ViewModel = new AboutPageViewModel();
+    public AboutPage()
     {
-        public AboutPageViewModel ViewModel = new AboutPageViewModel();
-        public AboutPage()
-        {
-            InitializeComponent();
+      InitializeComponent();
 
-            this.DataContext = ViewModel;
+      this.DataContext = ViewModel;
 
-            // 배경색 동기화
-            this.Background = ((MainWindow)System.Windows.Application.Current.MainWindow).ViewModel.BackgroundBrush;
-            ((MainWindow)System.Windows.Application.Current.MainWindow).ViewModel.BackgroundColorChanged += (b) => { this.Background = b; };
+      // 배경색 동기화
+      this.Background = ((MainWindow)System.Windows.Application.Current.MainWindow).ViewModel.BackgroundBrush;
+      ((MainWindow)System.Windows.Application.Current.MainWindow).ViewModel.BackgroundColorChanged += (b) => { this.Background = b; };
 
-            Mainlogo.Stretch = System.Windows.Media.Stretch.Fill;
-        }
+      Mainlogo.Stretch = System.Windows.Media.Stretch.Fill;
     }
+  }
 }

@@ -24,7 +24,7 @@ namespace CustomMediaPlayer.Option
     public static string SaveFileName { get { return $"UserSet.json"; } }
     private MainWindow mainWindow => (MainWindow)System.Windows.Application.Current.MainWindow;
 
-    public void Save()
+    public bool Save()
     {
       if (!Directory.Exists(SaveFilePath))
         Directory.CreateDirectory(SaveFilePath);
@@ -42,21 +42,30 @@ namespace CustomMediaPlayer.Option
           BackgroundColor = mainWindow.ViewModel.BackgroundBrush.ToString(),
           LastMediaSave = MainWindow.Optioncore.LastSongSaveOption
         };
-        if (MainMediaPlayer.NowPlayAudioStream != null && MainWindow.Optioncore.LastSongSaveOption)
+        if (MainWindow.Optioncore.LastSongSaveOption && MainMediaPlayer.NowPlayAudioStream != null)
         {
-          optionValue.LastMediaPath = MainMediaPlayer.NowPlayMedia.FileFullName ?? null;
-          if (optionValue.LastMediaPath != null)
-            optionValue.LastMediaPostion = MainMediaPlayer.NowPlayAudioStream.CurrentTime.TotalMilliseconds;
-          else
-            optionValue.LastMediaPostion = 0;
+          if (MainMediaPlayer.NowPlayMedia != null)
+          {
+            optionValue.LastMediaID = MainMediaPlayer.NowPlayMedia.ID.ToString();
+            if (int.TryParse(optionValue.LastMediaID, out _) )
+              optionValue.LastMediaPostion = MainMediaPlayer.NowPlayAudioStream.CurrentTime.TotalMilliseconds;
+            else
+              optionValue.LastMediaPostion = 0;
+          }
         }
 
         var JsonObj = JsonConvert.SerializeObject(optionValue, Formatting.Indented);
 
         File.WriteAllText(SaveFilePath + SaveFileName, JsonObj);
       }
-      catch { }
+      catch (Exception e)
+      {
+        mainWindow.MainPopup.Child = new Popup.MainWindowPopupPage(Popup.PopupContents.LoadError, $"Playlist Load Error : {e.Message}");
+        return false;
+      }
+      return true;
     }
+
     public void Load()
     {
       OptionValue DefaultValue = new OptionValue();
@@ -72,7 +81,7 @@ namespace CustomMediaPlayer.Option
       }
       else { optionValue = DefaultValue; }
 
-      // 로드 오류시
+      // 로드 오류시를 대비
       if (optionValue == null)
         optionValue = DefaultValue;
 
@@ -98,36 +107,33 @@ namespace CustomMediaPlayer.Option
       // 플레이리스트 로드
       try
       {
-        PlayListLoad.Load("PlayList.json");
+        MainWindow.PlayList.Playlist = PlayListLoad.Load("PlayList.json");
       }
       catch (Exception e)
       {
-        mainWindow.MainPopup.Child = new Popup.MainWindowPopupPage(Popup.PopupContents.PlayListLoadError, e.Message);
+        mainWindow.MainPopup.Child = new Popup.MainWindowPopupPage(Popup.PopupContents.LoadError, $"Playlist Load Error : {e.Message}");
       }
 
       // 저장된 미디어 로드
-      try
+      if (optionValue.LastMediaSave && (Environment.GetCommandLineArgs().Length < 2))
       {
-        if (optionValue.LastMediaSave && !(Environment.GetCommandLineArgs().Length > 1))
+        try
         {
-          var media = new Core.MediaInfo(optionValue.LastMediaPath);
-          if (!MainWindow.PlayList.Playlist.Contains(media))
+          if (int.TryParse(optionValue.LastMediaID, out int index) && MainWindow.PlayList.Playlist.Count > 0)
           {
-            MainWindow.PlayList.Playlist.Add(ref media);
+            MainMediaPlayer.Init(MainWindow.PlayList.Playlist[index - 1]);
+            MainMediaPlayer.NowPlayAudioStream.CurrentTime = TimeSpan.FromMilliseconds(optionValue.LastMediaPostion);
           }
           else
           {
-            media.ID = MainWindow.PlayList.Playlist.IndexOf(media);
+            mainWindow.MainPopup.Child = new Popup.MainWindowPopupPage(Popup.PopupContents.LoadError, $"LastMedia Load Error : 저장된 미디어 정보 오류");
           }
-          MainMediaPlayer.NowPlayMedia = new Core.MediaFullInfo(media);
-          MainMediaPlayer.NowPlayAudioStream.CurrentTime = TimeSpan.FromMilliseconds(optionValue.LastMediaPostion);
         }
-      }
-      catch
-      {
-        // 저장된 미디어 정보 오류
-        mainWindow.MainPopup.Child = new Popup.MainWindowPopupPage(Popup.PopupContents.SaveMediaFileLoadError);
-        mainWindow.MainPopup.IsOpen = true;
+        catch
+        {
+          // 저장된 미디어 정보 오류
+          mainWindow.MainPopup.Child = new Popup.MainWindowPopupPage(Popup.PopupContents.LoadError, $"LastMedia Load Error : 저장된 미디어 정보 오류");
+        }
       }
     }
   }
@@ -143,7 +149,7 @@ namespace CustomMediaPlayer.Option
     public string BaseColor = "BaseDark";
     public string BackgroundColor = @"#FF000000";
     public bool LastMediaSave = false;
-    public string LastMediaPath = "";
+    public string LastMediaID = "";
     public double LastMediaPostion = 0;
     public string CoreVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
     public string FileVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;

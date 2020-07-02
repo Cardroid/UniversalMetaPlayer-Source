@@ -21,18 +21,21 @@ namespace CustomMediaPlayer
   public class MainWindowViewModel : INotifyPropertyChanged
   {
     public event PropertyChangedEventHandler PropertyChanged;
-    private void Notify(string propName)
-    { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName)); }
+    private void Notify(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName)); 
 
     private MainWindow mainWindow => (MainWindow)System.Windows.Application.Current.MainWindow; // 메인윈도우 참조 (코드 가독성을 위함)
 
     // 전채 재생시간 (단일 파일)
     public bool DurationViewStatus => MainWindow.Optioncore.DurationViewStatus;
-    private TimeSpan totaltime;
-    public TimeSpan totalTime
+    private TimeSpan _TotalTime;
+    public TimeSpan TotalTime
     {
-      get => totaltime;
-      set { totaltime = value; Notify("TotalTimestring"); }
+      get => _TotalTime;
+      set
+      {
+        _TotalTime = value;
+        Notify("TotalTimestring");
+      }
     }
 
     public string TotalTimestring
@@ -42,9 +45,9 @@ namespace CustomMediaPlayer
         if (NowPlayAudioStream == null) // 오류 방지용
           return Utility.Utility.TimeSpanStringConverter(TimeSpan.Zero);
         if (DurationViewStatus)
-          return Utility.Utility.TimeSpanStringConverter(totalTime); // 전채 시간
+          return Utility.Utility.TimeSpanStringConverter(TotalTime); // 전채 시간
         else
-          return "-" + Utility.Utility.TimeSpanStringConverter(totalTime - _Currentpostion); // 남은 시간
+          return "-" + Utility.Utility.TimeSpanStringConverter(TotalTime - _Currentpostion); // 남은 시간
       }
     }
 
@@ -121,7 +124,7 @@ namespace CustomMediaPlayer
         _Volume = Math.Max(0, Math.Min(100, value)); // 오류 방지용
         if (_Volume != 0)
           BeforeVolume = _Volume;
-        mediaPlayer.Volume = _Volume / 100f;
+        MainMediaPlayer.Volume = _Volume / 100f;
         VolumeMuteButtonIcon = VolumeMuteButtonIconChanger();
         Notify("Volume");
         Notify("VolumeString");
@@ -157,15 +160,15 @@ namespace CustomMediaPlayer
     #region 배경색 관련
     public delegate void BackgroundColorChangedHandler(Brush brush);
     public event BackgroundColorChangedHandler BackgroundColorChanged;
-    private Brush backgroundbrush;
+    private Brush _BackgroundBrush;
     public Brush BackgroundBrush
     {
-      get { return backgroundbrush; }
+      get =>_BackgroundBrush;
       set
       {
-        backgroundbrush = value;
+        _BackgroundBrush = value;
         if (BackgroundColorChanged != null)
-          BackgroundColorChanged.Invoke(backgroundbrush);
+          BackgroundColorChanged.Invoke(_BackgroundBrush);
         Notify("BackgroundBrush");
       }
     }

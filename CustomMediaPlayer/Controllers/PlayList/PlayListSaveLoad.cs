@@ -14,17 +14,28 @@ namespace CustomMediaPlayer.Controllers.PlayList
 {
   public class PlayListSave
   {
+    /// <summary>
+    /// 플래이 리스트를 저장 합니다. 실패시 예외를 발생시킵니다.
+    /// </summary>
+    /// <param name="playList">저장할 플래이리스트</param>
     public static void Save(PlayListInfo playList)
     {
-      JArray MediaPropertieArray = new JArray();
-      for (int i = 0; i < playList.Count; i++)
-        MediaPropertieArray.Add(MediaInfo.Serialize(playList[i]));
-      JObject Jobj = new JObject
+      try
+      {
+        JArray MediaPropertieArray = new JArray();
+        for (int i = 0; i < playList.Count; i++)
+          MediaPropertieArray.Add(MediaInfo.Serialize(playList[i]));
+        JObject Jobj = new JObject
             {
                 new JProperty("PlayListProperties", JToken.FromObject(playList.Serialize())),
                 new JProperty("MediaProperties", MediaPropertieArray)
             };
-      File.WriteAllText("PlayList.json", Jobj.ToString());
+        File.WriteAllText("PlayList.json", Jobj.ToString());
+      }
+      catch (Exception e)
+      {
+        throw new Exception($"플레이리스트 저장 실패 (Playlist Save Error : {e.Message})");
+      }
     }
   }
 
@@ -65,12 +76,6 @@ namespace CustomMediaPlayer.Controllers.PlayList
         throw new IndexOutOfRangeException("플레이리스트 정보 변환 실패 (Indexing Error)");
       }
 
-      //string[] playListProperties = new string[2];
-      //for(int i = 0; i< playListProperties.Length; i++)
-      //{
-      //    playListProperties[i] = PlayListProperties[i].Value<string>();
-      //}
-
       if (!TargetPlayList.Deserialize(PlayListProperties))
       {
 #if DEBUG
@@ -78,27 +83,13 @@ namespace CustomMediaPlayer.Controllers.PlayList
 #endif
         throw new TypeLoadException("플레이리스트 정보 변환 실패 (Deserialize Error)");
       }
-      int Count = MediaPropertieArray.Length / 2;
-      string[] MediaProperties;
-      for (int i = 0; i < Count; i++)
+
+      for (int i = 1; i < MediaPropertieArray.Length; i += 2)
       {
-        MediaProperties = new string[2];
-        for (int j = 0; j < 2; j++)
-        {
-#if DEBUG
-          Debug.WriteLine(MediaPropertieArray[i * 2 + j]);
-#endif
-          MediaProperties[j] = MediaPropertieArray[i * 2 + j];
-        }
-        if (MediaInfo.Deserialize(MediaProperties, out MediaInfo Media))
-          TargetPlayList.Load(Media);
+        if (MediaInfo.Deserialize(MediaPropertieArray[i], out MediaInfo media))
+          TargetPlayList.Load(media);
         else
-        {
-#if DEBUG
-          Debug.WriteLine("재생목록 불러오기 오류 : 미디어 초기화 실패");
-#endif
-          throw new Exception("플레이리스트 정보 변환 실패 (Media Load Error)");
-        }
+          TargetPlayList.Load(new MediaInfo(null) { Title = $"(Null) {MediaPropertieArray[i - 1]}", FileFullName = MediaPropertieArray[i] });
       }
       TargetPlayList.IDRefresh();
       return TargetPlayList;

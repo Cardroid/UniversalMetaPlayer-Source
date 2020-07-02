@@ -11,16 +11,15 @@ using System.Windows.Media;
 
 namespace CustomMediaPlayer.Option.OptionPage.ViewModel
 {
-    public class AboutPageViewModel : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void Notify(string propName)
-        { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName)); }
+  public class AboutPageViewModel : INotifyPropertyChanged
+  {
+    public event PropertyChangedEventHandler PropertyChanged;
+    private void Notify(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName)); 
 
-        public ImageSource LogoImage { get { return Utility.Utility.LogoImage; } }
+    public ImageSource LogoImage { get { return Utility.Utility.LogoImage; } }
 
-        // 버전 표시
-        public string CoreVersion { get { return Assembly.GetExecutingAssembly().GetName().Version.ToString(); } }
-        public string FileVersion { get { return FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion.ToString(); } }
-    }
+    // 버전 표시
+    public string CoreVersion { get { return Assembly.GetExecutingAssembly().GetName().Version.ToString(); } }
+    public string FileVersion { get { return FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion.ToString(); } }
+  }
 }

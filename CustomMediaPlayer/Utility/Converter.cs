@@ -8,18 +8,18 @@ using System.Windows.Data;
 
 namespace CustomMediaPlayer.Utility
 {
-    public class TimeSpanStringConverter : IValueConverter
+  public class TimeSpanStringConverter : IValueConverter
+  {
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is TimeSpan)
-            { return Utility.TimeSpanStringConverter((TimeSpan)value); }
-            return null;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return null;
-        }
+      if (value is TimeSpan)
+      { return Utility.TimeSpanStringConverter((TimeSpan)value); }
+      return null;
     }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+      return null;
+    }
+  }
 }

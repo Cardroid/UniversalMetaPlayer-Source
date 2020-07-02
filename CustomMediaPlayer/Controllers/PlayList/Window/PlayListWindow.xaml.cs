@@ -11,20 +11,21 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+
 using MahApps.Metro.Controls;
 
 namespace CustomMediaPlayer.Controllers.PlayList
 {
-    public partial class PlayListWindow : MetroWindow
+  public partial class PlayListWindow : MetroWindow
+  {
+    public PlayListWindow()
     {
-        public PlayListWindow()
-        {
-            InitializeComponent();
-            PlayListFrame.Navigate(new PlayListPage());
+      InitializeComponent();
+      PlayListFrame.Navigate(new PlayListPage());
 
-            // 배경색 동기화
-            this.Background = ((MainWindow)System.Windows.Application.Current.MainWindow).ViewModel.BackgroundBrush;
-            ((MainWindow)System.Windows.Application.Current.MainWindow).ViewModel.BackgroundColorChanged += (b) => { this.Background = b; };
-        }
+      // 배경색 동기화
+      this.Background = ((MainWindow)System.Windows.Application.Current.MainWindow).ViewModel.BackgroundBrush;
+      ((MainWindow)System.Windows.Application.Current.MainWindow).ViewModel.BackgroundColorChanged += (b) => { this.Background = b; };
     }
+  }
 }
