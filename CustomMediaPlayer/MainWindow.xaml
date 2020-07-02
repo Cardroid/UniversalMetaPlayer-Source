@@ -139,6 +139,7 @@
                     Style="{StaticResource FlatSlider}"
                     IsMoveToPointEnabled="True"
                     Value="{Binding CurrentPostiondouble}"
+                    Margin="5,0,5,0"
                     Grid.Column="1" />
                 <Label
                     x:Name="TotalTimeLabel"
@@ -147,7 +148,7 @@
                     VerticalContentAlignment="Center"
                     HorizontalContentAlignment="Center"
                     Content="{Binding TotalTimestring}"
-                    Padding="0,0,2,0"
+                    Padding="0,0,3,0"
                     Grid.Column="2" />
             </Grid>
             <StackPanel
