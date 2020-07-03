@@ -89,7 +89,14 @@ namespace CustomMediaPlayer.Controllers.PlayList
         if (MediaInfo.Deserialize(MediaPropertieArray[i], out MediaInfo media))
           TargetPlayList.Load(media);
         else
-          TargetPlayList.Load(new MediaInfo(null) { Title = MediaPropertieArray[i - 1].StartsWith("(Null)") ? MediaPropertieArray[i - 1] : $"(Null) {MediaPropertieArray[i - 1]}", FileFullName = MediaPropertieArray[i] });
+          TargetPlayList.Load(
+            new MediaInfo(null)
+            {
+              Title = MediaPropertieArray[i - 1].StartsWith("(Null)")
+            ? MediaPropertieArray[i - 1]
+            : $"(Null) {MediaPropertieArray[i - 1]}",
+              FileFullName = MediaPropertieArray[i]
+            });
       }
       TargetPlayList.IDRefresh();
       return TargetPlayList;

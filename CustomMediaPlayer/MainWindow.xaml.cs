@@ -72,16 +72,6 @@ namespace CustomMediaPlayer
         // DataContext 설정
         ViewModel = (MainWindowViewModel)this.DataContext;
 
-        // 타이틀 설정
-#if DEBUG
-        this.Title = "TestVersion - CustomMediaPlayer";
-
-        // 디버그 모드일 경우
-        MainPopup.Child = new MainWindowPopupPage(PopupContents.DebugMode);
-#else
-        this.Title = "CustomMediaPlayer";
-#endif
-
         // 미구현 기능 차단
         PreviousButton.IsEnabled = false;
         NextButton.IsEnabled = false;
@@ -265,6 +255,11 @@ namespace CustomMediaPlayer
         //else
         //    NowPlayMedia = new Core.MediaInfo(new FileInfo(@"D:\Dif\Music\달의하루-염라_Karma.mp3"));
       };
+
+      this.Loaded += (s, e) =>
+      {
+        MediaPlayer_PlayStateChange();
+      };
     }
 
     #region 미디어 관련
@@ -294,11 +289,11 @@ namespace CustomMediaPlayer
     private void MediaPlayer_PlaybackStopped(object sender, StoppedEventArgs e)
     {
       MainMediaPlayer.NowPlayAudioStream.CurrentTime = TimeSpan.Zero;
-      if (ViewModel.RepeatPlayOption == (int)RepeatOption.Once && !StopButtonActive)
-      {
-        MainMediaPlayer.Play(); // 한곡 반복 설정
-        StopButtonActive = false;
-      }
+      if (ViewModel.RepeatPlayOption == (int)RepeatOption.Once)
+        if (!StopButtonActive)
+          MainMediaPlayer.Play(); // 한곡 반복 설정
+        else
+          StopButtonActive = false;
       MediaPlayer_PlayStateChange();
     }
 
@@ -316,7 +311,7 @@ namespace CustomMediaPlayer
 #if DEBUG
         this.Title = "TestVersion - CustomMediaPlayer - NowPlaying";
 #else
-                this.Title = "CustomMediaPlayer - NowPlaying";
+        this.Title = "CustomMediaPlayer - NowPlaying";
 #endif
       }
       else
@@ -326,7 +321,7 @@ namespace CustomMediaPlayer
 #if DEBUG
         this.Title = "TestVersion - CustomMediaPlayer";
 #else
-                this.Title = "CustomMediaPlayer";
+        this.Title = "CustomMediaPlayer";
 #endif
       }
       PlayPauseButton.Content = PlayPauseIcon;
@@ -507,6 +502,7 @@ namespace CustomMediaPlayer
         }
       }
       OptionWindow.hooking.Stop();
+      MainMediaPlayer.Dispose();
       System.Windows.Application.Current.Shutdown();
     }
 
