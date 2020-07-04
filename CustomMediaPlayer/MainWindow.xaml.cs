@@ -15,7 +15,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 
 using CustomMediaPlayer.Option;
@@ -64,7 +63,10 @@ namespace CustomMediaPlayer
 
     public MainWindow()
     {
-      InitializeComponent();
+      this.Loaded += (_s, _e) =>
+      {
+        InitializeComponent();
+      };
 
       this.Loaded += (NUs, NUe) =>
       {
@@ -252,17 +254,19 @@ namespace CustomMediaPlayer
             PlayList.Playlist.Add(new MediaInfo(media));
           }
         }
-        //else
-        //    NowPlayMedia = new Core.MediaInfo(new FileInfo(@"D:\Dif\Music\달의하루-염라_Karma.mp3"));
       };
 
       this.Loaded += (s, e) =>
       {
         MediaPlayer_PlayStateChange();
+#if DEBUG
+        this.MainPopup.Child = new MainWindowPopupPage(PopupContents.DebugMode);
+#endif
       };
     }
 
     #region 미디어 관련
+    private const string INFO_NULL = "정보 없음";
     /// <summary>
     /// 파일 열림 상태 변경 이벤트
     /// </summary>
@@ -278,8 +282,8 @@ namespace CustomMediaPlayer
       MediaImage.Source = MainMediaPlayer.NowPlayMedia.AlbumImage;
 
       SongTitleLabel.Content = MainMediaPlayer.NowPlayMedia.Title;
-      AlbumTitleLabel.Content = MainMediaPlayer.NowPlayMedia.AlbumTitle;
-      ArtistNameLabel.Content = MainMediaPlayer.NowPlayMedia.ArtistName;
+      AlbumTitleLabel.Content = MainMediaPlayer.NowPlayMedia.AlbumTitle ?? INFO_NULL;
+      ArtistNameLabel.Content = MainMediaPlayer.NowPlayMedia.ArtistName ?? INFO_NULL;
       #endregion
     }
 
@@ -289,11 +293,9 @@ namespace CustomMediaPlayer
     private void MediaPlayer_PlaybackStopped(object sender, StoppedEventArgs e)
     {
       MainMediaPlayer.NowPlayAudioStream.CurrentTime = TimeSpan.Zero;
-      if (ViewModel.RepeatPlayOption == (int)RepeatOption.Once)
-        if (!StopButtonActive)
-          MainMediaPlayer.Play(); // 한곡 반복 설정
-        else
-          StopButtonActive = false;
+      if (ViewModel.RepeatPlayOption == (int)RepeatOption.Once && !StopButtonActive)
+        MainMediaPlayer.Play(); // 한곡 반복 설정
+      StopButtonActive = false;
       MediaPlayer_PlayStateChange();
     }
 

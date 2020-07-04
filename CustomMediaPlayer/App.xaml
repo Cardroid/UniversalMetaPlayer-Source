@@ -23,16 +23,16 @@
             <Style
                 x:Key="WindowStyle"
                 TargetType="{x:Type Controls:MetroWindow}">
-                <Setter 
+                <Setter
                     Property="Title"
-                    Value="CustomMediaPlayer"/>
+                    Value="CustomMediaPlayer" />
                 <Setter
                     Property="TitleCharacterCasing"
-                    Value="Normal"/>
+                    Value="Normal" />
                 <Setter
                     Property="FontFamily"
                     Value="/CustomMediaPlayer;component/lib/Font/#NanumGothicOTF" />
-            </Style>       
+            </Style>
             <Style
                 x:Key="ControlStyle"
                 TargetType="{x:Type Control}">

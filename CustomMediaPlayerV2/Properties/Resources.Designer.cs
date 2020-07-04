@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace CustomMediaPlayer.Properties {
+namespace CMP2.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace CustomMediaPlayer.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CustomMediaPlayer.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CMP2.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -57,36 +57,6 @@ namespace CustomMediaPlayer.Properties {
             }
             set {
                 resourceCulture = value;
-            }
-        }
-        
-        /// <summary>
-        ///   (아이콘)과(와) 유사한 System.Drawing.Icon 형식의 지역화된 리소스를 찾습니다.
-        /// </summary>
-        internal static System.Drawing.Icon IconCustomMusicPlayerICO {
-            get {
-                object obj = ResourceManager.GetObject("IconCustomMusicPlayerICO", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
-        /// </summary>
-        internal static System.Drawing.Bitmap IconCustomMusicPlayerPNG {
-            get {
-                object obj = ResourceManager.GetObject("IconCustomMusicPlayerPNG", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
-        /// </summary>
-        internal static System.Drawing.Bitmap IconnoteCustomMusicPlayerPNG {
-            get {
-                object obj = ResourceManager.GetObject("IconnoteCustomMusicPlayerPNG", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

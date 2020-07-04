@@ -24,7 +24,7 @@ namespace CustomMediaPlayer.Core
 
       using (var Fileinfo = TagLib.File.Create(FileFullName))
       {
-        Title = Fileinfo.Tag.Title ?? Path.GetFileName(filefullpath);
+        Title = Fileinfo.Tag.Title ?? Path.GetFileNameWithoutExtension(filefullpath);
         Duration = Fileinfo.Properties.Duration;
       }
     }
@@ -41,7 +41,7 @@ namespace CustomMediaPlayer.Core
     /// <summary>
     /// 타이틀
     /// </summary>
-    public string Title { get; set; } = null;
+    public string Title { get; set; }
     /// <summary>
     /// 미디어의 총 재생시간
     /// </summary>
@@ -79,7 +79,6 @@ namespace CustomMediaPlayer.Core
   /// </summary>
   public class MediaFullInfo : MediaInfo
   {
-    private const string INFO_NULL = "정보 없음";
 
     public MediaFullInfo(MediaInfo media) : base(media.FileFullName)
     {
@@ -94,8 +93,8 @@ namespace CustomMediaPlayer.Core
           AlbumImage = BitmapFrame.Create(stream);
         }
         catch { AlbumImage = Utility.Utility.LogoNoteImage; }
-        AlbumTitle = Fileinfo.Tag.Album ?? INFO_NULL;
-        ArtistName = Fileinfo.Tag.FirstAlbumArtist ?? INFO_NULL;
+        AlbumTitle = string.IsNullOrWhiteSpace(Fileinfo.Tag.Album) ? Fileinfo.Tag.Album : null;
+        ArtistName = string.IsNullOrWhiteSpace(Fileinfo.Tag.FirstAlbumArtist) ? Fileinfo.Tag.FirstAlbumArtist : null;
       }
     }
 

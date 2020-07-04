@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -19,8 +20,26 @@ namespace CustomMediaPlayer.Utility
 {
   public class Utility
   {
-    public static ImageSource LogoImage = new BitmapImage(new Uri(@"Resources\IconCustomMusicPlayer.png", UriKind.Relative));
-    public static ImageSource LogoNoteImage = new BitmapImage(new Uri(@"Resources\IconnoteCustomMusicPlayer.png", UriKind.Relative));
+    public static ImageSource LogoImage = ConvertBitmap(Properties.Resources.IconCustomMusicPlayerPNG, ImageFormat.Png);
+    public static ImageSource LogoNoteImage = ConvertBitmap(Properties.Resources.IconnoteCustomMusicPlayerPNG,ImageFormat.Png);
+
+    /// <summary>
+    /// 비트맵을 이미지소스로 변환합니다.
+    /// </summary>
+    /// <param name="bitmap">System.Drawing.Bitmap</param>
+    /// <returns>BitmapImage</returns>
+    public static BitmapImage ConvertBitmap(System.Drawing.Bitmap bitmap, System.Drawing.Imaging.ImageFormat imageFormat)
+    {
+      MemoryStream ms = new MemoryStream();
+      bitmap.Save(ms, imageFormat);
+      BitmapImage image = new BitmapImage();
+      image.BeginInit();
+      ms.Seek(0, SeekOrigin.Begin);
+      image.StreamSource = ms;
+      image.EndInit();
+
+      return image;
+    }
 
     // / 관리자 권한 여부 확인
     public static bool IsAdministrator()
