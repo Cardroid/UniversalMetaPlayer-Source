@@ -7,20 +7,46 @@
     <RootNamespace>CMP2</RootNamespace>
     <AssemblyName>CustomMediaPlayer</AssemblyName>
     <ApplicationIcon>IconCustomMusicPlayer.ico</ApplicationIcon>
-    <Version>2.0.0</Version>
+    <Version>2.1.0</Version>
     <Authors>CarbonSIX</Authors>
     <PackageIcon>IconCustomMusicPlayer.png</PackageIcon>
+    <Nullable>disable</Nullable> 
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="Resources\IconCustomMusicPlayer.png">
+    <None Remove="Resources\Font\NanumGothic.otf" />
+    <None Remove="Resources\Font\NanumGothicBold.otf" />
+    <None Remove="Resources\Font\NanumGothicExtraBold.otf" />
+    <None Remove="Resources\Font\NanumGothicLight.otf" />
+    <None Remove="Resources\Font\ng.ttf" />
+    <None Remove="Resources\Font\ngBold.ttf" />
+    <None Remove="Resources\IconCustomMusicPlayer.ico" />
+    <None Remove="Resources\IconnoteCustomMusicPlayer.png" />
+    <None Remove="Resources\SplashScreen.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Font\NanumGothic.otf" />
+    <Resource Include="Resources\Font\NanumGothicBold.otf" />
+    <Resource Include="Resources\Font\NanumGothicExtraBold.otf" />
+    <Resource Include="Resources\Font\NanumGothicLight.otf" />
+    <Resource Include="Resources\Font\ng.ttf" />
+    <Resource Include="Resources\Font\ngBold.ttf" />
+    <Resource Include="Resources\IconCustomMusicPlayer.ico" />
+    <Resource Include="Resources\IconCustomMusicPlayer.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
-    </None>
+    </Resource>
+    <Resource Include="Resources\IconnoteCustomMusicPlayer.png" />
+    <SplashScreen Include="Resources\SplashScreen.png" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Costura.Fody" Version="4.1.0" />
+    <PackageReference Include="Fody" Version="6.2.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="gong-wpf-dragdrop" Version="2.2.0" />
     <PackageReference Include="MahApps.Metro" Version="2.1.1" />
     <PackageReference Include="MahApps.Metro.IconPacks" Version="4.2.0" />
@@ -31,18 +57,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
+    <Folder Include="Properties\" />
   </ItemGroup>
 
 </Project>

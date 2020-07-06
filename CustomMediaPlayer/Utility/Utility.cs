@@ -91,11 +91,6 @@ namespace CustomMediaPlayer.Utility
       return new Size(formattedText.Width + 14, formattedText.Height + 14);
     }
 
-    public string VolumeConverter(int value)
-    {
-      return value.ToString() + "%";
-    }
-
     /// <summary>
     /// 파일 다이얼로그 열기
     /// </summary>

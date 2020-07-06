@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Controller="clr-namespace:CMP2.Controller"
     xmlns:local="clr-namespace:CMP2"
     Title="MainWindow"
     WindowStartupLocation="CenterScreen"
@@ -13,5 +14,24 @@
     mc:Ignorable="d">
     
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition
+                Width="*" />
+            <ColumnDefinition
+                Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition
+                Height="*"/>
+            <RowDefinition 
+                Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Controller:MediaInfoControl 
+            Grid.Column="0"
+            Grid.Row="0"/>
+        <Controller:MediaControllerControl 
+            Grid.Column="0"
+            Grid.Row="1"/>
     </Grid>
 </mah:MetroWindow>

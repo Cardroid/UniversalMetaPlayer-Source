@@ -4,6 +4,7 @@
 /**/TestMusic/
 /**/packages/
 /**/Helper/
+*.user
 
 #
 # NOTE! Don't add files that are generated in specific
