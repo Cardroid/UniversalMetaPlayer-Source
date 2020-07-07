@@ -11,12 +11,8 @@ using ControlzEx.Standard;
 
 namespace CMP2.Controller
 {
-  public class MediaInfoControlViewModel : INotifyPropertyChanged
+  public class MediaInfoControlViewModel : ViewModel
   {
-    public event PropertyChangedEventHandler PropertyChanged;
-    protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    public FontFamily FontFamily => IGlobalProperty.MainFontFamily;
-
     public MediaInfoControlViewModel()
     {
       MainMediaPlayer.AudioFileOpenEvent += MediaPlayerProperty_AudioFileOpenEvent;

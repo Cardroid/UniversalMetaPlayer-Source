@@ -59,11 +59,17 @@ namespace CMP2.Core
       if (string.IsNullOrWhiteSpace(filepath))
         return;
       FileFullName = filepath;
+      InfomationLoader();
+    }
 
+    /// <summary>
+    /// 미디어 정보 로드
+    /// </summary>
+    public void InfomationLoader()
+    {
       using (var Fileinfo = TagLib.File.Create(FileFullName))
       {
-        // 미디어 정보를 정보 클래스에 저장
-        Title = Fileinfo.Tag.Title ?? Path.GetFileNameWithoutExtension(filepath);
+        Title = Fileinfo.Tag.Title ?? Path.GetFileNameWithoutExtension(FileFullName);
         Duration = Fileinfo.Properties.Duration;
         try
         {
@@ -76,7 +82,12 @@ namespace CMP2.Core
         ArtistName = !string.IsNullOrWhiteSpace(Fileinfo.Tag.FirstAlbumArtist) ? Fileinfo.Tag.FirstAlbumArtist : string.Empty;
         Lyrics = !string.IsNullOrWhiteSpace(Fileinfo.Tag.Lyrics) ? Fileinfo.Tag.Lyrics : string.Empty;
       }
+      LoadedCheck = true;
     }
+    /// <summary>
+    /// 정보의 로드가 완료되었는지 여부
+    /// </summary>
+    public bool LoadedCheck { get; private set; } = false;
     public int ID { get; set; } = -1;
     public string FileFullName { get; set; }
     public string Title { get; set; } = string.Empty;

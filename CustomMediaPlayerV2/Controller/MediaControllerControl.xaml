@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:local="clr-namespace:CMP2.Controller"
+    FontFamily="{Binding FontFamily}"
     mc:Ignorable="d">
 
     <UserControl.DataContext>
@@ -34,11 +35,11 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition
                     x:Name="ProgressLabelWidth"
-                    Width="{Binding Width, ElementName=TotalTimeLabel}" />
+                    Width="{Binding Width, ElementName=DurationLabel}" />
                 <ColumnDefinition
                     Width="*" />
                 <ColumnDefinition
-                    Width="{Binding Width, ElementName=TotalTimeLabel}" />
+                    Width="{Binding Width, ElementName=DurationLabel}" />
             </Grid.ColumnDefinitions>
             <Label
                 x:Name="ProgressLabel"
@@ -60,7 +61,7 @@
                 Margin="5,0,5,0"
                 Grid.Column="1" />
             <Label
-                x:Name="TotalTimeLabel"
+                x:Name="DurationLabel"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 VerticalContentAlignment="Center"
@@ -151,7 +152,8 @@
                 Height="50" />
         </StackPanel>
         <Grid
-            Grid.Column="2"
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
             Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition
