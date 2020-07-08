@@ -37,7 +37,7 @@ namespace CMP2
     {
       InitializeComponent();
 
-      MainMediaPlayer.Init(new MediaInfo(@"D:\Lab\Project\C#\CustomMediaPlayer\TestMusic\093 황인욱 - 포장마차.mp3"), true);
+      //MainMediaPlayer.Init(new MediaInfo(@"D:\Lab\Project\C#\CustomMediaPlayer\TestMusic\093 황인욱 - 포장마차.mp3"), true);
     }
 
     /// <summary>

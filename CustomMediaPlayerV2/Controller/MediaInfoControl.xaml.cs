@@ -13,13 +13,14 @@ using System.Windows.Shapes;
 
 namespace CMP2.Controller
 {
+  /// <summary>
+  /// MediaInfo.xaml에 대한 상호 작용 논리
+  /// </summary>
   public partial class MediaInfoControl : UserControl
   {
-    private MediaInfoControlViewModel ViewModel { get; set; }
     public MediaInfoControl()
     {
       InitializeComponent();
-      ViewModel = (MediaInfoControlViewModel)this.DataContext;
     }
   }
 }

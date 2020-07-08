@@ -6,7 +6,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:local="clr-namespace:CMP2.Controller"
-    FontFamily="{Binding FontFamily}"
     mc:Ignorable="d">
 
     <UserControl.DataContext>
@@ -35,11 +34,11 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition
                     x:Name="ProgressLabelWidth"
-                    Width="{Binding Width, ElementName=DurationLabel}" />
+                    Width="{Binding Width, ElementName=TotalTimeLabel}" />
                 <ColumnDefinition
                     Width="*" />
                 <ColumnDefinition
-                    Width="{Binding Width, ElementName=DurationLabel}" />
+                    Width="{Binding Width, ElementName=TotalTimeLabel}" />
             </Grid.ColumnDefinitions>
             <Label
                 x:Name="ProgressLabel"
@@ -61,7 +60,7 @@
                 Margin="5,0,5,0"
                 Grid.Column="1" />
             <Label
-                x:Name="DurationLabel"
+                x:Name="TotalTimeLabel"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 VerticalContentAlignment="Center"
@@ -152,6 +151,15 @@
                 Height="50" />
         </StackPanel>
         <Grid
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+            Grid.Column="2"
+>>>>>>> parent of 4baef91... Add MainPlayer Option Changed Event & Fixed App namespace
+=======
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+>>>>>>> parent of 708ea27... Add Uno Project
             Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition
