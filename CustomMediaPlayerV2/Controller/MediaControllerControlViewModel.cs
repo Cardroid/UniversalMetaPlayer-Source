@@ -18,7 +18,6 @@ namespace CMP2.Controller
     public MediaControllerControlViewModel()
     {
       MainMediaPlayer.PlayStateChangedEvent += MainMediaPlayer_PlayStateChangedEvent;
-      MainMediaPlayer.PlaybackStopped += MainMediaPlayer_Stopped;
       MainMediaPlayer.AudioFileOpenEvent += MainMediaPlayer_AudioFileOpenEvent;
       MainMediaPlayer.TickEvent += MainMediaPlayer_TickEvent;
       MainMediaPlayer.Option.PropertyChangedEvent += Option_RepeatPlayOption;
@@ -72,15 +71,15 @@ namespace CMP2.Controller
     #endregion
 
     #region 재생 / 일시정지
-    public PackIconBase PlayPauseStateIcon { get; private set; } = new PackIconControl { Width = 30, Height = 30, Kind = PackIconMaterialKind.Play };
-
-    private void MainMediaPlayer_PlayStateChangedEvent(PlaybackState state)
+    public PackIconBase PlayPauseStateIcon
     {
-      if (state == PlaybackState.Playing)
-        PlayPauseStateIcon = new PackIconControl { Width = 30, Height = 30, Kind = PackIconMaterialKind.Pause };
-      else
-        PlayPauseStateIcon = new PackIconControl { Width = 30, Height = 30, Kind = PackIconMaterialKind.Play };
-      OnPropertyChanged("PlayPauseStateIcon");
+      get
+      {
+        if (MainMediaPlayer.PlaybackState == PlaybackState.Playing)
+          return new PackIconControl { Width = 30, Height = 30, Kind = PackIconMaterialKind.Pause };
+        else
+          return new PackIconControl { Width = 30, Height = 30, Kind = PackIconMaterialKind.Play };
+      }
     }
     #endregion
 
@@ -143,28 +142,23 @@ namespace CMP2.Controller
     #endregion
 
     #region 동기화 메소드
-    private void MainMediaPlayer_AudioFileOpenEvent(IMediaInfo mediaInfo)
-    {
-      ApplyUI();
-    }
-    private void MainMediaPlayer_Stopped(object sender, StoppedEventArgs e)
-    {
-      ApplyUI();
-    }
-    private void MainMediaPlayer_TickEvent(object sender, EventArgs e)
-    {
-      ApplyUI(false);
-    }
+    private void MainMediaPlayer_PlayStateChangedEvent(PlaybackState state) => ApplyUI();
+    private void MainMediaPlayer_AudioFileOpenEvent(IMediaInfo mediaInfo) => ApplyUI();
+    private void MainMediaPlayer_Stopped(object sender, StoppedEventArgs e) => ApplyUI();
+    private void MainMediaPlayer_TickEvent(object sender, EventArgs e) => ApplyUI(false);
     /// <summary>
-    /// 현재 플래이어 상태를 UI에 적용합니다
+    /// 현재 플래이어 상태를 UI에 적용합니다 (UI 갱신)
     /// </summary>
     /// <param name="fullapply">모든 정보를 적용할지의 여부</param>
     public void ApplyUI(bool fullapply = true)
     {
       if (!MainMediaPlayer.Option.DurationViewStatus || fullapply)
-        OnPropertyChanged("DurationTimestring");   // 라벨 총 제생시간 적용
+        OnPropertyChanged("DurationTimestring"); // 라벨 총 제생시간 적용
       if (fullapply)
-        OnPropertyChanged("DurationTime");         // 슬라이드 바 최대 길이 적용
+      {
+        OnPropertyChanged("DurationTime");       // 슬라이드 바 최대 길이 적용
+        OnPropertyChanged("PlayPauseStateIcon"); // Play/Pause 버튼 아이콘 갱신
+      }
       //OnPropertyChanged("CurrentPostion"); 
       OnPropertyChanged("CurrentPostiondouble"); // 슬라이드 바 현재 재생위치 적용
       OnPropertyChanged("CurrentPostionstring"); // 라벨 현재 재생위치 적용

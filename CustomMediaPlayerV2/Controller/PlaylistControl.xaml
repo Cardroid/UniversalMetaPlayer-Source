@@ -1,0 +1,114 @@
+﻿<UserControl
+    x:Class="CMP2.Controller.PlaylistControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:CMP2.Controller"
+    FontFamily="{Binding FontFamily}"
+    mc:Ignorable="d">
+
+    <UserControl.DataContext>
+        <local:PlaylistControlViewModel />
+    </UserControl.DataContext>
+
+    <GroupBox
+        HorizontalContentAlignment="Stretch"
+        VerticalContentAlignment="Stretch"
+        Style="{StaticResource MahApps.Styles.GroupBox}"
+        BorderThickness="0"
+        Padding="0">
+        <GroupBox.Header>
+            <TextBlock
+                x:Name="PlayListName"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Text="{Binding PlayListName}"
+                FontSize="16" />
+        </GroupBox.Header>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition
+                    Height="Auto" />
+                <RowDefinition
+                    Height="*" />
+                <RowDefinition
+                    Height="Auto" />
+            </Grid.RowDefinitions>
+            <Popup
+                x:Name="PlayListRightClickMenu"
+                PopupAnimation="Scroll"
+                StaysOpen="False"
+                Placement="Mouse"
+                Focusable="True" />
+            <StackPanel
+                Orientation="Horizontal"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Grid.Row="0" />
+            <ListView
+                x:Name="PlayList"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                ItemsSource="{Binding Playlist}"
+                SelectedItem="{Binding SelectItem}"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                Grid.Row="1"
+                AllowDrop="True">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn
+                            x:Name="ID"
+                            Width="40">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Label
+                                        x:Name="ID"
+                                        Grid.Column="0"
+                                        Content="{Binding ID}"
+                                        FlowDirection="RightToLeft"
+                                        HorizontalContentAlignment="Right" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn
+                            x:Name="Title"
+                            Width="40">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Label
+                                        x:Name="Title"
+                                        Grid.Column="1"
+                                        Content="{Binding Title}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn
+                            x:Name="Duration"
+                            Width="40">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Label
+                                        x:Name="Duration"
+                                        Grid.Column="2"
+                                        Content="{Binding Duration, Converter={StaticResource TimeSpanStringConverter}, Mode=OneWay}"
+                                        FlowDirection="RightToLeft"
+                                        HorizontalContentAlignment="Right" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            <Label
+                x:Name="ProgressLabel"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                HorizontalContentAlignment="Left"
+                VerticalContentAlignment="Center"
+                Content="{Binding ProgressLabel}"
+                Grid.Row="2" />
+        </Grid>
+    </GroupBox>
+</UserControl>

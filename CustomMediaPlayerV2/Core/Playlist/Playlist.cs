@@ -2,42 +2,68 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace CMP2.Core.Playlist
 {
-  public class PlayList : ObservableCollection<IMediaInfo>, ICloneable
+  public class PlayList : ObservableCollection<IMediaInfo>
   {
     public string PlayListName { get; set; } = "Nameless";
     public TimeSpan TotalDuration { get; set; } = TimeSpan.Zero;
-    public bool NowWorking { get; set; }
-    public string Serialize()
+
+    public Task<string[,]> Serialize()
     {
-      string Properties = PlayListName;
-      return Properties;
+      string[,] Properties = new string[Count + 1, 2];
+      Properties[0,0] = PlayListName;
+      Properties[0,1] = TotalDuration.TotalMilliseconds.ToString();
+      for (int i = 0; i < Count; i++)
+      {
+        Properties[i + 1, 0] = base[i].Title;
+        Properties[i + 1, 1] = base[i].FileFullName;
+      }
+      return Task.FromResult(Properties);
     }
-    public bool Deserialize(string[] Properties)
+
+    private const string MEDIA_INFO_NULL = "(Null)";
+
+    public Task<bool> Deserialize(string[,] Properties)
     {
-      if (Properties.Length == 2)
+      if (Properties.GetLength(0) > 0)
       {
         try
         {
-          PlayListName = Properties[0];
-          return true;
+          PlayListName = Properties[0, 0];
+          for (int i = 1; i < Properties.Length; i += 2)
+          {
+            var media = new MediaInfo(Properties[i, 1]);
+            if (media.LoadedCheck == LoadState.NotTryed)
+              media.InfomationLoader();
+            if (media.LoadedCheck != LoadState.Complete)
+              if (!media.Title.StartsWith(MEDIA_INFO_NULL))
+                media.Title = $"{MEDIA_INFO_NULL} {media.Title}";
+            Add(media);
+            IDRefresh();
+          }
+          return Task.FromResult(true);
         }
-        catch { return false; }
+        catch { return Task.FromResult(false); }
       }
-      return false;
+      return Task.FromResult(false);
     }
 
-    public void Load(MediaInfo media)
+    public void IDRefresh()
     {
-      base.Add(media);
+      if (base.Count > 0)
+        for (int i = 0; i < base.Count; i++)
+        {
+          base[i].ID = i + 1;
+        }
     }
-    public void Add(ref MediaInfo media)
+    public new void Add(IMediaInfo media)
     {
       media.ID = base.Count + 1;
-      base.Add(media);
       TotalDuration += media.Duration;
+      base.Add(media);
     }
     public new void Remove(IMediaInfo media)
     {
@@ -72,43 +98,24 @@ namespace CMP2.Core.Playlist
         }
       }
     }
-    public void IDRefresh()
-    {
-      for (int i = 0; i < base.Count; i++)
-      {
-        base[i].ID = i + 1;
-      }
-    }
     public new void Move(int oldIndex, int newIndex)
     {
       base.Move(oldIndex, newIndex);
-      int Index1;
-      int Index2;
 
       if (oldIndex < newIndex)
       {
-        Index1 = oldIndex;
-        Index2 = newIndex;
+        for (int i = oldIndex; i < newIndex; i++)
+        {
+          base[i].ID = i;
+        }
       }
       else
       {
-        Index1 = newIndex;
-        Index2 = oldIndex;
+        for (int i = newIndex; i < oldIndex; i++)
+        {
+          base[i].ID = i;
+        }
       }
-      for (int i = Index1; i < Index2; i++)
-      {
-        base[i].ID = i;
-      }
-    }
-    public object Clone()
-    {
-      PlayList cloneplaylist = new PlayList();
-      cloneplaylist.PlayListName = PlayListName;
-      cloneplaylist.TotalDuration = TotalDuration;
-      cloneplaylist.NowWorking = NowWorking;
-      for (int i = 0; i < base.Count; i++)
-      { cloneplaylist.Add(base[i]); }
-      return cloneplaylist;
     }
   }
 }

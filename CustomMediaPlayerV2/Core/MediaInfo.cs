@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -54,48 +55,63 @@ namespace CMP2.Core
   /// </summary>
   public class MediaInfo : IMediaInfo
   {
-    public MediaInfo(string filepath)
+    public MediaInfo(string filepath, bool loadinfo = true)
     {
       if (string.IsNullOrWhiteSpace(filepath))
         return;
       FileFullName = filepath;
-      InfomationLoader();
+      if (loadinfo)
+        InfomationLoader();
     }
 
     /// <summary>
-    /// 미디어 정보 로드
+    /// 미디어 정보 로드시도
     /// </summary>
-    public void InfomationLoader()
+    public Task InfomationLoader()
     {
-      using (var Fileinfo = TagLib.File.Create(FileFullName))
+      if (File.Exists(FileFullName))
       {
-        Title = Fileinfo.Tag.Title ?? Path.GetFileNameWithoutExtension(FileFullName);
-        Duration = Fileinfo.Properties.Duration;
-        try
+        using (var Fileinfo = TagLib.File.Create(FileFullName))
         {
-          TagLib.IPicture pic = Fileinfo.Tag.Pictures[0];  //pic contains data for image.
-          MemoryStream stream = new MemoryStream(pic.Data.Data);  // create an in memory stream
-          AlbumImage = BitmapFrame.Create(stream);
+          Title = Fileinfo.Tag.Title ?? Path.GetFileNameWithoutExtension(FileFullName);
+          Duration = Fileinfo.Properties.Duration;
+          try
+          {
+            TagLib.IPicture pic = Fileinfo.Tag.Pictures[0];  //pic contains data for image.
+            MemoryStream stream = new MemoryStream(pic.Data.Data);  // create an in memory stream
+            AlbumImage = BitmapFrame.Create(stream);
+          }
+          catch { AlbumImage = null; }
+          AlbumTitle = !string.IsNullOrWhiteSpace(Fileinfo.Tag.Album) ? Fileinfo.Tag.Album : string.Empty;
+          ArtistName = !string.IsNullOrWhiteSpace(Fileinfo.Tag.FirstAlbumArtist) ? Fileinfo.Tag.FirstAlbumArtist : string.Empty;
+          Lyrics = !string.IsNullOrWhiteSpace(Fileinfo.Tag.Lyrics) ? Fileinfo.Tag.Lyrics : string.Empty;
         }
-        catch { AlbumImage = null; }
-        AlbumTitle = !string.IsNullOrWhiteSpace(Fileinfo.Tag.Album) ? Fileinfo.Tag.Album : string.Empty;
-        ArtistName = !string.IsNullOrWhiteSpace(Fileinfo.Tag.FirstAlbumArtist) ? Fileinfo.Tag.FirstAlbumArtist : string.Empty;
-        Lyrics = !string.IsNullOrWhiteSpace(Fileinfo.Tag.Lyrics) ? Fileinfo.Tag.Lyrics : string.Empty;
+        LoadedCheck = LoadState.Complete;
       }
-      LoadedCheck = true;
+      else
+        LoadedCheck = LoadState.Fail;
+      return Task.FromResult(0);
     }
     /// <summary>
-    /// 정보의 로드가 완료되었는지 여부
+    /// 정보의 로드 상태
     /// </summary>
-    public bool LoadedCheck { get; private set; } = false;
+    public LoadState LoadedCheck { get; private set; } = LoadState.NotTryed;
+    #region 프로퍼티 정의 (인터페이스 상속)
     public int ID { get; set; } = -1;
-    public string FileFullName { get; set; }
+    public string FileFullName { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
     public TimeSpan Duration { get; set; } = TimeSpan.Zero;
     public ImageSource AlbumImage { get; set; } = null;
     public string AlbumTitle { get; set; } = string.Empty;
     public string ArtistName { get; set; } = string.Empty;
     public string Lyrics { get; set; } = string.Empty;
+    #endregion
+  }
+  public enum LoadState
+  {
+    NotTryed,
+    Complete,
+    Fail
   }
   #endregion
 }

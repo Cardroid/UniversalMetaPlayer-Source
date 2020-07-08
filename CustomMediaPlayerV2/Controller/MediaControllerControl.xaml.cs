@@ -21,11 +21,11 @@ namespace CMP2.Controller
 
     public MediaControllerControl()
     {
+      InitializeComponent();
+      ViewModel = (MediaControllerControlViewModel)this.DataContext;
+
       this.Loaded += (s, e) =>
       {
-        InitializeComponent();
-        ViewModel = (MediaControllerControlViewModel)this.DataContext;
-
         this.ProgressSlider.ValueChanged += ProgressSlider_ValueChanged;
 
         // 마우스 휠을 사용한 볼륨조절

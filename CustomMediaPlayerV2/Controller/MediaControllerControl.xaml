@@ -152,8 +152,6 @@
                 Height="50" />
         </StackPanel>
         <Grid
-            Grid.Column="0"
-            Grid.ColumnSpan="3"
             Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition

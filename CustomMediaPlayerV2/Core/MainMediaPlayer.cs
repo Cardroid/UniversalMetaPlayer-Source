@@ -14,16 +14,16 @@ namespace CMP2.Core
     {
       Volume = 0.8f;
       Option.AutoPlayOption = true;
-      Option.RepeatPlayOption = 0;
+      Option.RepeatPlayOption = 1;
       Option.DurationViewStatus = true;
-      PlaybackStopped += MainMediaPlayer_PlaybackStopped;
+      _MediaPlayer.PlaybackStopped += MediaPlayer_PlaybackStopped;
     }
 
     // 메인 플레이어
     private static readonly IWavePlayer _MediaPlayer = new WaveOut();
     public static PlayerOption Option = new PlayerOption();
 
-    private static DispatcherTimer Tick { get; } = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(1) };
+    private static DispatcherTimer Tick { get; } = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(10) };
     public static event EventHandler TickEvent
     {
       add => Tick.Tick += value;
@@ -53,20 +53,10 @@ namespace CMP2.Core
       }
     }
     /// <summary>
-    /// 미디어 재생 상태 변화시 호출
-    /// </summary>
-    public static event EventHandler<StoppedEventArgs> PlaybackStopped
-    {
-      add => _MediaPlayer.PlaybackStopped += value;
-      remove => _MediaPlayer.PlaybackStopped -= value;
-    }
-    /// <summary>
     /// 재생이 끝났을 경우 이벤트 처리
     /// </summary>
-    private static void MainMediaPlayer_PlaybackStopped(object sender, StoppedEventArgs e)
-    {
-      AudioFile.CurrentTime = TimeSpan.Zero;
-    }
+    private static void MediaPlayer_PlaybackStopped(object sender, StoppedEventArgs e) =>
+      PlayStateChangedEvent?.Invoke(_MediaPlayer.PlaybackState);
     /// <summary>
     /// 볼륨
     /// </summary>
@@ -112,9 +102,8 @@ namespace CMP2.Core
     /// </summary>
     public static void Stop()
     {
-      PlaybackStopped -= MainMediaPlayer_PlaybackStopped;
       _MediaPlayer.Stop();
-      PlaybackStopped += MainMediaPlayer_PlaybackStopped;
+      AudioFile.CurrentTime = TimeSpan.Zero;
       Tick.Stop();
       PlayStateChangedEvent?.Invoke(_MediaPlayer.PlaybackState);
     }
