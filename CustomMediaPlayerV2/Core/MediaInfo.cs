@@ -61,8 +61,12 @@ namespace CMP2.Core
       FileFullName = filepath;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
       if (loadinfo)
         InfomationLoader();
+=======
+      InfomationLoader();
+>>>>>>> parent of 708ea27... Add Uno Project
 =======
       InfomationLoader();
 >>>>>>> parent of 708ea27... Add Uno Project
@@ -76,6 +80,7 @@ namespace CMP2.Core
       using (var Fileinfo = TagLib.File.Create(FileFullName))
       {
 <<<<<<< HEAD
+<<<<<<< HEAD
         using (var Fileinfo = TagLib.File.Create(FileFullName))
 =======
 
@@ -86,6 +91,11 @@ namespace CMP2.Core
         Duration = Fileinfo.Properties.Duration;
         try
 >>>>>>> parent of 4baef91... Add MainPlayer Option Changed Event & Fixed App namespace
+=======
+        Title = Fileinfo.Tag.Title ?? Path.GetFileNameWithoutExtension(FileFullName);
+        Duration = Fileinfo.Properties.Duration;
+        try
+>>>>>>> parent of 708ea27... Add Uno Project
 =======
         Title = Fileinfo.Tag.Title ?? Path.GetFileNameWithoutExtension(FileFullName);
         Duration = Fileinfo.Properties.Duration;
@@ -103,9 +113,13 @@ namespace CMP2.Core
       }
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
       else
         LoadedCheck = LoadState.Fail;
       return Task.FromResult(0);
+=======
+      LoadedCheck = true;
+>>>>>>> parent of 708ea27... Add Uno Project
 =======
       LoadedCheck = true;
 >>>>>>> parent of 708ea27... Add Uno Project
@@ -114,11 +128,15 @@ namespace CMP2.Core
     /// 정보의 로드가 완료되었는지 여부
     /// </summary>
 <<<<<<< HEAD
+<<<<<<< HEAD
     public LoadState LoadedCheck { get; private set; } = LoadState.NotTryed;
     #region 프로퍼티 정의 (인터페이스 상속)
 =======
     }
 >>>>>>> parent of 4baef91... Add MainPlayer Option Changed Event & Fixed App namespace
+=======
+    public bool LoadedCheck { get; private set; } = false;
+>>>>>>> parent of 708ea27... Add Uno Project
 =======
     public bool LoadedCheck { get; private set; } = false;
 >>>>>>> parent of 708ea27... Add Uno Project

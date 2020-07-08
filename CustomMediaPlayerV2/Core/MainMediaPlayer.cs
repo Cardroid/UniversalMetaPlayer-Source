@@ -17,9 +17,13 @@ namespace CMP2.Core
       Option.RepeatPlayOption = 0;
       Option.DurationViewStatus = true;
 <<<<<<< HEAD
+<<<<<<< HEAD
       _MediaPlayer.PlaybackStopped += MediaPlayer_PlaybackStopped;
 =======
 >>>>>>> parent of 4baef91... Add MainPlayer Option Changed Event & Fixed App namespace
+=======
+      PlaybackStopped += MainMediaPlayer_PlaybackStopped;
+>>>>>>> parent of 708ea27... Add Uno Project
 =======
       PlaybackStopped += MainMediaPlayer_PlaybackStopped;
 >>>>>>> parent of 708ea27... Add Uno Project
@@ -52,6 +56,7 @@ namespace CMP2.Core
     /// <summary>
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     /// 재생이 끝났을 경우 이벤트 처리
     /// </summary>
     private static void MediaPlayer_PlaybackStopped(object sender, StoppedEventArgs e) =>
@@ -76,10 +81,25 @@ namespace CMP2.Core
     /// <summary>
     /// 재생이 끝났을 경우 이벤트 처리
     /// </summary>
+=======
+    /// 미디어 재생 상태 변화시 호출
+    /// </summary>
+    public static event EventHandler<StoppedEventArgs> PlaybackStopped
+    {
+      add => _MediaPlayer.PlaybackStopped += value;
+      remove => _MediaPlayer.PlaybackStopped -= value;
+    }
+    /// <summary>
+    /// 재생이 끝났을 경우 이벤트 처리
+    /// </summary>
+>>>>>>> parent of 708ea27... Add Uno Project
     private static void MainMediaPlayer_PlaybackStopped(object sender, StoppedEventArgs e)
     {
       AudioFile.CurrentTime = TimeSpan.Zero;
     }
+<<<<<<< HEAD
+>>>>>>> parent of 708ea27... Add Uno Project
+=======
 >>>>>>> parent of 708ea27... Add Uno Project
     /// <summary>
     /// 볼륨
@@ -129,9 +149,13 @@ namespace CMP2.Core
       _MediaPlayer.Stop();
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
       AudioFile.CurrentTime = TimeSpan.Zero;
 =======
 >>>>>>> parent of 4baef91... Add MainPlayer Option Changed Event & Fixed App namespace
+=======
+      PlaybackStopped += MainMediaPlayer_PlaybackStopped;
+>>>>>>> parent of 708ea27... Add Uno Project
 =======
       PlaybackStopped += MainMediaPlayer_PlaybackStopped;
 >>>>>>> parent of 708ea27... Add Uno Project

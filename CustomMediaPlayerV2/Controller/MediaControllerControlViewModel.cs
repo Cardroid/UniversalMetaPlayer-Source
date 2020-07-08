@@ -24,10 +24,14 @@ namespace CMP2.Controller
 <<<<<<< HEAD
       MainMediaPlayer.PlayStateChangedEvent += MainMediaPlayer_PlayStateChangedEvent;
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
       MainMediaPlayer.PlaybackStopped += MainMediaPlayer_PlaybackStopped;
       MainMediaPlayer.PlaybackStopped += MainMediaPlayer_Stopped;
 >>>>>>> parent of 4baef91... Add MainPlayer Option Changed Event & Fixed App namespace
+=======
+      MainMediaPlayer.PlaybackStopped += MainMediaPlayer_Stopped;
+>>>>>>> parent of 708ea27... Add Uno Project
 =======
       MainMediaPlayer.PlaybackStopped += MainMediaPlayer_Stopped;
 >>>>>>> parent of 708ea27... Add Uno Project
@@ -85,6 +89,7 @@ namespace CMP2.Controller
     #region 재생 / 일시정지
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     public PackIconBase PlayPauseStateIcon
     {
       get
@@ -106,12 +111,22 @@ namespace CMP2.Controller
     {
       if (state == PlaybackState.Playing)
 >>>>>>> parent of 708ea27... Add Uno Project
+=======
+    public PackIconBase PlayPauseStateIcon { get; private set; } = new PackIconControl { Width = 30, Height = 30, Kind = PackIconMaterialKind.Play };
+
+    private void MainMediaPlayer_PlayStateChangedEvent(PlaybackState state)
+    {
+      if (state == PlaybackState.Playing)
+>>>>>>> parent of 708ea27... Add Uno Project
         PlayPauseStateIcon = new PackIconControl { Width = 30, Height = 30, Kind = PackIconMaterialKind.Pause };
       else
         PlayPauseStateIcon = new PackIconControl { Width = 30, Height = 30, Kind = PackIconMaterialKind.Play };
       OnPropertyChanged("PlayPauseStateIcon");
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> parent of 4baef91... Add MainPlayer Option Changed Event & Fixed App namespace
+=======
+>>>>>>> parent of 708ea27... Add Uno Project
 =======
 >>>>>>> parent of 708ea27... Add Uno Project
     }
@@ -187,11 +202,14 @@ namespace CMP2.Controller
     #region 동기화 메소드
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     private void MainMediaPlayer_PlayStateChangedEvent(PlaybackState state) => ApplyUI();
     private void MainMediaPlayer_AudioFileOpenEvent(IMediaInfo mediaInfo) => ApplyUI();
     private void MainMediaPlayer_Stopped(object sender, StoppedEventArgs e) => ApplyUI();
     private void MainMediaPlayer_TickEvent(object sender, EventArgs e) => ApplyUI(false);
 =======
+=======
+>>>>>>> parent of 708ea27... Add Uno Project
     private void MainMediaPlayer_AudioFileOpenEvent(IMediaInfo mediaInfo)
     {
       ApplyUI();
@@ -204,6 +222,9 @@ namespace CMP2.Controller
     {
       ApplyUI(false);
     }
+<<<<<<< HEAD
+>>>>>>> parent of 708ea27... Add Uno Project
+=======
 >>>>>>> parent of 708ea27... Add Uno Project
     /// <summary>
     /// 현재 플래이어 상태를 UI에 적용합니다

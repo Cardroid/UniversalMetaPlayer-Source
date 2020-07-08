@@ -6,7 +6,11 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomMediaPlayer", "CustomMediaPlayer\CustomMediaPlayer.csproj", "{7FCE0BE1-E67E-4731-ADB4-D9C89A19F35B}"
 EndProject
 <<<<<<< HEAD
+<<<<<<< HEAD
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomMediaPlayerV2", "CustomMediaPlayerV2\CustomMediaPlayerV2.csproj", "{AF788E7E-FCE4-4FA5-A70C-32CF11FCC6CA}"
+=======
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomMediaPlayerV2", "CustomMediaPlayerV2\CustomMediaPlayerV2.csproj", "{AF788E7E-FCE4-4FA5-A70C-32CF11FCC6CA}"
+>>>>>>> parent of 708ea27... Add Uno Project
 =======
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomMediaPlayerV2", "CustomMediaPlayerV2\CustomMediaPlayerV2.csproj", "{AF788E7E-FCE4-4FA5-A70C-32CF11FCC6CA}"
 >>>>>>> parent of 708ea27... Add Uno Project
@@ -15,11 +19,15 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 <<<<<<< HEAD
+<<<<<<< HEAD
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
+=======
+		Release|Any CPU = Release|Any CPU
+>>>>>>> parent of 708ea27... Add Uno Project
 =======
 		Release|Any CPU = Release|Any CPU
 >>>>>>> parent of 708ea27... Add Uno Project

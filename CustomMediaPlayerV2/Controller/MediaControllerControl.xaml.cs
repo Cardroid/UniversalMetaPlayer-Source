@@ -25,11 +25,17 @@ namespace CMP2.Controller
       {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
         InitializeComponent();
         ViewModel = (MediaControllerControlViewModel)DataContext;
 
 >>>>>>> parent of 4baef91... Add MainPlayer Option Changed Event & Fixed App namespace
+=======
+        InitializeComponent();
+        ViewModel = (MediaControllerControlViewModel)this.DataContext;
+
+>>>>>>> parent of 708ea27... Add Uno Project
 =======
         InitializeComponent();
         ViewModel = (MediaControllerControlViewModel)this.DataContext;

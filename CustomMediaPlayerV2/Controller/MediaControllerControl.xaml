@@ -153,9 +153,14 @@
         <Grid
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
             Grid.Column="2"
 >>>>>>> parent of 4baef91... Add MainPlayer Option Changed Event & Fixed App namespace
+=======
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+>>>>>>> parent of 708ea27... Add Uno Project
 =======
             Grid.Column="0"
             Grid.ColumnSpan="3"
