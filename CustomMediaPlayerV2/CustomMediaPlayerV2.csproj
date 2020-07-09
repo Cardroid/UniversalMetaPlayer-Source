@@ -53,6 +53,7 @@
     <PackageReference Include="NAudio" Version="1.10.0" />
     <PackageReference Include="NeatInput.Windows" Version="2.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="NYoutubeDL" Version="0.11.0" />
     <PackageReference Include="TagLibSharp" Version="2.2.0" />
   </ItemGroup>
 

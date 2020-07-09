@@ -35,17 +35,6 @@
                 <RowDefinition
                     Height="Auto" />
             </Grid.RowDefinitions>
-            <Popup
-                x:Name="PlayListRightClickMenu"
-                PopupAnimation="Scroll"
-                StaysOpen="False"
-                Placement="Mouse"
-                Focusable="True" />
-            <StackPanel
-                Orientation="Horizontal"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                Grid.Row="0" />
             <ListView
                 x:Name="PlayList"
                 HorizontalAlignment="Stretch"

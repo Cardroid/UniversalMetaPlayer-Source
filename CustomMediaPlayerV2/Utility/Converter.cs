@@ -13,8 +13,8 @@ namespace CMP2.Utility
     /// </summary>
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-      if (value is TimeSpan)
-      { return Converter.TimeSpanStringConverter((TimeSpan)value); }
+      if (value is TimeSpan span)
+      { return Converter.TimeSpanStringConverter(span); }
       return null;
     }
 

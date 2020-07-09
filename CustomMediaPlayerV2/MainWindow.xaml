@@ -18,7 +18,9 @@
             <ColumnDefinition
                 Width="*" />
             <ColumnDefinition
-                Width="Auto" />
+                Width="Auto" 
+                MinWidth="180"
+                MaxWidth="300"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition
@@ -33,5 +35,9 @@
         <Controller:MediaControllerControl 
             Grid.Column="0"
             Grid.Row="1"/>
+        <Controller:PlayListControl 
+            Grid.Column="1"
+            Grid.Row="0"
+            Grid.RowSpan="2"/>
     </Grid>
 </mah:MetroWindow>

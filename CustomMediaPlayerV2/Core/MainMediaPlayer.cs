@@ -11,9 +11,6 @@ namespace CMP2.Core
 {
   public static class MainMediaPlayer
   {
-    /// <summary>
-    /// 초기화 설정
-    /// </summary>
     static MainMediaPlayer()
     {
       Volume = 0.8f;
@@ -23,9 +20,17 @@ namespace CMP2.Core
       _MediaPlayer.PlaybackStopped += MediaPlayer_PlaybackStopped;
     }
 
-    // 메인 플레이어
+    /// <summary>
+    /// 메인 플레이어
+    /// </summary>
     private static readonly IWavePlayer _MediaPlayer = new WaveOut();
+    /// <summary>
+    /// 플레이어 옵션
+    /// </summary>
     public static PlayerOption Option = new PlayerOption();
+    /// <summary>
+    /// 플레이리스트
+    /// </summary>
     public static PlayList PlayList { get; set; } = new PlayList();
 
     private static DispatcherTimer Tick { get; } = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(10) };
@@ -197,6 +202,7 @@ namespace CMP2.Core
         OnPropertyChanged("AutoPlayOption");
       }
     }
+
     /// <summary>
     /// 남은시간 - 전체시간 전환 (ture = 전체시간, false = 남은시간)
     /// </summary>
