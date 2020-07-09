@@ -54,22 +54,14 @@ namespace CMP2.Core
   /// </summary>
   public class MediaInfo : IMediaInfo
   {
-    public MediaInfo(string filepath)
+    public MediaInfo(string filepath, bool tryload = true)
     {
       if (string.IsNullOrWhiteSpace(filepath))
         return;
       FileFullName = filepath;
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-      if (loadinfo)
+      Title = Path.GetFileNameWithoutExtension(FileFullName);
+      if (tryload)
         InfomationLoader();
-=======
-      InfomationLoader();
->>>>>>> parent of 708ea27... Add Uno Project
-=======
-      InfomationLoader();
->>>>>>> parent of 708ea27... Add Uno Project
     }
 
     /// <summary>
@@ -77,69 +69,34 @@ namespace CMP2.Core
     /// </summary>
     public void InfomationLoader()
     {
-      using (var Fileinfo = TagLib.File.Create(FileFullName))
+      if (File.Exists(FileFullName))
       {
-<<<<<<< HEAD
-<<<<<<< HEAD
         using (var Fileinfo = TagLib.File.Create(FileFullName))
-=======
-
-      using (var Fileinfo = TagLib.File.Create(FileFullName))
-      {
-        // 미디어 정보를 정보 클래스에 저장
-        Title = Fileinfo.Tag.Title ?? Path.GetFileNameWithoutExtension(filepath);
-        Duration = Fileinfo.Properties.Duration;
-        try
->>>>>>> parent of 4baef91... Add MainPlayer Option Changed Event & Fixed App namespace
-=======
-        Title = Fileinfo.Tag.Title ?? Path.GetFileNameWithoutExtension(FileFullName);
-        Duration = Fileinfo.Properties.Duration;
-        try
->>>>>>> parent of 708ea27... Add Uno Project
-=======
-        Title = Fileinfo.Tag.Title ?? Path.GetFileNameWithoutExtension(FileFullName);
-        Duration = Fileinfo.Properties.Duration;
-        try
->>>>>>> parent of 708ea27... Add Uno Project
         {
-          TagLib.IPicture pic = Fileinfo.Tag.Pictures[0];  //pic contains data for image.
-          MemoryStream stream = new MemoryStream(pic.Data.Data);  // create an in memory stream
-          AlbumImage = BitmapFrame.Create(stream);
+          // 미디어 정보를 정보 클래스에 저장
+          Title = Fileinfo.Tag.Title ?? Path.GetFileNameWithoutExtension(FileFullName);
+          Duration = Fileinfo.Properties.Duration;
+          try
+          {
+            TagLib.IPicture pic = Fileinfo.Tag.Pictures[0];  //pic contains data for image.
+            MemoryStream stream = new MemoryStream(pic.Data.Data);  // create an in memory stream
+            AlbumImage = BitmapFrame.Create(stream);
+          }
+          catch { AlbumImage = null; }
+          AlbumTitle = !string.IsNullOrWhiteSpace(Fileinfo.Tag.Album) ? Fileinfo.Tag.Album : string.Empty;
+          ArtistName = !string.IsNullOrWhiteSpace(Fileinfo.Tag.FirstAlbumArtist) ? Fileinfo.Tag.FirstAlbumArtist : string.Empty;
+          Lyrics = !string.IsNullOrWhiteSpace(Fileinfo.Tag.Lyrics) ? Fileinfo.Tag.Lyrics : string.Empty;
         }
-        catch { AlbumImage = null; }
-        AlbumTitle = !string.IsNullOrWhiteSpace(Fileinfo.Tag.Album) ? Fileinfo.Tag.Album : string.Empty;
-        ArtistName = !string.IsNullOrWhiteSpace(Fileinfo.Tag.FirstAlbumArtist) ? Fileinfo.Tag.FirstAlbumArtist : string.Empty;
-        Lyrics = !string.IsNullOrWhiteSpace(Fileinfo.Tag.Lyrics) ? Fileinfo.Tag.Lyrics : string.Empty;
+        LoadedCheck = LoadState.Complete;
       }
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
       else
         LoadedCheck = LoadState.Fail;
-      return Task.FromResult(0);
-=======
-      LoadedCheck = true;
->>>>>>> parent of 708ea27... Add Uno Project
-=======
-      LoadedCheck = true;
->>>>>>> parent of 708ea27... Add Uno Project
     }
     /// <summary>
     /// 정보의 로드가 완료되었는지 여부
     /// </summary>
-<<<<<<< HEAD
-<<<<<<< HEAD
     public LoadState LoadedCheck { get; private set; } = LoadState.NotTryed;
     #region 프로퍼티 정의 (인터페이스 상속)
-=======
-    }
->>>>>>> parent of 4baef91... Add MainPlayer Option Changed Event & Fixed App namespace
-=======
-    public bool LoadedCheck { get; private set; } = false;
->>>>>>> parent of 708ea27... Add Uno Project
-=======
-    public bool LoadedCheck { get; private set; } = false;
->>>>>>> parent of 708ea27... Add Uno Project
     public int ID { get; set; } = -1;
     public string FileFullName { get; set; }
     public string Title { get; set; } = string.Empty;
@@ -148,6 +105,13 @@ namespace CMP2.Core
     public string AlbumTitle { get; set; } = string.Empty;
     public string ArtistName { get; set; } = string.Empty;
     public string Lyrics { get; set; } = string.Empty;
+    #endregion
+  }
+  public enum LoadState
+  {
+    NotTryed,
+    Complete,
+    Fail
   }
   #endregion
 }

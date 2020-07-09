@@ -15,12 +15,18 @@
     <Compile Update="Controller\MediaInfoControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Controller\PlayListControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Controller\MediaControllerControl.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Controller\MediaInfoControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Controller\PlayListControl.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="MainWindow.xaml">

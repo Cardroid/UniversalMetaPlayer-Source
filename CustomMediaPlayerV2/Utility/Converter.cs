@@ -1,9 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
+using System.Windows.Data;
 
 namespace CMP2.Utility
 {
+  public class ValueConverter : IValueConverter
+  {
+    /// <summary>
+    /// 값 변환기 메소드 (인터페이스 구현용)
+    /// </summary>
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+      if (value is TimeSpan)
+      { return Converter.TimeSpanStringConverter((TimeSpan)value); }
+      return null;
+    }
+
+    /// <summary>
+    /// 값 변환기 메소드 (인터페이스 구현용)
+    /// </summary>
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+      return null;
+    }
+  }
+
   public static class Converter
   {
     /// <summary>
@@ -15,14 +38,15 @@ namespace CMP2.Utility
     {
       if (value == TimeSpan.Zero)
         return "00:00";
-      if (value > TimeSpan.FromDays(1))
+      if (value.TotalDays > 1)
         return value.ToString(@"d\:hh\:mm\:ss");
-      else if (value > TimeSpan.FromHours(1))
+      else if (value.TotalHours > 1)
         return value.ToString(@"h\:mm\:ss");
-      else if (value > TimeSpan.FromSeconds(1))
+      else if (value.TotalSeconds > 1)
         return value.ToString(@"mm\:ss");
-      //return value.ToString(@"s\:FFF");
-      return "00:00";
+      else
+        //return value.ToString(@"s\:FFF");
+        return "00:00";
     }
   }
 }

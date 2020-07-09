@@ -11,12 +11,8 @@ using ControlzEx.Standard;
 
 namespace CMP2.Controller
 {
-  public class MediaInfoControlViewModel : INotifyPropertyChanged
+  public class MediaInfoControlViewModel : ViewModelBase
   {
-    public event PropertyChangedEventHandler PropertyChanged;
-    protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    public FontFamily FontFamily => IGlobalProperty.MainFontFamily;
-
     public MediaInfoControlViewModel()
     {
       MainMediaPlayer.AudioFileOpenEvent += MediaPlayerProperty_AudioFileOpenEvent;
@@ -24,64 +20,42 @@ namespace CMP2.Controller
 
     private void MediaPlayerProperty_AudioFileOpenEvent(IMediaInfo mediaInfo)
     {
-      MediaTitle = mediaInfo.Title;
-      AlbumTitle = mediaInfo.AlbumTitle;
-      ArtistName = mediaInfo.ArtistName;
-      AlbumImage = mediaInfo.AlbumImage;
+      OnPropertyChanged("MediaTitle");
+      OnPropertyChanged("AlbumTitle");
+      OnPropertyChanged("ArtistName");
+      OnPropertyChanged("AlbumImage");
     }
 
     public const string INFO_NULL = "정보 없음";
 
-    #region 미디어 제목
-    private string _MediaTitle = "재생 중인 미디어가 없습니다";
-    public string MediaTitle
-    {
-      get => MainMediaPlayer.AudioFile != null ? (!string.IsNullOrWhiteSpace(_MediaTitle) ? _MediaTitle : INFO_NULL) : "재생 중인 미디어가 없습니다";
-      set
-      {
-        _MediaTitle = value;
-        OnPropertyChanged("MediaTitle");
-      }
-    }
-    #endregion
+  #region 미디어 제목
+    public string MediaTitle =>
+      MainMediaPlayer.MediaLoadedCheck
+        ? (!string.IsNullOrWhiteSpace(MainMediaPlayer.MediaInfo.Title)
+        ? MainMediaPlayer.MediaInfo.Title : INFO_NULL)
+        : "재생 중인 미디어가 없습니다";
+  #endregion
 
-    #region 앨범 제목
-    private string _AlbumTitle = string.Empty;
-    public string AlbumTitle
-    {
-      get => !string.IsNullOrWhiteSpace(_AlbumTitle) ? _AlbumTitle : INFO_NULL;
-      set
-      {
-        _AlbumTitle = value;
-        OnPropertyChanged("AlbumTitle");
-      }
-    }
-    #endregion
+  #region 앨범 제목
+    public string AlbumTitle =>
+      MainMediaPlayer.MediaLoadedCheck
+        ? (!string.IsNullOrWhiteSpace(MainMediaPlayer.MediaInfo.AlbumTitle)
+        ? MainMediaPlayer.MediaInfo.AlbumTitle : INFO_NULL)
+        : "Error";
+  #endregion
 
-    #region 아티스트 이름
-    private string _ArtistName = string.Empty;
-    public string ArtistName
-    {
-      get => !string.IsNullOrWhiteSpace(_ArtistName) ? _ArtistName : INFO_NULL;
-      set
-      {
-        _ArtistName = value;
-        OnPropertyChanged("ArtistName");
-      }
-    }
-    #endregion
+  #region 아티스트 이름
+    public string ArtistName =>
+      MainMediaPlayer.MediaLoadedCheck
+        ? (!string.IsNullOrWhiteSpace(MainMediaPlayer.MediaInfo.ArtistName)
+        ? MainMediaPlayer.MediaInfo.ArtistName : INFO_NULL)
+        : "Error";
+  #endregion
 
-    #region 앨범 이미지
-    private ImageSource _AlbumImage = null;
-    public ImageSource AlbumImage
-    {
-      get => _AlbumImage ?? IGlobalProperty.LogoNoteImage;
-      set
-      {
-        _AlbumImage = value;
-        OnPropertyChanged("AlbumImage");
-      }
-    }
-    #endregion
+  #region 앨범 이미지
+    public ImageSource AlbumImage =>
+      MainMediaPlayer.MediaLoadedCheck && MainMediaPlayer.MediaInfo.AlbumImage != null
+        ? MainMediaPlayer.MediaInfo.AlbumImage : IGlobalProperty.LogoNoteImage;
   }
+  #endregion
 }

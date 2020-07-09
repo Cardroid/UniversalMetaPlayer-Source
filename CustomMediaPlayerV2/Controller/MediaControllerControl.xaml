@@ -6,7 +6,13 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:local="clr-namespace:CMP2.Controller"
+    xmlns:Utility="clr-namespace:CMP2.Utility"
+    FontFamily="{Binding FontFamily}"
     mc:Ignorable="d">
+    <UserControl.Resources>
+        <Utility:ValueConverter
+            x:Key="TimeSpanStringConverter" />
+    </UserControl.Resources>
 
     <UserControl.DataContext>
         <local:MediaControllerControlViewModel />
@@ -46,8 +52,7 @@
                 VerticalAlignment="Center"
                 HorizontalContentAlignment="Center"
                 VerticalContentAlignment="Center"
-                FontFamily="{Binding FontFamily}"
-                Content="{Binding CurrentPostionstring}"
+                Content="{Binding CurrentPostion, Converter={StaticResource TimeSpanStringConverter}, Mode=OneWay}"
                 Grid.Column="0" />
             <Slider
                 x:Name="ProgressSlider"
@@ -55,7 +60,7 @@
                 VerticalAlignment="Center"
                 Style="{StaticResource MahApps.Styles.Slider.Flat}"
                 IsMoveToPointEnabled="True"
-                Value="{Binding CurrentPostiondouble}"
+                Value="{Binding CurrentPostion.TotalMilliseconds, Mode=OneWay}"
                 Maximum="{Binding DurationTime.TotalMilliseconds, Mode=OneWay}"
                 Margin="5,0,5,0"
                 Grid.Column="1" />
@@ -65,7 +70,6 @@
                 VerticalAlignment="Center"
                 VerticalContentAlignment="Center"
                 HorizontalContentAlignment="Center"
-                FontFamily="{Binding FontFamily}"
                 Content="{Binding DurationTimestring}"
                 Padding="0,0,3,0"
                 Grid.Column="2" />
@@ -151,20 +155,8 @@
                 Height="50" />
         </StackPanel>
         <Grid
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-            Grid.Column="2"
->>>>>>> parent of 4baef91... Add MainPlayer Option Changed Event & Fixed App namespace
-=======
             Grid.Column="0"
             Grid.ColumnSpan="3"
->>>>>>> parent of 708ea27... Add Uno Project
-=======
-            Grid.Column="0"
-            Grid.ColumnSpan="3"
->>>>>>> parent of 708ea27... Add Uno Project
             Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition
@@ -172,23 +164,13 @@
                 <ColumnDefinition
                     Width="Auto" />
                 <ColumnDefinition
-                    Width="Auto" />
+                    Width="*" />
             </Grid.ColumnDefinitions>
-            <Label
-                x:Name="TotalDurationLabel"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                HorizontalContentAlignment="Center"
-                VerticalContentAlignment="Center"
-                Content="{Binding TotalDuration}"
-                FontFamily="{Binding FontFamily}"
-                ToolTip="총 재생 길이 / Total Duration"
-                Grid.Column="0" />
             <StackPanel
                 Orientation="Horizontal"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Grid.Column="1">
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Grid.Column="0">
                 <Button
                     x:Name="VolumeMuteButton"
                     HorizontalAlignment="Center"
@@ -214,10 +196,18 @@
                 <Label
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    FontFamily="{Binding FontFamily}"
                     Content="{Binding VolumeString}"
                     ToolTip="볼륨 / Volume" />
             </StackPanel>
+            <Label
+                x:Name="TotalDurationLabel"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                HorizontalContentAlignment="Right"
+                VerticalContentAlignment="Center"
+                Content="{Binding TotalDuration, Converter={StaticResource TimeSpanStringConverter}, Mode=OneWay}"
+                ToolTip="총 재생 길이 / Total Duration"
+                Grid.Column="2" />
         </Grid>
     </Grid>
 </UserControl>

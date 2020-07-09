@@ -7,19 +7,7 @@
     <RootNamespace>CMP2</RootNamespace>
     <AssemblyName>CustomMediaPlayer</AssemblyName>
     <ApplicationIcon>IconCustomMusicPlayer.ico</ApplicationIcon>
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
     <Version>2.1.1.34</Version>
-=======
-    <Version>2.1.0</Version>
->>>>>>> parent of 4baef91... Add MainPlayer Option Changed Event & Fixed App namespace
-=======
-    <Version>2.1.1.21</Version>
->>>>>>> parent of 708ea27... Add Uno Project
-=======
-    <Version>2.1.1.21</Version>
->>>>>>> parent of 708ea27... Add Uno Project
     <Authors>CarbonSIX</Authors>
     <PackageIcon>IconCustomMusicPlayer.png</PackageIcon>
     <Nullable>disable</Nullable> 
@@ -61,11 +49,10 @@
     </PackageReference>
     <PackageReference Include="gong-wpf-dragdrop" Version="2.2.0" />
     <PackageReference Include="MahApps.Metro" Version="2.1.1" />
-    <PackageReference Include="MahApps.Metro.IconPacks" Version="3.6.0" />
+    <PackageReference Include="MahApps.Metro.IconPacks" Version="4.2.0" />
     <PackageReference Include="NAudio" Version="1.10.0" />
     <PackageReference Include="NeatInput.Windows" Version="2.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="NYoutubeDL" Version="0.11.0" />
     <PackageReference Include="TagLibSharp" Version="2.2.0" />
   </ItemGroup>
 

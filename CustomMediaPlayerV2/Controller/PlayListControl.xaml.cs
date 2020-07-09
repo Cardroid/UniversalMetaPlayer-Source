@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -13,13 +13,13 @@ using System.Windows.Shapes;
 
 namespace CMP2.Controller
 {
-  public partial class MediaInfoControl : UserControl
+  public partial class PlayListControl : UserControl
   {
-    private MediaInfoControlViewModel ViewModel { get; }
-    public MediaInfoControl()
+    private PlayListControlViewModel ViewModel { get; set; }
+    public PlayListControl()
     {
       InitializeComponent();
-      ViewModel = (MediaInfoControlViewModel)this.DataContext;
+      ViewModel = (PlayListControlViewModel)this.DataContext;
     }
   }
 }
