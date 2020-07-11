@@ -43,7 +43,7 @@ namespace CustomMediaPlayer.Controllers.PlayList
       #region 플레이리스트 설정
       this.PlayList.MouseLeftButtonDown += (s, e) =>
       { // 빈 부분을 클릭하면 선택 해제
-              if (e.GetType() != typeof(ListBoxItem)) PlayList.SelectedItems.Clear();
+        if (e.GetType() != typeof(ListBoxItem)) PlayList.SelectedItems.Clear();
       };
       this.PlayList.KeyDown += (s, e) => // 플레이리스트 단축키
       {

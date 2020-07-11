@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:dd="urn:gong-wpf-dragdrop"
     xmlns:local="clr-namespace:CMP2.Controller"
     FontFamily="{Binding FontFamily}"
     mc:Ignorable="d">
@@ -16,7 +17,7 @@
         HorizontalContentAlignment="Stretch"
         VerticalContentAlignment="Stretch"
         Style="{StaticResource MahApps.Styles.GroupBox}"
-        BorderThickness="0"
+        BorderThickness="1,0,0,0"
         Padding="0">
         <GroupBox.Header>
             <TextBlock
@@ -41,6 +42,12 @@
                 VerticalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
                 ItemsSource="{Binding PlayList}"
+                dd:DragDrop.IsDragSource="True"
+                dd:DragDrop.IsDropTarget="True"
+                dd:DragDrop.SelectDroppedItems="True"
+                dd:DragDrop.DragDirectlySelectedOnly="False"
+                dd:DragDrop.DragHandler="{Binding}"
+                dd:DragDrop.DropHandler="{Binding}"
                 SelectedItem="{Binding SelectItem}"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                 Grid.Row="1"

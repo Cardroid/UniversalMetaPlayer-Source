@@ -6,6 +6,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 using CMP2.Core;
+using CMP2.Core.Model;
 
 using ControlzEx.Standard;
 
@@ -15,15 +16,18 @@ namespace CMP2.Controller
   {
     public MediaInfoControlViewModel()
     {
-      MainMediaPlayer.AudioFileOpenEvent += MediaPlayerProperty_AudioFileOpenEvent;
+      MainMediaPlayer.PropertyChangedEvent += MainMediaPlayer_PropertyChangedEvent;
     }
 
-    private void MediaPlayerProperty_AudioFileOpenEvent(IMediaInfo mediaInfo)
+    private void MainMediaPlayer_PropertyChangedEvent(string propertyname)
     {
-      OnPropertyChanged("MediaTitle");
-      OnPropertyChanged("AlbumTitle");
-      OnPropertyChanged("ArtistName");
-      OnPropertyChanged("AlbumImage");
+      if (propertyname == "AudioFile")
+      {
+        OnPropertyChanged("MediaTitle");
+        OnPropertyChanged("AlbumTitle");
+        OnPropertyChanged("ArtistName");
+        OnPropertyChanged("AlbumImage");
+      }
     }
 
     public const string INFO_NULL = "정보 없음";

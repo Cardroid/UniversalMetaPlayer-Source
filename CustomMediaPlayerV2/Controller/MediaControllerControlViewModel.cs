@@ -5,6 +5,7 @@ using System.Text;
 using System.Windows.Media;
 
 using CMP2.Core;
+using CMP2.Core.Model;
 using CMP2.Utility;
 
 using MahApps.Metro.IconPacks;
@@ -18,7 +19,7 @@ namespace CMP2.Controller
     public MediaControllerControlViewModel()
     {
       MainMediaPlayer.PlayStateChangedEvent += MainMediaPlayer_PlayStateChangedEvent;
-      MainMediaPlayer.AudioFileOpenEvent += MainMediaPlayer_AudioFileOpenEvent;
+      MainMediaPlayer.PropertyChangedEvent += MainMediaPlayer_PropertyChangedEvent; ;
       MainMediaPlayer.TickEvent += MainMediaPlayer_TickEvent;
       MainMediaPlayer.Option.PropertyChangedEvent += Option_PropertyChangedEvent;
     }
@@ -141,8 +142,12 @@ namespace CMP2.Controller
         OnPropertyChanged("RepeatPlayOptionIcon");
     }
     private void MainMediaPlayer_PlayStateChangedEvent(PlaybackState state) => ApplyUI();
-    private void MainMediaPlayer_AudioFileOpenEvent(IMediaInfo mediaInfo) => ApplyUI();
     private void MainMediaPlayer_TickEvent(object sender, EventArgs e) => ApplyUI(false);
+    private void MainMediaPlayer_PropertyChangedEvent(string propertyname)
+    {
+      if (propertyname == "AudioFile")
+        ApplyUI();
+    }
 
     /// <summary>
     /// 현재 플래이어 상태를 UI에 적용합니다 (UI 갱신)

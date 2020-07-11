@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 
-namespace CMP2.Core.Playlist
+namespace CMP2.Core.Model
 {
   public class PlayList : ObservableCollection<IMediaInfo>, ICloneable
   {

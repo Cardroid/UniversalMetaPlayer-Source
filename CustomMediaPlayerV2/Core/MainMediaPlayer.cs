@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Windows.Media;
 using System.Windows.Threading;
 
-using CMP2.Core.Playlist;
+using CMP2.Core.Model;
 
 using NAudio.Wave;
 
@@ -13,25 +13,37 @@ namespace CMP2.Core
   {
     static MainMediaPlayer()
     {
+      WavePlayer = new WaveOut();
+      Option = new PlayerOption();
+      PlayList = new PlayList();
       Volume = 0.8f;
       Option.AutoPlayOption = true;
       Option.RepeatPlayOption = 0;
       Option.DurationViewStatus = true;
-      _MediaPlayer.PlaybackStopped += MediaPlayer_PlaybackStopped;
+      WavePlayer.PlaybackStopped += MediaPlayer_PlaybackStopped;
     }
 
     /// <summary>
     /// 메인 플레이어
     /// </summary>
-    private static readonly IWavePlayer _MediaPlayer = new WaveOut();
+    private static IWavePlayer WavePlayer { get; }
     /// <summary>
     /// 플레이어 옵션
     /// </summary>
-    public static PlayerOption Option = new PlayerOption();
+    public static PlayerOption Option;
     /// <summary>
     /// 플레이리스트
     /// </summary>
-    public static PlayList PlayList { get; set; } = new PlayList();
+    public static PlayList PlayList
+    {
+      get => _PlayList;
+      set
+      {
+        _PlayList = value;
+        OnPropertyChanged("PlayList");
+      }
+    }
+    private static PlayList _PlayList = null;
 
     private static DispatcherTimer Tick { get; } = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(10) };
     public static event EventHandler TickEvent
@@ -44,8 +56,9 @@ namespace CMP2.Core
 
     public delegate void PlayStateChangedEventHandler(PlaybackState state);
     public static event PlayStateChangedEventHandler PlayStateChangedEvent;
-    public delegate void AudioFileEventHandler(IMediaInfo mediaInfo);
-    public static event AudioFileEventHandler AudioFileOpenEvent;
+    public delegate void PropertyChangedEventHandler(string propertyname);
+    public static event PropertyChangedEventHandler PropertyChangedEvent;
+    private static void OnPropertyChanged(string name) => PropertyChangedEvent?.Invoke(name);
 
     public static bool MediaLoadedCheck => AudioFile != null && MediaInfo != null;
 
@@ -63,7 +76,7 @@ namespace CMP2.Core
       private set
       {
         _AudioFile = value;
-        AudioFileOpenEvent?.Invoke(MediaInfo);
+        OnPropertyChanged("AudioFile");
       }
     }
     private static AudioFileReader _AudioFile = null;
@@ -73,7 +86,7 @@ namespace CMP2.Core
     /// </summary>
     private static void MediaPlayer_PlaybackStopped(object sender, StoppedEventArgs e)
     {
-      if (_MediaPlayer.PlaybackState == PlaybackState.Stopped)
+      if (WavePlayer.PlaybackState == PlaybackState.Stopped)
       {
         AudioFile.CurrentTime = TimeSpan.Zero;
         if (StopButtonActive)
@@ -84,21 +97,25 @@ namespace CMP2.Core
             Play();
         }
       }
-      PlayStateChangedEvent?.Invoke(_MediaPlayer.PlaybackState);
+      PlayStateChangedEvent?.Invoke(WavePlayer.PlaybackState);
     }
     /// <summary>
     /// 볼륨
     /// </summary>
     public static float Volume
     {
-      get => _MediaPlayer.Volume;
-      set => _MediaPlayer.Volume = value;
+      get => WavePlayer.Volume;
+      set
+      {
+        WavePlayer.Volume = value;
+        OnPropertyChanged("Volume");
+      }
     }
 
     /// <summary>
     /// 현재 재생 상태
     /// </summary>
-    public static PlaybackState PlaybackState => _MediaPlayer.PlaybackState;
+    public static PlaybackState PlaybackState => WavePlayer.PlaybackState;
 
     /// <summary>
     /// 미디어로 초기화하고 재생을 준비합니다
@@ -111,10 +128,10 @@ namespace CMP2.Core
         return;
       if (PlaybackState != PlaybackState.Stopped)
         Stop();
-      MediaInfo = mediaInfo;
       AudioFile?.Dispose();
+      MediaInfo = mediaInfo;
       AudioFile = new AudioFileReader(mediaInfo.FileFullName);
-      _MediaPlayer.Init(AudioFile);
+      WavePlayer.Init(AudioFile);
       if (Option.AutoPlayOption || autoplay)
         Play();
     }
@@ -125,8 +142,8 @@ namespace CMP2.Core
     public static void Play()
     {
       Tick.Start();
-      _MediaPlayer.Play();
-      PlayStateChangedEvent?.Invoke(_MediaPlayer.PlaybackState);
+      WavePlayer.Play();
+      PlayStateChangedEvent?.Invoke(WavePlayer.PlaybackState);
     }
 
     /// <summary>
@@ -135,9 +152,9 @@ namespace CMP2.Core
     public static void Stop()
     {
       StopButtonActive = true;
-      _MediaPlayer.Stop();
+      WavePlayer.Stop();
       Tick.Stop();
-      PlayStateChangedEvent?.Invoke(_MediaPlayer.PlaybackState);
+      PlayStateChangedEvent?.Invoke(WavePlayer.PlaybackState);
     }
 
     /// <summary>
@@ -145,9 +162,9 @@ namespace CMP2.Core
     /// </summary>
     public static void Pause()
     {
-      _MediaPlayer.Pause();
+      WavePlayer.Pause();
       Tick.Stop();
-      PlayStateChangedEvent?.Invoke(_MediaPlayer.PlaybackState);
+      PlayStateChangedEvent?.Invoke(WavePlayer.PlaybackState);
     }
 
     /// <summary>
@@ -156,7 +173,7 @@ namespace CMP2.Core
     public static void Dispose()
     {
       AudioFile?.Dispose();
-      _MediaPlayer?.Dispose();
+      WavePlayer?.Dispose();
     }
   }
 

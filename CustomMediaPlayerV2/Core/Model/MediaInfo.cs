@@ -5,7 +5,7 @@ using System.Text;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace CMP2.Core
+namespace CMP2.Core.Model
 {
   #region 미디어 정보 인터페이스
   /// <summary>

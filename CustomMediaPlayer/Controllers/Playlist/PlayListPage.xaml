@@ -15,8 +15,6 @@
     HorizontalAlignment="Stretch"
     VerticalAlignment="Stretch">
 
-    <!--xmlns:lvhd="clr-namespace:Itenso.Windows.Controls.ListViewLayout;assembly=Itenso.Windows.Controls.ListViewLayout"-->
-
     <UserControl.Resources>
         <Utility:TimeSpanStringConverter
             x:Key="TimeSpanStringConverter" />

@@ -13,9 +13,11 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-using MahApps.Metro.Controls;
-using CMP2.Core;
 using ControlzEx.Theming;
+using MahApps.Metro.Controls;
+
+using CMP2.Core;
+using CMP2.Core.Model;
 
 namespace CMP2
 {

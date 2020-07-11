@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Text;
 using System.Windows.Media;
 
-namespace CMP2.Core
+namespace CMP2.Core.Model
 {
   public class ViewModelBase : INotifyPropertyChanged
   {
