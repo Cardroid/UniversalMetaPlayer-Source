@@ -21,7 +21,9 @@ namespace CMP2.Core
       Option.RepeatPlayOption = 0;
       Option.DurationViewStatus = true;
       WavePlayer.PlaybackStopped += MediaPlayer_PlaybackStopped;
+      Log.Debug("Initialized");
     }
+    private static Log Log { get; } = new Log(typeof(MainMediaPlayer));
 
     /// <summary>
     /// 메인 플레이어
@@ -86,6 +88,8 @@ namespace CMP2.Core
     /// </summary>
     private static void MediaPlayer_PlaybackStopped(object sender, StoppedEventArgs e)
     {
+      if(e.Exception != null)
+        Log.Error("PlaybackStopped", e.Exception);
       if (WavePlayer.PlaybackState == PlaybackState.Stopped)
       {
         AudioFile.CurrentTime = TimeSpan.Zero;
@@ -122,13 +126,32 @@ namespace CMP2.Core
     /// </summary>
     /// <param name="mediaInfo">재생할 미디어</param>
     /// <param name="autoplay">자동 재생 여부</param>
-    public static void Init(IMediaInfo mediaInfo, bool autoplay = false)
+    public static void Init(MediaInfo mediaInfo, bool autoplay = false)
     {
-      if (mediaInfo == null && string.IsNullOrWhiteSpace(mediaInfo.FileFullName))
+      if (mediaInfo == null || string.IsNullOrWhiteSpace(mediaInfo.FileFullName))
+      {
+        Log.Error("Missing media absolute path.");
         return;
+      }
       if (PlaybackState != PlaybackState.Stopped)
         Stop();
       AudioFile?.Dispose();
+      if (mediaInfo.LoadedCheck != LoadState.AllLoaded)
+      {
+        mediaInfo.TryInfomationLoad(true);
+        switch (mediaInfo.LoadedCheck)
+        {
+          case LoadState.Fail:
+            Log.Error("Failed to load information.");
+            break;
+          case LoadState.PartialLoaded:
+            Log.Warn("Some of the information on the media is missing.");
+            break;
+          case LoadState.AllLoaded:
+            Log.Info("Media Load Successfully.");
+            break;
+        }
+      }
       MediaInfo = mediaInfo;
       AudioFile = new AudioFileReader(mediaInfo.FileFullName);
       WavePlayer.Init(AudioFile);

@@ -88,6 +88,12 @@ namespace CMP2.Controller
           ViewModel.ApplyUI();
         };
       };
+
+      this.Loaded += (s, e) =>
+      {
+        Log log = new Log(typeof(MediaInfoControl));
+        log.Debug("Initialized");
+      };
     }
 
     /// <summary>

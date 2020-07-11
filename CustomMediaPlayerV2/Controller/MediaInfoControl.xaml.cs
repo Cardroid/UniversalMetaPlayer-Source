@@ -11,6 +11,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using CMP2.Core;
+
 namespace CMP2.Controller
 {
   public partial class MediaInfoControl : UserControl
@@ -20,6 +22,12 @@ namespace CMP2.Controller
     {
       InitializeComponent();
       ViewModel = (MediaInfoControlViewModel)this.DataContext;
+
+      this.Loaded += (s, e) =>
+      {
+        Log log = new Log(typeof(MediaInfoControl));
+        log.Debug("Initialized");
+      };
     }
   }
 }

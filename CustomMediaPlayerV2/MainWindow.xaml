@@ -19,7 +19,7 @@
                 Width="*" />
             <ColumnDefinition
                 Width="Auto" 
-                MinWidth="180"
+                MinWidth="250"
                 MaxWidth="300"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
