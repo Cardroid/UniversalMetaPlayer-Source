@@ -12,18 +12,11 @@ namespace CMP2.Controller.ViewModel
   {
     public PlayListControlViewModel()
     {
+      MainMediaPlayer.PlayList.PropertyChangedEvent += MainMediaPlayer_PropertyChangedEvent;
       MainMediaPlayer.PropertyChangedEvent += MainMediaPlayer_PropertyChangedEvent;
     }
 
-    public PlayList PlayList
-    {
-      get => MainMediaPlayer.PlayList;
-      set
-      {
-        MainMediaPlayer.PlayList = value;
-        OnPropertyChanged("Playlist");
-      }
-    }
+    public PlayList PlayList => MainMediaPlayer.PlayList;
 
     #region UI갱신
     private void MainMediaPlayer_PropertyChangedEvent(string propertyname)

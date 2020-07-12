@@ -39,7 +39,7 @@
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
-                ItemsSource="{Binding PlayList}"
+                ItemsSource="{Binding PlayList, Mode=OneWay}"
                 dd:DragDrop.IsDragSource="True"
                 dd:DragDrop.IsDropTarget="True"
                 dd:DragDrop.SelectDroppedItems="True"

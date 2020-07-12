@@ -22,7 +22,7 @@ namespace CMP2.Core
       Option.RepeatPlayOption = 0;
       Option.DurationViewStatus = true;
       WavePlayer.PlaybackStopped += MediaPlayer_PlaybackStopped;
-      Log.Debug("Initialized");
+      Log.Debug("초기화 성공");
     }
     private static Log Log { get; } = new Log(typeof(MainMediaPlayer));
 
@@ -46,7 +46,7 @@ namespace CMP2.Core
         OnPropertyChanged("PlayList");
       }
     }
-    private static PlayList _PlayList = null;
+    private static PlayList _PlayList;
 
     private static DispatcherTimer Tick { get; } = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(10) };
     public static event EventHandler TickEvent
@@ -59,8 +59,7 @@ namespace CMP2.Core
 
     public delegate void PlayStateChangedEventHandler(PlaybackState state);
     public static event PlayStateChangedEventHandler PlayStateChangedEvent;
-    public delegate void PropertyChangedEventHandler(string propertyname);
-    public static event PropertyChangedEventHandler PropertyChangedEvent;
+    public static event CMP_PropertyChangedEventHandler PropertyChangedEvent;
     private static void OnPropertyChanged(string name) => PropertyChangedEvent?.Invoke(name);
 
     public static bool MediaLoadedCheck => AudioFile != null && MediaInfo != null;
@@ -68,7 +67,16 @@ namespace CMP2.Core
     /// <summary>
     /// 미디어 파일 정보
     /// </summary>
-    public static IMediaInfo MediaInfo { get; private set; }
+    public static IMediaInfo MediaInfo
+    {
+      get => _MediaInfo;
+      set
+      {
+        _MediaInfo = value;
+        OnPropertyChanged("MediaInfo");
+      }
+    }
+    private static IMediaInfo _MediaInfo;
 
     /// <summary>
     /// 오디오 파일
@@ -89,7 +97,7 @@ namespace CMP2.Core
     /// </summary>
     private static void MediaPlayer_PlaybackStopped(object sender, StoppedEventArgs e)
     {
-      if(e.Exception != null)
+      if (e.Exception != null)
         Log.Error("PlaybackStopped", e.Exception);
       if (WavePlayer.PlaybackState == PlaybackState.Stopped)
       {
@@ -138,40 +146,40 @@ namespace CMP2.Core
         Stop();
       AudioFile?.Dispose();
 
-      if(mediaInfo.MediaType == MediaType.Local)
+      string path = string.Empty;
+      // 로컬 파일 로드 시
+      if (mediaInfo.MediaType == MediaType.Local)
       {
         if (mediaInfo.LoadedCheck != LoadState.AllLoaded)
-        {
           mediaInfo.TryLocalInfomationLoad(true);
-          switch (mediaInfo.LoadedCheck)
-          {
-            case LoadState.Fail:
-              Log.Error("미디어 정보 로드 실패.");
-              break;
-            case LoadState.PartialLoaded:
-              Log.Warn("미디어의 일부 정보가 누락되었습니다.");
-              break;
-            case LoadState.AllLoaded:
-              Log.Info("모든 미디어 정보 로드 성공.");
-              break;
-          }
-        }
-        MediaInfo = mediaInfo;
-        AudioFile = new MediaFoundationReader(mediaInfo.MediaLocation);
+        path = mediaInfo.MediaLocation;
       }
+      // YouTube 에서 로드 시
       else if (mediaInfo.MediaType == MediaType.Youtube)
       {
         if (mediaInfo.LoadedCheck == LoadState.Fail || mediaInfo.LoadedCheck == LoadState.NotTryed)
           await mediaInfo.TryYouTubeInfomationLoadAsync();
         string cachepath = await mediaInfo.TryYouTubeStreamDownloadAsync();
-        MediaInfo = mediaInfo;
         if (string.IsNullOrWhiteSpace(cachepath))
           Log.Error("인터넷 연결이 끊어졌거나, 캐쉬 불러오기에 실패 했습니다.");
-        else
-          AudioFile = new MediaFoundationReader(cachepath);
+        path = cachepath;
       }
 
+      if (string.IsNullOrWhiteSpace(path))
+      {
+        Log.Error("미디어 위치정보가 누락 되었습니다. (path is Null)");
+        return;
+      }
+
+      AudioFile = new MediaFoundationReader(path);
+      if (mediaInfo.Duration == TimeSpan.Zero)
+        mediaInfo.Duration = AudioFile.TotalTime;
+      MediaInfo = mediaInfo;
+
       WavePlayer.Init(AudioFile);
+
+      Log.Debug($"[{(string.IsNullOrWhiteSpace(mediaInfo.GetYouTubeID()) ? System.IO.Path.GetFileNameWithoutExtension(MediaInfo.MediaLocation) : $"\"{mediaInfo.GetYouTubeID()}\" {MediaInfo.Title}")}] 메인 미디어 플레이어에 로드 성공.");
+
       if (Option.AutoPlayOption || autoplay)
         Play();
     }

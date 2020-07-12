@@ -22,6 +22,7 @@ namespace CMP2.Controller.ViewModel
       MainMediaPlayer.PropertyChangedEvent += MainMediaPlayer_PropertyChangedEvent;
       MainMediaPlayer.TickEvent += MainMediaPlayer_TickEvent;
       MainMediaPlayer.Option.PropertyChangedEvent += Option_PropertyChangedEvent;
+      MainMediaPlayer.PlayList.PropertyChangedEvent += PlayList_PropertyChangedEvent;
     }
 
     #region 볼륨
@@ -133,9 +134,6 @@ namespace CMP2.Controller.ViewModel
     #endregion
 
     #region 동기화 메소드
-    /// <summary>
-    /// 옵션 변경사항 처리
-    /// </summary>
     private void Option_PropertyChangedEvent(object sender, PropertyChangedEventArgs e)
     {
       if (e.PropertyName == "RepeatPlayOption")
@@ -145,8 +143,13 @@ namespace CMP2.Controller.ViewModel
     private void MainMediaPlayer_TickEvent(object sender, EventArgs e) => ApplyUI(false);
     private void MainMediaPlayer_PropertyChangedEvent(string propertyname)
     {
-      if (propertyname == "AudioFile")
+      if (propertyname == "MediaInfo")
         ApplyUI();
+    }
+    private void PlayList_PropertyChangedEvent(string propertyname)
+    {
+      if (propertyname == "TotalDuration")
+        OnPropertyChanged("TotalDuration");      // 플래이리스트 재생길이 총합 적용
     }
 
     /// <summary>
@@ -160,7 +163,6 @@ namespace CMP2.Controller.ViewModel
       if (fullapply)
       {
         OnPropertyChanged("DurationTime");       // 슬라이드 바 최대 길이 적용
-        OnPropertyChanged("TotalDuration");      // 플래이리스트 재생길이 총합 적용
         OnPropertyChanged("PlayPauseStateIcon"); // Play/Pause 버튼 아이콘 새로고침 적용
       }
       OnPropertyChanged("CurrentPostion");

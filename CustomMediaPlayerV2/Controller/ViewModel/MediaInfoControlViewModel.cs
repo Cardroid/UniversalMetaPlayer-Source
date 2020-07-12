@@ -21,7 +21,7 @@ namespace CMP2.Controller.ViewModel
 
     private void MainMediaPlayer_PropertyChangedEvent(string propertyname)
     {
-      if (propertyname == "AudioFile")
+      if (propertyname == "MediaInfo")
       {
         OnPropertyChanged("MediaTitle");
         OnPropertyChanged("AlbumTitle");

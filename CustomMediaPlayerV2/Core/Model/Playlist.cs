@@ -6,11 +6,28 @@ using System.Threading.Tasks;
 
 namespace CMP2.Core.Model
 {
-  public class PlayList : ObservableCollection<MediaInfo>, ICloneable
+  public class PlayList : ObservableCollection<MediaInfo>
   {
+    public event CMP_PropertyChangedEventHandler PropertyChangedEvent;
+    private void OnPropertyChanged(string name) => PropertyChangedEvent?.Invoke(name);
+
     public string PlayListName { get; set; } = "Nameless";
-    public TimeSpan TotalDuration { get; set; } = TimeSpan.Zero;
-    public bool NowWorking { get; set; }
+    public TimeSpan _TotalDuration = TimeSpan.Zero;
+    public TimeSpan TotalDuration 
+    {
+      get => _TotalDuration;
+      private set
+      {
+        _TotalDuration = value;
+        OnPropertyChanged("TotalDuration");
+      }
+    }
+    private Log Log { get; } = new Log(typeof(PlayList));
+
+    /// <summary>
+    /// 플레이리스트 정보 직렬화
+    /// </summary>
+    /// <returns>직렬화된 플레이리스트 정보</returns>
     public Task<string[,]> Serialize()
     {
       string[,] Properties = new string[Count + 1, 3];
@@ -22,11 +39,16 @@ namespace CMP2.Core.Model
         Properties[i + 1, 1] = base[i].MediaType.ToString();
         Properties[i + 1, 2] = base[i].MediaLocation;
       }
+      Log.Debug("직렬화 성공");
       return Task.FromResult(Properties);
     }
 
-
-    public Task<bool> Deserialize(string[,] Properties)
+    /// <summary>
+    /// 플레이리스트 정보 역직렬화 시도
+    /// </summary>
+    /// <param name="Properties">처리할 플레이리스트 정보</param>
+    /// <returns>성공 여부</returns>
+    public async Task<bool> Deserialize(string[,] Properties)
     {
       if (Properties.GetLength(0) > 0)
       {
@@ -35,29 +57,30 @@ namespace CMP2.Core.Model
           PlayListName = Properties[0, 0];
           for (int i = 1; i < Properties.Length; i += 2)
           {
-            if(Enum.TryParse(Properties[i, 1],out MediaType mediaType))
+            if (Enum.TryParse(Properties[i, 1], out MediaType mediaType))
             {
               var media = new MediaInfo(mediaType, Properties[i, 1]);
-              if (media.LoadedCheck == LoadState.NotTryed)
-              {
-                if(media.MediaType == MediaType.Local)
-                  media.TryLocalInfomationLoad();
-                else if (media.MediaType == MediaType.Youtube)
-                  media.TryYouTubeInfomationLoadAsync();
-              }
-              media.LoadFailProcess();
-              Add(media);
-              IDRefresh();
-            } 
+              await Add(media);
+            }
           }
-          return Task.FromResult(true);
+          IDRefresh();
+          Log.Debug("역직렬화 성공");
+          return true;
         }
-        catch { return Task.FromResult(false); }
+        catch (Exception e)
+        {
+          Log.Error("역직렬화 실패", e);
+          return false;
+        }
       }
-      return Task.FromResult(false);
+      else
+      {
+        Log.Error("역직렬화 실패 (Properties.Length > 0)");
+        return false;
+      }
     }
 
-    public new void Add(MediaInfo media)
+    public new async Task Add(MediaInfo media)
     {
       media.ID = base.Count + 1;
 
@@ -66,10 +89,10 @@ namespace CMP2.Core.Model
         if (media.MediaType == MediaType.Local)
           media.TryLocalInfomationLoad();
         else if (media.MediaType == MediaType.Youtube)
-          media.TryYouTubeInfomationLoadAsync();
+          await media.TryYouTubeInfomationLoadAsync();
       }
 
-      if(media.LoadedCheck == LoadState.Fail)
+      if (media.LoadedCheck == LoadState.Fail)
         media.LoadFailProcess();
 
       base.Add(media);
@@ -129,16 +152,6 @@ namespace CMP2.Core.Model
         for (int i = newIndex; i < oldIndex; i++)
           base[i].ID = i;
       }
-    }
-    public object Clone()
-    {
-      PlayList cloneplaylist = new PlayList();
-      cloneplaylist.PlayListName = PlayListName;
-      cloneplaylist.TotalDuration = TotalDuration;
-      cloneplaylist.NowWorking = NowWorking;
-      for (int i = 0; i < base.Count; i++)
-      { cloneplaylist.Add(base[i]); }
-      return cloneplaylist;
     }
   }
 }

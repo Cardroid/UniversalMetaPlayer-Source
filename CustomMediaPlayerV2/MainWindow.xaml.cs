@@ -25,6 +25,7 @@ namespace CMP2
   {
     public MainWindow()
     {
+      this.Loaded += (s, e) => { InitializeComponent(); };
       MainLogger.Info("### Start application ###");
       this.Loaded += MainWindow_Loaded;
       this.Closing += MainWindow_Closing;
@@ -37,15 +38,16 @@ namespace CMP2
     /// <summary>
     /// 메인원도우 로드 후 이벤트 처리
     /// </summary>
-    private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+    private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
     {
-      InitializeComponent();
+      await Task.Delay(3000);
 
-      MainMediaPlayer.Init(new MediaInfo(MediaType.Youtube, @"https://www.youtube.com/watch?v=BEEFXAltoqo&list=RDJ3Rhqax4yVo&index=27"), true);
+      //MainMediaPlayer.Init(new MediaInfo(MediaType.Youtube, @"https://www.youtube.com/watch?v=BEEFXAltoqo&list=RDJ3Rhqax4yVo&index=27"), true);
+      MainMediaPlayer.Init(new MediaInfo(MediaType.Local, @"D:\Lab\Project\C#\CustomMediaPlayer\TestMusic\093 황인욱 - 포장마차.mp3"), true);
 
-      MainMediaPlayer.PlayList.Add(new MediaInfo(MediaType.Local, @"D:\Lab\Project\C#\CustomMediaPlayer\TestMusic\093 황인욱 - 포장마차.mp3"));
-      MainMediaPlayer.PlayList.Add(new MediaInfo(MediaType.Local, @"D:\Lab\Project\C#\CustomMediaPlayer\TestMusic\073 폴킴 - 안녕.mp3"));
-      MainMediaPlayer.PlayList.Add(new MediaInfo(MediaType.Local, @"D:\Lab\Project\C#\CustomMediaPlayer\TestMusic\090 창모 (CHANGMO) - 빌었어.mp3"));
+      await MainMediaPlayer.PlayList.Add(new MediaInfo(MediaType.Local, @"D:\Lab\Project\C#\CustomMediaPlayer\TestMusic\093 황인욱 - 포장마차.mp3"));
+      await MainMediaPlayer.PlayList.Add(new MediaInfo(MediaType.Local, @"D:\Lab\Project\C#\CustomMediaPlayer\TestMusic\073 폴킴 - 안녕.mp3"));
+      await MainMediaPlayer.PlayList.Add(new MediaInfo(MediaType.Local, @"D:\Lab\Project\C#\CustomMediaPlayer\TestMusic\090 창모 (CHANGMO) - 빌었어.mp3"));
     }
 
     /// <summary>
@@ -54,7 +56,7 @@ namespace CMP2
     private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
     {
       MainMediaPlayer.Dispose();
-      MainLogger.Info("### Exit application ###");
+      MainLogger.Info("### Exit application ###\n");
       Application.Current.Shutdown();
     }
   }

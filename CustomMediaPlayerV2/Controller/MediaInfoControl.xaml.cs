@@ -27,7 +27,7 @@ namespace CMP2.Controller
       this.Loaded += (s, e) =>
       {
         Log log = new Log(typeof(MediaInfoControl));
-        log.Debug("Initialized");
+        log.Debug("초기화 성공");
       };
     }
   }
