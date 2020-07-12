@@ -5,9 +5,17 @@ using System.Text;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
+using YoutubeExplode;
+
+using CMP2.Utility;
+using YoutubeExplode.Videos.Streams;
+using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
+
 namespace CMP2.Core.Model
 {
   #region 미디어 정보 인터페이스
+
   /// <summary>
   /// 미디어 정보 인터페이스
   /// </summary>
@@ -18,9 +26,13 @@ namespace CMP2.Core.Model
     /// </summary>
     public int ID { get; set; }
     /// <summary>
+    /// 미디어 타입
+    /// </summary>
+    public MediaType MediaType { get; set; }
+    /// <summary>
     /// 파일의 위치
     /// </summary>
-    public string FileFullName { get; set; }
+    public string MediaLocation { get; set; }
     /// <summary>
     /// 타이틀
     /// </summary>
@@ -55,28 +67,200 @@ namespace CMP2.Core.Model
   public class MediaInfo : IMediaInfo
   {
     private Log Log = new Log(typeof(MediaInfo));
-    public MediaInfo(string filepath, bool tryload = true)
+    public MediaInfo(MediaType mediaType, string medialocation)
     {
-      if (string.IsNullOrWhiteSpace(filepath))
+      if (string.IsNullOrWhiteSpace(medialocation))
         return;
-      FileFullName = filepath;
-      Title = Path.GetFileNameWithoutExtension(FileFullName);
+      MediaLocation = medialocation;
+      MediaType = mediaType;
+      if (MediaType == MediaType.Local)
+      {
+        Title = Path.GetFileNameWithoutExtension(MediaLocation);
+      }
       LoadedCheck = LoadState.NotTryed;
-      if (tryload)
-        TryInfomationLoad();
+    }
+
+    #region YouTube
+    /// <summary>
+    /// YouTube 미디어 정보 로드시도
+    /// </summary>
+    public async Task TryYouTubeInfomationLoadAsync()
+    {
+      Log.Debug("미디어 정보 로드 시도.");
+      // 타입 검사
+      if (MediaType != MediaType.Youtube)
+      {
+        Log.Error("미디어 타입이 YouTube가 아닙니다.");
+        return;
+      }
+
+      // 캐쉬폴더가 존재하지 않을시 생성
+      if (!Directory.Exists("Cache"))
+        Directory.CreateDirectory("Cache");
+
+      // 유튜브 Url을 Video_ID_Info.json 으로 파싱
+      string videoinfopath = MediaLocation.Replace("https://www.youtube.com/watch?v=", "");
+      if (videoinfopath.IndexOf('&') != -1)
+        videoinfopath = videoinfopath.Substring(0, videoinfopath.IndexOf('&') - 1);
+      videoinfopath = $"Cache\\{videoinfopath}_Info.json";
+
+      // 임시저장된 정보가 있는지 체크
+      if (File.Exists(videoinfopath))
+      {
+        // 임시저장된 정보를 로드
+        try
+        {
+          string Jsonstring = File.ReadAllText(videoinfopath);
+          JObject jObject = JObject.Parse(Jsonstring);
+
+          Title = jObject.Value<string>("Title");
+          ArtistName = jObject.Value<string>("ArtistName");
+          Duration = TimeSpan.FromMilliseconds(jObject.Value<double>("Duration"));
+
+          LoadedCheck = LoadState.PartialLoaded;
+        }
+        catch (Exception e)
+        {
+          Log.Error("임시저장된 미디어 정보 로드 실패.\n자동으로 온라인 다운로드를 시도합니다.", e);
+          LoadedCheck = await TryInfoOnlineDownloadAsync(videoinfopath);
+        }
+      }
+      else
+      {
+        LoadedCheck = await TryInfoOnlineDownloadAsync(videoinfopath);
+      }
+      if(LoadedCheck != LoadState.Fail || LoadedCheck != LoadState.NotTryed)
+        Log.Info("미디어 정보 로드 성공.");
     }
 
     /// <summary>
-    /// 미디어 정보 로드
+    /// YouTube 미디어 정보 온라인 다운로드시도
     /// </summary>
-    public void TryInfomationLoad(bool fullload = false)
+    /// <param name="videoinfopath">정보 캐쉬저장 경로</param>
+    /// <returns>다운로드 결과</returns>
+    private async Task<LoadState> TryInfoOnlineDownloadAsync(string videoinfopath)
     {
-      if (File.Exists(FileFullName))
+      Log.Debug("온라인에서 미디어 정보 다운로드 시도.");
+      if (Checker.CheckForInternetConnection())
       {
-        using (var Fileinfo = TagLib.File.Create(FileFullName))
+        // 정보 다운로드 시작.
+        var youtube = new YoutubeClient();
+        try
+        {
+          var video = await youtube.Videos.GetAsync(MediaLocation);
+
+          Title = video.Title;
+          ArtistName = video.Author;
+          Duration = video.Duration;
+        }
+        catch (Exception e)
+        {
+          Log.Error("미디어 정보 다운로드 실패.", e);
+          return LoadState.Fail;
+        }
+
+        // 다운로드된 정보를 임시저장합니다.
+        try
+        {
+          JObject Jobj = new JObject
+            {
+                new JProperty("Title", Title),
+                new JProperty("ArtistName", ArtistName),
+                new JProperty("Duration", Duration.TotalMilliseconds.ToString())
+            };
+          File.WriteAllText(videoinfopath, Jobj.ToString());
+        }
+        catch (Exception e)
+        {
+          Log.Error("미디어 정보 저장 실패.", e);
+          return LoadState.Fail;
+        }
+      }
+      else
+      {
+        Log.Error("네트워크를 사용할 수 없습니다.");
+        return LoadState.Fail;
+      }
+      return LoadState.PartialLoaded;
+    }
+
+    /// <summary>
+    /// YouTube 미디어 스트림 다운로드시도
+    /// </summary>
+    /// <returns>스트림 캐쉬 저장 경로</returns>
+    public async Task<string> TryYouTubeStreamDownloadAsync()
+    {
+      Log.Debug("미디어 스트림 로드 시도.");
+      // 타입 검사
+      if (MediaType != MediaType.Youtube)
+      {
+        Log.Error("미디어 타입이 YouTube가 아닙니다.");
+        return string.Empty;
+      }
+
+      // 캐쉬폴더가 존재하지 않을시 생성
+      if (!Directory.Exists("Cache"))
+        Directory.CreateDirectory("Cache");
+
+      // 유튜브 Url을 Video_ID로 파싱
+      string videoid = MediaLocation.Replace("https://www.youtube.com/watch?v=", "");
+      if (videoid.IndexOf('&') != -1)
+        videoid = videoid.Substring(0, videoid.IndexOf('&') - 1);
+
+      // 미디어 스트림 캐쉬가 있을 경우 경로를 return
+      if (File.Exists($"Cache\\{videoid}.{Container.WebM.Name}"))
+      {
+        Log.Info("캐쉬에서 미디어 스트림 로드 성공.");
+        return $"Cache\\{videoid}.{Container.WebM.Name}";
+      }
+
+      if (Checker.CheckForInternetConnection())
+      {
+        // 미디어 스트림 다운로드
+        var youtube = new YoutubeClient();
+        try
+        {
+          var streamManifest = await youtube.Videos.Streams.GetManifestAsync(MediaLocation);
+
+          var streamInfo = streamManifest.GetAudioOnly().WithHighestBitrate();
+
+          if (streamInfo == null)
+            return string.Empty;
+
+          string savepath = $"Cache\\{videoid}.{streamInfo.Container}";
+
+          // Download the stream to file
+          await youtube.Videos.Streams.DownloadAsync(streamInfo, savepath);
+
+          Log.Info("온라인에서 미디어 스트림 로드 성공.");
+          return savepath;
+        }
+        catch (Exception e)
+        {
+          Log.Error("미디어 스트림 다운로드 or 저장 실패", e);
+          return string.Empty;
+        }
+      }
+      else
+      {
+        Log.Error("네트워크를 사용할 수 없습니다.");
+        return string.Empty;
+      }
+    }
+    #endregion
+
+    #region Local
+    /// <summary>
+    /// 로컬 미디어 정보 로드
+    /// </summary>
+    public void TryLocalInfomationLoad(bool fullload = false)
+    {
+      if (File.Exists(MediaLocation))
+      {
+        using (var Fileinfo = TagLib.File.Create(MediaLocation))
         {
           // 미디어 정보를 정보 클래스에 저장
-          Title = Fileinfo.Tag.Title ?? Path.GetFileNameWithoutExtension(FileFullName);
+          Title = Fileinfo.Tag.Title ?? Path.GetFileNameWithoutExtension(MediaLocation);
           Duration = Fileinfo.Properties.Duration;
           if (fullload)
           {
@@ -100,34 +284,38 @@ namespace CMP2.Core.Model
       else
         LoadedCheck = LoadState.Fail;
     }
-    private LoadState _LoadedCheck;
+    #endregion
+
+    #region Other Function
+    private const string MEDIA_INFO_NULL = "(null)";
+    /// <summary>
+    /// 미디어 로드에 실패했을 경우 호출
+    /// </summary>
+    public void LoadFailProcess()
+    {
+      if (!Title.ToLower().StartsWith(MEDIA_INFO_NULL))
+      {
+        Title = $"{MEDIA_INFO_NULL} {Title}";
+      }
+    }
+    #endregion
+
     /// <summary>
     /// 정보의 로드가 완료되었는지 여부
     /// </summary>
-#if DEBUG
-    public LoadState LoadedCheck
-    {
-      get => _LoadedCheck;
-      private set
-      {
-        _LoadedCheck = value;
-        if (_LoadedCheck != LoadState.NotTryed)
-          Log.Debug($"{_LoadedCheck} file : {Path.GetFileName(FileFullName)}");
-      }
-    }
-#else
-    public LoadState LoadedCheck { get => _LoadedCheck; private set => _LoadedCheck = value; }
-#endif
+    public LoadState LoadedCheck { get; private set; }
+
     #region 프로퍼티 정의 (인터페이스 상속)
     public int ID { get; set; } = -1;
-    public string FileFullName { get; set; }
+    public MediaType MediaType { get; set; }
+    public string MediaLocation { get; set; }
     public string Title { get; set; } = string.Empty;
     public TimeSpan Duration { get; set; } = TimeSpan.Zero;
     public ImageSource AlbumImage { get; set; } = null;
     public string AlbumTitle { get; set; } = string.Empty;
     public string ArtistName { get; set; } = string.Empty;
     public string Lyrics { get; set; } = string.Empty;
-#endregion
+    #endregion
   }
   public enum LoadState
   {
@@ -136,5 +324,10 @@ namespace CMP2.Core.Model
     PartialLoaded,
     AllLoaded
   }
-#endregion
+  public enum MediaType
+  {
+    Local,
+    Youtube
+  }
+  #endregion
 }

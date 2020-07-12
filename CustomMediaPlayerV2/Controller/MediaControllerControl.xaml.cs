@@ -11,6 +11,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using CMP2.Controller.ViewModel;
 using CMP2.Core;
 
 namespace CMP2.Controller

@@ -6,7 +6,7 @@ using System.Windows;
 using CMP2.Core;
 using CMP2.Core.Model;
 
-namespace CMP2.Controller
+namespace CMP2.Controller.ViewModel
 {
   public class PlayListControlViewModel : ViewModelBase
   {
@@ -14,7 +14,7 @@ namespace CMP2.Controller
     {
       MainMediaPlayer.PropertyChangedEvent += MainMediaPlayer_PropertyChangedEvent;
     }
-    private bool PlayListIsNull => MainMediaPlayer.PlayList == null;
+
     public PlayList PlayList
     {
       get => MainMediaPlayer.PlayList;
@@ -25,21 +25,19 @@ namespace CMP2.Controller
       }
     }
 
+    #region UI갱신
     private void MainMediaPlayer_PropertyChangedEvent(string propertyname)
     {
-      if(propertyname == "PlayList") { }
-    }
-
-    // 플레이리스트 선택 항목
-    private MediaInfo _SelectItem = null;
-    public MediaInfo SelectItem
-    {
-      get => _SelectItem;
-      set
+      if(propertyname == "PlayList") 
       {
-        _SelectItem = value;
-        OnPropertyChanged("SelectItem");
+        ApplyUI();
       }
     }
+
+    public void ApplyUI()
+    {
+      OnPropertyChanged("Playlist");
+    }
+    #endregion
   }
 }

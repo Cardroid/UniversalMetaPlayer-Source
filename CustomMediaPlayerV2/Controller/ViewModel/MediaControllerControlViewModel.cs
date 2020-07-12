@@ -12,14 +12,14 @@ using MahApps.Metro.IconPacks;
 
 using NAudio.Wave;
 
-namespace CMP2.Controller
+namespace CMP2.Controller.ViewModel
 {
   public class MediaControllerControlViewModel : ViewModelBase
   {
     public MediaControllerControlViewModel()
     {
       MainMediaPlayer.PlayStateChangedEvent += MainMediaPlayer_PlayStateChangedEvent;
-      MainMediaPlayer.PropertyChangedEvent += MainMediaPlayer_PropertyChangedEvent; ;
+      MainMediaPlayer.PropertyChangedEvent += MainMediaPlayer_PropertyChangedEvent;
       MainMediaPlayer.TickEvent += MainMediaPlayer_TickEvent;
       MainMediaPlayer.Option.PropertyChangedEvent += Option_PropertyChangedEvent;
     }

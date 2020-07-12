@@ -5,17 +5,18 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-    xmlns:local="clr-namespace:CMP2.Controller"
+    xmlns:model="clr-namespace:CMP2.Controller.ViewModel"
     xmlns:Utility="clr-namespace:CMP2.Utility"
     FontFamily="{Binding FontFamily}"
     mc:Ignorable="d">
+    
     <UserControl.Resources>
         <Utility:ValueConverter
             x:Key="TimeSpanStringConverter" />
     </UserControl.Resources>
 
     <UserControl.DataContext>
-        <local:MediaControllerControlViewModel />
+        <model:MediaControllerControlViewModel />
     </UserControl.DataContext>
 
     <Grid

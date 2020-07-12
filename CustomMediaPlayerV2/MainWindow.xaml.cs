@@ -18,7 +18,6 @@ using MahApps.Metro.Controls;
 
 using CMP2.Core;
 using CMP2.Core.Model;
-using log4net.Core;
 
 namespace CMP2
 {
@@ -42,11 +41,11 @@ namespace CMP2
     {
       InitializeComponent();
 
-      MainMediaPlayer.Init(new MediaInfo(@"D:\Lab\Project\C#\CustomMediaPlayer\TestMusic\093 황인욱 - 포장마차.mp3"), true);
+      MainMediaPlayer.Init(new MediaInfo(MediaType.Youtube, @"https://www.youtube.com/watch?v=BEEFXAltoqo&list=RDJ3Rhqax4yVo&index=27"), true);
 
-      MainMediaPlayer.PlayList.Add(new MediaInfo(@"D:\Lab\Project\C#\CustomMediaPlayer\TestMusic\093 황인욱 - 포장마차.mp3"));
-      MainMediaPlayer.PlayList.Add(new MediaInfo(@"D:\Lab\Project\C#\CustomMediaPlayer\TestMusic\073 폴킴 - 안녕.mp3"));
-      MainMediaPlayer.PlayList.Add(new MediaInfo(@"D:\Lab\Project\C#\CustomMediaPlayer\TestMusic\090 창모 (CHANGMO) - 빌었어.mp3"));
+      MainMediaPlayer.PlayList.Add(new MediaInfo(MediaType.Local, @"D:\Lab\Project\C#\CustomMediaPlayer\TestMusic\093 황인욱 - 포장마차.mp3"));
+      MainMediaPlayer.PlayList.Add(new MediaInfo(MediaType.Local, @"D:\Lab\Project\C#\CustomMediaPlayer\TestMusic\073 폴킴 - 안녕.mp3"));
+      MainMediaPlayer.PlayList.Add(new MediaInfo(MediaType.Local, @"D:\Lab\Project\C#\CustomMediaPlayer\TestMusic\090 창모 (CHANGMO) - 빌었어.mp3"));
     }
 
     /// <summary>

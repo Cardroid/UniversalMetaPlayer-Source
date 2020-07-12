@@ -10,7 +10,7 @@ using CMP2.Core.Model;
 
 using ControlzEx.Standard;
 
-namespace CMP2.Controller
+namespace CMP2.Controller.ViewModel
 {
   public class MediaInfoControlViewModel : ViewModelBase
   {

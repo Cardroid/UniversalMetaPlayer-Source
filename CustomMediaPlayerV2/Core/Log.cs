@@ -45,7 +45,11 @@ namespace CMP2.Core
 
       Hierarchy.Root.AddAppender(RollingAppender);
       // 로그 출력 설정 All 이면 모든 설정이 되고 Info 이면 최하 레벨 Info 위가 설정됩니다.
+#if DEBUG
       Hierarchy.Root.Level = Level.All;
+#else
+      Hierarchy.Root.Level = Level.Info;
+#endif
       Hierarchy.Configured = true;
     }
 

@@ -13,18 +13,18 @@ namespace CMP2.Core.Model
     public bool NowWorking { get; set; }
     public Task<string[,]> Serialize()
     {
-      string[,] Properties = new string[Count + 1, 2];
+      string[,] Properties = new string[Count + 1, 3];
       Properties[0, 0] = PlayListName;
       Properties[0, 1] = TotalDuration.TotalMilliseconds.ToString();
       for (int i = 0; i < Count; i++)
       {
         Properties[i + 1, 0] = base[i].Title;
-        Properties[i + 1, 1] = base[i].FileFullName;
+        Properties[i + 1, 1] = base[i].MediaType.ToString();
+        Properties[i + 1, 2] = base[i].MediaLocation;
       }
       return Task.FromResult(Properties);
     }
 
-    private const string MEDIA_INFO_NULL = "(Null)";
 
     public Task<bool> Deserialize(string[,] Properties)
     {
@@ -35,14 +35,20 @@ namespace CMP2.Core.Model
           PlayListName = Properties[0, 0];
           for (int i = 1; i < Properties.Length; i += 2)
           {
-            var media = new MediaInfo(Properties[i, 1]);
-            if (media.LoadedCheck == LoadState.NotTryed)
-              media.TryInfomationLoad();
-            if (media.LoadedCheck == LoadState.Fail)
-              if (!media.Title.StartsWith(MEDIA_INFO_NULL))
-                media.Title = $"{MEDIA_INFO_NULL} {media.Title}";
-            Add(media);
-            IDRefresh();
+            if(Enum.TryParse(Properties[i, 1],out MediaType mediaType))
+            {
+              var media = new MediaInfo(mediaType, Properties[i, 1]);
+              if (media.LoadedCheck == LoadState.NotTryed)
+              {
+                if(media.MediaType == MediaType.Local)
+                  media.TryLocalInfomationLoad();
+                else if (media.MediaType == MediaType.Youtube)
+                  media.TryYouTubeInfomationLoadAsync();
+              }
+              media.LoadFailProcess();
+              Add(media);
+              IDRefresh();
+            } 
           }
           return Task.FromResult(true);
         }
@@ -54,8 +60,18 @@ namespace CMP2.Core.Model
     public new void Add(MediaInfo media)
     {
       media.ID = base.Count + 1;
+
       if ((int)media.LoadedCheck < 2)
-        media.TryInfomationLoad();
+      {
+        if (media.MediaType == MediaType.Local)
+          media.TryLocalInfomationLoad();
+        else if (media.MediaType == MediaType.Youtube)
+          media.TryYouTubeInfomationLoadAsync();
+      }
+
+      if(media.LoadedCheck == LoadState.Fail)
+        media.LoadFailProcess();
+
       base.Add(media);
       TotalDuration += media.Duration;
     }

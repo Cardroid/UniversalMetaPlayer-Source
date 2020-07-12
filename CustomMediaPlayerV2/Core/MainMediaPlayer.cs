@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Threading;
 
@@ -72,7 +73,7 @@ namespace CMP2.Core
     /// <summary>
     /// 오디오 파일
     /// </summary>
-    public static AudioFileReader AudioFile
+    public static WaveStream AudioFile
     {
       get => _AudioFile;
       private set
@@ -81,7 +82,7 @@ namespace CMP2.Core
         OnPropertyChanged("AudioFile");
       }
     }
-    private static AudioFileReader _AudioFile = null;
+    private static WaveStream _AudioFile = null;
 
     /// <summary>
     /// 재생이 끝났을 경우 이벤트 처리
@@ -126,34 +127,50 @@ namespace CMP2.Core
     /// </summary>
     /// <param name="mediaInfo">재생할 미디어</param>
     /// <param name="autoplay">자동 재생 여부</param>
-    public static void Init(MediaInfo mediaInfo, bool autoplay = false)
+    public static async void Init(MediaInfo mediaInfo, bool autoplay = false)
     {
-      if (mediaInfo == null || string.IsNullOrWhiteSpace(mediaInfo.FileFullName))
+      if (mediaInfo == null || string.IsNullOrWhiteSpace(mediaInfo.MediaLocation))
       {
-        Log.Error("Missing media absolute path.");
+        Log.Error("미디어 위치정보가 누락 되었습니다. (잘못된 매개변수)");
         return;
       }
       if (PlaybackState != PlaybackState.Stopped)
         Stop();
       AudioFile?.Dispose();
-      if (mediaInfo.LoadedCheck != LoadState.AllLoaded)
+
+      if(mediaInfo.MediaType == MediaType.Local)
       {
-        mediaInfo.TryInfomationLoad(true);
-        switch (mediaInfo.LoadedCheck)
+        if (mediaInfo.LoadedCheck != LoadState.AllLoaded)
         {
-          case LoadState.Fail:
-            Log.Error("Failed to load information.");
-            break;
-          case LoadState.PartialLoaded:
-            Log.Warn("Some of the information on the media is missing.");
-            break;
-          case LoadState.AllLoaded:
-            Log.Info("Media Load Successfully.");
-            break;
+          mediaInfo.TryLocalInfomationLoad(true);
+          switch (mediaInfo.LoadedCheck)
+          {
+            case LoadState.Fail:
+              Log.Error("미디어 정보 로드 실패.");
+              break;
+            case LoadState.PartialLoaded:
+              Log.Warn("미디어의 일부 정보가 누락되었습니다.");
+              break;
+            case LoadState.AllLoaded:
+              Log.Info("모든 미디어 정보 로드 성공.");
+              break;
+          }
         }
+        MediaInfo = mediaInfo;
+        AudioFile = new MediaFoundationReader(mediaInfo.MediaLocation);
       }
-      MediaInfo = mediaInfo;
-      AudioFile = new AudioFileReader(mediaInfo.FileFullName);
+      else if (mediaInfo.MediaType == MediaType.Youtube)
+      {
+        if (mediaInfo.LoadedCheck == LoadState.Fail || mediaInfo.LoadedCheck == LoadState.NotTryed)
+          await mediaInfo.TryYouTubeInfomationLoadAsync();
+        string cachepath = await mediaInfo.TryYouTubeStreamDownloadAsync();
+        MediaInfo = mediaInfo;
+        if (string.IsNullOrWhiteSpace(cachepath))
+          Log.Error("인터넷 연결이 끊어졌거나, 캐쉬 불러오기에 실패 했습니다.");
+        else
+          AudioFile = new MediaFoundationReader(cachepath);
+      }
+
       WavePlayer.Init(AudioFile);
       if (Option.AutoPlayOption || autoplay)
         Play();
