@@ -4,17 +4,15 @@ using System.Text;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-
-using ControlzEx.Theming;
+using MaterialDesignThemes.Wpf;
 
 namespace CMP2.Core
 {
-  public interface IGlobalProperty
+  public static class GlobalProperty
   {
-    static IGlobalProperty()
+    static GlobalProperty()
     {
       MainFontFamily = new FontFamily(new Uri("pack://application:,,,/"), "./Resources/Font/#NanumGothic");
-      MainTheme = ThemeManager.Current.GetTheme("Dark", "Green");
       LogoImage = new BitmapImage(new Uri("pack://application:,,,/CustomMediaPlayer;component/Resources/IconCustomMusicPlayer.png", UriKind.RelativeOrAbsolute));
       LogoNoteImage = new BitmapImage(new Uri("pack://application:,,,/CustomMediaPlayer;component/Resources/IconnoteCustomMusicPlayer.png", UriKind.RelativeOrAbsolute));
     }
@@ -25,7 +23,32 @@ namespace CMP2.Core
     /// <summary>
     /// 테마
     /// </summary>
-    public static Theme MainTheme { get; set; }
+    public static ITheme Theme
+    {
+      get => _Theme;
+      set
+      {
+        _Theme = value;
+        _paletteHelper.SetTheme(_Theme);
+      }
+    }
+    public static bool IsDark 
+    {
+      get => _IsDark;
+      set
+      {
+        if (_IsDark != value)
+          ToggleBaseColour(_IsDark);
+      }
+    }
+    private static void ToggleBaseColour(bool isDark)
+    {
+      ITheme theme = _paletteHelper.GetTheme();
+      IBaseTheme baseTheme = isDark ? new MaterialDesignDarkTheme() : (IBaseTheme)new MaterialDesignLightTheme();
+      _IsDark = isDark;
+      theme.SetBaseTheme(baseTheme);
+      _paletteHelper.SetTheme(theme);
+    }
     /// <summary>
     /// 로고 이미지
     /// </summary>
@@ -34,5 +57,9 @@ namespace CMP2.Core
     /// 로고 음표 이미지
     /// </summary>
     public static ImageSource LogoNoteImage { get; }
+
+    private static readonly PaletteHelper _paletteHelper = new PaletteHelper();
+    private static ITheme _Theme;
+    private static bool _IsDark;
   }
 }

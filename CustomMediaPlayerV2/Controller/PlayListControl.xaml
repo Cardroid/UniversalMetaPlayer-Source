@@ -7,22 +7,26 @@
     xmlns:dd="urn:gong-wpf-dragdrop"
     xmlns:model="clr-namespace:CMP2.Controller.ViewModel"
     xmlns:Utility="clr-namespace:CMP2.Utility"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+    Background="{DynamicResource MaterialDesignPaper}"
+    TextElement.FontWeight="Medium"
+    TextElement.FontSize="14"
     FontFamily="{Binding FontFamily}"
     mc:Ignorable="d">
+
+    <UserControl.DataContext>
+        <model:PlayListControlViewModel />
+    </UserControl.DataContext>
 
     <UserControl.Resources>
         <Utility:ValueConverter
             x:Key="TimeSpanStringConverter" />
     </UserControl.Resources>
 
-    <UserControl.DataContext>
-        <model:PlayListControlViewModel />
-    </UserControl.DataContext>
-
     <GroupBox
         HorizontalContentAlignment="Stretch"
         VerticalContentAlignment="Stretch"
-        Style="{StaticResource MahApps.Styles.GroupBox}"
         BorderThickness="1,0,0,0"
         Padding="0">
         <GroupBox.Header>
@@ -54,7 +58,7 @@
                     <GridView>
                         <GridViewColumn
                             x:Name="ID"
-                            Width="40">
+                            Width="Auto">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <Label
@@ -68,7 +72,7 @@
                         </GridViewColumn>
                         <GridViewColumn
                             x:Name="Title"
-                            Width="40">
+                            Width="Auto">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <Label
@@ -80,7 +84,7 @@
                         </GridViewColumn>
                         <GridViewColumn
                             x:Name="Duration"
-                            Width="40">
+                            Width="Auto">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <Label
@@ -95,7 +99,7 @@
                     </GridView>
                 </ListView.View>
             </ListView>
-            
+
             <!--<Label
                 x:Name="ProgressLabel"
                 HorizontalAlignment="Stretch"

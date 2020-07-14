@@ -7,17 +7,22 @@
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:model="clr-namespace:CMP2.Controller.ViewModel"
     xmlns:Utility="clr-namespace:CMP2.Utility"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+    Background="Transparent"
+    TextElement.FontWeight="Medium"
+    TextElement.FontSize="14"
     FontFamily="{Binding FontFamily}"
     mc:Ignorable="d">
-    
-    <UserControl.Resources>
-        <Utility:ValueConverter
-            x:Key="TimeSpanStringConverter" />
-    </UserControl.Resources>
 
     <UserControl.DataContext>
         <model:MediaControllerControlViewModel />
     </UserControl.DataContext>
+
+    <UserControl.Resources>
+        <Utility:ValueConverter
+            x:Key="TimeSpanStringConverter" />
+    </UserControl.Resources>
 
     <Grid
         HorizontalAlignment="Stretch"
@@ -59,12 +64,12 @@
                 x:Name="ProgressSlider"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Center"
-                Style="{StaticResource MahApps.Styles.Slider.Flat}"
                 IsMoveToPointEnabled="True"
                 Value="{Binding CurrentPostion.TotalMilliseconds, Mode=OneWay}"
                 Maximum="{Binding DurationTime.TotalMilliseconds, Mode=OneWay}"
                 Margin="5,0,5,0"
-                Grid.Column="1" />
+                Grid.Column="1">
+            </Slider>
             <Label
                 x:Name="TotalTimeLabel"
                 HorizontalAlignment="Center"
@@ -81,11 +86,12 @@
             VerticalAlignment="Center"
             Grid.Row="1">
             <Button
+                IsEnabled="False"
                 x:Name="ShuffleButton"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                Content="{iconPacks:Material Kind=ShuffleDisabled, Width=20, Height=20}"
-                Style="{DynamicResource MahApps.Styles.Button.Circle}"
+                Style="{StaticResource MaterialDesignIconButton}"
+                Content="{materialDesign:PackIcon Kind=Shuffle, Size=30}"
                 ToolTip="셔플 / Shuffle"
                 Width="50"
                 Height="50" />
@@ -93,18 +99,19 @@
                 x:Name="RepeatButton"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
+                Style="{StaticResource MaterialDesignIconButton}"
                 Content="{Binding RepeatPlayOptionIcon}"
-                Style="{DynamicResource MahApps.Styles.Button.Circle}"
                 ToolTip="반복 / Repeat"
                 Margin="0,0,20,0"
                 Width="50"
                 Height="50" />
             <Button
+                IsEnabled="False"
                 x:Name="PreviousButton"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                Content="{iconPacks:Material Kind=SkipPrevious, Width=18, Height=18}"
-                Style="{DynamicResource MahApps.Styles.Button.Circle}"
+                Style="{StaticResource MaterialDesignIconButton}"
+                Content="{materialDesign:PackIcon Kind=SkipPrevious, Size=40}"
                 ToolTip="이전 / Previous"
                 Width="50"
                 Height="50" />
@@ -112,8 +119,8 @@
                 x:Name="PlayPauseButton"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
+                Style="{StaticResource MaterialDesignIconButton}"
                 Content="{Binding PlayPauseStateIcon}"
-                Style="{DynamicResource MahApps.Styles.Button.Circle}"
                 ToolTip="[재생 / 일시정지] / [Play / Pause]"
                 Width="80"
                 Height="80" />
@@ -121,36 +128,39 @@
                 x:Name="StopButton"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                Content="{iconPacks:Material Kind=Stop, Width=25, Height=25}"
-                Style="{DynamicResource MahApps.Styles.Button.Circle}"
+                Style="{StaticResource MaterialDesignIconButton}"
+                Content="{materialDesign:PackIcon Kind=Stop, Size=45}"
                 ToolTip="정지 / Stop"
                 Width="60"
                 Height="60" />
             <Button
+                IsEnabled="False"
                 x:Name="NextButton"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                Content="{iconPacks:Material Kind=SkipNext, Width=18, Height=18}"
-                Style="{DynamicResource MahApps.Styles.Button.Circle}"
+                Style="{StaticResource MaterialDesignIconButton}"
+                Content="{materialDesign:PackIcon Kind=SkipNext, Size=40}"
                 ToolTip="다음 / Next"
                 Width="50"
                 Height="50" />
             <Button
+                IsEnabled="False"
                 x:Name="MediaListButton"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                Content="{iconPacks:BoxIcons Kind=SolidPlayList, Width=20, Height=20}"
-                Style="{DynamicResource MahApps.Styles.Button.Circle}"
+                Style="{StaticResource MaterialDesignIconButton}"
+                Content="{materialDesign:PackIcon Kind=PlaylistMusic, Size=30}"
                 ToolTip="플레이리스트 / PlayList"
                 Margin="20,0,0,0"
                 Width="50"
                 Height="50" />
             <Button
+                IsEnabled="False"
                 x:Name="SettingButton"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                Content="{iconPacks:Material Kind=SettingsHelper, Width=20, Height=20}"
-                Style="{DynamicResource MahApps.Styles.Button.Circle}"
+                Style="{StaticResource MaterialDesignIconButton}"
+                Content="{materialDesign:PackIcon Kind=Settings, Size=30}"
                 ToolTip="설정 / Setting"
                 Width="50"
                 Height="50" />
@@ -176,8 +186,8 @@
                     x:Name="VolumeMuteButton"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
+                    Style="{StaticResource MaterialDesignIconButton}"
                     Content="{Binding VolumeMuteButtonIcon}"
-                    Style="{DynamicResource MahApps.Styles.Button.Circle}"
                     ToolTip="볼륨 버튼 / Volume Button"
                     BorderThickness="0"
                     Width="30"
@@ -186,7 +196,6 @@
                     x:Name="VolumeSlider"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    Style="{StaticResource MahApps.Styles.Slider}"
                     IsMoveToPointEnabled="True"
                     AutoToolTipPlacement="TopLeft"
                     AutoToolTipPrecision="0"
@@ -194,11 +203,6 @@
                     ToolTip="볼륨 / Volume"
                     Maximum="100"
                     Width="100" />
-                <Label
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Content="{Binding VolumeString}"
-                    ToolTip="볼륨 / Volume" />
             </StackPanel>
             <Label
                 x:Name="TotalDurationLabel"

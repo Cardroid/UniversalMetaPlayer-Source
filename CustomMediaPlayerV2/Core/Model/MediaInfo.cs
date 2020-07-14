@@ -85,7 +85,7 @@ namespace CMP2.Core.Model
     }
 
     #region YouTube
-    public static string CacheDirectoryPath = "Cache";
+    public static string CacheDirectoryPath = Path.Combine("Cache","Youtube");
 
     /// <summary>
     /// YouTube 미디어 정보 로드시도
@@ -101,8 +101,7 @@ namespace CMP2.Core.Model
       }
 
       // 캐쉬폴더가 존재하지 않을시 생성
-      if (!Directory.Exists(CacheDirectoryPath))
-        Directory.CreateDirectory(CacheDirectoryPath);
+      DirectoryCheck(CacheDirectoryPath);
 
       string videoInfoPath = Path.Combine(CacheDirectoryPath, $"{GetYouTubeID()}_Info.json");
       
@@ -129,7 +128,7 @@ namespace CMP2.Core.Model
         }
       }
       LoadedCheck = await TryInfoOnlineDownloadAsync(videoInfoPath);
-      if (LoadedCheck != LoadState.Fail || LoadedCheck != LoadState.NotTryed)
+      if (LoadedCheck == LoadState.AllLoaded || LoadedCheck == LoadState.PartialLoaded)
         Log.Info("온라인에서 미디어 정보 로드 성공.");
     }
 
@@ -199,8 +198,7 @@ namespace CMP2.Core.Model
       }
 
       // 캐쉬폴더가 존재하지 않을시 생성
-      if (!Directory.Exists(CacheDirectoryPath))
-        Directory.CreateDirectory(CacheDirectoryPath);
+      DirectoryCheck(CacheDirectoryPath);
 
       // 미디어 스트림 캐쉬가 있을 경우 경로를 return
       string[] files = Directory.GetFiles(CacheDirectoryPath, $"{GetYouTubeID()}.*", SearchOption.AllDirectories);
@@ -352,6 +350,16 @@ namespace CMP2.Core.Model
       {
         Title = $"{MEDIA_INFO_NULL} {Title}";
       }
+    }
+
+    /// <summary>
+    /// 디랙터리를 채크합니다. 존재하지 않으면 생성합니다.
+    /// </summary>
+    /// <param name="path"></param>
+    private void DirectoryCheck(string path)
+    {
+      if (!Directory.Exists(path))
+        Directory.CreateDirectory(path);
     }
     #endregion
 

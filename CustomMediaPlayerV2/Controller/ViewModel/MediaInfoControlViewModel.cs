@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 using CMP2.Core;
 using CMP2.Core.Model;
-
-using ControlzEx.Standard;
 
 namespace CMP2.Controller.ViewModel
 {
@@ -57,9 +56,33 @@ namespace CMP2.Controller.ViewModel
   #endregion
 
   #region 앨범 이미지
-    public ImageSource AlbumImage =>
-      MainMediaPlayer.MediaLoadedCheck && MainMediaPlayer.MediaInfo.AlbumImage != null
-        ? MainMediaPlayer.MediaInfo.AlbumImage : IGlobalProperty.LogoNoteImage;
+    public ImageSource AlbumImage 
+    {
+      get
+      {
+        if (MainMediaPlayer.MediaLoadedCheck && MainMediaPlayer.MediaInfo.AlbumImage != null)
+        {
+          ImageMargin = new Thickness(0);
+          return MainMediaPlayer.MediaInfo.AlbumImage;
+        }
+        else
+        {
+          ImageMargin = new Thickness(70);
+          return GlobalProperty.LogoNoteImage;
+        }
+      }
+    }
+
+    private Thickness _ImageMargin = new Thickness(70);
+    public Thickness ImageMargin 
+    {
+      get => _ImageMargin;
+      private set
+      {
+        _ImageMargin = value;
+        OnPropertyChanged("ImageMargin");
+      }
+    }
   }
   #endregion
 }

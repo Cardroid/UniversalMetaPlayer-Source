@@ -8,7 +8,7 @@ using CMP2.Core;
 using CMP2.Core.Model;
 using CMP2.Utility;
 
-using MahApps.Metro.IconPacks;
+using MaterialDesignThemes.Wpf;
 
 using NAudio.Wave;
 
@@ -26,8 +26,12 @@ namespace CMP2.Controller.ViewModel
     }
 
     #region 볼륨
-    public float BeforeVolume { get; private set; } = 100;
-    public string VolumeString { get => ((int)(Volume)).ToString() + "%"; }
+    public float _BeforeVolume = 80;
+    public float BeforeVolume
+    {
+      get => _BeforeVolume;
+      private set => _BeforeVolume = Math.Clamp(value, 10, 100);
+    }
     public float Volume
     {
       get => MainMediaPlayer.Volume * 100;
@@ -42,8 +46,8 @@ namespace CMP2.Controller.ViewModel
       }
     }
     // 볼륨 뮤트 버튼 아이콘 관련
-    private PackIconBase _VolumeMuteButtonIcon = null;
-    public PackIconBase VolumeMuteButtonIcon
+    private PackIcon _VolumeMuteButtonIcon = null;
+    public PackIcon VolumeMuteButtonIcon
     {
       get
       {
@@ -57,46 +61,46 @@ namespace CMP2.Controller.ViewModel
         OnPropertyChanged("VolumeMuteButtonIcon");
       }
     }
-    public PackIconBase VolumeMuteButtonIconChanger()
+    public PackIcon VolumeMuteButtonIconChanger()
     {
-      var Icon = new PackIconControl() { Width = 15, Height = 15 };
-      if (Volume > 75)
-        Icon.Kind = PackIconMaterialKind.VolumeHigh;
-      else if (Volume > 35)
-        Icon.Kind = PackIconMaterialKind.VolumeMedium;
+      var Icon = new PackIcon() { Width = 25, Height = 25 };
+      if (Volume > 70)
+        Icon.Kind = PackIconKind.VolumeHigh;
+      else if (Volume > 25)
+        Icon.Kind = PackIconKind.VolumeMedium;
       else if (Volume > 0)
-        Icon.Kind = PackIconMaterialKind.VolumeLow;
+        Icon.Kind = PackIconKind.VolumeLow;
       else if (Volume == 0)
-        Icon.Kind = PackIconMaterialKind.VolumeOff;
+        Icon.Kind = PackIconKind.VolumeOff;
       return Icon;
     }
     #endregion
 
     #region 재생 / 일시정지
-    public PackIconBase PlayPauseStateIcon
+    public PackIcon PlayPauseStateIcon
     {
       get
       {
         if (MainMediaPlayer.PlaybackState == PlaybackState.Playing)
-          return new PackIconControl { Width = 30, Height = 30, Kind = PackIconMaterialKind.Pause };
+          return new PackIcon { Width = 50, Height = 50, Kind = PackIconKind.Pause };
         else
-          return new PackIconControl { Width = 30, Height = 30, Kind = PackIconMaterialKind.Play };
+          return new PackIcon { Width = 50, Height = 50, Kind = PackIconKind.Play };
       }
     }
     #endregion
 
     #region 반복재생
-    public PackIconBase RepeatPlayOptionIcon 
+    public PackIcon RepeatPlayOptionIcon 
     {
       get
       {
-        var RepeatIcon = new PackIconControl() { Width = 20, Height = 20 };
+        var RepeatIcon = new PackIcon() { Width = 30, Height = 30 };
         if (MainMediaPlayer.Option.RepeatPlayOption == 0) // 반복 안함
-        { RepeatIcon.Kind = PackIconMaterialKind.RepeatOff; }
+        { RepeatIcon.Kind = PackIconKind.RepeatOff; }
         else if (MainMediaPlayer.Option.RepeatPlayOption == 1) // 한 곡 반복
-        { RepeatIcon.Kind = PackIconMaterialKind.RepeatOnce; }
+        { RepeatIcon.Kind = PackIconKind.RepeatOnce; }
         else if (MainMediaPlayer.Option.RepeatPlayOption == 2) // 전채 반복
-        { RepeatIcon.Kind = PackIconMaterialKind.Repeat; }
+        { RepeatIcon.Kind = PackIconKind.Repeat; }
         return RepeatIcon;
       }
     }

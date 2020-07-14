@@ -5,57 +5,51 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:model="clr-namespace:CMP2.Controller.ViewModel"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+    Background="{DynamicResource MaterialDesignPaper}"
+    TextElement.FontWeight="Medium"
+    TextElement.FontSize="14"
     FontFamily="{Binding FontFamily}"
     mc:Ignorable="d">
 
     <UserControl.DataContext>
         <model:MediaInfoControlViewModel />
     </UserControl.DataContext>
-    
-    <Grid
-        HorizontalAlignment="Stretch"
-        VerticalAlignment="Stretch"
-        Grid.Row="0">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition
-                Width="Auto"
-                MaxWidth="500" />
-            <ColumnDefinition
-                Width="Auto" />
-        </Grid.ColumnDefinitions>
-        <Image
+
+    <Grid>
+        <Grid.Background>
+            <ImageBrush
+                Opacity="0.25"
+                Stretch="UniformToFill"
+                ImageSource="{Binding AlbumImage}"/>
+        </Grid.Background>
+        <!--<Image
             x:Name="MediaImage"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch"
-            Stretch="UniformToFill"
+            Stretch="Uniform"
             Source="{Binding AlbumImage}"
-            Grid.Column="0" />
+            Margin="{Binding ImageMargin}"
+            Grid.Column="0" />-->
         <StackPanel
             Orientation="Vertical"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
-            Grid.Column="1">
+            Margin="30,0,30,30">
             <Label
                 x:Name="SongTitleLabel"
                 HorizontalAlignment="Left"
-                VerticalAlignment="Center"
-                HorizontalContentAlignment="Left"
-                VerticalContentAlignment="Center"
+                VerticalAlignment="Bottom"
                 Content="{Binding MediaTitle}"
                 FontSize="24" />
             <Label
                 x:Name="AlbumTitleLabel"
                 HorizontalAlignment="Left"
-                VerticalAlignment="Center"
-                HorizontalContentAlignment="Left"
-                VerticalContentAlignment="Center"
+                VerticalAlignment="Bottom"
                 Content="{Binding AlbumTitle}" />
             <Label
                 x:Name="ArtistNameLabel"
                 HorizontalAlignment="Left"
-                VerticalAlignment="Center"
-                HorizontalContentAlignment="Left"
-                VerticalContentAlignment="Center"
+                VerticalAlignment="Bottom"
                 Content="{Binding ArtistName}" />
         </StackPanel>
     </Grid>

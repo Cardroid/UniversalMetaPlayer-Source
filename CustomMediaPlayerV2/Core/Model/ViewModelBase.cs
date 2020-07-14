@@ -10,6 +10,6 @@ namespace CMP2.Core.Model
   {
     public event PropertyChangedEventHandler PropertyChanged;
     protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    public FontFamily FontFamily => IGlobalProperty.MainFontFamily;
+    public FontFamily FontFamily => GlobalProperty.MainFontFamily;
   }
 }

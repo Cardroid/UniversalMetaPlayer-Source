@@ -13,15 +13,13 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-using ControlzEx.Theming;
-using MahApps.Metro.Controls;
-
 using CMP2.Core;
 using CMP2.Core.Model;
+using MaterialDesignThemes.Wpf;
 
 namespace CMP2
 {
-  public partial class MainWindow : MetroWindow
+  public partial class MainWindow : Window
   {
     public MainWindow()
     {
@@ -29,9 +27,6 @@ namespace CMP2
       MainLogger.Info("### Start application ###");
       this.Loaded += MainWindow_Loaded;
       this.Closing += MainWindow_Closing;
-
-      // 초기 메인 테마 설정
-      ThemeManager.Current.ChangeTheme(this, IGlobalProperty.MainTheme);
     }
     private Log MainLogger { get; } = new Log(typeof(App));
 
@@ -42,7 +37,9 @@ namespace CMP2
     {
       await Task.Delay(3000);
 
-      //MainMediaPlayer.Init(new MediaInfo(MediaType.Youtube, @"https://www.youtube.com/watch?v=BEEFXAltoqo&list=RDJ3Rhqax4yVo&index=27"), true);
+      //MainMediaPlayer.Init(new MediaInfo(MediaType.Youtube, @"https://www.youtube.com/watch?v=jv543Nk5s18"), true);
+      //MainMediaPlayer.Init(new MediaInfo(MediaType.Youtube, @"https://www.youtube.com/watch?v=3vhA8njtoQg"), true);
+
       MainMediaPlayer.Init(new MediaInfo(MediaType.Local, @"D:\Lab\Project\C#\CustomMediaPlayer\TestMusic\093 황인욱 - 포장마차.mp3"), true);
 
       await MainMediaPlayer.PlayList.Add(new MediaInfo(MediaType.Local, @"D:\Lab\Project\C#\CustomMediaPlayer\TestMusic\093 황인욱 - 포장마차.mp3"));
