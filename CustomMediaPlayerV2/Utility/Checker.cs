@@ -17,14 +17,9 @@ namespace CMP2.Utility
       {
         using (var client = new WebClient())
         using (client.OpenRead("http://clients3.google.com/generate_204"))
-        {
-          return true;
-        }
+        { return true; }
       }
-      catch
-      {
-        return false;
-      }
+      catch { return false; }
     }
   }
 }

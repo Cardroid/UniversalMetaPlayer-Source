@@ -31,6 +31,7 @@
             Margin="{Binding ImageMargin}"
             Grid.Column="0" />-->
         <StackPanel
+            x:Name="InfoPanel"
             Orientation="Vertical"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"

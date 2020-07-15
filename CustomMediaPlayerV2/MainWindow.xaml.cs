@@ -15,6 +15,8 @@ using System.Windows.Shapes;
 
 using CMP2.Core;
 using CMP2.Core.Model;
+using CMP2.Test;
+
 using MaterialDesignThemes.Wpf;
 
 namespace CMP2
@@ -23,8 +25,8 @@ namespace CMP2
   {
     public MainWindow()
     {
-      this.Loaded += (s, e) => { InitializeComponent(); };
       MainLogger.Info("### Start application ###");
+      this.Loaded += (s, e) => { InitializeComponent(); };
       this.Loaded += MainWindow_Loaded;
       this.Closing += MainWindow_Closing;
     }
@@ -33,27 +35,43 @@ namespace CMP2
     /// <summary>
     /// 메인원도우 로드 후 이벤트 처리
     /// </summary>
-    private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
+    private void MainWindow_Loaded(object sender, RoutedEventArgs e)
     {
-      await Task.Delay(3000);
+      // 마우스로 배경을 클릭 했을 경우 컨트롤 숨기기 or 보이기
+      this.MouseEnter += (_, e) =>
+      {
+        this.MainControllerControl.Visibility = Visibility.Visible;
+        this.MainInfoControl.InfoPanel.VerticalAlignment = VerticalAlignment.Center;
+      };
+      this.MouseLeave += async (_, e) =>
+      {
+        await Task.Delay(5000);
+        this.MainControllerControl.Visibility = Visibility.Collapsed;
+        this.MainInfoControl.InfoPanel.VerticalAlignment = VerticalAlignment.Bottom;
+      };
 
-      //MainMediaPlayer.Init(new MediaInfo(MediaType.Youtube, @"https://www.youtube.com/watch?v=jv543Nk5s18"), true);
-      //MainMediaPlayer.Init(new MediaInfo(MediaType.Youtube, @"https://www.youtube.com/watch?v=3vhA8njtoQg"), true);
+      // 창 드레그 움직임
+      this.MouseLeftButtonDown += MainWindow_WindowDrag;
 
-      MainMediaPlayer.Init(new MediaInfo(MediaType.Local, @"D:\Lab\Project\C#\CustomMediaPlayer\TestMusic\093 황인욱 - 포장마차.mp3"), true);
+      // 종료 버튼
+      this.ExitButteon.Click += (_, e) => { this.Close(); };
 
-      await MainMediaPlayer.PlayList.Add(new MediaInfo(MediaType.Local, @"D:\Lab\Project\C#\CustomMediaPlayer\TestMusic\093 황인욱 - 포장마차.mp3"));
-      await MainMediaPlayer.PlayList.Add(new MediaInfo(MediaType.Local, @"D:\Lab\Project\C#\CustomMediaPlayer\TestMusic\073 폴킴 - 안녕.mp3"));
-      await MainMediaPlayer.PlayList.Add(new MediaInfo(MediaType.Local, @"D:\Lab\Project\C#\CustomMediaPlayer\TestMusic\090 창모 (CHANGMO) - 빌었어.mp3"));
+      // 디버그 전용 코드
+      // 오류시 제거 요망
+#if DEBUG
+      PlayTest test = new PlayTest();
+      test.StartPlayTest();
+#endif
     }
+    private void MainWindow_WindowDrag(object sender, MouseButtonEventArgs e) { this.DragMove(); e.Handled = true; }
 
     /// <summary>
     /// 메인 윈도우 종료 이벤트처리
     /// </summary>
     private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
     {
-      MainMediaPlayer.Dispose();
       MainLogger.Info("### Exit application ###\n");
+      MainMediaPlayer.Dispose();
       Application.Current.Shutdown();
     }
   }

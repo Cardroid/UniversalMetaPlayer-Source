@@ -23,7 +23,7 @@
         <Utility:ValueConverter
             x:Key="TimeSpanStringConverter" />
     </UserControl.Resources>
-
+    
     <Grid
         HorizontalAlignment="Stretch"
         VerticalAlignment="Center"
@@ -39,7 +39,6 @@
                 Height="30" />
         </Grid.RowDefinitions>
         <Grid
-            x:Name="grid"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
             Grid.Row="0">
@@ -68,8 +67,9 @@
                 Value="{Binding CurrentPostion.TotalMilliseconds, Mode=OneWay}"
                 Maximum="{Binding DurationTime.TotalMilliseconds, Mode=OneWay}"
                 Margin="5,0,5,0"
-                Grid.Column="1">
-            </Slider>
+                Focusable="False"
+                Cursor="Hand"
+                Grid.Column="1" />
             <Label
                 x:Name="TotalTimeLabel"
                 HorizontalAlignment="Center"
@@ -77,6 +77,7 @@
                 VerticalContentAlignment="Center"
                 HorizontalContentAlignment="Center"
                 Content="{Binding DurationTimestring}"
+                Cursor="Hand"
                 Padding="0,0,3,0"
                 Grid.Column="2" />
         </Grid>
@@ -93,6 +94,8 @@
                 Style="{StaticResource MaterialDesignIconButton}"
                 Content="{materialDesign:PackIcon Kind=Shuffle, Size=30}"
                 ToolTip="셔플 / Shuffle"
+                Focusable="False"
+                Cursor="Hand"
                 Width="50"
                 Height="50" />
             <Button
@@ -103,6 +106,8 @@
                 Content="{Binding RepeatPlayOptionIcon}"
                 ToolTip="반복 / Repeat"
                 Margin="0,0,20,0"
+                Focusable="False"
+                Cursor="Hand"
                 Width="50"
                 Height="50" />
             <Button
@@ -113,6 +118,8 @@
                 Style="{StaticResource MaterialDesignIconButton}"
                 Content="{materialDesign:PackIcon Kind=SkipPrevious, Size=40}"
                 ToolTip="이전 / Previous"
+                Focusable="False"
+                Cursor="Hand"
                 Width="50"
                 Height="50" />
             <Button
@@ -122,6 +129,8 @@
                 Style="{StaticResource MaterialDesignIconButton}"
                 Content="{Binding PlayPauseStateIcon}"
                 ToolTip="[재생 / 일시정지] / [Play / Pause]"
+                Focusable="False"
+                Cursor="Hand"
                 Width="80"
                 Height="80" />
             <Button
@@ -131,6 +140,8 @@
                 Style="{StaticResource MaterialDesignIconButton}"
                 Content="{materialDesign:PackIcon Kind=Stop, Size=45}"
                 ToolTip="정지 / Stop"
+                Focusable="False"
+                Cursor="Hand"
                 Width="60"
                 Height="60" />
             <Button
@@ -141,17 +152,21 @@
                 Style="{StaticResource MaterialDesignIconButton}"
                 Content="{materialDesign:PackIcon Kind=SkipNext, Size=40}"
                 ToolTip="다음 / Next"
+                Focusable="False"
+                Cursor="Hand"
                 Width="50"
                 Height="50" />
             <Button
                 IsEnabled="False"
-                x:Name="MediaListButton"
+                x:Name="PlayListButton"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Style="{StaticResource MaterialDesignIconButton}"
                 Content="{materialDesign:PackIcon Kind=PlaylistMusic, Size=30}"
                 ToolTip="플레이리스트 / PlayList"
                 Margin="20,0,0,0"
+                Focusable="False"
+                Cursor="Hand"
                 Width="50"
                 Height="50" />
             <Button
@@ -162,6 +177,8 @@
                 Style="{StaticResource MaterialDesignIconButton}"
                 Content="{materialDesign:PackIcon Kind=Settings, Size=30}"
                 ToolTip="설정 / Setting"
+                Focusable="False"
+                Cursor="Hand"
                 Width="50"
                 Height="50" />
         </StackPanel>
@@ -190,6 +207,8 @@
                     Content="{Binding VolumeMuteButtonIcon}"
                     ToolTip="볼륨 버튼 / Volume Button"
                     BorderThickness="0"
+                    Focusable="False"
+                    Cursor="Hand"
                     Width="30"
                     Height="30" />
                 <Slider
@@ -201,6 +220,8 @@
                     AutoToolTipPrecision="0"
                     Value="{Binding Volume}"
                     ToolTip="볼륨 / Volume"
+                    Focusable="False"
+                    Cursor="Hand"
                     Maximum="100"
                     Width="100" />
             </StackPanel>

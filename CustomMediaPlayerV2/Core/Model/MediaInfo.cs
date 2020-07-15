@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Drawing;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -11,6 +12,7 @@ using CMP2.Utility;
 using YoutubeExplode.Videos.Streams;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using System.Net;
 
 namespace CMP2.Core.Model
 {
@@ -80,12 +82,37 @@ namespace CMP2.Core.Model
         Title = $"\"{GetYouTubeID()}\" Form YouTube";
         AlbumTitle = $"{MediaLocation} Form YouTube";
       }
-      Log = new Log($"MediaInfo - [{Title}]");
+      Log = new Log($"MediaInfo - <{MediaType}>[{Title}]");
       LoadedCheck = LoadState.NotTryed;
     }
 
+    public async Task<string> GetPathAsync()
+    {
+      string path = string.Empty;
+      // 로컬 파일 로드 시
+      if (MediaType == MediaType.Local)
+      {
+        if (LoadedCheck != LoadState.AllLoaded)
+          TryLocalInfomationLoad(true);
+        path = MediaLocation;
+      }
+      // YouTube 에서 로드 시
+      else if (MediaType == MediaType.Youtube)
+      {
+        if (LoadedCheck == LoadState.Fail || LoadedCheck == LoadState.NotTryed)
+          await TryYouTubeInfomationLoadAsync();
+        string cachepath = await TryYouTubeStreamDownloadAsync();
+        if (string.IsNullOrWhiteSpace(cachepath))
+          Log.Error("인터넷 연결이 끊어졌거나, 캐쉬 불러오기에 실패 했습니다.");
+        path = cachepath;
+      }
+      return path;
+    }
+
     #region YouTube
-    public static string CacheDirectoryPath = Path.Combine("Cache","Youtube");
+    static string CacheYouTubeStreamDirectoryPath = Path.Combine("Cache", "Youtube", "Stream");
+    public static string CacheYouTubeInfoDirectoryPath = Path.Combine("Cache", "Youtube", "Info");
+    public static string CacheYouTubeImageDirectoryPath = Path.Combine("Cache", "Youtube", "Image");
 
     /// <summary>
     /// YouTube 미디어 정보 로드시도
@@ -101,10 +128,12 @@ namespace CMP2.Core.Model
       }
 
       // 캐쉬폴더가 존재하지 않을시 생성
-      DirectoryCheck(CacheDirectoryPath);
+      DirectoryCheck(CacheYouTubeInfoDirectoryPath);
+      DirectoryCheck(CacheYouTubeImageDirectoryPath);
 
-      string videoInfoPath = Path.Combine(CacheDirectoryPath, $"{GetYouTubeID()}_Info.json");
-      
+      string videoInfoPath = Path.Combine(CacheYouTubeInfoDirectoryPath, $"{GetYouTubeID()}_Info.json");
+      string videoImagePath = Path.Combine(CacheYouTubeImageDirectoryPath, $"{GetYouTubeID()}_Image.png");
+
       // 임시저장된 정보가 있는지 체크
       if (File.Exists(videoInfoPath))
       {
@@ -117,6 +146,8 @@ namespace CMP2.Core.Model
           Title = jObject.Value<string>("Title");
           ArtistName = jObject.Value<string>("ArtistName");
           Duration = TimeSpan.FromMilliseconds(jObject.Value<double>("Duration"));
+          if (File.Exists(videoImagePath))
+            AlbumImage = new BitmapImage(new Uri(videoImagePath, UriKind.Relative));
 
           LoadedCheck = LoadState.PartialLoaded;
           Log.Info("캐쉬에서 미디어 정보 로드 성공.");
@@ -127,7 +158,7 @@ namespace CMP2.Core.Model
           Log.Error("임시저장된 미디어 정보 로드 실패.\n온라인에서 정보로드를 시도합니다.", e);
         }
       }
-      LoadedCheck = await TryInfoOnlineDownloadAsync(videoInfoPath);
+      LoadedCheck = await TryInfoOnlineDownloadAsync(videoInfoPath, videoImagePath);
       if (LoadedCheck == LoadState.AllLoaded || LoadedCheck == LoadState.PartialLoaded)
         Log.Info("온라인에서 미디어 정보 로드 성공.");
     }
@@ -137,7 +168,7 @@ namespace CMP2.Core.Model
     /// </summary>
     /// <param name="videoinfopath">정보 캐쉬저장 경로</param>
     /// <returns>다운로드 결과</returns>
-    private async Task<LoadState> TryInfoOnlineDownloadAsync(string videoinfopath)
+    private async Task<LoadState> TryInfoOnlineDownloadAsync(string infopath, string imagepath)
     {
       if (Checker.CheckForInternetConnection())
       {
@@ -150,12 +181,17 @@ namespace CMP2.Core.Model
           Title = video.Title;
           ArtistName = video.Author;
           Duration = video.Duration;
+          AlbumImage = (ImageSource)new ImageSourceConverter().ConvertFromString(video.Thumbnails.MediumResUrl);
         }
         catch (Exception e)
         {
           Log.Error("미디어 정보 다운로드 실패.", e);
           return LoadState.Fail;
         }
+
+        // 캐쉬폴더가 존재하지 않을시 생성
+        DirectoryCheck(CacheYouTubeInfoDirectoryPath);
+        DirectoryCheck(CacheYouTubeImageDirectoryPath);
 
         // 다운로드된 정보를 임시저장합니다.
         try
@@ -167,12 +203,15 @@ namespace CMP2.Core.Model
                 new JProperty("Duration", Duration.TotalMilliseconds.ToString()),
                 new JProperty("MediaLocation", MediaLocation)
             };
-          File.WriteAllText(videoinfopath, Jobj.ToString());
+          File.WriteAllText(infopath, Jobj.ToString());
+
+          if (AlbumImage != null)
+            using (WebClient webClient = new WebClient())
+              webClient.DownloadFile(AlbumImage.ToString(), imagepath);
         }
         catch (Exception e)
         {
           Log.Error("미디어 정보 저장 실패.", e);
-          return LoadState.Fail;
         }
       }
       else
@@ -198,10 +237,10 @@ namespace CMP2.Core.Model
       }
 
       // 캐쉬폴더가 존재하지 않을시 생성
-      DirectoryCheck(CacheDirectoryPath);
+      DirectoryCheck(CacheYouTubeStreamDirectoryPath);
 
       // 미디어 스트림 캐쉬가 있을 경우 경로를 return
-      string[] files = Directory.GetFiles(CacheDirectoryPath, $"{GetYouTubeID()}.*", SearchOption.AllDirectories);
+      string[] files = Directory.GetFiles(CacheYouTubeStreamDirectoryPath, $"{GetYouTubeID()}.*", SearchOption.AllDirectories);
       if (files.Length > 0)
       {
         // 검색 결과에 여러 파일들이 나올 경우
@@ -233,7 +272,7 @@ namespace CMP2.Core.Model
           if (streamInfo == null)
             return string.Empty;
 
-          string savepath = Path.Combine(CacheDirectoryPath, $"{GetYouTubeID()}.{streamInfo.Container}");
+          string savepath = Path.Combine(CacheYouTubeStreamDirectoryPath, $"{GetYouTubeID()}.{streamInfo.Container}");
 
           // Download the stream to file
           await youtube.Videos.Streams.DownloadAsync(streamInfo, savepath);
@@ -271,17 +310,17 @@ namespace CMP2.Core.Model
 
       string[] minusurls = { "https://", "http://", "www.", "youtu.be/", "youtube.com/watch?v=" };
 
-      for(int i = 0; i < minusurls.Length; i++)
+      for (int i = 0; i < minusurls.Length; i++)
         videoinfopath = videoinfopath.Replace(minusurls[i], "");
 
       index = videoinfopath.IndexOf('?');
       if (index >= 0)
         videoinfopath = videoinfopath.Substring(0, index);
-      
+
       index = videoinfopath.IndexOf('/');
       if (index >= 0)
         videoinfopath = videoinfopath.Substring(0, index);
-      
+
       index = videoinfopath.IndexOf('=');
       if (index >= 0)
         videoinfopath = videoinfopath.Substring(0, index);

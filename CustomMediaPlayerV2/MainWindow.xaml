@@ -6,7 +6,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Controller="clr-namespace:CMP2.Controller"
     xmlns:model="clr-namespace:CMP2.Core.Model"
-    xmlns:local="clr-namespace:CMP2"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     TextElement.Foreground="{DynamicResource MaterialDesignBody}"
     Background="{DynamicResource MaterialDesignPaper}"
@@ -16,6 +15,7 @@
     mc:Ignorable="d"
     Title="CustomMediaPlayer - V2"
     WindowStartupLocation="CenterScreen"
+    WindowStyle="None"
     Width="800"
     Height="450"
     MinWidth="500"
@@ -29,24 +29,58 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition
                 Width="*" />
+            <ColumnDefinition
+                Width="50" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition
-                Height="*"/>
-            <RowDefinition 
-                Height="Auto"/>
+                Height="50" />
+            <RowDefinition
+                Height="*" />
         </Grid.RowDefinitions>
 
-        <Controller:MediaInfoControl
+        <Button
+            x:Name="ExitButteon"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Style="{DynamicResource MaterialDesignIconButton}"
+            Content="{materialDesign:PackIcon Kind=Shutdown, Size=30}"
+            Panel.ZIndex="999"
+            Cursor="Hand"
+            Grid.Column="1"
+            Grid.Row="0"/>
+
+        <Grid
             Grid.Column="0"
+            Grid.ColumnSpan="2"
             Grid.Row="0"
-            Grid.RowSpan="2"/>
-        <Controller:MediaControllerControl
-            Grid.Column="0"
-            Grid.Row="1"/>
-        <!--<Controller:PlayListControl
+            Grid.RowSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition
+                    Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition
+                    Height="*" />
+                <RowDefinition
+                    Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Controller:MediaInfoControl
+                x:Name="MainInfoControl"
+                Grid.Column="0"
+                Grid.Row="0"
+                Grid.RowSpan="2" />
+            <Controller:MediaControllerControl
+                x:Name="MainControllerControl"
+                Visibility="Collapsed"
+                Grid.Column="0"
+                Grid.Row="1" />
+            <!--<Controller:PlayListControl
+            x:Name="MainPlayListControl"
             Grid.Column="1"
             Grid.Row="0"
             Grid.RowSpan="2"/>-->
+        </Grid>
     </Grid>
 </Window>

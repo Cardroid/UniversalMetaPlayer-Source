@@ -8,20 +8,27 @@ using CMP2.Core.Model;
 
 using NAudio.Wave;
 
+using Newtonsoft.Json;
+
 namespace CMP2.Core
 {
   public static class MainMediaPlayer
   {
     static MainMediaPlayer()
     {
-      WavePlayer = new WaveOut();
       Option = new PlayerOption();
       PlayList = new PlayList();
       Volume = 0.8f;
       Option.AutoPlayOption = true;
       Option.RepeatPlayOption = 0;
       Option.DurationViewStatus = true;
-      WavePlayer.PlaybackStopped += MediaPlayer_PlaybackStopped;
+      // 오토 플래이 옵션
+      PropertyChangedEvent += (e) =>
+      {
+        if (e == "MainPlayerInitialized")
+          if (MediaLoadedCheck && Option.AutoPlayOption)
+            Play();
+      };
       Log.Debug("초기화 성공");
     }
     private static Log Log { get; } = new Log(typeof(MainMediaPlayer));
@@ -29,7 +36,7 @@ namespace CMP2.Core
     /// <summary>
     /// 메인 플레이어
     /// </summary>
-    private static IWavePlayer WavePlayer { get; }
+    private static IWavePlayer WavePlayer { get; set; }
     /// <summary>
     /// 플레이어 옵션
     /// </summary>
@@ -76,21 +83,30 @@ namespace CMP2.Core
         OnPropertyChanged("MediaInfo");
       }
     }
-    private static IMediaInfo _MediaInfo;
+    private static IMediaInfo _MediaInfo = null;
 
     /// <summary>
-    /// 오디오 파일
+    /// 오디오 파일 (약한참조)
     /// </summary>
     public static WaveStream AudioFile
     {
-      get => _AudioFile;
+      get
+      {
+        if (_AudioFile != null && _AudioFile.TryGetTarget(out WaveStream ws))
+          return ws;
+        else
+          return null;
+      }
       private set
       {
-        _AudioFile = value;
+        if (_AudioFile != null)
+          _AudioFile.SetTarget(value);
+        else
+          _AudioFile = new WeakReference<WaveStream>(value);
         OnPropertyChanged("AudioFile");
       }
     }
-    private static WaveStream _AudioFile = null;
+    private static WeakReference<WaveStream> _AudioFile = null;
 
     /// <summary>
     /// 재생이 끝났을 경우 이벤트 처리
@@ -112,58 +128,57 @@ namespace CMP2.Core
       }
       PlayStateChangedEvent?.Invoke(WavePlayer.PlaybackState);
     }
+
     /// <summary>
     /// 볼륨
     /// </summary>
     public static float Volume
     {
-      get => WavePlayer.Volume;
+      get => WavePlayer != null ? WavePlayer.Volume : _Volume;
       set
       {
-        WavePlayer.Volume = value;
+        if (WavePlayer != null)
+          WavePlayer.Volume = value;
+        _Volume = value;
         OnPropertyChanged("Volume");
       }
     }
+    public static float _Volume;
 
     /// <summary>
     /// 현재 재생 상태
     /// </summary>
-    public static PlaybackState PlaybackState => WavePlayer.PlaybackState;
+    public static PlaybackState PlaybackState => WavePlayer != null ? WavePlayer.PlaybackState : PlaybackState.Stopped;
 
     /// <summary>
     /// 미디어로 초기화하고 재생을 준비합니다
     /// </summary>
     /// <param name="mediaInfo">재생할 미디어</param>
     /// <param name="autoplay">자동 재생 여부</param>
-    public static async void Init(MediaInfo mediaInfo, bool autoplay = false)
+    public static void Init(MediaInfo mediaInfo)
+    {
+      ReadToPlay(mediaInfo);
+
+      WavePlayer?.Dispose();
+      WavePlayer = new WaveOut();
+      WavePlayer.PlaybackStopped += MediaPlayer_PlaybackStopped;
+      WavePlayer.Volume = _Volume;
+      WavePlayer.Init(AudioFile);
+
+      Log.Debug($"[{(string.IsNullOrWhiteSpace(mediaInfo.GetYouTubeID()) ? System.IO.Path.GetFileNameWithoutExtension(MediaInfo.MediaLocation) : $"\"{mediaInfo.GetYouTubeID()}\" {MediaInfo.Title}")}] 메인 미디어 플레이어에 로드 성공.");
+
+      PropertyChangedEvent?.Invoke("MainPlayerInitialized");
+    }
+
+    private static async void ReadToPlay(MediaInfo mediaInfo)
     {
       if (mediaInfo == null || string.IsNullOrWhiteSpace(mediaInfo.MediaLocation))
       {
         Log.Error("미디어 위치정보가 누락 되었습니다. (잘못된 매개변수)");
         return;
       }
-      if (PlaybackState != PlaybackState.Stopped)
-        Stop();
-      AudioFile?.Dispose();
 
-      string path = string.Empty;
-      // 로컬 파일 로드 시
-      if (mediaInfo.MediaType == MediaType.Local)
-      {
-        if (mediaInfo.LoadedCheck != LoadState.AllLoaded)
-          mediaInfo.TryLocalInfomationLoad(true);
-        path = mediaInfo.MediaLocation;
-      }
-      // YouTube 에서 로드 시
-      else if (mediaInfo.MediaType == MediaType.Youtube)
-      {
-        if (mediaInfo.LoadedCheck == LoadState.Fail || mediaInfo.LoadedCheck == LoadState.NotTryed)
-          await mediaInfo.TryYouTubeInfomationLoadAsync();
-        string cachepath = await mediaInfo.TryYouTubeStreamDownloadAsync();
-        if (string.IsNullOrWhiteSpace(cachepath))
-          Log.Error("인터넷 연결이 끊어졌거나, 캐쉬 불러오기에 실패 했습니다.");
-        path = cachepath;
-      }
+      string path = await mediaInfo.GetPathAsync();
 
       if (string.IsNullOrWhiteSpace(path))
       {
@@ -171,17 +186,18 @@ namespace CMP2.Core
         return;
       }
 
+      Stop();
+      MediaInfo = null;
+      if (AudioFile != null)
+      {
+        AudioFile.Dispose();
+        AudioFile = null;
+      }
+
       AudioFile = new MediaFoundationReader(path);
-      if (mediaInfo.Duration == TimeSpan.Zero)
+      if (mediaInfo.Duration <= TimeSpan.Zero)
         mediaInfo.Duration = AudioFile.TotalTime;
       MediaInfo = mediaInfo;
-
-      WavePlayer.Init(AudioFile);
-
-      Log.Debug($"[{(string.IsNullOrWhiteSpace(mediaInfo.GetYouTubeID()) ? System.IO.Path.GetFileNameWithoutExtension(MediaInfo.MediaLocation) : $"\"{mediaInfo.GetYouTubeID()}\" {MediaInfo.Title}")}] 메인 미디어 플레이어에 로드 성공.");
-
-      if (Option.AutoPlayOption || autoplay)
-        Play();
     }
 
     /// <summary>
@@ -189,9 +205,12 @@ namespace CMP2.Core
     /// </summary>
     public static void Play()
     {
-      Tick.Start();
-      WavePlayer.Play();
-      PlayStateChangedEvent?.Invoke(WavePlayer.PlaybackState);
+      if (MediaLoadedCheck)
+      {
+        Tick.Start();
+        WavePlayer.Play();
+        PlayStateChangedEvent?.Invoke(WavePlayer.PlaybackState);
+      }
     }
 
     /// <summary>
@@ -199,10 +218,13 @@ namespace CMP2.Core
     /// </summary>
     public static void Stop()
     {
-      StopButtonActive = true;
-      WavePlayer.Stop();
-      Tick.Stop();
-      PlayStateChangedEvent?.Invoke(WavePlayer.PlaybackState);
+      if (MediaLoadedCheck)
+      {
+        StopButtonActive = true;
+        WavePlayer.Stop();
+        Tick.Stop();
+        PlayStateChangedEvent?.Invoke(WavePlayer.PlaybackState);
+      }
     }
 
     /// <summary>
@@ -210,9 +232,12 @@ namespace CMP2.Core
     /// </summary>
     public static void Pause()
     {
-      WavePlayer.Pause();
-      Tick.Stop();
-      PlayStateChangedEvent?.Invoke(WavePlayer.PlaybackState);
+      if (MediaLoadedCheck)
+      {
+        WavePlayer.Pause();
+        Tick.Stop();
+        PlayStateChangedEvent?.Invoke(WavePlayer.PlaybackState);
+      }
     }
 
     /// <summary>
@@ -228,6 +253,7 @@ namespace CMP2.Core
   /// <summary>
   /// 플레이어 옵션
   /// </summary>
+  [JsonObject]
   public struct PlayerOption
   {
     public event PropertyChangedEventHandler PropertyChangedEvent;
@@ -241,6 +267,7 @@ namespace CMP2.Core
     /// <summary>
     /// 반복 옵션 (0 = OFF, 1 = Once, 2 = All)
     /// </summary>
+    [JsonProperty]
     public int RepeatPlayOption
     {
       get => _RepeatPlayOption;
@@ -258,6 +285,7 @@ namespace CMP2.Core
     /// <summary>
     /// 자동 재생 옵션
     /// </summary>
+    [JsonProperty]
     public bool AutoPlayOption
     {
       get => _AutoPlayOption;
@@ -271,6 +299,7 @@ namespace CMP2.Core
     /// <summary>
     /// 남은시간 - 전체시간 전환 (ture = 전체시간, false = 남은시간)
     /// </summary>
+    [JsonProperty]
     public bool DurationViewStatus
     {
       get => _DurationViewStatus;
@@ -283,6 +312,7 @@ namespace CMP2.Core
     /// <summary>
     /// 마지막 곡 저장
     /// </summary>
+    [JsonProperty]
     public bool LastSongSaveOption
     {
       get => _LastSongSaveOption;

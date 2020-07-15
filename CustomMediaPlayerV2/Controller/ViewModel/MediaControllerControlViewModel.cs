@@ -131,7 +131,7 @@ namespace CMP2.Controller.ViewModel
 
     // 현재 재생위치
     public TimeSpan CurrentPostion =>
-      MainMediaPlayer.MediaLoadedCheck && MainMediaPlayer.PlaybackState != PlaybackState.Stopped
+      MainMediaPlayer.MediaLoadedCheck
       ? MainMediaPlayer.AudioFile.CurrentTime 
       : TimeSpan.Zero;
     public string CurrentPostionstring => Converter.TimeSpanStringConverter(CurrentPostion);
