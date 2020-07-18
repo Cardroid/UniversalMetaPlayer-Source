@@ -20,10 +20,10 @@
     </UserControl.DataContext>
 
     <UserControl.Resources>
-        <Utility:ValueConverter
+        <Utility:TimeSpanStringConverter
             x:Key="TimeSpanStringConverter" />
     </UserControl.Resources>
-    
+
     <Grid
         HorizontalAlignment="Stretch"
         VerticalAlignment="Center"
@@ -156,13 +156,15 @@
                 Cursor="Hand"
                 Width="50"
                 Height="50" />
-            <Button
-                IsEnabled="False"
-                x:Name="PlayListButton"
+            <CheckBox
+                x:Name="PlayListCheckBox"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                Style="{StaticResource MaterialDesignIconButton}"
+                Style="{StaticResource MaterialDesignActionCheckBox}"
+                Background="Transparent"
+                Foreground="{Binding Foreground, ElementName=PlayPauseButton}"
                 Content="{materialDesign:PackIcon Kind=PlaylistMusic, Size=30}"
+                IsChecked="{Binding IsPlayListWindowOpen}"
                 ToolTip="플레이리스트 / PlayList"
                 Margin="20,0,0,0"
                 Focusable="False"

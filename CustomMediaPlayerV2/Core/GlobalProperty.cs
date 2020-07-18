@@ -4,10 +4,17 @@ using System.Text;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+
 using MaterialDesignThemes.Wpf;
+
+using Newtonsoft.Json;
 
 namespace CMP2.Core
 {
+  /// <summary>
+  /// 프로그램 전체 설정
+  /// </summary>
+  [JsonObject]
   public static class GlobalProperty
   {
     static GlobalProperty()
@@ -16,50 +23,50 @@ namespace CMP2.Core
       LogoImage = new BitmapImage(new Uri("pack://application:,,,/CustomMediaPlayer;component/Resources/IconCustomMusicPlayer.png", UriKind.RelativeOrAbsolute));
       LogoNoteImage = new BitmapImage(new Uri("pack://application:,,,/CustomMediaPlayer;component/Resources/IconnoteCustomMusicPlayer.png", UriKind.RelativeOrAbsolute));
     }
+
     /// <summary>
-    /// 폰트
+    /// 기본 설정으로 되돌립니다.
     /// </summary>
-    public static FontFamily MainFontFamily { get; }
+    public static void SetDefault()
+    {
+      // 테마 기본 설정
+      var theme = new CustomColorTheme();
+      theme.BaseTheme = BaseTheme.Dark;
+      theme.PrimaryColor = Colors.LightGreen;
+      theme.SecondaryColor = Colors.DarkSeaGreen;
+      Theme = theme.GetTheme();
+    }
+
+    #region 테마
     /// <summary>
     /// 테마
     /// </summary>
+    [JsonProperty]
     public static ITheme Theme
     {
-      get => _Theme;
-      set
-      {
-        _Theme = value;
-        _paletteHelper.SetTheme(_Theme);
-      }
+      get => _paletteHelper.GetTheme();
+      set => _paletteHelper.SetTheme(value);
     }
-    public static bool IsDark 
-    {
-      get => _IsDark;
-      set
-      {
-        if (_IsDark != value)
-          ToggleBaseColour(_IsDark);
-      }
-    }
-    private static void ToggleBaseColour(bool isDark)
-    {
-      ITheme theme = _paletteHelper.GetTheme();
-      IBaseTheme baseTheme = isDark ? new MaterialDesignDarkTheme() : (IBaseTheme)new MaterialDesignLightTheme();
-      _IsDark = isDark;
-      theme.SetBaseTheme(baseTheme);
-      _paletteHelper.SetTheme(theme);
-    }
+    #endregion
+
+    #region Not Save
+    /// <summary>
+    /// 폰트
+    /// </summary>
+    [JsonIgnore]
+    public static FontFamily MainFontFamily { get; }
     /// <summary>
     /// 로고 이미지
     /// </summary>
+    [JsonIgnore]
     public static ImageSource LogoImage { get; }
     /// <summary>
     /// 로고 음표 이미지
     /// </summary>
+    [JsonIgnore]
     public static ImageSource LogoNoteImage { get; }
+    #endregion
 
     private static readonly PaletteHelper _paletteHelper = new PaletteHelper();
-    private static ITheme _Theme;
-    private static bool _IsDark;
   }
 }

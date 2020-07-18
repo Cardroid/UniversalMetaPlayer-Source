@@ -20,87 +20,76 @@
     </UserControl.DataContext>
 
     <UserControl.Resources>
-        <Utility:ValueConverter
+        <Utility:StarWidthConverter
+            x:Key="StarWidthConverter" />
+        <Utility:TimeSpanStringConverter
             x:Key="TimeSpanStringConverter" />
     </UserControl.Resources>
 
-    <GroupBox
-        HorizontalContentAlignment="Stretch"
-        VerticalContentAlignment="Stretch"
-        BorderThickness="1,0,0,0"
-        Padding="0">
-        <GroupBox.Header>
-            <TextBlock
-                x:Name="PlayListName"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                Text="{Binding PlayList.PlayListName}"
-                FontSize="16" />
-        </GroupBox.Header>
-        <Grid>
-            <ListView
-                x:Name="PlayList"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                HorizontalContentAlignment="Stretch"
-                ItemsSource="{Binding PlayList, Mode=OneWay}"
-                dd:DragDrop.IsDragSource="True"
-                dd:DragDrop.IsDropTarget="True"
-                dd:DragDrop.SelectDroppedItems="True"
-                dd:DragDrop.DragDirectlySelectedOnly="False"
-                dd:DragDrop.DragHandler="{Binding}"
-                dd:DragDrop.DropHandler="{Binding}"
-                SelectedItem="{Binding SelectItem}"
-                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                AllowDrop="True">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition
+                Width="Auto" />
+            <ColumnDefinition
+                Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition
+                Height="Auto" />
+            <RowDefinition
+                Height="*" />
+        </Grid.RowDefinitions>
+        
+        <GroupBox
+            Style="{StaticResource MaterialDesignGroupBox}"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            Grid.Row="0"
+            Grid.RowSpan="2">
+            <GroupBox.Header>
+                <TextBlock
+                    x:Name="PlayListName"
+                    Foreground="{Binding Theme.TextFieldBoxBackground, Mode=OneWay}"
+                    Text="{Binding PlayList.PlayListName}"
+                    FontSize="16" />
+            </GroupBox.Header>
+            <Grid>
+                <ListView
+                    x:Name="PlayList"
+                    Style="{StaticResource MaterialDesignListView}"
+                    ItemsSource="{Binding PlayList, Mode=OneWay}"
+                    dd:DragDrop.IsDragSource="True"
+                    dd:DragDrop.IsDropTarget="True"
+                    dd:DragDrop.SelectDroppedItems="True"
+                    dd:DragDrop.DragDirectlySelectedOnly="False"
+                    dd:DragDrop.DragHandler="{Binding}"
+                    dd:DragDrop.DropHandler="{Binding}"
+                    SelectedIndex="{Binding PlayListSelectIndex}"
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                    AllowDrop="True">
 
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn
-                            x:Name="ID"
-                            Width="Auto">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Label
-                                        x:Name="ID"
-                                        Grid.Column="0"
-                                        Content="{Binding ID}"
-                                        FlowDirection="RightToLeft"
-                                        HorizontalContentAlignment="Right" />
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                        <GridViewColumn
-                            x:Name="Title"
-                            Width="Auto">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Label
-                                        x:Name="Title"
-                                        Grid.Column="1"
-                                        Content="{Binding Title}" />
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                        <GridViewColumn
-                            x:Name="Duration"
-                            Width="Auto">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Label
-                                        x:Name="Duration"
-                                        Grid.Column="2"
-                                        Content="{Binding Duration, Converter={StaticResource TimeSpanStringConverter}}"
-                                        FlowDirection="RightToLeft"
-                                        HorizontalContentAlignment="Right" />
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                    </GridView>
-                </ListView.View>
-            </ListView>
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn
+                                x:Name="Title"
+                                HeaderContainerStyle="{StaticResource MaterialDesignToolButton}"
+                                DisplayMemberBinding="{Binding Title}">
+                            </GridViewColumn>
+                            <GridViewColumn
+                                x:Name="MediaType"
+                                HeaderContainerStyle="{StaticResource MaterialDesignToolButton}"
+                                DisplayMemberBinding="{Binding MediaType}">
+                            </GridViewColumn>
+                            <GridViewColumn
+                                x:Name="Duration"
+                                HeaderContainerStyle="{StaticResource MaterialDesignToolButton}"
+                                DisplayMemberBinding="{Binding Duration, Converter={StaticResource TimeSpanStringConverter}}">
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
 
-            <!--<Label
+                <!--<Label
                 x:Name="ProgressLabel"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
@@ -108,6 +97,7 @@
                 VerticalContentAlignment="Center"
                 Content="{Binding ProgressLabel}"
                 Grid.Row="2" />-->
-        </Grid>
-    </GroupBox>
+            </Grid>
+        </GroupBox>
+    </Grid>
 </UserControl>

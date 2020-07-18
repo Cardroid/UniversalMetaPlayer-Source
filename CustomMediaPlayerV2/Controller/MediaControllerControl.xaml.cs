@@ -10,10 +10,14 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
+using System.Windows.Threading;
 using CMP2.Controller.ViewModel;
 using CMP2.Core;
 using CMP2.Core.Model;
+using CMP2.Utility;
+
+using NeatInput.Windows.Events;
+using NeatInput.Windows.Processing.Keyboard.Enums;
 
 namespace CMP2.Controller
 {
@@ -25,21 +29,22 @@ namespace CMP2.Controller
     {
       InitializeComponent();
       ViewModel = (MediaControllerControlViewModel)this.DataContext;
+      Hook.KeyboardEvent += Hook_KeyboardEvent;
 
-      this.Loaded += (s, e) =>
+      this.Loaded += (_, e) =>
       {
         // 재생 진행바 이벤트 연결
         this.ProgressSlider.ValueChanged += ProgressSlider_ValueChanged;
 
         // 버튼 테그 추가
-        this.PlayPauseButton.Tag = ControlButton.PlayPause;
-        this.StopButton.Tag = ControlButton.Stop;
-        this.NextButton.Tag = ControlButton.Next;
-        this.PreviousButton.Tag = ControlButton.Previous;
-        this.RepeatButton.Tag = ControlButton.Repeat;
-        this.ShuffleButton.Tag = ControlButton.Shuffle;
-        this.PlayListButton.Tag = ControlButton.PlayList;
-        this.SettingButton.Tag = ControlButton.Setting;
+        this.PlayPauseButton.Tag = ControlType.PlayPause;
+        this.StopButton.Tag = ControlType.Stop;
+        this.NextButton.Tag = ControlType.Next;
+        this.PreviousButton.Tag = ControlType.Previous;
+        this.RepeatButton.Tag = ControlType.Repeat;
+        this.ShuffleButton.Tag = ControlType.Shuffle;
+        this.PlayListCheckBox.Tag = ControlType.PlayList;
+        this.SettingButton.Tag = ControlType.Setting;
 
         // 버튼 이벤트 연결
         this.PlayPauseButton.Click += ControllerButton_ClickHandler;
@@ -48,13 +53,11 @@ namespace CMP2.Controller
         this.PreviousButton.Click += ControllerButton_ClickHandler;
         this.RepeatButton.Click += ControllerButton_ClickHandler;
         this.ShuffleButton.Click += ControllerButton_ClickHandler;
-        this.PlayListButton.Click += ControllerButton_ClickHandler;
         this.SettingButton.Click += ControllerButton_ClickHandler;
 
         Window parentWindow = Window.GetWindow(Parent);
 
-        // 키보드 컨트롤
-        parentWindow.KeyDown += MediaControllerControl_KeyDown;
+        GlobalEvent.KeyDownEvent += GlobalEvent_KeyDownEvent;
 
         // 마우스 휠을 사용한 볼륨조절
         parentWindow.MouseWheel += (s, e) =>
@@ -98,48 +101,24 @@ namespace CMP2.Controller
     }
 
     /// <summary>
-    /// 컨트롤 버튼을 구분용 (버튼 테그)
+    /// 컨트롤 키보드 이벤트 처리 (내부 이벤트)
     /// </summary>
-    private enum ControlButton
-    {
-      PlayPause,
-      Stop,
-      Next,
-      Previous,
-      Repeat,
-      Shuffle,
-      PlayList,
-      Setting
-    }
-
-    /// <summary>
-    /// 컨트롤 키보드 이벤트 처리
-    /// </summary>
-    private void MediaControllerControl_KeyDown(object sender, KeyEventArgs e)
+    private void GlobalEvent_KeyDownEvent(KeyEventArgs e)
     {
       switch (e.Key)
       {
         // Play/Pause
         case Key.Space:
         case Key.Pause:
-        case Key.Play:
-        case Key.MediaPlayPause:
         case Key.P:
-            if (MainMediaPlayer.PlaybackState == NAudio.Wave.PlaybackState.Playing)
-              MainMediaPlayer.Pause();
-            else
-              MainMediaPlayer.Play();
+          if (MainMediaPlayer.PlaybackState == NAudio.Wave.PlaybackState.Playing)
+            MainMediaPlayer.Pause();
+          else
+            MainMediaPlayer.Play();
           break;
         // Stop
-        case Key.MediaStop:
         case Key.O:
-            MainMediaPlayer.Stop();
-          break;
-          // Next
-        case Key.MediaNextTrack: 
-          break;
-        // Previous
-        case Key.MediaPreviousTrack:
+          MainMediaPlayer.Stop();
           break;
         // Repeat
         case Key.I:
@@ -150,6 +129,7 @@ namespace CMP2.Controller
           break;
         // PlayList
         case Key.L:
+          ViewModel.IsPlayListWindowOpen = !ViewModel.IsPlayListWindowOpen;
           break;
         // Setting
         case Key.S:
@@ -167,6 +147,52 @@ namespace CMP2.Controller
         case Key.Down:
           ViewModel.Volume -= 5;
           break;
+      }
+    }
+
+    /// <summary>
+    /// 컨트롤 버튼을 구분용 (버튼 테그)
+    /// </summary>
+    private enum ControlType
+    {
+      PlayPause,
+      Stop,
+      Next,
+      Previous,
+      Repeat,
+      Shuffle,
+      PlayList,
+      Setting
+    }
+
+    /// <summary>
+    /// 컨트롤 키보드 이벤트 처리 (전역 이벤트)
+    /// </summary>
+    private void Hook_KeyboardEvent(KeyboardEvent e)
+    {
+      if (e.State == NeatInput.Windows.Processing.Keyboard.Enums.KeyStates.Down)
+      {
+        switch (e.Key)
+        {
+          // Play/Pause
+          case Keys.Play:
+          case Keys.MediaPlayPause:
+            if (MainMediaPlayer.PlaybackState == NAudio.Wave.PlaybackState.Playing)
+              MainMediaPlayer.Pause();
+            else
+              MainMediaPlayer.Play();
+            break;
+          // Stop
+          case Keys.MediaStop:
+            MainMediaPlayer.Stop();
+            break;
+          // Next
+          case Keys.MediaNextTrack:
+            break;
+          // Previous
+          case Keys.MediaPreviousTrack:
+            break;
+        }
       }
     }
 
@@ -199,31 +225,29 @@ namespace CMP2.Controller
     /// </summary>
     private void ControllerButton_ClickHandler(object sender, RoutedEventArgs e)
     {
-      switch ((ControlButton)((Button)sender).Tag)
+      switch ((ControlType)((Button)sender).Tag)
       {
-        case ControlButton.PlayPause:
+        case ControlType.PlayPause:
           if (MainMediaPlayer.MediaLoadedCheck)
             if (MainMediaPlayer.PlaybackState == NAudio.Wave.PlaybackState.Playing)
               MainMediaPlayer.Pause();
             else
               MainMediaPlayer.Play();
           break;
-        case ControlButton.Stop:
+        case ControlType.Stop:
           if (MainMediaPlayer.MediaLoadedCheck)
             MainMediaPlayer.Stop();
           break;
-        case ControlButton.Next:
+        case ControlType.Next:
           break;
-        case ControlButton.Previous:
+        case ControlType.Previous:
           break;
-        case ControlButton.Repeat:
+        case ControlType.Repeat:
           ++MainMediaPlayer.Option.RepeatPlayOption;
           break;
-        case ControlButton.Shuffle:
+        case ControlType.Shuffle:
           break;
-        case ControlButton.PlayList:
-          break;
-        case ControlButton.Setting:
+        case ControlType.Setting:
           break;
       }
     }

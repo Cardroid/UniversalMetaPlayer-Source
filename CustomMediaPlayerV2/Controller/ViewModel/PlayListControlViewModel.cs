@@ -18,6 +18,8 @@ namespace CMP2.Controller.ViewModel
 
     public PlayList PlayList => MainMediaPlayer.PlayList;
 
+    public int PlayListSelectIndex { get; set; }
+
     #region UI갱신
     private void MainMediaPlayer_PropertyChangedEvent(string propertyname)
     {

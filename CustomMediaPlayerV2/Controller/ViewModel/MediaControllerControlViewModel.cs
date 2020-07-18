@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
+using System.Windows;
 using System.Windows.Media;
 
 using CMP2.Core;
@@ -26,7 +27,7 @@ namespace CMP2.Controller.ViewModel
     }
 
     #region 볼륨
-    public float _BeforeVolume = 80;
+    private float _BeforeVolume = 80;
     public float BeforeVolume
     {
       get => _BeforeVolume;
@@ -135,6 +136,37 @@ namespace CMP2.Controller.ViewModel
       ? MainMediaPlayer.AudioFile.CurrentTime 
       : TimeSpan.Zero;
     public string CurrentPostionstring => Converter.TimeSpanStringConverter(CurrentPostion);
+    #endregion
+
+    #region PlayList 관련
+
+    private static PlayListWindow PlayListWindow = new PlayListWindow { Visibility = Visibility.Collapsed };
+
+    /// <summary>
+    /// 플레이리스트 창이 열렸는지 여부
+    /// </summary>
+    public bool IsPlayListWindowOpen 
+    {
+      get => _IsPlayListWindowOpen;
+      set
+      {
+        PlayListWindowManager(value);
+        OnPropertyChanged("IsPlayListWindowOpen");
+      }
+    }
+    private bool _IsPlayListWindowOpen = false;
+
+    public void PlayListWindowManager(bool isopen)
+    {
+      if (isopen)
+      {
+        PlayListWindow.Visibility = Visibility.Visible;
+        PlayListWindow.Focus();
+      }
+      else
+        PlayListWindow.Visibility = Visibility.Collapsed;
+      _IsPlayListWindowOpen = isopen;
+    }
     #endregion
 
     #region 동기화 메소드

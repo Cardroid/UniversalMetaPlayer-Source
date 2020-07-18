@@ -155,9 +155,9 @@ namespace CMP2.Core
     /// </summary>
     /// <param name="mediaInfo">재생할 미디어</param>
     /// <param name="autoplay">자동 재생 여부</param>
-    public static void Init(MediaInfo mediaInfo)
+    public static async void Init(MediaInfo mediaInfo)
     {
-      ReadToPlay(mediaInfo);
+      await ReadToPlay(mediaInfo);
 
       WavePlayer?.Dispose();
       WavePlayer = new WaveOut();
@@ -170,7 +170,7 @@ namespace CMP2.Core
       PropertyChangedEvent?.Invoke("MainPlayerInitialized");
     }
 
-    private static async void ReadToPlay(MediaInfo mediaInfo)
+    private static async Task ReadToPlay(MediaInfo mediaInfo)
     {
       if (mediaInfo == null || string.IsNullOrWhiteSpace(mediaInfo.MediaLocation))
       {

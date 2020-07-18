@@ -1,0 +1,51 @@
+﻿<UserControl
+    x:Class="CMP2.Controller.WindowButton.WindowStyleButtonControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    mc:Ignorable="d">
+
+    <materialDesign:PopupBox
+        Style="{StaticResource MaterialDesignMultiFloatingActionAccentPopupBox}"
+        PlacementMode="LeftAndAlignMiddles"
+        Opacity="0.5"
+        ToolTip="창 조정 버튼"
+        Width="40"
+        Height="40">
+        <materialDesign:PopupBox.ToggleContent>
+            <materialDesign:PackIcon
+                Kind="Plus"
+                Width="30"
+                Height="30" />
+        </materialDesign:PopupBox.ToggleContent>
+        <StackPanel
+            Orientation="Horizontal">
+            <Button
+                x:Name="MinimizeButton"
+                Style="{StaticResource MaterialDesignIconButton}"
+                Content="{materialDesign:PackIcon Kind=WindowMinimize, Size=15}"
+                ToolTip="창 최소화 / Window Minimize"
+                Focusable="False"
+                Cursor="Hand"
+                Grid.Column="0" />
+            <Button
+                x:Name="MaximizeButton"
+                Style="{StaticResource MaterialDesignIconButton}"
+                Content="{materialDesign:PackIcon Kind=WindowMaximize, Size=15}"
+                ToolTip="창 최대화 / Window Maximize"
+                Focusable="False"
+                Cursor="Hand"
+                Grid.Column="1" />
+            <Button
+                x:Name="CloseButton"
+                Style="{StaticResource MaterialDesignIconButton}"
+                Content="{materialDesign:PackIcon Kind=WindowClose, Size=15}"
+                ToolTip="종료 / Exit"
+                Focusable="False"
+                Cursor="Hand"
+                Grid.Column="2" />
+        </StackPanel>
+    </materialDesign:PopupBox>
+</UserControl>

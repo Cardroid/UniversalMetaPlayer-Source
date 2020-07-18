@@ -18,6 +18,12 @@
     <Compile Update="Controller\PlayListControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Controller\WindowButton\WindowStyleButtonControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="PlayListWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Controller\MediaControllerControl.xaml">
@@ -29,7 +35,13 @@
     <Page Update="Controller\PlayListControl.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Controller\WindowButton\WindowStyleButtonControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="MainWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="PlayListWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

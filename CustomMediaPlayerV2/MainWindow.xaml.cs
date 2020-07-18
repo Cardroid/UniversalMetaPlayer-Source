@@ -16,6 +16,7 @@ using System.Windows.Shapes;
 using CMP2.Core;
 using CMP2.Core.Model;
 using CMP2.Test;
+using CMP2.Utility;
 
 using MaterialDesignThemes.Wpf;
 
@@ -25,6 +26,9 @@ namespace CMP2
   {
     public MainWindow()
     {
+      GlobalProperty.SetDefault();
+      Hook.Start();
+      this.KeyDown += (_, e) => GlobalEvent.KeyDownEventInvoke(e);
       MainLogger.Info("### Start application ###");
       this.Loaded += (s, e) => { InitializeComponent(); };
       this.Loaded += MainWindow_Loaded;
@@ -37,24 +41,30 @@ namespace CMP2
     /// </summary>
     private void MainWindow_Loaded(object sender, RoutedEventArgs e)
     {
-      // 마우스로 배경을 클릭 했을 경우 컨트롤 숨기기 or 보이기
-      this.MouseEnter += (_, e) =>
+      #region 마우스 우클릭 컨트롤 숨기기 or 보이기
+      this.MainWindowButton.Visibility = Visibility.Collapsed;
+      this.MainControllerControl.Visibility = Visibility.Collapsed;
+      this.MainInfoControl.InfoPanel.VerticalAlignment = VerticalAlignment.Bottom;
+
+      this.MouseRightButtonDown += (_, e) =>
       {
-        this.MainControllerControl.Visibility = Visibility.Visible;
-        this.MainInfoControl.InfoPanel.VerticalAlignment = VerticalAlignment.Center;
+        if (this.MainWindowButton.Visibility != Visibility.Visible)
+        {
+          this.MainWindowButton.Visibility = Visibility.Visible;
+          this.MainControllerControl.Visibility = Visibility.Visible;
+          this.MainInfoControl.InfoPanel.VerticalAlignment = VerticalAlignment.Center;
+        }
+        else
+        {
+          this.MainWindowButton.Visibility = Visibility.Collapsed;
+          this.MainControllerControl.Visibility = Visibility.Collapsed;
+          this.MainInfoControl.InfoPanel.VerticalAlignment = VerticalAlignment.Bottom;
+        }
       };
-      this.MouseLeave += async (_, e) =>
-      {
-        await Task.Delay(5000);
-        this.MainControllerControl.Visibility = Visibility.Collapsed;
-        this.MainInfoControl.InfoPanel.VerticalAlignment = VerticalAlignment.Bottom;
-      };
+      #endregion
 
       // 창 드레그 움직임
       this.MouseLeftButtonDown += MainWindow_WindowDrag;
-
-      // 종료 버튼
-      this.ExitButteon.Click += (_, e) => { this.Close(); };
 
       // 디버그 전용 코드
       // 오류시 제거 요망
@@ -71,6 +81,7 @@ namespace CMP2
     private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
     {
       MainLogger.Info("### Exit application ###\n");
+      Hook.Dispose();
       MainMediaPlayer.Dispose();
       Application.Current.Shutdown();
     }

@@ -63,7 +63,6 @@ namespace CMP2.Core.Model
               await Add(media);
             }
           }
-          IDRefresh();
           Log.Debug("역직렬화 성공");
           return true;
         }
@@ -82,8 +81,6 @@ namespace CMP2.Core.Model
 
     public new async Task Add(MediaInfo media)
     {
-      media.ID = base.Count + 1;
-
       if ((int)media.LoadedCheck < 2)
       {
         if (media.MediaType == MediaType.Local)
@@ -91,9 +88,6 @@ namespace CMP2.Core.Model
         else if (media.MediaType == MediaType.Youtube)
           await media.TryYouTubeInfomationLoadAsync();
       }
-
-      if (media.LoadedCheck == LoadState.Fail)
-        media.LoadFailProcess();
 
       base.Add(media);
       TotalDuration += media.Duration;
@@ -113,10 +107,6 @@ namespace CMP2.Core.Model
         index--;
         TotalDuration -= base[index].Duration;
         base.RemoveAt(index);
-        for (int i = index; i < base.Count; i++)
-        {
-          base[i].ID = i;
-        }
       }
     }
     public new void Insert(int index, MediaInfo item)
@@ -125,32 +115,6 @@ namespace CMP2.Core.Model
       {
         base.Insert(index, item);
         TotalDuration += item.Duration;
-        for (int i = index; i < base.Count; i++)
-        {
-          base[i].ID = i;
-        }
-      }
-    }
-    public void IDRefresh()
-    {
-      for (int i = 0; i < base.Count; i++)
-      {
-        base[i].ID = i + 1;
-      }
-    }
-    public new void Move(int oldIndex, int newIndex)
-    {
-      base.Move(oldIndex, newIndex);
-
-      if (oldIndex < newIndex)
-      {
-        for (int i = oldIndex; i < newIndex; i++)
-          base[i].ID = i;
-      }
-      else
-      {
-        for (int i = newIndex; i < oldIndex; i++)
-          base[i].ID = i;
       }
     }
   }

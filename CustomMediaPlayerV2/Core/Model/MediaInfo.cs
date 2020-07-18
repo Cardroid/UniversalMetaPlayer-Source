@@ -24,10 +24,6 @@ namespace CMP2.Core.Model
   public interface IMediaInfo
   {
     /// <summary>
-    /// 플래이리스트에서의 고유숫자
-    /// </summary>
-    public int ID { get; set; }
-    /// <summary>
     /// 미디어 타입
     /// </summary>
     public MediaType MediaType { get; set; }
@@ -82,7 +78,7 @@ namespace CMP2.Core.Model
         Title = $"\"{GetYouTubeID()}\" Form YouTube";
         AlbumTitle = $"{MediaLocation} Form YouTube";
       }
-      Log = new Log($"MediaInfo - <{MediaType}>[{Title}]");
+      Log = new Log($"{typeof(MediaInfo)} - <{MediaType}>[{Title}]");
       LoadedCheck = LoadState.NotTryed;
     }
 
@@ -155,8 +151,12 @@ namespace CMP2.Core.Model
         }
         catch (Exception e)
         {
-          Log.Error("임시저장된 미디어 정보 로드 실패.\n온라인에서 정보로드를 시도합니다.", e);
+          Log.Error("캐쉬된 미디어 정보에서 로드를 시도했지만 실패 했습니다.\n온라인에서 정보로드를 시도합니다.", e);
         }
+      }
+      else
+      {
+        Log.Info("캐쉬에 미디어 정보가 없습니다. 온라인 로드 시도");
       }
       LoadedCheck = await TryInfoOnlineDownloadAsync(videoInfoPath, videoImagePath);
       if (LoadedCheck == LoadState.AllLoaded || LoadedCheck == LoadState.PartialLoaded)
@@ -181,7 +181,7 @@ namespace CMP2.Core.Model
           Title = video.Title;
           ArtistName = video.Author;
           Duration = video.Duration;
-          AlbumImage = (ImageSource)new ImageSourceConverter().ConvertFromString(video.Thumbnails.MediumResUrl);
+          AlbumImage = (ImageSource)new ImageSourceConverter().ConvertFromString(video.Thumbnails.MaxResUrl);
         }
         catch (Exception e)
         {
@@ -257,6 +257,10 @@ namespace CMP2.Core.Model
         // 단일 파일 처리
         Log.Info("캐쉬에서 미디어 스트림 로드 성공.");
         return files[0];
+      }
+      else
+      {
+        Log.Info("캐쉬에 미디어 스트림이 없습니다. 온라인 로드 시도");
       }
 
       if (Checker.CheckForInternetConnection())
@@ -395,7 +399,7 @@ namespace CMP2.Core.Model
     /// 디랙터리를 채크합니다. 존재하지 않으면 생성합니다.
     /// </summary>
     /// <param name="path"></param>
-    private void DirectoryCheck(string path)
+    private static void DirectoryCheck(string path)
     {
       if (!Directory.Exists(path))
         Directory.CreateDirectory(path);
@@ -405,10 +409,19 @@ namespace CMP2.Core.Model
     /// <summary>
     /// 정보의 로드가 완료되었는지 여부
     /// </summary>
-    public LoadState LoadedCheck { get; private set; }
+    public LoadState LoadedCheck
+    {
+      get => _LoadedCheck;
+      private set
+      {
+        _LoadedCheck = value;
+        if (_LoadedCheck == LoadState.Fail)
+          LoadFailProcess();
+      }
+    }
+    private LoadState _LoadedCheck = LoadState.NotTryed;
 
     #region 프로퍼티 정의 (인터페이스 상속)
-    public int ID { get; set; } = -1;
     public MediaType MediaType { get; set; }
     public string MediaLocation { get; set; }
     public string Title { get; set; } = string.Empty;

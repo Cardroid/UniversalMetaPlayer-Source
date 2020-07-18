@@ -1,0 +1,41 @@
+﻿<Window
+    x:Class="CMP2.PlayListWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Controller="clr-namespace:CMP2.Controller"
+    xmlns:WindowButton="clr-namespace:CMP2.Controller.WindowButton"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+    Background="{DynamicResource MaterialDesignPaper}"
+    TextElement.FontWeight="Medium"
+    TextElement.FontSize="14"
+    FontFamily="{Binding FontFamily}"
+    mc:Ignorable="d"
+    WindowStyle="None"
+    ResizeMode="CanResizeWithGrip"
+    AllowsTransparency="True"
+    SizeToContent="Width"
+    Title="PlayList"
+    Width="500"
+    Height="600"
+    MinWidth="500"
+    MinHeight="450">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition
+                Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition
+                Height="*" />
+        </Grid.RowDefinitions>
+
+        <Controller:PlayListControl
+            x:Name="MainPlayListControl"
+            Grid.Column="0"
+            Grid.Row="0" />
+    </Grid>
+</Window>
