@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace CMP2.Core
@@ -10,6 +11,7 @@ namespace CMP2.Core
 
   public static class GlobalEvent
   {
+    private static bool KeyDownEventHandled = false;
     /// <summary>
     /// 전역 키 누름 이벤트
     /// </summary>
@@ -18,6 +20,14 @@ namespace CMP2.Core
     /// <summary>
     /// 전역 키 누름 이벤트 호출
     /// </summary>
-    public static void KeyDownEventInvoke(KeyEventArgs e) => KeyDownEvent?.Invoke(e);
+    public static async void KeyDownEventInvoke(KeyEventArgs e)
+    {
+      if (KeyDownEventHandled)
+        return;
+      KeyDownEventHandled = true;
+      KeyDownEvent?.Invoke(e);
+      await Task.Delay(GlobalProperty.KeyEventDelay);
+      KeyDownEventHandled = false;
+    }
   }
 }

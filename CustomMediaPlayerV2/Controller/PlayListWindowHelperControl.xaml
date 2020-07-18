@@ -5,27 +5,38 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-    mc:Ignorable="d"
-    d:DesignHeight="450"
-    d:DesignWidth="800">
-    
-    <Grid>
+    xmlns:Controller="clr-namespace:CMP2.Controller"
+    xmlns:WindowButton="clr-namespace:CMP2.Controller.WindowButton"
+    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+    Background="{DynamicResource MaterialDesignPaper}"
+    TextElement.FontWeight="Medium"
+    TextElement.FontSize="14"
+    FontFamily="{Binding FontFamily}"
+    mc:Ignorable="d">
+
+    <StackPanel
+        Orientation="Vertical">
         <materialDesign:ColorZone
+            x:Name="PlayListColorZone"
             Mode="PrimaryDark"
-            Padding="16"
-            CornerRadius="3"
-            materialDesign:ShadowAssist.ShadowDepth="Depth3"
-            Margin="2">
-            <StackPanel
-                Orientation="Horizontal">
-                <ToggleButton
-                    Style="{DynamicResource MaterialDesignHamburgerToggleButton}" />
-                <TextBlock
+            materialDesign:ShadowAssist.ShadowDepth="Depth3">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition
+                        Width="*" />
+                    <ColumnDefinition
+                        Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Label
+                    HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    Margin="16 0 0 0">
-    Material Design In XAML Toolkit
-                </TextBlock>
-            </StackPanel>
+                    Padding="10,5,10,5"
+                    Content="PlayList"
+                    Grid.Column="0" />
+                <WindowButton:WindowStyleButtonControl
+                    Panel.ZIndex="999"
+                    Grid.Column="1" />
+            </Grid>
         </materialDesign:ColorZone>
-    </Grid>
+    </StackPanel>
 </UserControl>

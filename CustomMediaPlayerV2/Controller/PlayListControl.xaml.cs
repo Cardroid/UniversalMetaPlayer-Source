@@ -22,7 +22,6 @@ namespace CMP2.Controller
     private Log Log { get; }
     public PlayListControl()
     {
-      this.KeyDown += (_, e) => GlobalEvent.KeyDownEventInvoke(e);
       InitializeComponent();
       ViewModel = (PlayListControlViewModel)this.DataContext;
       Log = new Log(typeof(PlayListControl));
@@ -41,6 +40,14 @@ namespace CMP2.Controller
       Log.Debug("초기화 성공");
 
       this.PlayList.MouseDoubleClick += PlayList_MouseDoubleClick;
+      this.PlayList.MouseDown += PlayList_MouseDown;
+    }
+
+    private void PlayList_MouseDown(object sender, MouseButtonEventArgs e)
+    {
+      HitTestResult r = VisualTreeHelper.HitTest(this, e.GetPosition(this));
+      if (r.VisualHit.GetType() != typeof(ListBoxItem))
+        ((ListView)sender).UnselectAll();
     }
 
     private void PlayList_MouseDoubleClick(object sender, MouseButtonEventArgs e)

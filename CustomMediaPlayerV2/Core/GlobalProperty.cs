@@ -22,6 +22,8 @@ namespace CMP2.Core
       MainFontFamily = new FontFamily(new Uri("pack://application:,,,/"), "./Resources/Font/#NanumGothic");
       LogoImage = new BitmapImage(new Uri("pack://application:,,,/CustomMediaPlayer;component/Resources/IconCustomMusicPlayer.png", UriKind.RelativeOrAbsolute));
       LogoNoteImage = new BitmapImage(new Uri("pack://application:,,,/CustomMediaPlayer;component/Resources/IconnoteCustomMusicPlayer.png", UriKind.RelativeOrAbsolute));
+
+      SetDefault();
     }
 
     /// <summary>
@@ -35,7 +37,11 @@ namespace CMP2.Core
       theme.PrimaryColor = Colors.LightGreen;
       theme.SecondaryColor = Colors.DarkSeaGreen;
       Theme = theme.GetTheme();
+
+      KeyEventDelay = 20;
     }
+
+    public static int KeyEventDelay { get; set; }
 
     #region 테마
     /// <summary>

@@ -16,7 +16,7 @@
     WindowStyle="None"
     ResizeMode="CanResizeWithGrip"
     AllowsTransparency="True"
-    SizeToContent="Width"
+    SizeToContent="WidthAndHeight"
     Title="PlayList"
     Width="500"
     Height="600"
@@ -24,18 +24,18 @@
     MinHeight="450">
 
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition
-                Width="*" />
-        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition
+                Height="Auto" />
             <RowDefinition
                 Height="*" />
         </Grid.RowDefinitions>
 
+        <Controller:PlayListWindowHelperControl
+            x:Name="MainPlayListWindowHelperControl"
+            Grid.Row="0" />
         <Controller:PlayListControl
             x:Name="MainPlayListControl"
-            Grid.Column="0"
-            Grid.Row="0" />
+            Grid.Row="1"  />
     </Grid>
 </Window>

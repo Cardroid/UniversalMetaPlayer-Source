@@ -10,7 +10,6 @@
     <materialDesign:PopupBox
         Style="{StaticResource MaterialDesignMultiFloatingActionAccentPopupBox}"
         PlacementMode="LeftAndAlignMiddles"
-        Opacity="0.5"
         ToolTip="창 조정 버튼"
         Width="40"
         Height="40">

@@ -55,7 +55,7 @@ namespace CMP2.Core
     }
     private static PlayList _PlayList;
 
-    private static DispatcherTimer Tick { get; } = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(10) };
+    private static DispatcherTimer Tick { get; } = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(1) };
     public static event EventHandler TickEvent
     {
       add => Tick.Tick += value;

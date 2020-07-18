@@ -26,11 +26,10 @@ namespace CMP2
   {
     public MainWindow()
     {
-      GlobalProperty.SetDefault();
       Hook.Start();
+      InitializeComponent();
       this.KeyDown += (_, e) => GlobalEvent.KeyDownEventInvoke(e);
       MainLogger.Info("### Start application ###");
-      this.Loaded += (s, e) => { InitializeComponent(); };
       this.Loaded += MainWindow_Loaded;
       this.Closing += MainWindow_Closing;
     }

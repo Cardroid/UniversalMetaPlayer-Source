@@ -67,7 +67,6 @@
                     SelectedIndex="{Binding PlayListSelectIndex}"
                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                     AllowDrop="True">
-
                     <ListView.View>
                         <GridView>
                             <GridViewColumn

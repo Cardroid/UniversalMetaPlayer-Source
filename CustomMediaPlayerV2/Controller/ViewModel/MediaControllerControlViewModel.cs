@@ -24,6 +24,9 @@ namespace CMP2.Controller.ViewModel
       MainMediaPlayer.TickEvent += MainMediaPlayer_TickEvent;
       MainMediaPlayer.Option.PropertyChangedEvent += Option_PropertyChangedEvent;
       MainMediaPlayer.PlayList.PropertyChangedEvent += PlayList_PropertyChangedEvent;
+
+      PlayListWindow = new PlayListWindow { Visibility = Visibility.Collapsed };
+      PlayListWindow.Closing += PlayListWindow_Closing;
     }
 
     #region 볼륨
@@ -138,9 +141,10 @@ namespace CMP2.Controller.ViewModel
     public string CurrentPostionstring => Converter.TimeSpanStringConverter(CurrentPostion);
     #endregion
 
-    #region PlayList 관련
+    #region PlayList 창 관련
+    private static PlayListWindow PlayListWindow { get; set; }
 
-    private static PlayListWindow PlayListWindow = new PlayListWindow { Visibility = Visibility.Collapsed };
+    private void PlayListWindow_Closing(object sender, CancelEventArgs e) => IsPlayListWindowOpen = false;
 
     /// <summary>
     /// 플레이리스트 창이 열렸는지 여부
