@@ -38,9 +38,15 @@ namespace CMP2.Controller.WindowButton
       {
         Window parentWindow = Window.GetWindow(Parent);
         if (parentWindow.WindowState == WindowState.Normal)
+        {
           parentWindow.WindowState = WindowState.Maximized;
+          MaximizeButton.ToolTip = "이전 크기로 복원";
+        }
         else
+        {
           parentWindow.WindowState = WindowState.Normal;
+          MaximizeButton.ToolTip = "최대화";
+        } 
       };
       this.CloseButton.Click += (s, e) =>
       {

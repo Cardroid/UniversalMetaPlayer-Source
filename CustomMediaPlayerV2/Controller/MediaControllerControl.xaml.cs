@@ -11,6 +11,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+
 using CMP2.Controller.ViewModel;
 using CMP2.Core;
 using CMP2.Core.Model;
@@ -188,9 +189,11 @@ namespace CMP2.Controller
             break;
           // Next
           case Keys.MediaNextTrack:
+            MainMediaPlayer.Next();
             break;
           // Previous
           case Keys.MediaPreviousTrack:
+            MainMediaPlayer.Previous();
             break;
         }
       }
@@ -201,7 +204,7 @@ namespace CMP2.Controller
       if (!MainMediaPlayer.MediaLoadedCheck || appendtime == TimeSpan.Zero)
         return;
 
-      if(appendtime > TimeSpan.Zero)
+      if (appendtime > TimeSpan.Zero)
       {
         // 양수
         if (MainMediaPlayer.AudioFile.TotalTime > (MainMediaPlayer.AudioFile.CurrentTime + appendtime))
@@ -239,8 +242,10 @@ namespace CMP2.Controller
             MainMediaPlayer.Stop();
           break;
         case ControlType.Next:
+          MainMediaPlayer.Next();
           break;
         case ControlType.Previous:
+          MainMediaPlayer.Previous();
           break;
         case ControlType.Repeat:
           ++MainMediaPlayer.Option.RepeatPlayOption;

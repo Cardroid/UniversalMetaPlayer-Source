@@ -27,7 +27,7 @@ namespace CMP2.Core
       PropertyChangedEvent += (e) =>
       {
         if (e == "MainPlayerInitialized")
-          if (MediaLoadedCheck && Option.AutoPlayOption)
+          if (MediaLoadedCheck && Option.AutoPlayOption && !NotAutoPlay)
             Play();
       };
       Log.Debug("초기화 성공");
@@ -68,7 +68,8 @@ namespace CMP2.Core
       remove => Tick.Tick -= value;
     }
 
-    private static bool StopButtonActive = false;
+    private static bool StopButtonActive { get; set; } = false;
+    private static bool NotAutoPlay { get; set; } = false;
 
     public delegate void PlayStateChangedEventHandler(PlaybackState state);
     public static event PlayStateChangedEventHandler PlayStateChangedEvent;
@@ -191,6 +192,9 @@ namespace CMP2.Core
       PropertyChangedEvent?.Invoke("MainPlayerInitialized");
     }
 
+    /// <summary>
+    /// 재생준비
+    /// </summary>
     private static async Task ReadToPlay(MediaInfo mediaInfo)
     {
       if (mediaInfo == null || string.IsNullOrWhiteSpace(mediaInfo.MediaLocation))
@@ -214,6 +218,9 @@ namespace CMP2.Core
         AudioFile.Dispose();
         AudioFile = null;
       }
+
+      // 모든 정보로드
+      await mediaInfo.TryInfoAllLoadAsync();
 
       AudioFile = new MediaFoundationReader(path);
       if (mediaInfo.Duration <= TimeSpan.Zero)
@@ -261,13 +268,18 @@ namespace CMP2.Core
       }
     }
 
+    /// <summary>
+    /// 다음 미디어
+    /// </summary>
     public static void Next()
     {
-      if (PlayListPlayMediaIndex == -1)
+      if (PlayListPlayMediaIndex < 0)
         return;
 
       int index = PlayListPlayMediaIndex + 1;
+      var beforeState = PlaybackState;
       bool InitComplete = false;
+      NotAutoPlay = true;
       do
       {
         if (index == PlayList.Count)
@@ -284,7 +296,42 @@ namespace CMP2.Core
         index++;
       }
       while (!InitComplete);
-      Play();
+      if (beforeState == PlaybackState.Playing)
+        Play();
+      NotAutoPlay = false;
+    }
+
+    /// <summary>
+    /// 이전 미디어
+    /// </summary>
+    public static void Previous()
+    {
+      if (PlayListPlayMediaIndex < 0)
+        return;
+
+      int index = PlayListPlayMediaIndex - 1;
+      var beforeState = PlaybackState;
+      bool InitComplete = false;
+      NotAutoPlay = true;
+      do
+      {
+        if (index == 0)
+          index = PlayList.Count;
+
+        if ((int)PlayList[index].LoadedCheck >= 2)
+        {
+          Init(PlayList[index]);
+          InitComplete = true;
+        }
+        else if (PlayListPlayMediaIndex == index)
+          return;
+
+        index--;
+      }
+      while (!InitComplete);
+      if (beforeState == PlaybackState.Playing)
+        Play();
+      NotAutoPlay = false;
     }
 
     /// <summary>

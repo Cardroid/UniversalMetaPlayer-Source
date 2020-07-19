@@ -10,7 +10,7 @@
     <materialDesign:PopupBox
         Style="{StaticResource MaterialDesignMultiFloatingActionAccentPopupBox}"
         PlacementMode="LeftAndAlignMiddles"
-        ToolTip="창 조정 버튼"
+        ToolTip="창 관련 버튼"
         Width="40"
         Height="40">
         <materialDesign:PopupBox.ToggleContent>
@@ -25,7 +25,7 @@
                 x:Name="MinimizeButton"
                 Style="{StaticResource MaterialDesignIconButton}"
                 Content="{materialDesign:PackIcon Kind=WindowMinimize, Size=15}"
-                ToolTip="창 최소화 / Window Minimize"
+                ToolTip="최소화"
                 Focusable="False"
                 Cursor="Hand"
                 Grid.Column="0" />
@@ -33,7 +33,7 @@
                 x:Name="MaximizeButton"
                 Style="{StaticResource MaterialDesignIconButton}"
                 Content="{materialDesign:PackIcon Kind=WindowMaximize, Size=15}"
-                ToolTip="창 최대화 / Window Maximize"
+                ToolTip="최대화"
                 Focusable="False"
                 Cursor="Hand"
                 Grid.Column="1" />
@@ -41,7 +41,7 @@
                 x:Name="CloseButton"
                 Style="{StaticResource MaterialDesignIconButton}"
                 Content="{materialDesign:PackIcon Kind=WindowClose, Size=15}"
-                ToolTip="종료 / Exit"
+                ToolTip="닫기"
                 Focusable="False"
                 Cursor="Hand"
                 Grid.Column="2" />

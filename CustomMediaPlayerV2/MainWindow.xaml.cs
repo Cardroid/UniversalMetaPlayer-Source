@@ -80,7 +80,7 @@ namespace CMP2
     {
       Hook.Dispose();
       MainMediaPlayer.Dispose();
-      App.MainLog.Info("### Exit application ###\n");
+      App.MainLog.Info("### Exit application ###\n\n\n");
       Application.Current.Shutdown();
     }
   }

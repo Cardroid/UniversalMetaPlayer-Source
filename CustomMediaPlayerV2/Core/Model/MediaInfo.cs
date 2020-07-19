@@ -80,15 +80,18 @@ namespace CMP2.Core.Model
 
       MediaLocation = medialocation;
       MediaType = mediaType;
-      
+
       if (MediaType == MediaType.Local)
         Title = Path.GetFileNameWithoutExtension(MediaLocation);
       else if (MediaType == MediaType.Youtube)
       {
-        Title = $"\"{GetYouTubeVideoID()}\" Form YouTube";
+        if (!string.IsNullOrWhiteSpace(GetYouTubeVideoID()))
+          Title = $"\"{GetYouTubeVideoID()}\" Form YouTube";
+        else
+          Title = $"\"{MediaLocation}\" Form YouTube";
         AlbumTitle = $"{MediaLocation} Form YouTube";
       }
-      
+
       Log = new Log($"{typeof(MediaInfo)} - <{MediaType}>[{Title}]");
       LoadedCheck = LoadState.NotTryed;
     }
@@ -419,9 +422,7 @@ namespace CMP2.Core.Model
     public void LoadFailProcess()
     {
       if (!Title.ToLower().StartsWith(MEDIA_INFO_NULL))
-      {
         Title = $"{MEDIA_INFO_NULL} {Title}";
-      }
     }
     #endregion
 

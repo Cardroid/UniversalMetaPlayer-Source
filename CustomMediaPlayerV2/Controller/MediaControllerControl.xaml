@@ -111,7 +111,6 @@
                 Width="50"
                 Height="50" />
             <Button
-                IsEnabled="False"
                 x:Name="PreviousButton"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
@@ -145,7 +144,6 @@
                 Width="60"
                 Height="60" />
             <Button
-                IsEnabled="False"
                 x:Name="NextButton"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
