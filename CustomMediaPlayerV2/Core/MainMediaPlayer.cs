@@ -18,6 +18,7 @@ namespace CMP2.Core
     {
       Option = new PlayerOption();
       PlayList = new PlayList();
+      PlayListPlayMediaIndex = -1;
       Volume = 0.8f;
       Option.AutoPlayOption = true;
       Option.RepeatPlayOption = 0;
@@ -54,6 +55,11 @@ namespace CMP2.Core
       }
     }
     private static PlayList _PlayList;
+
+    /// <summary>
+    /// 현재 플레이리스트에서 재생중인 미디어의 Index
+    /// </summary>
+    public static int PlayListPlayMediaIndex { get; private set; }
 
     private static DispatcherTimer Tick { get; } = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(1) };
     public static event EventHandler TickEvent
@@ -114,7 +120,7 @@ namespace CMP2.Core
     private static void MediaPlayer_PlaybackStopped(object sender, StoppedEventArgs e)
     {
       if (e.Exception != null)
-        Log.Error("PlaybackStopped", e.Exception);
+        Log.Error("메인 플레이어 [PlaybackStopped]이벤트 처리오류", e.Exception);
       if (WavePlayer.PlaybackState == PlaybackState.Stopped)
       {
         AudioFile.CurrentTime = TimeSpan.Zero;
@@ -122,8 +128,20 @@ namespace CMP2.Core
           StopButtonActive = false;
         else
         {
+          // 한 곡 반복
           if (Option.RepeatPlayOption == 1)
             Play();
+          // 전체 반복
+          else if (Option.RepeatPlayOption == 2)
+          {
+            if (PlayListPlayMediaIndex == -1)
+              Play();
+            else
+            {
+              Next();
+              Play();
+            }
+          }
         }
       }
       PlayStateChangedEvent?.Invoke(WavePlayer.PlaybackState);
@@ -157,7 +175,10 @@ namespace CMP2.Core
     /// <param name="autoplay">자동 재생 여부</param>
     public static async void Init(MediaInfo mediaInfo)
     {
+      PlayListPlayMediaIndex = PlayList.IndexOf(mediaInfo);
+
       await ReadToPlay(mediaInfo);
+      StopButtonActive = false;
 
       WavePlayer?.Dispose();
       WavePlayer = new WaveOut();
@@ -165,7 +186,7 @@ namespace CMP2.Core
       WavePlayer.Volume = _Volume;
       WavePlayer.Init(AudioFile);
 
-      Log.Debug($"[{(string.IsNullOrWhiteSpace(mediaInfo.GetYouTubeID()) ? System.IO.Path.GetFileNameWithoutExtension(MediaInfo.MediaLocation) : $"\"{mediaInfo.GetYouTubeID()}\" {MediaInfo.Title}")}] 메인 미디어 플레이어에 로드 성공.");
+      Log.Debug($"[{(string.IsNullOrWhiteSpace(mediaInfo.GetYouTubeVideoID()) ? System.IO.Path.GetFileNameWithoutExtension(MediaInfo.MediaLocation) : $"\"{mediaInfo.GetYouTubeVideoID()}\" {MediaInfo.Title}")}] 메인 미디어 플레이어에 로드 성공.");
 
       PropertyChangedEvent?.Invoke("MainPlayerInitialized");
     }
@@ -178,7 +199,7 @@ namespace CMP2.Core
         return;
       }
 
-      string path = await mediaInfo.GetPathAsync();
+      string path = await mediaInfo.GetStreamPath();
 
       if (string.IsNullOrWhiteSpace(path))
       {
@@ -205,7 +226,7 @@ namespace CMP2.Core
     /// </summary>
     public static void Play()
     {
-      if (MediaLoadedCheck)
+      if (MediaLoadedCheck && PlaybackState != PlaybackState.Playing)
       {
         Tick.Start();
         WavePlayer.Play();
@@ -218,7 +239,7 @@ namespace CMP2.Core
     /// </summary>
     public static void Stop()
     {
-      if (MediaLoadedCheck)
+      if (MediaLoadedCheck && PlaybackState != PlaybackState.Stopped)
       {
         StopButtonActive = true;
         WavePlayer.Stop();
@@ -232,12 +253,38 @@ namespace CMP2.Core
     /// </summary>
     public static void Pause()
     {
-      if (MediaLoadedCheck)
+      if (MediaLoadedCheck && PlaybackState != PlaybackState.Paused)
       {
         WavePlayer.Pause();
         Tick.Stop();
         PlayStateChangedEvent?.Invoke(WavePlayer.PlaybackState);
       }
+    }
+
+    public static void Next()
+    {
+      if (PlayListPlayMediaIndex == -1)
+        return;
+
+      int index = PlayListPlayMediaIndex + 1;
+      bool InitComplete = false;
+      do
+      {
+        if (index == PlayList.Count)
+          index = 0;
+
+        if ((int)PlayList[index].LoadedCheck >= 2)
+        {
+          Init(PlayList[index]);
+          InitComplete = true;
+        }
+        else if (PlayListPlayMediaIndex == index)
+          return;
+
+        index++;
+      }
+      while (!InitComplete);
+      Play();
     }
 
     /// <summary>

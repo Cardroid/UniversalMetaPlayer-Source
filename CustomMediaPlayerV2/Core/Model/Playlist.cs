@@ -93,12 +93,7 @@ namespace CMP2.Core.Model
     {
       Log.Debug($"[{media.Title}](을)를 미디어 리스트에 등록 시도.");
       if ((int)media.LoadedCheck < 2)
-      {
-        if (media.MediaType == MediaType.Local)
-          media.TryLocalInfomationLoad();
-        else if (media.MediaType == MediaType.Youtube)
-          await media.TryYouTubeInfomationLoadAsync();
-      }
+          await media.TryInfoPartialLoadAsync();
 
       base.Add(media);
       TotalDuration += media.Duration;

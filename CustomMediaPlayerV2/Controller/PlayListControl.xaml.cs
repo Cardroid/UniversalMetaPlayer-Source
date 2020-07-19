@@ -40,21 +40,24 @@ namespace CMP2.Controller
       Log.Debug("초기화 성공");
 
       this.PlayList.MouseDoubleClick += PlayList_MouseDoubleClick;
-      this.PlayList.MouseDown += PlayList_MouseDown;
+      this.PlayList.PreviewMouseDown += PlayList_MouseDownUnSelect;
+      this.PlayListGroupBox.PreviewMouseDown += PlayList_MouseDownUnSelect;
     }
 
-    private void PlayList_MouseDown(object sender, MouseButtonEventArgs e)
+    private void PlayList_MouseDownUnSelect(object sender, MouseButtonEventArgs e)
     {
       HitTestResult r = VisualTreeHelper.HitTest(this, e.GetPosition(this));
       if (r.VisualHit.GetType() != typeof(ListBoxItem))
-        ((ListView)sender).UnselectAll();
+        PlayList.UnselectAll();
     }
 
-    private void PlayList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    private async void PlayList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
       if (0 <= ViewModel.PlayListSelectIndex && ViewModel.PlayList.Count > ViewModel.PlayListSelectIndex)
       {
-        if (MainMediaPlayer.PlayList[ViewModel.PlayListSelectIndex].LoadedCheck == Core.Model.LoadState.PartialLoaded || MainMediaPlayer.PlayList[ViewModel.PlayListSelectIndex].LoadedCheck == Core.Model.LoadState.AllLoaded)
+        if (MainMediaPlayer.PlayList[ViewModel.PlayListSelectIndex].LoadedCheck != Core.Model.LoadState.Loaded)
+          await MainMediaPlayer.PlayList[ViewModel.PlayListSelectIndex].TryInfoAllLoadAsync();
+        if (MainMediaPlayer.PlayList[ViewModel.PlayListSelectIndex].LoadedCheck == Core.Model.LoadState.Loaded)
         {
           MainMediaPlayer.Init(MainMediaPlayer.PlayList[ViewModel.PlayListSelectIndex]);
         }

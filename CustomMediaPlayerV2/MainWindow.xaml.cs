@@ -29,11 +29,10 @@ namespace CMP2
       Hook.Start();
       InitializeComponent();
       this.KeyDown += (_, e) => GlobalEvent.KeyDownEventInvoke(e);
-      MainLogger.Info("### Start application ###");
+      App.MainLog.Info("### Start application ###");
       this.Loaded += MainWindow_Loaded;
       this.Closing += MainWindow_Closing;
     }
-    private Log MainLogger { get; } = new Log(typeof(App));
 
     /// <summary>
     /// 메인원도우 로드 후 이벤트 처리
@@ -79,9 +78,9 @@ namespace CMP2
     /// </summary>
     private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
     {
-      MainLogger.Info("### Exit application ###\n");
       Hook.Dispose();
       MainMediaPlayer.Dispose();
+      App.MainLog.Info("### Exit application ###\n");
       Application.Current.Shutdown();
     }
   }

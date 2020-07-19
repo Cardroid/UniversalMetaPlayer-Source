@@ -10,7 +10,8 @@ using CMP2.Core;
 
 namespace CMP2
 {
-  public partial class App : Application 
+  public partial class App : Application
   {
+    public static Log MainLog { get; } = new Log("System");
   }
 }

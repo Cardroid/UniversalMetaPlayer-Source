@@ -39,8 +39,9 @@
             <RowDefinition
                 Height="*" />
         </Grid.RowDefinitions>
-        
+
         <GroupBox
+            x:Name="PlayListGroupBox"
             Style="{StaticResource MaterialDesignGroupBox}"
             Grid.Column="0"
             Grid.ColumnSpan="2"
@@ -53,50 +54,41 @@
                     Text="{Binding PlayList.PlayListName}"
                     FontSize="16" />
             </GroupBox.Header>
-            <Grid>
-                <ListView
-                    x:Name="PlayList"
-                    Style="{StaticResource MaterialDesignListView}"
-                    ItemsSource="{Binding PlayList, Mode=OneWay}"
-                    dd:DragDrop.IsDragSource="True"
-                    dd:DragDrop.IsDropTarget="True"
-                    dd:DragDrop.SelectDroppedItems="True"
-                    dd:DragDrop.DragDirectlySelectedOnly="False"
-                    dd:DragDrop.DragHandler="{Binding}"
-                    dd:DragDrop.DropHandler="{Binding}"
-                    SelectedIndex="{Binding PlayListSelectIndex}"
-                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                    AllowDrop="True">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn
-                                x:Name="Title"
-                                HeaderContainerStyle="{StaticResource MaterialDesignToolButton}"
-                                DisplayMemberBinding="{Binding Title}">
-                            </GridViewColumn>
-                            <GridViewColumn
-                                x:Name="MediaType"
-                                HeaderContainerStyle="{StaticResource MaterialDesignToolButton}"
-                                DisplayMemberBinding="{Binding MediaType}">
-                            </GridViewColumn>
-                            <GridViewColumn
-                                x:Name="Duration"
-                                HeaderContainerStyle="{StaticResource MaterialDesignToolButton}"
-                                DisplayMemberBinding="{Binding Duration, Converter={StaticResource TimeSpanStringConverter}}">
-                            </GridViewColumn>
-                        </GridView>
-                    </ListView.View>
-                </ListView>
-
-                <!--<Label
-                x:Name="ProgressLabel"
+            <ListView
+                x:Name="PlayList"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
-                HorizontalContentAlignment="Left"
-                VerticalContentAlignment="Center"
-                Content="{Binding ProgressLabel}"
-                Grid.Row="2" />-->
-            </Grid>
+                Style="{StaticResource MaterialDesignListView}"
+                ItemsSource="{Binding PlayList, Mode=OneWay}"
+                dd:DragDrop.IsDragSource="True"
+                dd:DragDrop.IsDropTarget="True"
+                dd:DragDrop.SelectDroppedItems="True"
+                dd:DragDrop.DragDirectlySelectedOnly="False"
+                dd:DragDrop.DragHandler="{Binding}"
+                dd:DragDrop.DropHandler="{Binding}"
+                SelectedIndex="{Binding PlayListSelectIndex}"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                AllowDrop="True">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn
+                            x:Name="Title"
+                            HeaderContainerStyle="{StaticResource MaterialDesignToolButton}"
+                            DisplayMemberBinding="{Binding Title}">
+                        </GridViewColumn>
+                        <GridViewColumn
+                            x:Name="MediaType"
+                            HeaderContainerStyle="{StaticResource MaterialDesignToolButton}"
+                            DisplayMemberBinding="{Binding MediaType}">
+                        </GridViewColumn>
+                        <GridViewColumn
+                            x:Name="Duration"
+                            HeaderContainerStyle="{StaticResource MaterialDesignToolButton}"
+                            DisplayMemberBinding="{Binding Duration, Converter={StaticResource TimeSpanStringConverter}}">
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
         </GroupBox>
     </Grid>
 </UserControl>
