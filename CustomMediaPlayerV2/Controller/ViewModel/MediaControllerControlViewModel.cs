@@ -110,6 +110,19 @@ namespace CMP2.Controller.ViewModel
     }
     #endregion
 
+    #region Shuffle
+    public PackIcon ShuffleIcon
+    {
+      get
+      {
+        if (MainMediaPlayer.Option.Shuffle)
+          return new PackIcon { Width = 30, Height = 30, Kind = PackIconKind.ShuffleVariant };
+        else
+          return new PackIcon { Width = 40, Height = 40, Kind = PackIconKind.ShuffleDisabled };
+      }
+    }
+    #endregion
+
     #region 플레이 시간 UI
 
     // 재생길이 (단일 파일)
@@ -178,6 +191,8 @@ namespace CMP2.Controller.ViewModel
     {
       if (e.PropertyName == "RepeatPlayOption")
         OnPropertyChanged("RepeatPlayOptionIcon");
+      if (e.PropertyName == "Shuffle")
+        OnPropertyChanged("ShuffleIcon");
     }
     private void MainMediaPlayer_PlayStateChangedEvent(PlaybackState state) => ApplyUI();
     private void MainMediaPlayer_TickEvent(object sender, EventArgs e) => ApplyUI(false);

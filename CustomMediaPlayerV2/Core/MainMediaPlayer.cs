@@ -20,9 +20,7 @@ namespace CMP2.Core
       PlayList = new PlayList();
       PlayListPlayMediaIndex = -1;
       Volume = 0.8f;
-      Option.AutoPlayOption = true;
-      Option.RepeatPlayOption = 0;
-      Option.DurationViewStatus = true;
+      OptionDefault();
       // 오토 플래이 옵션
       PropertyChangedEvent += (e) =>
       {
@@ -42,6 +40,14 @@ namespace CMP2.Core
     /// 플레이어 옵션
     /// </summary>
     public static PlayerOption Option;
+
+    public static void OptionDefault()
+    {
+      Option.Shuffle = false;
+      Option.AutoPlayOption = true;
+      Option.RepeatPlayOption = 0;
+      Option.DurationViewStatus = true;
+    }
     /// <summary>
     /// 플레이리스트
     /// </summary>
@@ -276,6 +282,11 @@ namespace CMP2.Core
       if (PlayListPlayMediaIndex < 0)
         return;
 
+      if (Option.Shuffle && PlayListPlayMediaIndex >= 0)
+      {
+        PlayListPlayMediaIndex = new Random().Next(0, PlayList.Count);
+      }
+
       int index = PlayListPlayMediaIndex + 1;
       var beforeState = PlaybackState;
       bool InitComplete = false;
@@ -308,6 +319,11 @@ namespace CMP2.Core
     {
       if (PlayListPlayMediaIndex < 0)
         return;
+
+      if (Option.Shuffle && PlayListPlayMediaIndex >= 0)
+      {
+        PlayListPlayMediaIndex = new Random().Next(0, PlayList.Count);
+      }
 
       int index = PlayListPlayMediaIndex - 1;
       var beforeState = PlaybackState;
@@ -353,10 +369,25 @@ namespace CMP2.Core
     public event PropertyChangedEventHandler PropertyChangedEvent;
     private void OnPropertyChanged(string propertyName) => PropertyChangedEvent?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
+    private bool _Shuffle;
     private int _RepeatPlayOption;
     private bool _AutoPlayOption;
     private bool _DurationViewStatus;
     private bool _LastSongSaveOption;
+
+    /// <summary>
+    /// 셔플 옵션
+    /// </summary>
+    [JsonProperty]
+    public bool Shuffle
+    {
+      get => _Shuffle;
+      set
+      {
+        _Shuffle = value;
+        OnPropertyChanged("Shuffle");
+      }
+    }
 
     /// <summary>
     /// 반복 옵션 (0 = OFF, 1 = Once, 2 = All)
@@ -376,6 +407,7 @@ namespace CMP2.Core
         OnPropertyChanged("RepeatPlayOption");
       }
     }
+
     /// <summary>
     /// 자동 재생 옵션
     /// </summary>
@@ -403,6 +435,7 @@ namespace CMP2.Core
         OnPropertyChanged("DurationViewStatus");
       }
     }
+
     /// <summary>
     /// 마지막 곡 저장
     /// </summary>

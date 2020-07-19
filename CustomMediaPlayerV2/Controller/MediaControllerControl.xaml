@@ -87,12 +87,11 @@
             VerticalAlignment="Center"
             Grid.Row="1">
             <Button
-                IsEnabled="False"
                 x:Name="ShuffleButton"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Style="{StaticResource MaterialDesignIconButton}"
-                Content="{materialDesign:PackIcon Kind=Shuffle, Size=30}"
+                Content="{Binding ShuffleIcon}"
                 ToolTip="셔플 / Shuffle"
                 Focusable="False"
                 Cursor="Hand"

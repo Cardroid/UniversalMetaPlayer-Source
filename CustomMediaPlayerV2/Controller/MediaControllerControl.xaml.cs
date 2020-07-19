@@ -248,9 +248,10 @@ namespace CMP2.Controller
           MainMediaPlayer.Previous();
           break;
         case ControlType.Repeat:
-          ++MainMediaPlayer.Option.RepeatPlayOption;
+          MainMediaPlayer.Option.RepeatPlayOption++;
           break;
         case ControlType.Shuffle:
+          MainMediaPlayer.Option.Shuffle = !MainMediaPlayer.Option.Shuffle;
           break;
         case ControlType.Setting:
           break;
