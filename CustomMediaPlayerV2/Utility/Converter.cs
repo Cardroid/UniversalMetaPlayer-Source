@@ -78,12 +78,12 @@ namespace CMP2.Utility
     /// </summary>
     /// <param name="sourceFilename">소스가 될 파일 경로</param>
     /// <param name="targetFilename">타겟파일 경로</param>
-    public static void ConvertToMP3(string sourceFilename, string targetFilename)
+    public static async System.Threading.Tasks.Task ConvertToMP3Async(string sourceFilename, string targetFilename)
     {
       using (var reader = new NAudio.Wave.AudioFileReader(sourceFilename))
       using (var writer = new NAudio.Lame.LameMP3FileWriter(targetFilename, reader.WaveFormat, NAudio.Lame.LAMEPreset.STANDARD))
       {
-        reader.CopyTo(writer);
+        await reader.CopyToAsync(writer);
       }
     }
   }

@@ -149,7 +149,7 @@ namespace CMP2.Core.Model
     }
 
     #region YouTube
-    public static string CacheYouTubeDirectoryPath = Path.Combine("Cache", "Youtube", "Stream");
+    public static string CacheYouTubeDirectoryPath = Path.Combine("Cache", "Youtube");
 
     /// <summary>
     /// YouTube 미디어 정보 로드시도
@@ -236,7 +236,7 @@ namespace CMP2.Core.Model
             throw new Exception("Failed to download YouTube stream.");
 
           // Mp3로 변환
-          Converter.ConvertToMP3(streampath, mp3FilePath);
+          await Converter.ConvertToMP3Async(streampath, mp3FilePath);
           File.Delete(streampath);
           Log.Info("미디어 스트림 Mp3 변환 성공.");
 

@@ -5,6 +5,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 
 using CMP2.Core.Model;
+using CMP2.Utility;
 
 using NAudio.Wave;
 
@@ -277,7 +278,7 @@ namespace CMP2.Core
 
       if (Option.Shuffle && PlayListPlayMediaIndex >= 0)
       {
-        PlayListPlayMediaIndex = new Random().Next(0, PlayList.Count);
+        PlayListPlayMediaIndex = RandomFunc.RandomInt(PlayListPlayMediaIndex, PlayListPlayMediaIndex, 0, PlayList.Count);
       }
 
       int index = PlayListPlayMediaIndex + 1;
@@ -316,7 +317,7 @@ namespace CMP2.Core
 
       if (Option.Shuffle && PlayListPlayMediaIndex >= 0)
       {
-        PlayListPlayMediaIndex = new Random().Next(0, PlayList.Count);
+        PlayListPlayMediaIndex = RandomFunc.RandomInt(PlayListPlayMediaIndex, PlayListPlayMediaIndex, 0, PlayList.Count);
       }
 
       int index = PlayListPlayMediaIndex - 1;
