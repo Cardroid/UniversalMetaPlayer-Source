@@ -17,17 +17,21 @@ using YoutubeExplode.Videos;
 
 namespace CMP2.Core.Model
 {
-  #region 미디어 정보 인터페이스
+  #region 미디어 정보 구조체
 
   /// <summary>
   /// 미디어 정보 인터페이스
   /// </summary>
-  public interface IMediaInfo
+  public struct MediaInfomation
   {
     /// <summary>
     /// 미디어 타입
     /// </summary>
     public MediaType MediaType { get; set; }
+    /// <summary>
+    /// 정보가 로드 되었는지 여부
+    /// </summary>
+    public LoadState LoadedCheck { get; set; }
     /// <summary>
     /// 파일의 위치
     /// </summary>
@@ -63,36 +67,40 @@ namespace CMP2.Core.Model
   /// <summary>
   /// 미디어 정보 클레스
   /// </summary>
-  public class MediaInfo : IMediaInfo
+  public class Media
   {
     private Log Log { get; }
-    public MediaInfo(MediaType mediaType, string medialocation)
+    public Media(MediaType mediaType, string medialocation)
     {
       if (string.IsNullOrWhiteSpace(medialocation))
-        return;
+        throw new NullReferenceException("미디어 위치정보는 비어있을 수 없습니다.");
 
-      Title = string.Empty;
-      Duration = TimeSpan.Zero;
-      AlbumImage = null;
-      AlbumTitle = string.Empty;
-      ArtistName = string.Empty;
-      Lyrics = string.Empty;
+      Infomation = new MediaInfomation()
+      {
+        LoadedCheck = LoadState.NotTryed,
+        Title = string.Empty,
+        Duration = TimeSpan.Zero,
+        AlbumImage = null,
+        AlbumTitle = string.Empty,
+        ArtistName = string.Empty,
+        Lyrics = string.Empty
+      };
 
-      MediaLocation = medialocation;
-      MediaType = mediaType;
+      Infomation.MediaLocation = medialocation;
+      Infomation.MediaType = mediaType;
 
-      if (MediaType == MediaType.Local)
-        Title = Path.GetFileNameWithoutExtension(MediaLocation);
-      else if (MediaType == MediaType.Youtube)
+      if (Infomation.MediaType == MediaType.Local)
+        Infomation.Title = Path.GetFileNameWithoutExtension(Infomation.MediaLocation);
+      else if (Infomation.MediaType == MediaType.Youtube)
       {
         if (!string.IsNullOrWhiteSpace(GetYouTubeVideoID()))
-          Title = $"\"{GetYouTubeVideoID()}\" Form YouTube";
+          Infomation.Title = $"\"{GetYouTubeVideoID()}\" Form YouTube";
         else
-          Title = $"\"{MediaLocation}\" Form YouTube";
-        AlbumTitle = $"{MediaLocation} Form YouTube";
+          Infomation.Title = $"\"{Infomation.MediaLocation}\" Form YouTube";
+        Infomation.AlbumTitle = $"{Infomation.MediaLocation} Form YouTube";
       }
 
-      Log = new Log($"{typeof(MediaInfo)} - <{MediaType}>[{Title}]");
+      Log = new Log($"{typeof(Media)} - <{Infomation.MediaType}>[{Infomation.Title}]");
       LoadedCheck = LoadState.NotTryed;
     }
 
@@ -103,10 +111,10 @@ namespace CMP2.Core.Model
     public async Task<bool> TryInfoPartialLoadAsync()
     {
       // 로컬 파일
-      if (MediaType == MediaType.Local)
-        return TryFileInfomationLoad(MediaLocation, false);
+      if (Infomation.MediaType == MediaType.Local)
+        return TryFileInfomationLoad(Infomation.MediaLocation, false);
       // YouTube
-      else if (MediaType == MediaType.Youtube)
+      else if (Infomation.MediaType == MediaType.Youtube)
         return await TryYouTubeInfomationLoadAsync(false);
       return false;
     }
@@ -118,10 +126,10 @@ namespace CMP2.Core.Model
     public async Task<bool> TryInfoAllLoadAsync()
     {
       // 로컬 파일
-      if (MediaType == MediaType.Local)
-        return TryFileInfomationLoad(MediaLocation, true);
+      if (Infomation.MediaType == MediaType.Local)
+        return TryFileInfomationLoad(Infomation.MediaLocation, true);
       // YouTube
-      else if (MediaType == MediaType.Youtube)
+      else if (Infomation.MediaType == MediaType.Youtube)
         return await TryYouTubeInfomationLoadAsync(true);
       return false;
     }
@@ -132,10 +140,10 @@ namespace CMP2.Core.Model
     public async Task<string> GetStreamPath()
     {
       // 로컬 파일
-      if (MediaType == MediaType.Local)
-        return MediaLocation;
+      if (Infomation.MediaType == MediaType.Local)
+        return Infomation.MediaLocation;
       // YouTube
-      else if (MediaType == MediaType.Youtube)
+      else if (Infomation.MediaType == MediaType.Youtube)
         return await GetYouTubeMediaAsync(true);
       return string.Empty;
     }
@@ -153,7 +161,7 @@ namespace CMP2.Core.Model
       string streamCachePath = TrySearchCachedMedia();
       if (!string.IsNullOrWhiteSpace(streamCachePath))
       {
-        if(TryFileInfomationLoad(streamCachePath, fullload))
+        if (TryFileInfomationLoad(streamCachePath, fullload))
         {
           Log.Info($"캐쉬에서 미디어 정보 로드 성공. Full : {fullload}");
           return true;
@@ -233,7 +241,7 @@ namespace CMP2.Core.Model
           Log.Info("미디어 스트림 Mp3 변환 성공.");
 
           // 메타 데이터 저장
-          await TryYouTubeMetaDataSave(MediaLocation, mp3FilePath, Log);
+          await TryYouTubeMetaDataSave(Infomation.MediaLocation, mp3FilePath, Log);
 
           Log.Info("미디어 스트림 다운로드 & 변환 성공.");
         }
@@ -265,7 +273,7 @@ namespace CMP2.Core.Model
         var youtube = new YoutubeClient();
         try
         {
-          var streamManifest = await youtube.Videos.Streams.GetManifestAsync(MediaLocation);
+          var streamManifest = await youtube.Videos.Streams.GetManifestAsync(Infomation.MediaLocation);
 
           var streamInfo = streamManifest.GetAudioOnly().WithHighestBitrate();
 
@@ -316,15 +324,18 @@ namespace CMP2.Core.Model
             using (WebClient webClient = new WebClient())
             {
               var imagedata = webClient.DownloadData(videoinfo.Thumbnails.MaxResUrl);
-              Fileinfo.Tag.Pictures = new TagLib.IPicture[] 
+              Fileinfo.Tag.Pictures = new TagLib.IPicture[]
               {
                 new TagLib.Picture(new TagLib.ByteVector(imagedata))
                 {
-                  Type = TagLib.PictureType.FrontCover, 
-                  Description = "Cover" 
-                } 
+                  Type = TagLib.PictureType.FrontCover,
+                  Description = "Cover"
+                }
               };
             }
+
+            Fileinfo.Tag.Description = $"\"{url}\" form YouTube";
+
             Fileinfo.Save();
           }
           log.Info("YouTube에서 Mp3 메타 데이터 저장 성공.");
@@ -364,10 +375,10 @@ namespace CMP2.Core.Model
     /// <returns>YouTube Video ID</returns>
     public string GetYouTubeVideoID()
     {
-      if (MediaType != MediaType.Youtube)
+      if (Infomation.MediaType != MediaType.Youtube)
         return string.Empty;
 
-      var id = VideoId.TryParse(MediaLocation);
+      var id = VideoId.TryParse(Infomation.MediaLocation);
       if (id.HasValue)
         return id.Value;
       else
@@ -389,17 +400,17 @@ namespace CMP2.Core.Model
         using (var Fileinfo = TagLib.File.Create(path))
         {
           // 미디어 정보를 정보 클래스에 저장
-          Title = !string.IsNullOrWhiteSpace(Fileinfo.Tag.Title) ? Fileinfo.Tag.Title : Title;
-          Duration = Fileinfo.Properties.Duration;
+          Infomation.Title = !string.IsNullOrWhiteSpace(Fileinfo.Tag.Title) ? Fileinfo.Tag.Title : Infomation.Title;
+          Infomation.Duration = Fileinfo.Properties.Duration;
 
           // 모든 정보 로드
           if (fullload)
           {
-            try { AlbumImage = BitmapFrame.Create(new MemoryStream(Fileinfo.Tag.Pictures[0].Data.Data)); }
-            catch { AlbumImage = null; }
-            AlbumTitle = Fileinfo.Tag.Album;
-            ArtistName = Fileinfo.Tag.FirstAlbumArtist;
-            Lyrics = Fileinfo.Tag.Lyrics;
+            try { Infomation.AlbumImage = BitmapFrame.Create(new MemoryStream(Fileinfo.Tag.Pictures[0].Data.Data)); }
+            catch { Infomation.AlbumImage = null; }
+            Infomation.AlbumTitle = Fileinfo.Tag.Album;
+            Infomation.ArtistName = Fileinfo.Tag.FirstAlbumArtist;
+            Infomation.Lyrics = Fileinfo.Tag.Lyrics;
           }
           LoadedCheck = LoadState.Loaded;
           return true;
@@ -421,8 +432,8 @@ namespace CMP2.Core.Model
     /// </summary>
     public void LoadFailProcess()
     {
-      if (!Title.ToLower().StartsWith(MEDIA_INFO_NULL))
-        Title = $"{MEDIA_INFO_NULL} {Title}";
+      if (!Infomation.Title.ToLower().StartsWith(MEDIA_INFO_NULL))
+        Infomation.Title = $"{MEDIA_INFO_NULL} {Infomation.Title}";
     }
     #endregion
 
@@ -431,25 +442,24 @@ namespace CMP2.Core.Model
     /// </summary>
     public LoadState LoadedCheck
     {
-      get => _LoadedCheck;
+      get => Infomation.LoadedCheck;
       private set
       {
-        _LoadedCheck = value;
-        if (_LoadedCheck == LoadState.Fail)
+        Infomation.LoadedCheck = value;
+        if (Infomation.LoadedCheck == LoadState.Fail)
           LoadFailProcess();
       }
     }
-    private LoadState _LoadedCheck = LoadState.NotTryed;
 
     #region 프로퍼티 정의 (인터페이스 상속)
-    public MediaType MediaType { get; set; }
-    public string MediaLocation { get; set; }
-    public string Title { get; set; }
-    public TimeSpan Duration { get; set; }
-    public ImageSource AlbumImage { get; set; }
-    public string AlbumTitle { get; set; }
-    public string ArtistName { get; set; } 
-    public string Lyrics { get; set; } 
+    /// <summary>
+    /// 정보 구조체
+    /// </summary>
+    private MediaInfomation Infomation;
+    /// <summary>
+    /// 정보 구조체 Getter
+    /// </summary>
+    public MediaInfomation GetInfomation() => Infomation;
     #endregion
   }
   public enum LoadState

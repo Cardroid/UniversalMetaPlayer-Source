@@ -18,6 +18,17 @@ namespace CMP2.Core
     {
       Option = new PlayerOption();
       PlayList = new PlayList();
+      MediaInfomation = new MediaInfomation()
+      {
+        LoadedCheck = LoadState.NotTryed,
+        Title = string.Empty,
+        Duration = TimeSpan.Zero,
+        AlbumImage = null,
+        AlbumTitle = string.Empty,
+        ArtistName = string.Empty,
+        Lyrics = string.Empty
+      };
+
       PlayListPlayMediaIndex = -1;
       Volume = 0.8f;
       OptionDefault();
@@ -65,7 +76,7 @@ namespace CMP2.Core
     /// <summary>
     /// 현재 플레이리스트에서 재생중인 미디어의 Index
     /// </summary>
-    public static int PlayListPlayMediaIndex { get; private set; }
+    public static int PlayListPlayMediaIndex { get; set; }
 
     private static DispatcherTimer Tick { get; } = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(1) };
     public static event EventHandler TickEvent
@@ -82,21 +93,21 @@ namespace CMP2.Core
     public static event CMP_PropertyChangedEventHandler PropertyChangedEvent;
     private static void OnPropertyChanged(string name) => PropertyChangedEvent?.Invoke(name);
 
-    public static bool MediaLoadedCheck => AudioFile != null && MediaInfo != null;
+    public static bool MediaLoadedCheck => AudioFile != null;
 
     /// <summary>
     /// 미디어 파일 정보
     /// </summary>
-    public static IMediaInfo MediaInfo
+    public static MediaInfomation MediaInfomation
     {
-      get => _MediaInfo;
+      get => _MediaInfomation;
       set
       {
-        _MediaInfo = value;
-        OnPropertyChanged("MediaInfo");
+        _MediaInfomation = value;
+        OnPropertyChanged("MediaInfomation");
       }
     }
-    private static IMediaInfo _MediaInfo = null;
+    private static MediaInfomation _MediaInfomation;
 
     /// <summary>
     /// 오디오 파일 (약한참조)
@@ -178,13 +189,31 @@ namespace CMP2.Core
     /// <summary>
     /// 미디어로 초기화하고 재생을 준비합니다
     /// </summary>
-    /// <param name="mediaInfo">재생할 미디어</param>
-    /// <param name="autoplay">자동 재생 여부</param>
-    public static async void Init(MediaInfo mediaInfo)
+    /// <param name="media">재생할 미디어</param>
+    public static async void Init(Media media)
     {
-      PlayListPlayMediaIndex = PlayList.IndexOf(mediaInfo);
+      string path = await media.GetStreamPath();
 
-      await ReadToPlay(mediaInfo);
+      if (string.IsNullOrWhiteSpace(path))
+      {
+        Log.Error("미디어 위치정보가 누락 되었습니다. (path is Null)");
+        return;
+      }
+
+      // 모든 정보로드
+      await media.TryInfoAllLoadAsync();
+      var info = media.GetInfomation();
+
+      Stop();
+      if (AudioFile != null)
+      {
+        await AudioFile.DisposeAsync();
+        AudioFile = null;
+      }
+
+      AudioFile = new MediaFoundationReader(path);
+      MediaInfomation = info;
+
       StopButtonActive = false;
 
       WavePlayer?.Dispose();
@@ -193,45 +222,9 @@ namespace CMP2.Core
       WavePlayer.Volume = _Volume;
       WavePlayer.Init(AudioFile);
 
-      Log.Debug($"[{(string.IsNullOrWhiteSpace(mediaInfo.GetYouTubeVideoID()) ? System.IO.Path.GetFileNameWithoutExtension(MediaInfo.MediaLocation) : $"\"{mediaInfo.GetYouTubeVideoID()}\" {MediaInfo.Title}")}] 메인 미디어 플레이어에 로드 성공.");
+      Log.Debug($"[{(string.IsNullOrWhiteSpace(media.GetYouTubeVideoID()) ? System.IO.Path.GetFileNameWithoutExtension(info.MediaLocation) : $"\"{media.GetYouTubeVideoID()}\" {info.Title}")}] 메인 미디어 플레이어에 로드 성공.");
 
       PropertyChangedEvent?.Invoke("MainPlayerInitialized");
-    }
-
-    /// <summary>
-    /// 재생준비
-    /// </summary>
-    private static async Task ReadToPlay(MediaInfo mediaInfo)
-    {
-      if (mediaInfo == null || string.IsNullOrWhiteSpace(mediaInfo.MediaLocation))
-      {
-        Log.Error("미디어 위치정보가 누락 되었습니다. (잘못된 매개변수)");
-        return;
-      }
-
-      string path = await mediaInfo.GetStreamPath();
-
-      if (string.IsNullOrWhiteSpace(path))
-      {
-        Log.Error("미디어 위치정보가 누락 되었습니다. (path is Null)");
-        return;
-      }
-
-      Stop();
-      MediaInfo = null;
-      if (AudioFile != null)
-      {
-        AudioFile.Dispose();
-        AudioFile = null;
-      }
-
-      // 모든 정보로드
-      await mediaInfo.TryInfoAllLoadAsync();
-
-      AudioFile = new MediaFoundationReader(path);
-      if (mediaInfo.Duration <= TimeSpan.Zero)
-        mediaInfo.Duration = AudioFile.TotalTime;
-      MediaInfo = mediaInfo;
     }
 
     /// <summary>
@@ -293,12 +286,13 @@ namespace CMP2.Core
       NotAutoPlay = true;
       do
       {
-        if (index == PlayList.Count)
+        if (index >= PlayList.Count)
           index = 0;
 
         if ((int)PlayList[index].LoadedCheck >= 2)
         {
-          Init(PlayList[index]);
+          Init(new Media(PlayList[index].MediaType, PlayList[index].MediaLocation));
+          PlayListPlayMediaIndex = index;
           InitComplete = true;
         }
         else if (PlayListPlayMediaIndex == index)
@@ -331,12 +325,13 @@ namespace CMP2.Core
       NotAutoPlay = true;
       do
       {
-        if (index == 0)
-          index = PlayList.Count;
+        if (index < 0)
+          index = PlayList.Count - 1;
 
         if ((int)PlayList[index].LoadedCheck >= 2)
         {
-          Init(PlayList[index]);
+          Init(new Media(PlayList[index].MediaType, PlayList[index].MediaLocation));
+          PlayListPlayMediaIndex = index;
           InitComplete = true;
         }
         else if (PlayListPlayMediaIndex == index)

@@ -51,19 +51,19 @@ namespace CMP2.Controller
         PlayList.UnselectAll();
     }
 
-    private async void PlayList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    private void PlayList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
       if (0 <= ViewModel.PlayListSelectIndex && ViewModel.PlayList.Count > ViewModel.PlayListSelectIndex)
       {
-        if (MainMediaPlayer.PlayList[ViewModel.PlayListSelectIndex].LoadedCheck != Core.Model.LoadState.Loaded)
-          await MainMediaPlayer.PlayList[ViewModel.PlayListSelectIndex].TryInfoAllLoadAsync();
         if (MainMediaPlayer.PlayList[ViewModel.PlayListSelectIndex].LoadedCheck == Core.Model.LoadState.Loaded)
         {
-          MainMediaPlayer.Init(MainMediaPlayer.PlayList[ViewModel.PlayListSelectIndex]);
+          MainMediaPlayer.PlayListPlayMediaIndex = ViewModel.PlayListSelectIndex;
+          MainMediaPlayer.Init(new Core.Model.Media(MainMediaPlayer.PlayList[ViewModel.PlayListSelectIndex].MediaType, MainMediaPlayer.PlayList[ViewModel.PlayListSelectIndex].MediaLocation));
         }
         else
         {
-          Log.Error($"<{MainMediaPlayer.PlayList[ViewModel.PlayListSelectIndex].MediaType}>[{MainMediaPlayer.PlayList[ViewModel.PlayListSelectIndex].Title}] 미디어 정보가 로드되지 않았거나 로드에 실패 했습니다.");
+          var info = MainMediaPlayer.PlayList[ViewModel.PlayListSelectIndex];
+          Log.Error($"<{info.MediaType}>[{info.Title}] 미디어 정보가 로드되지 않았거나 로드에 실패 했습니다.");
         }
       }
     }
