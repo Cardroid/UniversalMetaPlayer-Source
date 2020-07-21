@@ -31,7 +31,7 @@ namespace CustomMediaPlayer.Core
 
     #region 프로퍼티 정의
     /// <summary>
-    /// 플래이리스트에서의 고유숫자
+    /// 플레이리스트에서의 고유숫자
     /// </summary>
     public int ID { get; set; }
     /// <summary>

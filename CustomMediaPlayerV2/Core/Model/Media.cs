@@ -55,7 +55,7 @@ namespace CMP2.Core.Model
     /// <summary>
     /// 아티스트 이름
     /// </summary>
-    public string ArtistName { get; set; }
+    public string AlbumArtist { get; set; }
     /// <summary>
     /// 가사
     /// </summary>
@@ -69,7 +69,7 @@ namespace CMP2.Core.Model
   /// </summary>
   public class Media
   {
-    private Log Log { get; }
+    private Log Log { get; set; }
     public Media(MediaType mediaType, string medialocation)
     {
       if (string.IsNullOrWhiteSpace(medialocation))
@@ -82,7 +82,7 @@ namespace CMP2.Core.Model
         Duration = TimeSpan.Zero,
         AlbumImage = null,
         AlbumTitle = string.Empty,
-        ArtistName = string.Empty,
+        AlbumArtist = string.Empty,
         Lyrics = string.Empty
       };
 
@@ -149,28 +149,33 @@ namespace CMP2.Core.Model
     }
 
     #region YouTube
-    public static string CacheYouTubeDirectoryPath = Path.Combine("Cache", "Youtube");
+    public static string CacheYouTubeDirectoryPath = Path.Combine(GlobalProperty.CachePath, "Youtube");
 
     /// <summary>
     /// YouTube 미디어 정보 로드시도
     /// </summary>
     /// <param name="fullload">모든 정보 로드 여부</param>
     /// <returns>성공시 true를 반환</returns>
-    private async Task<bool> TryYouTubeInfomationLoadAsync(bool fullload)
+    private async Task<bool> TryYouTubeInfomationLoadAsync(bool fullload, bool useCache = true)
     {
-      string streamCachePath = TrySearchCachedMedia();
-      if (!string.IsNullOrWhiteSpace(streamCachePath))
+      if (useCache)
       {
-        if (TryFileInfomationLoad(streamCachePath, fullload))
+        string streamCachePath = TrySearchCachedMedia();
+        if (!string.IsNullOrWhiteSpace(streamCachePath))
         {
-          Log.Info($"캐쉬에서 미디어 정보 로드 성공. Full : {fullload}");
-          return true;
+          if (TryFileInfomationLoad(streamCachePath, fullload))
+          {
+            Log.Info($"캐쉬에서 미디어 정보 로드 성공. Full : {fullload}");
+            return true;
+          }
+          else
+            Log.Warn($"캐쉬된 미디어 정보 로드 실패. 온라인에서 다운로드를 시도합니다. Full : {fullload}");
         }
         else
           Log.Warn($"캐쉬된 미디어 정보 로드 실패. 온라인에서 다운로드를 시도합니다. Full : {fullload}");
       }
       else
-        Log.Warn($"캐쉬된 미디어 정보 로드 실패. 온라인에서 다운로드를 시도합니다. Full : {fullload}");
+        Log.Info($"캐쉬사용이 꺼져있습니다. 온라인에서 다운로드를 시도합니다. Full : {fullload}");
 
       string cachepath = await GetYouTubeMediaAsync(false);
 
@@ -218,7 +223,7 @@ namespace CMP2.Core.Model
         string streamCachePath = TrySearchCachedMedia();
         if (!string.IsNullOrWhiteSpace(streamCachePath))
         {
-          Log.Info("캐쉬에서 미디어 로드 성공.");
+          Log.Debug("캐쉬에서 미디어가 확인됨.");
           return streamCachePath;
         }
         else
@@ -236,7 +241,8 @@ namespace CMP2.Core.Model
             throw new Exception("Failed to download YouTube stream.");
 
           // Mp3로 변환
-          await Converter.ConvertToMP3Async(streampath, mp3FilePath);
+          if (!await Converter.ConvertToMP3Async(streampath, mp3FilePath))
+            throw new FileNotFoundException($"File is Null\nSourceFile : [{streampath}]\nTargetFile : [{mp3FilePath}]");
           File.Delete(streampath);
           Log.Info("미디어 스트림 Mp3 변환 성공.");
 
@@ -409,7 +415,7 @@ namespace CMP2.Core.Model
             try { Infomation.AlbumImage = BitmapFrame.Create(new MemoryStream(Fileinfo.Tag.Pictures[0].Data.Data)); }
             catch { Infomation.AlbumImage = null; }
             Infomation.AlbumTitle = Fileinfo.Tag.Album;
-            Infomation.ArtistName = Fileinfo.Tag.FirstAlbumArtist;
+            Infomation.AlbumArtist = Fileinfo.Tag.FirstAlbumArtist;
             Infomation.Lyrics = Fileinfo.Tag.Lyrics;
           }
           LoadedCheck = LoadState.Loaded;
@@ -445,7 +451,11 @@ namespace CMP2.Core.Model
       get => Infomation.LoadedCheck;
       private set
       {
-        Infomation.LoadedCheck = value;
+        if (Infomation.LoadedCheck != value)
+        {
+          Infomation.LoadedCheck = value;
+          Log = new Log($"{typeof(Media)} - <{Infomation.MediaType}>[{Infomation.Title}]");
+        }
         if (Infomation.LoadedCheck == LoadState.Fail)
           LoadFailProcess();
       }

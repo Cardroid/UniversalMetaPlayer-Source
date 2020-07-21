@@ -15,9 +15,9 @@ namespace CustomMediaPlayer.Controllers.PlayList
   public class PlayListSave
   {
     /// <summary>
-    /// 플래이 리스트를 저장 합니다. 실패시 예외를 발생시킵니다.
+    /// 플레이 리스트를 저장 합니다. 실패시 예외를 발생시킵니다.
     /// </summary>
-    /// <param name="playList">저장할 플래이리스트</param>
+    /// <param name="playList">저장할 플레이리스트</param>
     public static void Save(PlayListInfo playList)
     {
       try

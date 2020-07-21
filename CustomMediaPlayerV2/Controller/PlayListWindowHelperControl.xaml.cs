@@ -18,6 +18,9 @@ namespace CMP2.Controller
     public PlayListWindowHelperControl()
     {
       InitializeComponent();
+
+      // 최대화 버튼 봉인
+      this.WindowStyleButtons.MaximizeButton.IsEnabled = false;
     }
   }
 }

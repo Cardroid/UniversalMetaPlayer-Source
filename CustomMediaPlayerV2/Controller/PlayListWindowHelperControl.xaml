@@ -34,6 +34,7 @@
                     Content="PlayList"
                     Grid.Column="0" />
                 <WindowButton:WindowStyleButtonControl
+                    x:Name="WindowStyleButtons"
                     Panel.ZIndex="999"
                     Grid.Column="1" />
             </Grid>

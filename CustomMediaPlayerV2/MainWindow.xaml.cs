@@ -23,10 +23,11 @@ namespace CMP2
   {
     public MainWindow()
     {
+      App.MainLog.Info("### Start application ###");
+      GlobalProperty.SetDefault();
       Hook.Start();
       InitializeComponent();
       this.KeyDown += (_, e) => GlobalEvent.KeyDownEventInvoke(e);
-      App.MainLog.Info("### Start application ###");
       this.Loaded += MainWindow_Loaded;
       this.Closing += MainWindow_Closing;
     }

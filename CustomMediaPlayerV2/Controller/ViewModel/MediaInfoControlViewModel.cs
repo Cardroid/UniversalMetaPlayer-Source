@@ -24,7 +24,7 @@ namespace CMP2.Controller.ViewModel
       {
         OnPropertyChanged("MediaTitle");
         OnPropertyChanged("AlbumTitle");
-        OnPropertyChanged("ArtistName");
+        OnPropertyChanged("AlbumArtist");
         OnPropertyChanged("AlbumImage");
       }
     }
@@ -48,10 +48,10 @@ namespace CMP2.Controller.ViewModel
   #endregion
 
   #region 아티스트 이름
-    public string ArtistName =>
+    public string AlbumArtist =>
       MainMediaPlayer.MediaLoadedCheck
-        ? (!string.IsNullOrWhiteSpace(MainMediaPlayer.MediaInfomation.ArtistName)
-        ? MainMediaPlayer.MediaInfomation.ArtistName : INFO_NULL)
+        ? (!string.IsNullOrWhiteSpace(MainMediaPlayer.MediaInfomation.AlbumArtist)
+        ? MainMediaPlayer.MediaInfomation.AlbumArtist : INFO_NULL)
         : "Error";
   #endregion
 

@@ -10,41 +10,60 @@
     <materialDesign:PopupBox
         Style="{StaticResource MaterialDesignMultiFloatingActionAccentPopupBox}"
         PlacementMode="LeftAndAlignMiddles"
+        Background="Transparent"
+        BorderBrush="Transparent"
+        Foreground="Red"
         ToolTip="창 관련 버튼"
         Width="40"
         Height="40">
         <materialDesign:PopupBox.ToggleContent>
             <materialDesign:PackIcon
+                Foreground="Red"
                 Kind="Plus"
                 Width="30"
                 Height="30" />
         </materialDesign:PopupBox.ToggleContent>
-        <StackPanel
-            Orientation="Horizontal">
-            <Button
-                x:Name="MinimizeButton"
-                Style="{StaticResource MaterialDesignIconButton}"
-                Content="{materialDesign:PackIcon Kind=WindowMinimize, Size=15}"
-                ToolTip="최소화"
-                Focusable="False"
-                Cursor="Hand"
-                Grid.Column="0" />
-            <Button
-                x:Name="MaximizeButton"
-                Style="{StaticResource MaterialDesignIconButton}"
-                Content="{materialDesign:PackIcon Kind=WindowMaximize, Size=15}"
-                ToolTip="최대화"
-                Focusable="False"
-                Cursor="Hand"
-                Grid.Column="1" />
-            <Button
-                x:Name="CloseButton"
-                Style="{StaticResource MaterialDesignIconButton}"
-                Content="{materialDesign:PackIcon Kind=WindowClose, Size=15}"
-                ToolTip="닫기"
-                Focusable="False"
-                Cursor="Hand"
-                Grid.Column="2" />
-        </StackPanel>
+        <Border
+            BorderBrush="Red"
+            BorderThickness="2"
+            Height="40">
+            <StackPanel
+                Orientation="Horizontal"
+                Background="Black">
+                <Button
+                    x:Name="MinimizeButton"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Style="{StaticResource MaterialDesignIconButton}"
+                    Content="{materialDesign:PackIcon Kind=WindowMinimize, Size=15}"
+                    Foreground="Green"
+                    ToolTip="최소화"
+                    Focusable="False"
+                    Cursor="Hand"
+                    Grid.Column="0" />
+                <Button
+                    x:Name="MaximizeButton"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Style="{StaticResource MaterialDesignIconButton}"
+                    Content="{materialDesign:PackIcon Kind=WindowMaximize, Size=15}"
+                    Foreground="Yellow"
+                    ToolTip="최대화"
+                    Focusable="False"
+                    Cursor="Hand"
+                    Grid.Column="1" />
+                <Button
+                    x:Name="CloseButton"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Style="{StaticResource MaterialDesignIconButton}"
+                    Content="{materialDesign:PackIcon Kind=WindowClose, Size=15}"
+                    Foreground="Red"
+                    ToolTip="닫기"
+                    Focusable="False"
+                    Cursor="Hand"
+                    Grid.Column="2" />
+            </StackPanel>
+        </Border>
     </materialDesign:PopupBox>
 </UserControl>

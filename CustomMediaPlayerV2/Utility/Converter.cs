@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -78,13 +80,20 @@ namespace CMP2.Utility
     /// </summary>
     /// <param name="sourceFilename">소스가 될 파일 경로</param>
     /// <param name="targetFilename">타겟파일 경로</param>
-    public static async System.Threading.Tasks.Task ConvertToMP3Async(string sourceFilename, string targetFilename)
+    /// <returns>성공하면 true를 반환</returns>
+    public static async Task<bool> ConvertToMP3Async(string sourceFilename, string targetFilename)
     {
-      using (var reader = new NAudio.Wave.AudioFileReader(sourceFilename))
-      using (var writer = new NAudio.Lame.LameMP3FileWriter(targetFilename, reader.WaveFormat, NAudio.Lame.LAMEPreset.STANDARD))
+      if (File.Exists(sourceFilename))
       {
-        await reader.CopyToAsync(writer);
+        using (var reader = new NAudio.Wave.AudioFileReader(sourceFilename))
+        using (var writer = new NAudio.Lame.LameMP3FileWriter(targetFilename, reader.WaveFormat, NAudio.Lame.LAMEPreset.STANDARD))
+        {
+          await reader.CopyToAsync(writer);
+        }
+        return true;
       }
+      else
+        return false;
     }
   }
 }

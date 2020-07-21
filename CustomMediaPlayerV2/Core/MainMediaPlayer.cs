@@ -26,14 +26,14 @@ namespace CMP2.Core
         Duration = TimeSpan.Zero,
         AlbumImage = null,
         AlbumTitle = string.Empty,
-        ArtistName = string.Empty,
+        AlbumArtist = string.Empty,
         Lyrics = string.Empty
       };
 
       PlayListPlayMediaIndex = -1;
       Volume = 0.8f;
       OptionDefault();
-      // 오토 플래이 옵션
+      // 오토 플레이 옵션
       PropertyChangedEvent += (e) =>
       {
         if (e == "MainPlayerInitialized")
@@ -113,7 +113,7 @@ namespace CMP2.Core
     /// <summary>
     /// 오디오 파일 (약한참조)
     /// </summary>
-    public static WaveStream AudioFile
+    private static WaveStream AudioFile
     {
       get
       {
@@ -122,7 +122,7 @@ namespace CMP2.Core
         else
           return null;
       }
-      private set
+      set
       {
         if (_AudioFile != null)
           _AudioFile.SetTarget(value);
@@ -132,6 +132,24 @@ namespace CMP2.Core
       }
     }
     private static WeakReference<WaveStream> _AudioFile = null;
+
+    /// <summary>
+    /// 오디오 현재 재생위치
+    /// </summary>
+    public static TimeSpan AudioCurrentTime
+    {
+      get => AudioFile.CurrentTime;
+      set
+      {
+        AudioFile.CurrentTime = value;
+        PlayStateChangedEvent?.Invoke(PlaybackState);
+      }
+    }
+
+    /// <summary>
+    /// 오디오 현재 재생위치
+    /// </summary>
+    public static TimeSpan AudioTotalTime => AudioFile.TotalTime;
 
     /// <summary>
     /// 재생이 끝났을 경우 이벤트 처리
@@ -273,37 +291,38 @@ namespace CMP2.Core
     /// </summary>
     public static void Next()
     {
-      if (PlayListPlayMediaIndex < 0)
+      if (!MediaLoadedCheck)
         return;
 
-      if (Option.Shuffle && PlayListPlayMediaIndex >= 0)
+      if (PlayListPlayMediaIndex >= 0)
       {
-        PlayListPlayMediaIndex = RandomFunc.RandomInt(PlayListPlayMediaIndex, PlayListPlayMediaIndex, 0, PlayList.Count);
-      }
+        if (Option.Shuffle && PlayListPlayMediaIndex >= 0)
+          PlayListPlayMediaIndex = RandomFunc.RandomInt(PlayListPlayMediaIndex, PlayListPlayMediaIndex, 0, PlayList.Count);
 
-      int index = PlayListPlayMediaIndex + 1;
-      var beforeState = PlaybackState;
-      bool InitComplete = false;
-      NotAutoPlay = true;
-      do
-      {
-        if (index >= PlayList.Count)
-          index = 0;
-
-        if ((int)PlayList[index].LoadedCheck >= 2)
+        int index = PlayListPlayMediaIndex + 1;
+        var beforeState = PlaybackState;
+        bool InitComplete = false;
+        NotAutoPlay = true;
+        do
         {
-          Init(new Media(PlayList[index].MediaType, PlayList[index].MediaLocation));
-          PlayListPlayMediaIndex = index;
-          InitComplete = true;
-        }
-        else if (PlayListPlayMediaIndex == index)
-          return;
+          if (index >= PlayList.Count)
+            index = 0;
 
-        index++;
+          if ((int)PlayList[index].LoadedCheck >= 2)
+          {
+            Init(new Media(PlayList[index].MediaType, PlayList[index].MediaLocation));
+            PlayListPlayMediaIndex = index;
+            InitComplete = true;
+          }
+          else if (PlayListPlayMediaIndex == index)
+            return;
+
+          index++;
+        }
+        while (!InitComplete);
+        if (beforeState == PlaybackState.Playing)
+          Play();
       }
-      while (!InitComplete);
-      if (beforeState == PlaybackState.Playing)
-        Play();
       NotAutoPlay = false;
     }
 
@@ -312,37 +331,43 @@ namespace CMP2.Core
     /// </summary>
     public static void Previous()
     {
-      if (PlayListPlayMediaIndex < 0)
+      if (!MediaLoadedCheck)
         return;
 
-      if (Option.Shuffle && PlayListPlayMediaIndex >= 0)
+      if (AudioFile.CurrentTime > TimeSpan.FromSeconds(5))
       {
-        PlayListPlayMediaIndex = RandomFunc.RandomInt(PlayListPlayMediaIndex, PlayListPlayMediaIndex, 0, PlayList.Count);
+        AudioFile.CurrentTime = TimeSpan.Zero;
+        PlayStateChangedEvent?.Invoke(PlaybackState);
       }
-
-      int index = PlayListPlayMediaIndex - 1;
-      var beforeState = PlaybackState;
-      bool InitComplete = false;
-      NotAutoPlay = true;
-      do
+      else if (PlayListPlayMediaIndex >= 0)
       {
-        if (index < 0)
-          index = PlayList.Count - 1;
+        if (Option.Shuffle && PlayListPlayMediaIndex >= 0)
+          PlayListPlayMediaIndex = RandomFunc.RandomInt(PlayListPlayMediaIndex, PlayListPlayMediaIndex, 0, PlayList.Count);
 
-        if ((int)PlayList[index].LoadedCheck >= 2)
+        int index = PlayListPlayMediaIndex - 1;
+        var beforeState = PlaybackState;
+        bool InitComplete = false;
+        NotAutoPlay = true;
+        do
         {
-          Init(new Media(PlayList[index].MediaType, PlayList[index].MediaLocation));
-          PlayListPlayMediaIndex = index;
-          InitComplete = true;
-        }
-        else if (PlayListPlayMediaIndex == index)
-          return;
+          if (index < 0)
+            index = PlayList.Count - 1;
 
-        index--;
+          if ((int)PlayList[index].LoadedCheck >= 2)
+          {
+            Init(new Media(PlayList[index].MediaType, PlayList[index].MediaLocation));
+            PlayListPlayMediaIndex = index;
+            InitComplete = true;
+          }
+          else if (PlayListPlayMediaIndex == index)
+            return;
+
+          index--;
+        }
+        while (!InitComplete);
+        if (beforeState == PlaybackState.Playing)
+          Play();
       }
-      while (!InitComplete);
-      if (beforeState == PlaybackState.Playing)
-        Play();
       NotAutoPlay = false;
     }
 

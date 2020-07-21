@@ -48,10 +48,10 @@
                 VerticalAlignment="Bottom"
                 Content="{Binding AlbumTitle}" />
             <Label
-                x:Name="ArtistNameLabel"
+                x:Name="AlbumArtistLabel"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Bottom"
-                Content="{Binding ArtistName}" />
+                Content="{Binding AlbumArtist}" />
         </StackPanel>
     </Grid>
 </UserControl>

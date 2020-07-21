@@ -207,18 +207,18 @@ namespace CMP2.Controller
       if (appendtime > TimeSpan.Zero)
       {
         // 양수
-        if (MainMediaPlayer.AudioFile.TotalTime > (MainMediaPlayer.AudioFile.CurrentTime + appendtime))
-          MainMediaPlayer.AudioFile.CurrentTime += appendtime;
+        if (MainMediaPlayer.AudioTotalTime > (MainMediaPlayer.AudioCurrentTime + appendtime))
+          MainMediaPlayer.AudioCurrentTime += appendtime;
         else
-          MainMediaPlayer.AudioFile.CurrentTime = MainMediaPlayer.AudioFile.TotalTime;
+          MainMediaPlayer.AudioCurrentTime = MainMediaPlayer.AudioTotalTime;
       }
       else
       {
         // 음수
-        if (MainMediaPlayer.AudioFile.CurrentTime + appendtime > TimeSpan.Zero)
-          MainMediaPlayer.AudioFile.CurrentTime += appendtime;
+        if (MainMediaPlayer.AudioCurrentTime + appendtime > TimeSpan.Zero)
+          MainMediaPlayer.AudioCurrentTime += appendtime;
         else
-          MainMediaPlayer.AudioFile.CurrentTime = TimeSpan.Zero;
+          MainMediaPlayer.AudioCurrentTime = TimeSpan.Zero;
       }
       ViewModel.ApplyUI(false);
     }
@@ -267,7 +267,7 @@ namespace CMP2.Controller
         if (this.ProgressSlider.IsMouseOver && Mouse.LeftButton == MouseButtonState.Pressed)
         {
           // 진행 슬라이더를 클릭 또는 드래그 하여 미디어 재생 위치 변경
-          MainMediaPlayer.AudioFile.CurrentTime = TimeSpan.FromMilliseconds(e.NewValue);
+          MainMediaPlayer.AudioCurrentTime = TimeSpan.FromMilliseconds(e.NewValue);
         }
     }
   }

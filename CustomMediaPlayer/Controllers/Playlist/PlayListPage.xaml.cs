@@ -93,7 +93,7 @@ namespace CustomMediaPlayer.Controllers.PlayList
       // 음악 삭제
       ((PlayListRightClickMenu)PlayListRightClickMenu.Child).RemoveButton.Click += (s, e) => { RemoveMediafromPlayList(); };
 
-      // 플래이리스트에서 더블클릭시 이벤트 처리
+      // 플레이리스트에서 더블클릭시 이벤트 처리
       this.PlayList.MouseDoubleClick += (s, e) =>
       {
         // 목록에서 한 가지를 선택한 경우
@@ -104,7 +104,7 @@ namespace CustomMediaPlayer.Controllers.PlayList
           if (MainMediaPlayer.NowPlayAudioStream != null)
             MainMediaPlayer.NowPlayAudioStream.Dispose();
 
-          // 플래이리스트의 정보에서 미디어열기를 시도
+          // 플레이리스트의 정보에서 미디어열기를 시도
           try
           { MainMediaPlayer.Init((MediaInfo)this.PlayList.SelectedItem); }
           catch (Exception ex)

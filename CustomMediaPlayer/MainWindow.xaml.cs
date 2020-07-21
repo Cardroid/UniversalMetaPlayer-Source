@@ -491,7 +491,7 @@ namespace CustomMediaPlayer
         }
       }
 
-      // 플래이리스트 저장
+      // 플레이리스트 저장
       try { PlayListSave.Save(PlayList.Playlist); }
       catch (Exception ex)
       {

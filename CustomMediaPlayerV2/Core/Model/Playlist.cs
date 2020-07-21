@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
 using CMP2.Utility;
+
+using PlaylistsNET.Models;
 
 namespace CMP2.Core.Model
 {
@@ -38,19 +41,35 @@ namespace CMP2.Core.Model
     /// 플레이리스트 정보 직렬화
     /// </summary>
     /// <returns>직렬화된 플레이리스트 정보</returns>
-    public Task<string[,]> Serialize()
+    public Task<M3uPlaylist> Serialize()
     {
-      string[,] Properties = new string[Count + 1, 3];
-      Properties[0, 0] = PlayListName;
-      Properties[0, 1] = TotalDuration.TotalMilliseconds.ToString();
+      M3uPlaylist playlist = new M3uPlaylist();
+      playlist.IsExtended = true;
+
       for (int i = 0; i < Count; i++)
       {
-        Properties[i + 1, 0] = base[i].Title;
-        Properties[i + 1, 1] = base[i].MediaType.ToString();
-        Properties[i + 1, 2] = base[i].MediaLocation;
+        var entry = new M3uPlaylistEntry()
+        {
+          Album = base[i].AlbumTitle,
+          AlbumArtist = base[i].AlbumArtist,
+          Duration = base[i].Duration,
+          Path = base[i].MediaLocation,
+          Title = base[i].Title
+        };
+
+        entry.CustomProperties.Add("MediaType", base[i].MediaType.ToString());
+
+        playlist.PlaylistEntries.Add(entry);
       }
-      Log.Debug("직렬화 성공");
-      return Task.FromResult(Properties);
+      playlist.FileName = PlayListName;
+      
+      var savepath = Path.Combine(GlobalProperty.FileSavePath, "PlayList");
+      if (!Directory.Exists(savepath))
+        Directory.CreateDirectory(savepath);
+      playlist.Path = savepath;
+
+      Log.Info("플레이 리스트 저장 성공");
+      return Task.FromResult(playlist);
     }
 
     /// <summary>

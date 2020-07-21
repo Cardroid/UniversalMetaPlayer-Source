@@ -69,11 +69,6 @@
                 Visibility="Collapsed"
                 Grid.Column="0"
                 Grid.Row="1" />
-            <!--<Controller:PlayListControl
-                x:Name="MainPlayListControl"
-                Grid.Column="1"
-                Grid.Row="0"
-                Grid.RowSpan="2" />-->
         </Grid>
     </Grid>
 </Window>

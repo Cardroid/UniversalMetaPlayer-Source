@@ -149,7 +149,7 @@ namespace CMP2.Controller.ViewModel
     // 현재 재생위치
     public TimeSpan CurrentPostion =>
       MainMediaPlayer.MediaLoadedCheck
-      ? MainMediaPlayer.AudioFile.CurrentTime 
+      ? MainMediaPlayer.AudioCurrentTime
       : TimeSpan.Zero;
     public string CurrentPostionstring => Converter.TimeSpanStringConverter(CurrentPostion);
     #endregion
@@ -204,11 +204,11 @@ namespace CMP2.Controller.ViewModel
     private void PlayList_PropertyChangedEvent(string propertyname)
     {
       if (propertyname == "TotalDuration")
-        OnPropertyChanged("TotalDuration");      // 플래이리스트 재생길이 총합 적용
+        OnPropertyChanged("TotalDuration");      // 플레이리스트 재생길이 총합 적용
     }
 
     /// <summary>
-    /// 현재 플래이어 상태를 UI에 적용합니다 (UI 갱신)
+    /// 현재 플레이어 상태를 UI에 적용합니다 (UI 갱신)
     /// </summary>
     /// <param name="fullapply">모든 정보를 적용할지의 여부</param>
     public void ApplyUI(bool fullapply = true)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Media;
@@ -23,7 +24,8 @@ namespace CMP2.Core
       LogoImage = new BitmapImage(new Uri("pack://application:,,,/CustomMediaPlayer;component/Resources/IconCustomMusicPlayer.png", UriKind.RelativeOrAbsolute));
       LogoNoteImage = new BitmapImage(new Uri("pack://application:,,,/CustomMediaPlayer;component/Resources/IconnoteCustomMusicPlayer.png", UriKind.RelativeOrAbsolute));
 
-      SetDefault();
+      CachePath = "Cache";
+      FileSavePath = "Save";
     }
 
     /// <summary>
@@ -37,6 +39,9 @@ namespace CMP2.Core
       theme.PrimaryColor = Colors.LightGreen;
       theme.SecondaryColor = Colors.DarkSeaGreen;
       Theme = theme.GetTheme();
+
+      CachePath = "Cache";
+      FileSavePath = "Save";
 
       KeyEventDelay = 20;
     }
@@ -54,6 +59,16 @@ namespace CMP2.Core
       set => _paletteHelper.SetTheme(value);
     }
     #endregion
+
+    /// <summary>
+    /// 캐쉬저장 폴더 경로
+    /// </summary>
+    public static string CachePath { get; set; }
+
+    /// <summary>
+    /// 캐쉬를 재외한 파일 저장 폴더 경로
+    /// </summary>
+    public static string FileSavePath { get; set; }
 
     #region Not Save
     /// <summary>
