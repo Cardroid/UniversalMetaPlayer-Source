@@ -40,6 +40,14 @@ namespace CMP2.Core
           if (MediaLoadedCheck && Option.AutoPlayOption && !NotAutoPlay)
             Play();
       };
+
+      // 스트림 끝에 오류가 있는 미디어 예방
+      TickEvent += (s, e) => 
+      {
+        if (AudioCurrentTime >= AudioTotalTime)
+          WavePlayer.Stop();
+      };
+
       Log.Debug("초기화 성공");
     }
     private static Log Log { get; } = new Log(typeof(MainMediaPlayer));

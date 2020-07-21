@@ -44,39 +44,24 @@ namespace CMP2.Controller.ViewModel
         MainMediaPlayer.Volume = Math.Clamp(value / 100f, 0f, 1f); // 오류 방지용
         if (MainMediaPlayer.Volume != 0)
           BeforeVolume = Volume;
-        VolumeMuteButtonIcon = VolumeMuteButtonIconChanger();
         OnPropertyChanged("Volume");
         OnPropertyChanged("VolumeString");
-      }
-    }
-    // 볼륨 뮤트 버튼 아이콘 관련
-    private PackIcon _VolumeMuteButtonIcon = null;
-    public PackIcon VolumeMuteButtonIcon
-    {
-      get
-      {
-        if (_VolumeMuteButtonIcon == null)
-          _VolumeMuteButtonIcon = VolumeMuteButtonIconChanger();
-        return _VolumeMuteButtonIcon;
-      }
-      set
-      {
-        _VolumeMuteButtonIcon = value;
         OnPropertyChanged("VolumeMuteButtonIcon");
       }
     }
-    public PackIcon VolumeMuteButtonIconChanger()
+    
+    // 볼륨 버튼 관련
+    public PackIconKind VolumeMuteButtonIcon => VolumeMuteButtonIconChanger();
+    public PackIconKind VolumeMuteButtonIconChanger()
     {
-      var Icon = new PackIcon() { Width = 25, Height = 25 };
       if (Volume > 70)
-        Icon.Kind = PackIconKind.VolumeHigh;
+        return PackIconKind.VolumeHigh;
       else if (Volume > 25)
-        Icon.Kind = PackIconKind.VolumeMedium;
+        return PackIconKind.VolumeMedium;
       else if (Volume > 0)
-        Icon.Kind = PackIconKind.VolumeLow;
-      else if (Volume == 0)
-        Icon.Kind = PackIconKind.VolumeOff;
-      return Icon;
+        return PackIconKind.VolumeLow;
+      else
+        return PackIconKind.VolumeOff;
     }
     #endregion
 

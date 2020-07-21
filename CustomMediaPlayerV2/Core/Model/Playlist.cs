@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 using CMP2.Utility;
 
+using PlaylistsNET.Content;
 using PlaylistsNET.Models;
 
 namespace CMP2.Core.Model
@@ -41,7 +42,7 @@ namespace CMP2.Core.Model
     /// 플레이리스트 정보 직렬화
     /// </summary>
     /// <returns>직렬화된 플레이리스트 정보</returns>
-    public Task<M3uPlaylist> Serialize()
+    public async Task Serialize()
     {
       M3uPlaylist playlist = new M3uPlaylist();
       playlist.IsExtended = true;
@@ -62,14 +63,17 @@ namespace CMP2.Core.Model
         playlist.PlaylistEntries.Add(entry);
       }
       playlist.FileName = PlayListName;
-      
+
+      string m3uData = PlaylistToTextHelper.ToText(playlist);
+
       var savepath = Path.Combine(GlobalProperty.FileSavePath, "PlayList");
       if (!Directory.Exists(savepath))
         Directory.CreateDirectory(savepath);
       playlist.Path = savepath;
 
+      await File.WriteAllTextAsync(Path.Combine(savepath, $"{PlayListName}.m3u8"), m3uData, Encoding.UTF8);
+
       Log.Info("플레이 리스트 저장 성공");
-      return Task.FromResult(playlist);
     }
 
     /// <summary>

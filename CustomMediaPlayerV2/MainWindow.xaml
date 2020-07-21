@@ -20,8 +20,8 @@
     AllowsTransparency="True"
     Width="800"
     Height="450"
-    MinWidth="500"
-    MinHeight="400">
+    MinWidth="550"
+    MinHeight="250">
 
     <Grid>
         <Grid.ColumnDefinitions>

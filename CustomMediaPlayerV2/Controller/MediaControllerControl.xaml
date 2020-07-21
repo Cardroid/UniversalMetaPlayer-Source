@@ -13,7 +13,8 @@
     TextElement.FontWeight="Medium"
     TextElement.FontSize="14"
     FontFamily="{Binding FontFamily}"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    MinWidth="550">
 
     <UserControl.DataContext>
         <model:MediaControllerControlViewModel />
@@ -32,11 +33,11 @@
         Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition
-                Height="30" />
+                Height="Auto" />
             <RowDefinition
-                Height="80" />
+                Height="*" />
             <RowDefinition
-                Height="30" />
+                Height="Auto" />
         </Grid.RowDefinitions>
         <Grid
             HorizontalAlignment="Stretch"
@@ -66,8 +67,10 @@
                 IsMoveToPointEnabled="True"
                 Value="{Binding CurrentPostion.TotalMilliseconds, Mode=OneWay}"
                 Maximum="{Binding DurationTime.TotalMilliseconds, Mode=OneWay}"
-                Margin="5,0,5,0"
+                TickFrequency="10000"
+                TickPlacement="BottomRight"
                 Focusable="False"
+                Margin="5,5,5,0"
                 Cursor="Hand"
                 Grid.Column="1" />
             <Label
@@ -81,11 +84,84 @@
                 Padding="0,0,3,0"
                 Grid.Column="2" />
         </Grid>
-        <StackPanel
-            Orientation="Horizontal"
+        <Grid
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             Grid.Row="1">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition
+                    Width="Auto" />
+                <ColumnDefinition
+                    Width="Auto" />
+                <ColumnDefinition
+                    Width="Auto" />
+                <ColumnDefinition
+                    Width="Auto" />
+                <ColumnDefinition
+                    Width="Auto" />
+                <ColumnDefinition
+                    Width="Auto" />
+                <ColumnDefinition
+                    Width="Auto" />
+                <ColumnDefinition
+                    Width="Auto" />
+                <ColumnDefinition
+                    Width="Auto" />
+                <ColumnDefinition
+                    Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <materialDesign:PopupBox
+                x:Name="VolumeMuteButton"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Style="{StaticResource MaterialDesignMultiFloatingActionAccentPopupBox}"
+                Foreground="{Binding Foreground, ElementName=PlayPauseButton}"
+                Background="Transparent"
+                BorderBrush="Transparent"
+                ToolTip="볼륨 / Volume"
+                PlacementMode="TopAndAlignCentres"
+                Focusable="False"
+                Cursor="Hand"
+                Width="{Binding Width, ElementName=ShuffleButton}"
+                Height="{Binding Height, ElementName=ShuffleButton}"
+                Grid.Column="0">
+                <materialDesign:PopupBox.ToggleContent>
+                    <materialDesign:PackIcon
+                        Kind="{Binding VolumeMuteButtonIcon}"
+                        Width="35"
+                        Height="35" />
+                </materialDesign:PopupBox.ToggleContent>
+                <materialDesign:PopupBox.ToggleCheckedContent>
+                    <materialDesign:PackIcon
+                        Kind="Close"
+                        Width="35"
+                        Height="35" />
+                </materialDesign:PopupBox.ToggleCheckedContent>
+                <Grid>
+                    <Slider
+                        x:Name="VolumeSlider"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        TickFrequency="10"
+                        TickPlacement="BottomRight"
+                        Orientation="Vertical"
+                        IsMoveToPointEnabled="True"
+                        AutoToolTipPlacement="TopLeft"
+                        AutoToolTipPrecision="0"
+                        Value="{Binding Volume}"
+                        ToolTip="볼륨 / Volume"
+                        Focusable="False"
+                        Cursor="Hand"
+                        Maximum="100"
+                        Height="100" />
+                    <Border 
+                        Background="Black"
+                        Panel.ZIndex="-999"
+                        Opacity="0.3" />
+                </Grid>
+            </materialDesign:PopupBox>
             <Button
                 x:Name="ShuffleButton"
                 HorizontalAlignment="Center"
@@ -95,8 +171,7 @@
                 ToolTip="셔플 / Shuffle"
                 Focusable="False"
                 Cursor="Hand"
-                Width="50"
-                Height="50" />
+                Grid.Column="1" />
             <Button
                 x:Name="RepeatButton"
                 HorizontalAlignment="Center"
@@ -107,8 +182,7 @@
                 Margin="0,0,20,0"
                 Focusable="False"
                 Cursor="Hand"
-                Width="50"
-                Height="50" />
+                Grid.Column="2" />
             <Button
                 x:Name="PreviousButton"
                 HorizontalAlignment="Center"
@@ -118,8 +192,7 @@
                 ToolTip="이전 / Previous"
                 Focusable="False"
                 Cursor="Hand"
-                Width="50"
-                Height="50" />
+                Grid.Column="3" />
             <Button
                 x:Name="PlayPauseButton"
                 HorizontalAlignment="Center"
@@ -129,8 +202,7 @@
                 ToolTip="[재생 / 일시정지] / [Play / Pause]"
                 Focusable="False"
                 Cursor="Hand"
-                Width="80"
-                Height="80" />
+                Grid.Column="4" />
             <Button
                 x:Name="StopButton"
                 HorizontalAlignment="Center"
@@ -140,8 +212,7 @@
                 ToolTip="정지 / Stop"
                 Focusable="False"
                 Cursor="Hand"
-                Width="60"
-                Height="60" />
+                Grid.Column="5" />
             <Button
                 x:Name="NextButton"
                 HorizontalAlignment="Center"
@@ -151,8 +222,7 @@
                 ToolTip="다음 / Next"
                 Focusable="False"
                 Cursor="Hand"
-                Width="50"
-                Height="50" />
+                Grid.Column="6" />
             <CheckBox
                 x:Name="PlayListCheckBox"
                 HorizontalAlignment="Center"
@@ -166,8 +236,7 @@
                 Margin="20,0,0,0"
                 Focusable="False"
                 Cursor="Hand"
-                Width="50"
-                Height="50" />
+                Grid.Column="7" />
             <Button
                 IsEnabled="False"
                 x:Name="SettingButton"
@@ -178,52 +247,7 @@
                 ToolTip="설정 / Setting"
                 Focusable="False"
                 Cursor="Hand"
-                Width="50"
-                Height="50" />
-        </StackPanel>
-        <Grid
-            Grid.Column="0"
-            Grid.ColumnSpan="3"
-            Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition
-                    Width="Auto" />
-                <ColumnDefinition
-                    Width="Auto" />
-                <ColumnDefinition
-                    Width="*" />
-            </Grid.ColumnDefinitions>
-            <StackPanel
-                Orientation="Horizontal"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                Grid.Column="0">
-                <Button
-                    x:Name="VolumeMuteButton"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Style="{StaticResource MaterialDesignIconButton}"
-                    Content="{Binding VolumeMuteButtonIcon}"
-                    ToolTip="볼륨 버튼 / Volume Button"
-                    BorderThickness="0"
-                    Focusable="False"
-                    Cursor="Hand"
-                    Width="30"
-                    Height="30" />
-                <Slider
-                    x:Name="VolumeSlider"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    IsMoveToPointEnabled="True"
-                    AutoToolTipPlacement="TopLeft"
-                    AutoToolTipPrecision="0"
-                    Value="{Binding Volume}"
-                    ToolTip="볼륨 / Volume"
-                    Focusable="False"
-                    Cursor="Hand"
-                    Maximum="100"
-                    Width="100" />
-            </StackPanel>
+                Grid.Column="8" />
             <Label
                 x:Name="TotalDurationLabel"
                 HorizontalAlignment="Right"
@@ -232,7 +256,8 @@
                 VerticalContentAlignment="Center"
                 Content="{Binding TotalDuration, Converter={StaticResource TimeSpanStringConverter}, Mode=OneWay}"
                 ToolTip="총 재생 길이 / Total Duration"
-                Grid.Column="2" />
+                Grid.Row="1"
+                Grid.Column="9" />
         </Grid>
     </Grid>
 </UserControl>

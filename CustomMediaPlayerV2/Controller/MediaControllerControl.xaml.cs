@@ -77,15 +77,6 @@ namespace CMP2.Controller
           }
         };
 
-        // 볼륨 뮤트 버튼
-        VolumeMuteButton.Click += (s, e) =>
-        {
-          if (ViewModel.Volume > 0)
-            ViewModel.Volume = 0;
-          else
-            ViewModel.Volume = ViewModel.BeforeVolume;
-        };
-
         // (미디어 길이 <-> 남은 미디어 시간) 전환
         this.TotalTimeLabel.MouseDown += (s, e) =>
         {
@@ -134,6 +125,13 @@ namespace CMP2.Controller
           break;
         // Setting
         case Key.S:
+          break;
+        // Mute
+        case Key.M:
+          if (ViewModel.Volume > 0)
+            ViewModel.Volume = 0;
+          else
+            ViewModel.Volume = ViewModel.BeforeVolume;
           break;
 
         case Key.Left:
