@@ -42,7 +42,7 @@ namespace CMP2.Core.Model
     /// 플레이리스트 정보 직렬화
     /// </summary>
     /// <returns>직렬화된 플레이리스트 정보</returns>
-    public async Task Serialize()
+    public async Task Save()
     {
       M3uPlaylist playlist = new M3uPlaylist();
       playlist.IsExtended = true;
@@ -81,33 +81,58 @@ namespace CMP2.Core.Model
     /// </summary>
     /// <param name="Properties">처리할 플레이리스트 정보</param>
     /// <returns>성공 여부</returns>
-    public async Task<bool> Deserialize(string[,] Properties)
+    public async Task<bool> Load(string path)
     {
-      if (Properties.GetLength(0) > 0)
+      if (File.Exists(path))
       {
+        var parser = PlaylistParserFactory.GetPlaylistParser(".m3u8");
+        Stream playListStream = null;
+        IBasePlaylist playListData = null;
         try
         {
-          PlayListName = Properties[0, 0];
-          for (int i = 1; i < Properties.Length; i += 2)
-          {
-            if (Enum.TryParse(Properties[i, 1], out MediaType mediaType))
-            {
-              var media = new Media(mediaType, Properties[i, 1]);
-              await Add(media);
-            }
-          }
-          Log.Debug("역직렬화 성공");
-          return true;
+          playListStream = new FileStream(path, FileMode.Open, FileAccess.Read);
+          playListData = parser.GetFromStream(playListStream);
         }
         catch (Exception e)
         {
-          Log.Error("역직렬화 실패", e);
+          Log.Error($"플레이 리스트 로드 중 오류 발생. (Parsing Error)\nPath : [{path}]", e);
           return false;
         }
+        finally
+        {
+          if (playListStream != null)
+            playListStream.Close();
+        }
+
+        if (playListData == null)
+        {
+          Log.Error($"플레이 리스트 로드 중 오류 발생. (Data is Null)\nPath : [{path}]");
+          return false;
+        }
+
+        PlayListName = playListData.FileName ?? "Nameless";
+
+        List<string> paths = playListData.GetTracksPaths();
+        if (paths.Count <= 0)
+        {
+          Log.Error("플레이 리스트 로드 중 오류 발생.", new NullReferenceException($"(PlayList Count <= 0) is Impossible.\nPlayList Name : [{playListData}]\nPath : [{path}]"));
+          return false;
+        }
+
+        for (int i = 0; i < paths.Count; i++)
+        {
+          var mediatype = Checker.MediaTypeChecker(paths[i]);
+          if (mediatype.HasValue)
+            await Add(new Media(mediatype.Value, paths[i]));
+          else
+            Log.Warn($"타입을 알 수 없는 미디어를 건너뛰었습니다.\nPath : [{paths[i]}]");
+        }
+        Log.Info($"플레이 리스트 로드 성공.\nSuccessful loading PlayList from path\nPath : [{path}]");
+        return true;
       }
       else
       {
-        Log.Error("역직렬화 실패 (Properties.Length > 0)");
+        Log.Error("플레이 리스트 로드 중 오류 발생.", new FileNotFoundException($"File Not Found\nPath : [{path}]"));
         return false;
       }
     }
@@ -121,7 +146,10 @@ namespace CMP2.Core.Model
       var info = media.GetInfomation();
       base.Add(info);
       TotalDuration += info.Duration;
-      Log.Info($"[{info.Title}](을)를 미디어 리스트에 등록 성공.");
+      if (media.LoadedCheck == LoadState.Fail)
+        Log.Warn($"[{info.Title}](을)를 미디어 리스트에 등록중 오류가 발생했습니다.");
+      else
+        Log.Info($"[{info.Title}](을)를 미디어 리스트에 등록 성공.");
     }
 
     public new void Remove(MediaInfomation media)

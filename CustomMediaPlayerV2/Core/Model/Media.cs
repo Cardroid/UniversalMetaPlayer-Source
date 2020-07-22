@@ -329,7 +329,7 @@ namespace CMP2.Core.Model
 
             using (WebClient webClient = new WebClient())
             {
-              var imagedata = webClient.DownloadData(videoinfo.Thumbnails.MaxResUrl);
+              var imagedata = await webClient.DownloadDataTaskAsync(videoinfo.Thumbnails.MaxResUrl);
               Fileinfo.Tag.Pictures = new TagLib.IPicture[]
               {
                 new TagLib.Picture(new TagLib.ByteVector(imagedata))
@@ -414,7 +414,10 @@ namespace CMP2.Core.Model
           {
             try { Infomation.AlbumImage = BitmapFrame.Create(new MemoryStream(Fileinfo.Tag.Pictures[0].Data.Data)); }
             catch { Infomation.AlbumImage = null; }
-            Infomation.AlbumTitle = Fileinfo.Tag.Album;
+            if (Infomation.MediaType == MediaType.Youtube)
+              Infomation.AlbumTitle = Fileinfo.Tag.Album ?? Infomation.AlbumTitle;
+            else
+              Infomation.AlbumTitle = Fileinfo.Tag.Album;
             Infomation.AlbumArtist = Fileinfo.Tag.FirstAlbumArtist;
             Infomation.Lyrics = Fileinfo.Tag.Lyrics;
           }

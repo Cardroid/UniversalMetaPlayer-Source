@@ -66,7 +66,7 @@ namespace CMP2
       // 오류시 제거 요망
 #if DEBUG
       PlayTest test = new PlayTest();
-      test.StartPlayTest();
+      test.StartTest();
 #endif
     }
     private void MainWindow_WindowDrag(object sender, MouseButtonEventArgs e) { this.DragMove(); e.Handled = true; }

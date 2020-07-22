@@ -4,6 +4,9 @@ using System.IO;
 using System.Net;
 using System.Text;
 
+using CMP2.Core.Model;
+using YoutubeExplode.Videos;
+
 namespace CMP2.Utility
 {
   public static class Checker
@@ -34,6 +37,21 @@ namespace CMP2.Utility
         Directory.CreateDirectory(path);
         App.MainLog.Info($"[{path}]폴더가 생성되었습니다.");
       }
+    }
+
+    /// <summary>
+    /// 미디어 타입이 판별기
+    /// </summary>
+    /// <param name="path">체크할 미디어의 위치</param>
+    /// <returns>없을 시 Null</returns>
+    public static MediaType? MediaTypeChecker(string path)
+    {
+      if (File.Exists(path))
+        return MediaType.Local;
+      else if (VideoId.TryParse(path).HasValue)
+        return MediaType.Youtube;
+      else
+        return null;
     }
   }
 }
