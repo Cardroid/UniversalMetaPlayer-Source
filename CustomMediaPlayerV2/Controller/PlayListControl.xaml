@@ -27,158 +27,163 @@
     </UserControl.Resources>
 
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition
-                Width="Auto" />
-            <ColumnDefinition
-                Width="*" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition
-                Height="Auto" />
-            <RowDefinition
-                Height="*" />
-        </Grid.RowDefinitions>
+        <materialDesign:DialogHost 
+            x:Name="PlayListDialog"/>
 
-        <GroupBox
-            x:Name="PlayListGroupBox"
-            Style="{StaticResource MaterialDesignGroupBox}"
-            Grid.Column="0"
-            Grid.ColumnSpan="2"
-            Grid.Row="0"
-            Grid.RowSpan="2">
-            <GroupBox.Header>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition
-                            Width="Auto" />
-                        <ColumnDefinition
-                            Width="*" />
-                        <ColumnDefinition
-                            Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <TextBlock
-                        x:Name="PlayListName"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center"
-                        Foreground="{Binding Theme.TextFieldBoxBackground, Mode=OneWay}"
-                        Text="{Binding PlayList.PlayListName}"
-                        FontSize="24"
-                        Grid.Column="0" />
-                    <materialDesign:PopupBox
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Center"
-                        Style="{StaticResource MaterialDesignMultiFloatingActionAccentPopupBox}"
-                        Foreground="{Binding Theme.PrimaryMid}"
-                        PlacementMode="LeftAndAlignMiddles"
-                        Background="Transparent"
-                        BorderBrush="Transparent"
-                        ToolTip="추가기능"
-                        Width="30"
-                        Height="30"
-                        Grid.Column="2">
-                        <materialDesign:PopupBox.ToggleContent>
-                            <materialDesign:PackIcon
-                                Kind="PlaylistPlus"
-                                Width="30"
-                                Height="30" />
-                        </materialDesign:PopupBox.ToggleContent>
-                        <materialDesign:PopupBox.ToggleCheckedContent>
-                            <materialDesign:PackIcon
-                                Kind="Close"
-                                Width="30"
-                                Height="30" />
-                        </materialDesign:PopupBox.ToggleCheckedContent>
-                        <StackPanel
-                            Orientation="Horizontal">
-                            <Button
-                                x:Name="PlayListResetButton"
-                                Style="{StaticResource MaterialDesignIconButton}"
-                                Content="{materialDesign:PackIcon Kind=DeleteEmpty, Size=20}"
-                                Foreground="{Binding Theme.PrimaryMid}"
-                                ToolTip="초기화"
-                                Focusable="False"
-                                Margin="0,0,15,0"
-                                Cursor="Hand" />
-                            <Button
-                                x:Name="PlayListAddButton"
-                                Style="{StaticResource MaterialDesignIconButton}"
-                                Content="{materialDesign:PackIcon Kind=PlaylistAdd, Size=20}"
-                                Foreground="{Binding Theme.PrimaryMid}"
-                                ToolTip="추가"
-                                Focusable="False"
-                                Cursor="Hand" />
-                            <Button
-                                x:Name="PlayListEditButton"
-                                Style="{StaticResource MaterialDesignIconButton}"
-                                Content="{materialDesign:PackIcon Kind=PlaylistEdit, Size=20}"
-                                Foreground="{Binding Theme.PrimaryMid}"
-                                ToolTip="편집"
-                                Focusable="False"
-                                Cursor="Hand" />
-                            <Button
-                                x:Name="PlayListSaveButton"
-                                Style="{StaticResource MaterialDesignIconButton}"
-                                Content="{materialDesign:PackIcon Kind=ContentSave, Size=20}"
-                                Foreground="{Binding Theme.PrimaryMid}"
-                                ToolTip="저장"
-                                Focusable="False"
-                                Cursor="Hand" />
-                            <Button
-                                x:Name="PlayListLoadButton"
-                                Style="{StaticResource MaterialDesignIconButton}"
-                                Content="{materialDesign:PackIcon Kind=FileUpload, Size=20}"
-                                Foreground="{Binding Theme.PrimaryMid}"
-                                ToolTip="불러오기"
-                                Focusable="False"
-                                Cursor="Hand" />
-                            <Button
-                                x:Name="PlayListReloadButton"
-                                Style="{StaticResource MaterialDesignIconButton}"
-                                Content="{materialDesign:PackIcon Kind=Reload, Size=20}"
-                                Foreground="{Binding Theme.PrimaryMid}"
-                                ToolTip="새로고침"
-                                Focusable="False"
-                                Cursor="Hand" />
-                        </StackPanel>
-                    </materialDesign:PopupBox>
-                </Grid>
-            </GroupBox.Header>
-            <ListView
-                x:Name="PlayList"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                Style="{StaticResource MaterialDesignListView}"
-                ItemsSource="{Binding PlayList, Mode=OneWay}"
-                dd:DragDrop.IsDragSource="True"
-                dd:DragDrop.IsDropTarget="True"
-                dd:DragDrop.SelectDroppedItems="True"
-                dd:DragDrop.DragDirectlySelectedOnly="False"
-                dd:DragDrop.DragHandler="{Binding}"
-                dd:DragDrop.DropHandler="{Binding}"
-                SelectedIndex="{Binding PlayListSelectIndex}"
-                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                AllowDrop="True">
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn
-                            x:Name="Title"
-                            HeaderContainerStyle="{StaticResource MaterialDesignToolButton}"
-                            DisplayMemberBinding="{Binding Title}">
-                        </GridViewColumn>
-                        <GridViewColumn
-                            x:Name="MediaType"
-                            HeaderContainerStyle="{StaticResource MaterialDesignToolButton}"
-                            DisplayMemberBinding="{Binding MediaType}">
-                        </GridViewColumn>
-                        <GridViewColumn
-                            x:Name="Duration"
-                            HeaderContainerStyle="{StaticResource MaterialDesignToolButton}"
-                            DisplayMemberBinding="{Binding Duration, Converter={StaticResource TimeSpanStringConverter}}">
-                        </GridViewColumn>
-                    </GridView>
-                </ListView.View>
-            </ListView>
-        </GroupBox>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition
+                    Width="Auto" />
+                <ColumnDefinition
+                    Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition
+                    Height="Auto" />
+                <RowDefinition
+                    Height="*" />
+            </Grid.RowDefinitions>
+
+            <GroupBox
+                x:Name="PlayListGroupBox"
+                Style="{StaticResource MaterialDesignGroupBox}"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                Grid.Row="0"
+                Grid.RowSpan="2">
+                <GroupBox.Header>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition
+                                Width="Auto" />
+                            <ColumnDefinition
+                                Width="*" />
+                            <ColumnDefinition
+                                Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            x:Name="PlayListName"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Foreground="{Binding Theme.TextFieldBoxBackground, Mode=OneWay}"
+                            Text="{Binding PlayList.PlayListName}"
+                            FontSize="16"
+                            Grid.Column="0" />
+                        <materialDesign:PopupBox
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Style="{StaticResource MaterialDesignMultiFloatingActionAccentPopupBox}"
+                            Foreground="{Binding Theme.PrimaryMid}"
+                            PlacementMode="LeftAndAlignMiddles"
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            ToolTip="추가기능"
+                            Width="20"
+                            Height="20"
+                            Grid.Column="2">
+                            <materialDesign:PopupBox.ToggleContent>
+                                <materialDesign:PackIcon
+                                    Kind="PlaylistPlus"
+                                    Width="20"
+                                    Height="20" />
+                            </materialDesign:PopupBox.ToggleContent>
+                            <materialDesign:PopupBox.ToggleCheckedContent>
+                                <materialDesign:PackIcon
+                                    Kind="Close"
+                                    Width="20"
+                                    Height="20" />
+                            </materialDesign:PopupBox.ToggleCheckedContent>
+                            <StackPanel
+                                Orientation="Horizontal">
+                                <Button
+                                    x:Name="PlayListResetButton"
+                                    Style="{StaticResource MaterialDesignIconButton}"
+                                    Content="{materialDesign:PackIcon Kind=DeleteEmpty, Size=20}"
+                                    Foreground="{Binding Theme.PrimaryMid}"
+                                    ToolTip="초기화"
+                                    Focusable="False"
+                                    Margin="0,0,15,0"
+                                    Cursor="Hand" />
+                                <Button
+                                    x:Name="PlayListAddButton"
+                                    Style="{StaticResource MaterialDesignIconButton}"
+                                    Content="{materialDesign:PackIcon Kind=PlaylistAdd, Size=20}"
+                                    Foreground="{Binding Theme.PrimaryMid}"
+                                    ToolTip="추가"
+                                    Focusable="False"
+                                    Cursor="Hand" />
+                                <Button
+                                    x:Name="PlayListEditButton"
+                                    Style="{StaticResource MaterialDesignIconButton}"
+                                    Content="{materialDesign:PackIcon Kind=PlaylistEdit, Size=20}"
+                                    Foreground="{Binding Theme.PrimaryMid}"
+                                    ToolTip="편집"
+                                    Focusable="False"
+                                    Cursor="Hand" />
+                                <Button
+                                    x:Name="PlayListSaveButton"
+                                    Style="{StaticResource MaterialDesignIconButton}"
+                                    Content="{materialDesign:PackIcon Kind=ContentSave, Size=20}"
+                                    Foreground="{Binding Theme.PrimaryMid}"
+                                    ToolTip="저장"
+                                    Focusable="False"
+                                    Cursor="Hand" />
+                                <Button
+                                    x:Name="PlayListLoadButton"
+                                    Style="{StaticResource MaterialDesignIconButton}"
+                                    Content="{materialDesign:PackIcon Kind=FileUpload, Size=20}"
+                                    Foreground="{Binding Theme.PrimaryMid}"
+                                    ToolTip="불러오기"
+                                    Focusable="False"
+                                    Cursor="Hand" />
+                                <Button
+                                    x:Name="PlayListReloadButton"
+                                    Style="{StaticResource MaterialDesignIconButton}"
+                                    Content="{materialDesign:PackIcon Kind=Reload, Size=20}"
+                                    Foreground="{Binding Theme.PrimaryMid}"
+                                    ToolTip="새로고침"
+                                    Focusable="False"
+                                    Cursor="Hand" />
+                            </StackPanel>
+                        </materialDesign:PopupBox>
+                    </Grid>
+                </GroupBox.Header>
+                <ListView
+                    x:Name="PlayList"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Style="{StaticResource MaterialDesignListView}"
+                    ItemsSource="{Binding PlayList, Mode=OneWay}"
+                    dd:DragDrop.IsDragSource="True"
+                    dd:DragDrop.IsDropTarget="True"
+                    dd:DragDrop.SelectDroppedItems="True"
+                    dd:DragDrop.DragDirectlySelectedOnly="False"
+                    dd:DragDrop.DragHandler="{Binding}"
+                    dd:DragDrop.DropHandler="{Binding}"
+                    SelectedIndex="{Binding PlayListSelectIndex}"
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                    AllowDrop="True">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn
+                                x:Name="Title"
+                                HeaderContainerStyle="{StaticResource MaterialDesignToolButton}"
+                                DisplayMemberBinding="{Binding Title}">
+                            </GridViewColumn>
+                            <GridViewColumn
+                                x:Name="MediaType"
+                                HeaderContainerStyle="{StaticResource MaterialDesignToolButton}"
+                                DisplayMemberBinding="{Binding MediaType}">
+                            </GridViewColumn>
+                            <GridViewColumn
+                                x:Name="Duration"
+                                HeaderContainerStyle="{StaticResource MaterialDesignToolButton}"
+                                DisplayMemberBinding="{Binding Duration, Converter={StaticResource TimeSpanStringConverter}}">
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </GroupBox>
+        </Grid>
     </Grid>
 </UserControl>

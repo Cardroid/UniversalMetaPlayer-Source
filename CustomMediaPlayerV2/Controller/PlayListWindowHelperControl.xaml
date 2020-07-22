@@ -32,6 +32,7 @@
                     VerticalAlignment="Center"
                     Padding="10,5,10,5"
                     Content="PlayList"
+                    FontSize="16"
                     Grid.Column="0" />
                 <WindowButton:WindowStyleButtonControl
                     x:Name="WindowStyleButtons"

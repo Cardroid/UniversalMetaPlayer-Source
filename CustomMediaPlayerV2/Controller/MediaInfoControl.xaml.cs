@@ -13,6 +13,7 @@ using System.Windows.Shapes;
 
 using CMP2.Controller.ViewModel;
 using CMP2.Core;
+using CMP2.Utility.Effect;
 
 namespace CMP2.Controller
 {

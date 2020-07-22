@@ -16,6 +16,7 @@ using System.Windows.Shapes;
 using CMP2.Core;
 using CMP2.Test;
 using CMP2.Utility;
+using CMP2.Utility.Effect;
 
 namespace CMP2
 {

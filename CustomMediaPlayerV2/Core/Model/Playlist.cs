@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,9 +20,28 @@ namespace CMP2.Core.Model
     public event CMP_PropertyChangedEventHandler PropertyChangedEvent;
     private void OnPropertyChanged(string name) => PropertyChangedEvent?.Invoke(name);
 
-    public string PlayListName { get; set; }
+    /// <summary>
+    /// 플레이 리스트 구별을 위한 고유 값
+    /// </summary>
     public string EigenValue { get; }
-    public TimeSpan _TotalDuration = TimeSpan.Zero;
+    
+    /// <summary>
+    /// 플레이 리스트 이름
+    /// </summary>
+    public string PlayListName
+    {
+      get => _PlayListName;
+      set
+      {
+        _PlayListName = value;
+        OnPropertyChanged("PlayListName");
+      }
+    }
+    public string _PlayListName;
+
+    /// <summary>
+    /// 플레이 리스트의 총 길이
+    /// </summary>
     public TimeSpan TotalDuration
     {
       get => _TotalDuration;
@@ -30,6 +51,7 @@ namespace CMP2.Core.Model
         OnPropertyChanged("TotalDuration");
       }
     }
+    public TimeSpan _TotalDuration = TimeSpan.Zero;
 
     public PlayList(string name = "Nameless")
     {
@@ -37,7 +59,8 @@ namespace CMP2.Core.Model
       PlayListName = name;
       Log = new Log($"{typeof(PlayList)} - ({EigenValue})[{PlayListName}]");
     }
-
+    
+    #region Save & Load
     /// <summary>
     /// 플레이리스트 정보 직렬화
     /// </summary>
@@ -47,7 +70,7 @@ namespace CMP2.Core.Model
       M3uPlaylist playlist = new M3uPlaylist();
       playlist.IsExtended = true;
 
-      for (int i = 0; i < Count; i++)
+      for (int i = 0; i < base.Count; i++)
       {
         var entry = new M3uPlaylistEntry()
         {
@@ -136,13 +159,18 @@ namespace CMP2.Core.Model
         return false;
       }
     }
+    #endregion
 
+    /// <summary>
+    /// 리스트 추가
+    /// </summary>
+    /// <param name="media">추가할 미디어</param>
     public async Task Add(Media media)
     {
       Log.Debug($"[{media.GetInfomation().Title}](을)를 미디어 리스트에 등록 시도.");
       if ((int)media.LoadedCheck < 2)
           await media.TryInfoPartialLoadAsync();
-
+      
       var info = media.GetInfomation();
       base.Add(info);
       TotalDuration += info.Duration;
@@ -152,19 +180,27 @@ namespace CMP2.Core.Model
         Log.Info($"[{info.Title}](을)를 미디어 리스트에 등록 성공.");
     }
 
-    public new void Remove(MediaInfomation media)
+    /// <summary>
+    /// 리스트에서 <seealso cref="MediaInfomation"/>를 제거합니다.
+    /// </summary>
+    /// <param name="media">제거할 미디어 정보</param>
+    public new void Remove(MediaInfomation mediaInfo)
     {
-      Log.Debug($"[{media.Title}](을)를 미디어 리스트에서 제거 시도.");
-      if (base.Contains(media))
+      Log.Debug($"[{mediaInfo.Title}](을)를 미디어 리스트에서 제거 시도.");
+      if (base.Contains(mediaInfo))
       {
-        base.Remove(media);
-        TotalDuration -= media.Duration;
-        Log.Info($"[{media.Title}](을)를 미디어 리스트에서 제거 성공.");
+        base.Remove(mediaInfo);
+        TotalDuration -= mediaInfo.Duration;
+        Log.Info($"[{mediaInfo.Title}](을)를 미디어 리스트에서 제거 성공.");
       }
       else
-        Log.Error($"[{media.Title}](을)를 미디어 리스트에서 제거 실패.", new NullReferenceException($"Unlisted Media.\nTitle : [{media.Title}]"));
+        Log.Error($"[{mediaInfo.Title}](을)를 미디어 리스트에서 제거 실패.", new NullReferenceException($"Unlisted Media.\nTitle : [{mediaInfo.Title}]"));
     }
 
+    /// <summary>
+    /// Index의 미디어 정보를 리스트에서 제거합니다.
+    /// </summary>
+    /// <param name="index">제거할 미디어 정보 Index</param>
     public new void RemoveAt(int index)
     {
       Log.Debug($"[{index}]번째 미디어를 미디어 리스트에서 제거 시도.");

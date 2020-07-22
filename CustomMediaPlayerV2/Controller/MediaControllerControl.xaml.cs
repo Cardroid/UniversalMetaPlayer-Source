@@ -150,7 +150,7 @@ namespace CMP2.Controller
     }
 
     /// <summary>
-    /// 컨트롤 버튼을 구분용 (버튼 테그)
+    /// 컨트롤 버튼 구분용 (버튼 테그)
     /// </summary>
     private enum ControlType
     {
@@ -226,33 +226,36 @@ namespace CMP2.Controller
     /// </summary>
     private void ControllerButton_ClickHandler(object sender, RoutedEventArgs e)
     {
-      switch ((ControlType)((Button)sender).Tag)
+      if (((Button)sender).Tag is ControlType type)
       {
-        case ControlType.PlayPause:
-          if (MainMediaPlayer.MediaLoadedCheck)
-            if (MainMediaPlayer.PlaybackState == NAudio.Wave.PlaybackState.Playing)
-              MainMediaPlayer.Pause();
-            else
-              MainMediaPlayer.Play();
-          break;
-        case ControlType.Stop:
-          if (MainMediaPlayer.MediaLoadedCheck)
-            MainMediaPlayer.Stop();
-          break;
-        case ControlType.Next:
-          MainMediaPlayer.Next();
-          break;
-        case ControlType.Previous:
-          MainMediaPlayer.Previous();
-          break;
-        case ControlType.Repeat:
-          MainMediaPlayer.Option.RepeatPlayOption++;
-          break;
-        case ControlType.Shuffle:
-          MainMediaPlayer.Option.Shuffle = !MainMediaPlayer.Option.Shuffle;
-          break;
-        case ControlType.Setting:
-          break;
+        switch (type)
+        {
+          case ControlType.PlayPause:
+            if (MainMediaPlayer.MediaLoadedCheck)
+              if (MainMediaPlayer.PlaybackState == NAudio.Wave.PlaybackState.Playing)
+                MainMediaPlayer.Pause();
+              else
+                MainMediaPlayer.Play();
+            break;
+          case ControlType.Stop:
+            if (MainMediaPlayer.MediaLoadedCheck)
+              MainMediaPlayer.Stop();
+            break;
+          case ControlType.Next:
+            MainMediaPlayer.Next();
+            break;
+          case ControlType.Previous:
+            MainMediaPlayer.Previous();
+            break;
+          case ControlType.Repeat:
+            MainMediaPlayer.Option.RepeatPlayOption++;
+            break;
+          case ControlType.Shuffle:
+            MainMediaPlayer.Option.Shuffle = !MainMediaPlayer.Option.Shuffle;
+            break;
+          case ControlType.Setting:
+            break;
+        }
       }
     }
 

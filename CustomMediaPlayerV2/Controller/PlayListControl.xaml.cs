@@ -10,9 +10,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
+using CMP2.Controller.Dialog;
 using CMP2.Controller.ViewModel;
 using CMP2.Core;
+using MaterialDesignThemes.Wpf;
 
 namespace CMP2.Controller
 {
@@ -31,6 +32,20 @@ namespace CMP2.Controller
 
     private void PlayListControl_Loaded(object sender, RoutedEventArgs e)
     {
+      this.PlayListAddButton.Tag = PlayListControlType.Add;
+      this.PlayListEditButton.Tag = PlayListControlType.Edit;
+      this.PlayListSaveButton.Tag = PlayListControlType.Save;
+      this.PlayListLoadButton.Tag = PlayListControlType.Load;
+      this.PlayListReloadButton.Tag = PlayListControlType.Reload;
+      this.PlayListResetButton.Tag = PlayListControlType.Reset;
+
+      this.PlayListAddButton   .Click += PlayListControlButton_Click;
+      this.PlayListEditButton  .Click += PlayListControlButton_Click;
+      this.PlayListSaveButton  .Click += PlayListControlButton_Click;
+      this.PlayListLoadButton  .Click += PlayListControlButton_Click;
+      this.PlayListReloadButton.Click += PlayListControlButton_Click;
+      this.PlayListResetButton .Click += PlayListControlButton_Click;
+
       // 헤더 설정
       this.Title.Header = "제목";
       this.MediaType.Header = "타입";
@@ -42,6 +57,37 @@ namespace CMP2.Controller
       this.PlayList.MouseDoubleClick += PlayList_MouseDoubleClick;
       this.PlayList.PreviewMouseDown += PlayList_MouseDownUnSelect;
       this.PlayListGroupBox.PreviewMouseDown += PlayList_MouseDownUnSelect;
+    }
+
+    private async void PlayListControlButton_Click(object sender, RoutedEventArgs e)
+    {
+      if (((Button)sender).Tag is PlayListControlType type)
+      {
+        switch (type)
+        {
+          case PlayListControlType.Add:
+            break;
+          case PlayListControlType.Edit:
+            break;
+          case PlayListControlType.Save:
+            break;
+          case PlayListControlType.Load:
+            break;
+          case PlayListControlType.Reload:
+            await this.PlayListDialog.ShowDialog(new PlayListAddDialog());
+            break;
+          case PlayListControlType.Reset:
+            break;
+        }
+      }
+    }
+
+    /// <summary>
+    /// 컨트롤 버튼 구분용 (버튼 테그)
+    /// </summary>
+    private enum PlayListControlType
+    {
+      Add, Edit, Save, Load, Reload, Reset
     }
 
     private void PlayList_MouseDownUnSelect(object sender, MouseButtonEventArgs e)
