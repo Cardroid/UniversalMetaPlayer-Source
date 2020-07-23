@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -10,7 +11,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 using CMP2.Core.Model;
 using CMP2.Utility;
@@ -20,24 +20,24 @@ namespace CMP2.Controller.Dialog
   /// <summary>
   /// PlayListAddDialog.xaml에 대한 상호 작용 논리
   /// </summary>
-  public partial class PlayListAddDialog : UserControl
+  public partial class PlayListLoadDialog : UserControl
   {
-    public PlayListAddDialog()
+    public PlayListLoadDialog()
     {
       InitializeComponent();
 
       this.AcceptButton.IsEnabled = false;
-      this.UserTextBox.TextChanged += UserTextBox_TextChanged;
+      this.UserTextBox.TextChanged += MediaLocationTextBox_TextChanged;
       this.MouseDown += (s, e) => { this.UserTextBox.Focus(); };
     }
 
     private bool IsWorkDelay = false;
 
-    private async void UserTextBox_TextChanged(object sender, TextChangedEventArgs e)
+    private async void MediaLocationTextBox_TextChanged(object sender, TextChangedEventArgs e)
     {
       if (string.IsNullOrWhiteSpace(this.UserTextBox.Text))
       {
-        this.MessageLabel.Content = "미디어의 위치";
+        this.MessageLabel.Content = "플레이 리스트의 위치";
         return;
       }
 
@@ -48,16 +48,17 @@ namespace CMP2.Controller.Dialog
 
       await Task.Delay(500);
 
-      var result = Checker.MediaTypeChecker(this.UserTextBox.Text);
-      if (result.HasValue)
+      var result = Path.GetExtension(this.UserTextBox.Text);
+      switch (result.ToLower())
       {
-        this.AcceptButton.IsEnabled = true;
-        this.MessageLabel.Content = $"미디어 타입 : {result.Value}";
-      }
-      else
-      {
-        this.AcceptButton.IsEnabled = false;
-        this.MessageLabel.Content = "타입을 알 수 없습니다.";
+        case ".m3u8":
+          this.AcceptButton.IsEnabled = true;
+          this.MessageLabel.Content = $"[m3u8] 타입이 확인 되었습니다.";
+          break;
+        default:
+          this.AcceptButton.IsEnabled = false;
+          this.MessageLabel.Content = "지원하지 않는 파일 입니다.";
+          break;
       }
       
       this.ProgressRing.Visibility = Visibility.Collapsed;
@@ -68,7 +69,7 @@ namespace CMP2.Controller.Dialog
     {
       var result = new Dictionary<string, string>();
 
-      result.Add("MediaLocation", this.UserTextBox.Text);
+      result.Add("PlayListFilePath", this.UserTextBox.Text);
       return result;
     }
   }

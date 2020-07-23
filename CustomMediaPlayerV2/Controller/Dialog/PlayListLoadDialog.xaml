@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="CMP2.Controller.Dialog.PlayListAddDialog"
+    x:Class="CMP2.Controller.Dialog.PlayListLoadDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -32,7 +32,7 @@
                 <Label
                     x:Name="MessageLabel"
                     Style="{StaticResource MaterialDesignLabel}"
-                    Content="미디어의 위치" />
+                    Content="플레이 리스트의 위치" />
                 <materialDesign:Card
                     x:Name="ProgressRing"
                     Visibility="Collapsed"
@@ -49,7 +49,7 @@
                 Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
                 Margin="0,8,0,0"
                 FontSize="16"
-                Cursor="IBeam"/>
+                Cursor="IBeam" />
         </StackPanel>
 
         <Border

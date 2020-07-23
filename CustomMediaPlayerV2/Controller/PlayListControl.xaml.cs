@@ -13,6 +13,8 @@ using System.Windows.Shapes;
 using CMP2.Controller.Dialog;
 using CMP2.Controller.ViewModel;
 using CMP2.Core;
+using CMP2.Core.Model;
+using CMP2.Utility;
 using MaterialDesignThemes.Wpf;
 
 namespace CMP2.Controller
@@ -33,14 +35,12 @@ namespace CMP2.Controller
     private void PlayListControl_Loaded(object sender, RoutedEventArgs e)
     {
       this.PlayListAddButton.Tag = PlayListControlType.Add;
-      this.PlayListEditButton.Tag = PlayListControlType.Edit;
       this.PlayListSaveButton.Tag = PlayListControlType.Save;
       this.PlayListLoadButton.Tag = PlayListControlType.Load;
       this.PlayListReloadButton.Tag = PlayListControlType.Reload;
       this.PlayListResetButton.Tag = PlayListControlType.Reset;
 
       this.PlayListAddButton   .Click += PlayListControlButton_Click;
-      this.PlayListEditButton  .Click += PlayListControlButton_Click;
       this.PlayListSaveButton  .Click += PlayListControlButton_Click;
       this.PlayListLoadButton  .Click += PlayListControlButton_Click;
       this.PlayListReloadButton.Click += PlayListControlButton_Click;
@@ -66,19 +66,61 @@ namespace CMP2.Controller
         switch (type)
         {
           case PlayListControlType.Add:
-            break;
-          case PlayListControlType.Edit:
+            EnableControl(false);
+            var addView = new PlayListAddDialog();
+
+            var addResultObj = await this.PlayListDialog.ShowDialog(addView);
+            if (addResultObj is bool ddResult && ddResult)
+            {
+              if (addView.GetResult().TryGetValue("MediaLocation", out string addValue))
+              {
+                var mediatype = Checker.MediaTypeChecker(addValue);
+                if (mediatype.HasValue)
+                  await ViewModel.PlayList.Add(new Media(mediatype.Value, addValue));
+                else
+                  Log.Error($"미디어 타입을 알 수 없습니다.\nPath : [{addValue}]");
+              }
+            }
+            EnableControl(true);
             break;
           case PlayListControlType.Save:
+            await ViewModel.PlayList.Save();
             break;
           case PlayListControlType.Load:
+            EnableControl(false);
+            var loadView = new PlayListLoadDialog();
+
+            var loadResultObj = await this.PlayListDialog.ShowDialog(loadView);
+            if (loadResultObj is bool loadResult && loadResult)
+            {
+              if (loadView.GetResult().TryGetValue("PlayListFilePath", out string loadValue))
+              {
+                await ViewModel.PlayList.Load(loadValue);
+              }
+            }
+            EnableControl(true);
             break;
           case PlayListControlType.Reload:
-            await this.PlayListDialog.ShowDialog(new PlayListAddDialog());
             break;
           case PlayListControlType.Reset:
             break;
         }
+      }
+    }
+
+    private void EnableControl(bool isEnable)
+    {
+      var parentWindow = (PlayListWindow)Window.GetWindow(Parent);
+
+      if (isEnable)
+      {
+        parentWindow.MainPlayListWindowHelperControl.IsEnabled = true;
+        this.PlayListGroupBox.IsEnabled = true;
+      }
+      else
+      {
+        parentWindow.MainPlayListWindowHelperControl.IsEnabled = false;
+        this.PlayListGroupBox.IsEnabled = false;
       }
     }
 
@@ -87,12 +129,17 @@ namespace CMP2.Controller
     /// </summary>
     private enum PlayListControlType
     {
-      Add, Edit, Save, Load, Reload, Reset
+      Add, Save, Load, Reload, Reset
     }
 
     private void PlayList_MouseDownUnSelect(object sender, MouseButtonEventArgs e)
     {
       HitTestResult r = VisualTreeHelper.HitTest(this, e.GetPosition(this));
+      if (!(r.VisualHit.GetType() == null))
+      {
+        PlayList.UnselectAll();
+        return;
+      }
       if (r.VisualHit.GetType() != typeof(ListBoxItem))
         PlayList.UnselectAll();
     }

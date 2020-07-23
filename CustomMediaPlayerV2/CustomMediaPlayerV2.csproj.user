@@ -29,6 +29,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Page Update="Controller\Dialog\PlayListLoadDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Controller\Dialog\PlayListAddDialog.xaml">
       <SubType>Designer</SubType>
     </Page>

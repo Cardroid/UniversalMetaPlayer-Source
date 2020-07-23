@@ -113,14 +113,6 @@
                                     Focusable="False"
                                     Cursor="Hand" />
                                 <Button
-                                    x:Name="PlayListEditButton"
-                                    Style="{StaticResource MaterialDesignIconButton}"
-                                    Content="{materialDesign:PackIcon Kind=PlaylistEdit, Size=20}"
-                                    Foreground="{Binding Theme.PrimaryMid}"
-                                    ToolTip="편집"
-                                    Focusable="False"
-                                    Cursor="Hand" />
-                                <Button
                                     x:Name="PlayListSaveButton"
                                     Style="{StaticResource MaterialDesignIconButton}"
                                     Content="{materialDesign:PackIcon Kind=ContentSave, Size=20}"
