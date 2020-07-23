@@ -63,11 +63,13 @@ namespace CMP2.Core
     /// <summary>
     /// 캐쉬저장 폴더 경로
     /// </summary>
+    [JsonProperty]
     public static string CachePath { get; set; }
 
     /// <summary>
     /// 캐쉬를 재외한 파일 저장 폴더 경로
     /// </summary>
+    [JsonProperty]
     public static string FileSavePath { get; set; }
 
     #region Not Save

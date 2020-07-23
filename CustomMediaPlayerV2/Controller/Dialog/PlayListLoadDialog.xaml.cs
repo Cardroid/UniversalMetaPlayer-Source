@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 
 using CMP2.Core.Model;
 using CMP2.Utility;
+using System.Text.RegularExpressions;
 
 namespace CMP2.Controller.Dialog
 {
@@ -32,35 +33,42 @@ namespace CMP2.Controller.Dialog
     }
 
     private bool IsWorkDelay = false;
-
-    private async void MediaLocationTextBox_TextChanged(object sender, TextChangedEventArgs e)
+    private string Invalid = $"{new string(Path.GetInvalidPathChars())}\"";
+    private void MediaLocationTextBox_TextChanged(object sender, TextChangedEventArgs e)
     {
       if (string.IsNullOrWhiteSpace(this.UserTextBox.Text))
       {
         this.MessageLabel.Content = "플레이 리스트의 위치";
         return;
       }
-
       if (IsWorkDelay)
         return;
       IsWorkDelay = true;
       this.ProgressRing.Visibility = Visibility.Visible;
 
-      await Task.Delay(500);
+      string text = this.UserTextBox.Text;
+      for (int i = 0; i < Invalid.Length; i++)
+        text = text.Replace(Invalid[i].ToString(), "");
+      this.UserTextBox.Text = text;
 
-      var result = Path.GetExtension(this.UserTextBox.Text);
-      switch (result.ToLower())
+      if (File.Exists(text))
       {
-        case ".m3u8":
-          this.AcceptButton.IsEnabled = true;
-          this.MessageLabel.Content = $"[m3u8] 타입이 확인 되었습니다.";
-          break;
-        default:
-          this.AcceptButton.IsEnabled = false;
-          this.MessageLabel.Content = "지원하지 않는 파일 입니다.";
-          break;
+        var result = Path.GetExtension(text);
+        switch (result.ToLower())
+        {
+          case ".m3u8":
+            this.AcceptButton.IsEnabled = true;
+            this.MessageLabel.Content = $"[{result.ToLower()}] 타입이 확인 되었습니다.";
+            break;
+          default:
+            this.AcceptButton.IsEnabled = false;
+            this.MessageLabel.Content = "지원하지 않는 파일 입니다.";
+            break;
+        }
       }
-      
+      else
+        this.MessageLabel.Content = "존재하지 않는 파일 입니다.";
+
       this.ProgressRing.Visibility = Visibility.Collapsed;
       IsWorkDelay = false;
     }

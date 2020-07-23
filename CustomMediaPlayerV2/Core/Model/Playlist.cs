@@ -65,7 +65,7 @@ namespace CMP2.Core.Model
     /// 플레이리스트 정보 직렬화
     /// </summary>
     /// <returns>직렬화된 플레이리스트 정보</returns>
-    public async Task Save()
+    public async Task Save(string path = "")
     {
       M3uPlaylist playlist = new M3uPlaylist();
       playlist.IsExtended = true;
@@ -89,7 +89,7 @@ namespace CMP2.Core.Model
 
       string m3uData = PlaylistToTextHelper.ToText(playlist);
 
-      var savepath = Path.Combine(GlobalProperty.FileSavePath, "PlayList");
+      var savepath = Path.Combine(!string.IsNullOrWhiteSpace(path) ? path : GlobalProperty.FileSavePath, "PlayList");
       if (!Directory.Exists(savepath))
         Directory.CreateDirectory(savepath);
       playlist.Path = savepath;
