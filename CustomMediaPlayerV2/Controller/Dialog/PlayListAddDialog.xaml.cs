@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -10,7 +11,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 using CMP2.Core.Model;
 using CMP2.Utility;
@@ -29,11 +29,13 @@ namespace CMP2.Controller.Dialog
       this.AcceptButton.IsEnabled = false;
       this.UserTextBox.TextChanged += UserTextBox_TextChanged;
       this.MouseDown += (s, e) => { this.UserTextBox.Focus(); };
+      this.UserTextBox.Focus();
     }
 
     private bool IsWorkDelay = false;
+    private readonly string Invalid = $"{new string(Path.GetInvalidPathChars())}\"";
 
-    private async void UserTextBox_TextChanged(object sender, TextChangedEventArgs e)
+    private void UserTextBox_TextChanged(object sender, TextChangedEventArgs e)
     {
       if (string.IsNullOrWhiteSpace(this.UserTextBox.Text))
       {
@@ -46,20 +48,29 @@ namespace CMP2.Controller.Dialog
       IsWorkDelay = true;
       this.ProgressRing.Visibility = Visibility.Visible;
 
-      await Task.Delay(500);
+      // 올바르지 않은 문자 제거
+      string text = this.UserTextBox.Text;
+      for (int i = 0; i < Invalid.Length; i++)
+        text = text.Replace(Invalid[i].ToString(), "");
+      this.UserTextBox.Text = text;
 
-      var result = Checker.MediaTypeChecker(this.UserTextBox.Text);
-      if (result.HasValue)
+      if (File.Exists(text))
       {
-        this.AcceptButton.IsEnabled = true;
-        this.MessageLabel.Content = $"미디어 타입 : {result.Value}";
+        var result = Checker.MediaTypeChecker(text);
+        if (result.HasValue)
+        {
+          this.AcceptButton.IsEnabled = true;
+          this.MessageLabel.Content = $"미디어 타입 : {result.Value}";
+        }
+        else
+        {
+          this.AcceptButton.IsEnabled = false;
+          this.MessageLabel.Content = "타입을 알 수 없습니다.";
+        }
       }
       else
-      {
-        this.AcceptButton.IsEnabled = false;
-        this.MessageLabel.Content = "타입을 알 수 없습니다.";
-      }
-      
+        this.MessageLabel.Content = "존재하지 않는 파일 입니다.";
+
       this.ProgressRing.Visibility = Visibility.Collapsed;
       IsWorkDelay = false;
     }

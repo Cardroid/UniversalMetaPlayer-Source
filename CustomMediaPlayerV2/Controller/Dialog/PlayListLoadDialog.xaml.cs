@@ -30,10 +30,12 @@ namespace CMP2.Controller.Dialog
       this.AcceptButton.IsEnabled = false;
       this.UserTextBox.TextChanged += MediaLocationTextBox_TextChanged;
       this.MouseDown += (s, e) => { this.UserTextBox.Focus(); };
+      this.UserTextBox.Focus();
     }
 
     private bool IsWorkDelay = false;
-    private string Invalid = $"{new string(Path.GetInvalidPathChars())}\"";
+    private readonly string Invalid = $"{new string(Path.GetInvalidPathChars())}\"";
+
     private void MediaLocationTextBox_TextChanged(object sender, TextChangedEventArgs e)
     {
       if (string.IsNullOrWhiteSpace(this.UserTextBox.Text))
@@ -46,6 +48,7 @@ namespace CMP2.Controller.Dialog
       IsWorkDelay = true;
       this.ProgressRing.Visibility = Visibility.Visible;
 
+      // 올바르지 않은 문자 제거
       string text = this.UserTextBox.Text;
       for (int i = 0; i < Invalid.Length; i++)
         text = text.Replace(Invalid[i].ToString(), "");
