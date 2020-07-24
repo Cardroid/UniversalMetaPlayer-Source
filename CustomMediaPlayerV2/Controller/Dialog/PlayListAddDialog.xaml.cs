@@ -12,7 +12,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 
-using CMP2.Core.Model;
 using CMP2.Utility;
 
 namespace CMP2.Controller.Dialog

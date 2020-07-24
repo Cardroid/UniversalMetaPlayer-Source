@@ -11,10 +11,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-
-using CMP2.Core.Model;
+using Microsoft.Win32;
 using CMP2.Utility;
-using System.Text.RegularExpressions;
+using CMP2.Core;
 
 namespace CMP2.Controller.Dialog
 {
@@ -29,6 +28,7 @@ namespace CMP2.Controller.Dialog
 
       this.AcceptButton.IsEnabled = false;
       this.UserTextBox.TextChanged += MediaLocationTextBox_TextChanged;
+      this.OpenFileDialogButton.Click += OpenFileDialogButton_Click; ;
       this.MouseDown += (s, e) => { this.UserTextBox.Focus(); };
       this.UserTextBox.Focus();
     }
@@ -74,6 +74,17 @@ namespace CMP2.Controller.Dialog
 
       this.ProgressRing.Visibility = Visibility.Collapsed;
       IsWorkDelay = false;
+    }
+
+    private void OpenFileDialogButton_Click(object sender, RoutedEventArgs e)
+    {
+      string defaultPath = Path.Combine(GlobalProperty.FileSavePath, "PlayList");
+      if (!Directory.Exists(defaultPath))
+        defaultPath = string.Empty;
+
+      var filepath = DialogHelper.OpenFileDialog("플레이 리스트 파일열기", "M3U8 File | *.m3u8", defaultPath);
+      if (!string.IsNullOrWhiteSpace(filepath))
+        this.UserTextBox.Text = filepath;
     }
 
     public Dictionary<string, string> GetResult()
