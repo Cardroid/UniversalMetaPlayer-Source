@@ -61,22 +61,17 @@ namespace CMP2.Controller.Dialog
         text = text.Replace(Invalid[i].ToString(), "");
       this.UserTextBox.Text = text;
 
-      if (File.Exists(text))
+      var result = Checker.MediaTypeChecker(text);
+      if (result != MediaType.NotSupport)
       {
-        var result = Checker.MediaTypeChecker(text);
-        if (result != MediaType.NotSupport)
-        {
-          this.AcceptButton.IsEnabled = true;
-          this.MessageLabel.Content = $"미디어 타입 : {result}";
-        }
-        else
-        {
-          this.AcceptButton.IsEnabled = false;
-          this.MessageLabel.Content = "지원하지 않는 미디어 타입입니다.";
-        }
+        this.AcceptButton.IsEnabled = true;
+        this.MessageLabel.Content = $"미디어 타입 : {result}";
       }
       else
-        this.MessageLabel.Content = "존재하지 않는 파일 입니다.";
+      {
+        this.AcceptButton.IsEnabled = false;
+        this.MessageLabel.Content = "지원하지 않는 미디어 타입입니다.";
+      }
 
       this.ProgressRing.Visibility = Visibility.Collapsed;
       IsWorkDelay = false;

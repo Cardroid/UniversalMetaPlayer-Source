@@ -112,14 +112,16 @@ namespace CMP2.Controller
             var loadResultObj = await this.PlayListDialog.ShowDialog(loadView);
             if (loadResultObj is bool loadResult && loadResult)
             {
-              if (loadView.SaveCurrentPlayList.IsChecked.GetValueOrDefault())
+              var result = loadView.GetResult();
+
+              if (result.TryGetValue("SaveCurrentPlayList", out string saveCurrentPlayList )&& saveCurrentPlayList.ToLower() == bool.TrueString)
                 await ViewModel.PlayList.Save();
 
-              bool loadContinue = loadView.LoadContinue.IsChecked.GetValueOrDefault();
+              bool loadContinue = result.TryGetValue("LoadContinue", out string _loadContinue) && _loadContinue.ToLower() == bool.TrueString;
               if (!loadContinue)
                 ViewModel.PlayList.Clear();
 
-              if (loadView.GetResult().TryGetValue("PlayListFilePath", out string loadValue))
+              if (result.TryGetValue("PlayListFilePath", out string loadValue))
                 await ViewModel.PlayList.Load(loadValue, !loadContinue);
             }
             EnableControl(true);

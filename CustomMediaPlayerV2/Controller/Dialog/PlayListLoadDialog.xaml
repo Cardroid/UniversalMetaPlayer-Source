@@ -49,8 +49,7 @@
             <CheckBox
                 x:Name="SaveCurrentPlayList"
                 Style="{StaticResource MaterialDesignAccentCheckBox}"
-                Content="현재 재생목록 저장"
-                IsChecked="True" />
+                Content="현재 재생목록 저장"/>
             <CheckBox
                 x:Name="LoadContinue"
                 Style="{StaticResource MaterialDesignAccentCheckBox}"

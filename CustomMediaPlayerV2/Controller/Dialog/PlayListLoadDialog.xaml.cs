@@ -31,6 +31,8 @@ namespace CMP2.Controller.Dialog
       this.OpenFileDialogButton.Click += OpenFileDialogButton_Click;
       this.MouseDown += (s, e) => { this.UserTextBox.Focus(); };
       this.UserTextBox.Focus();
+
+      this.SaveCurrentPlayList.IsChecked = true;
     }
 
     private bool IsWorkDelay = false;
@@ -92,6 +94,8 @@ namespace CMP2.Controller.Dialog
       var result = new Dictionary<string, string>();
 
       result.Add("PlayListFilePath", this.UserTextBox.Text);
+      result.Add("SaveCurrentPlayList", this.SaveCurrentPlayList.IsChecked.GetValueOrDefault().ToString());
+      result.Add("LoadContinue", this.LoadContinue.IsChecked.GetValueOrDefault().ToString());
       return result;
     }
   }
