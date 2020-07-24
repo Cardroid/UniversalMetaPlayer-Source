@@ -31,7 +31,7 @@ namespace CMP2.Core
       };
 
       PlayListPlayMediaIndex = -1;
-      Volume = 0.8f;
+      Volume = 0.5f;
       OptionDefault();
       // 오토 플레이 옵션
       PropertyChangedEvent += (e) =>
@@ -81,6 +81,7 @@ namespace CMP2.Core
       }
     }
     private static PlayList _PlayList;
+    public static string PlayListEigenValue { get; set; }
 
     /// <summary>
     /// 현재 플레이리스트에서 재생중인 미디어의 Index
@@ -217,14 +218,20 @@ namespace CMP2.Core
     /// 미디어로 초기화하고 재생을 준비합니다
     /// </summary>
     /// <param name="media">재생할 미디어</param>
-    public static async void Init(Media media)
+    public static async Task<bool> Init(Media media)
     {
+      if (media.GetInfomation().Title.ToLower().StartsWith(Media.MEDIA_INFO_NULL.ToLower()))
+      {
+        Log.Error("미디어 정보에 오류가 있습니다.", new NullReferenceException("Media is Null"));
+        return false;
+      }
+
       string path = await media.GetStreamPath();
 
       if (string.IsNullOrWhiteSpace(path))
       {
-        Log.Error("미디어 위치정보가 누락 되었습니다. (path is Null)");
-        return;
+        Log.Error("미디어 위치정보가 누락 되었습니다.", new NullReferenceException("Path is Null"));
+        return false;
       }
 
       // 모든 정보로드
@@ -252,6 +259,7 @@ namespace CMP2.Core
       Log.Debug($"[{(string.IsNullOrWhiteSpace(media.GetYouTubeVideoID()) ? System.IO.Path.GetFileNameWithoutExtension(info.MediaLocation) : $"\"{media.GetYouTubeVideoID()}\" {info.Title}")}] 메인 미디어 플레이어에 로드 성공.");
 
       PropertyChangedEvent?.Invoke("MainPlayerInitialized");
+      return true;
     }
 
     /// <summary>
@@ -297,13 +305,16 @@ namespace CMP2.Core
     /// <summary>
     /// 다음 미디어
     /// </summary>
-    public static void Next()
+    public static async void Next()
     {
       if (!MediaLoadedCheck)
         return;
 
       if (PlayListPlayMediaIndex >= 0)
       {
+        if (PlayListEigenValue != PlayList.EigenValue)
+          PlayListPlayMediaIndex = 0;
+
         if (Option.Shuffle && PlayListPlayMediaIndex >= 0)
           PlayListPlayMediaIndex = RandomFunc.RandomInt(PlayListPlayMediaIndex, PlayListPlayMediaIndex, 0, PlayList.Count);
 
@@ -318,9 +329,12 @@ namespace CMP2.Core
 
           if ((int)PlayList[index].LoadedCheck >= 2)
           {
-            Init(new Media(PlayList[index].MediaType, PlayList[index].MediaLocation));
-            PlayListPlayMediaIndex = index;
-            InitComplete = true;
+            if(await Init(new Media(PlayList[index].MediaType, PlayList[index].MediaLocation)))
+            {
+              PlayListEigenValue = PlayList.EigenValue;
+              PlayListPlayMediaIndex = index;
+              InitComplete = true;
+            }
           }
           else if (PlayListPlayMediaIndex == index)
             return;
@@ -337,7 +351,7 @@ namespace CMP2.Core
     /// <summary>
     /// 이전 미디어
     /// </summary>
-    public static void Previous()
+    public static async void Previous()
     {
       if (!MediaLoadedCheck)
         return;
@@ -349,6 +363,9 @@ namespace CMP2.Core
       }
       else if (PlayListPlayMediaIndex >= 0)
       {
+        if (PlayListEigenValue != PlayList.EigenValue)
+          PlayListPlayMediaIndex = 0;
+
         if (Option.Shuffle && PlayListPlayMediaIndex >= 0)
           PlayListPlayMediaIndex = RandomFunc.RandomInt(PlayListPlayMediaIndex, PlayListPlayMediaIndex, 0, PlayList.Count);
 
@@ -363,9 +380,12 @@ namespace CMP2.Core
 
           if ((int)PlayList[index].LoadedCheck >= 2)
           {
-            Init(new Media(PlayList[index].MediaType, PlayList[index].MediaLocation));
-            PlayListPlayMediaIndex = index;
-            InitComplete = true;
+            if(await Init(new Media(PlayList[index].MediaType, PlayList[index].MediaLocation)))
+            {
+              PlayListEigenValue = PlayList.EigenValue;
+              PlayListPlayMediaIndex = index;
+              InitComplete = true;
+            }
           }
           else if (PlayListPlayMediaIndex == index)
             return;

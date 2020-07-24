@@ -55,18 +55,15 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition
-                                Width="Auto" />
-                            <ColumnDefinition
                                 Width="*" />
                             <ColumnDefinition
                                 Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock
+                        <TextBox
                             x:Name="PlayListName"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
                             Foreground="{Binding Theme.TextFieldBoxBackground, Mode=OneWay}"
-                            Text="{Binding PlayList.PlayListName}"
+                            Text="{Binding PlayListName}"
+                            IsReadOnly="True"
                             FontSize="16"
                             Grid.Column="0" />
                         <materialDesign:PopupBox
@@ -80,7 +77,7 @@
                             ToolTip="추가기능"
                             Width="20"
                             Height="20"
-                            Grid.Column="2">
+                            Grid.Column="1">
                             <materialDesign:PopupBox.ToggleContent>
                                 <materialDesign:PackIcon
                                     Kind="PlaylistPlus"

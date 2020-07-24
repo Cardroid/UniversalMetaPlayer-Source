@@ -11,8 +11,11 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-
+using CMP2.Core;
+using CMP2.Core.Model;
 using CMP2.Utility;
+
+using MaterialDesignThemes.Wpf;
 
 namespace CMP2.Controller.Dialog
 {
@@ -21,15 +24,20 @@ namespace CMP2.Controller.Dialog
   /// </summary>
   public partial class PlayListAddDialog : UserControl
   {
+    public CMP_VoidEventHandler Close;
     public PlayListAddDialog()
     {
       InitializeComponent();
 
+      Log = new Log(typeof(PlayListAddDialog));
+
       this.AcceptButton.IsEnabled = false;
       this.UserTextBox.TextChanged += UserTextBox_TextChanged;
+      this.OpenFileDialogButton.Click += OpenFileDialogButton_Click;
       this.MouseDown += (s, e) => { this.UserTextBox.Focus(); };
       this.UserTextBox.Focus();
     }
+    private Log Log;
 
     private bool IsWorkDelay = false;
     private readonly string Invalid = $"{new string(Path.GetInvalidPathChars())}\"";
@@ -56,15 +64,15 @@ namespace CMP2.Controller.Dialog
       if (File.Exists(text))
       {
         var result = Checker.MediaTypeChecker(text);
-        if (result.HasValue)
+        if (result != MediaType.NotSupport)
         {
           this.AcceptButton.IsEnabled = true;
-          this.MessageLabel.Content = $"미디어 타입 : {result.Value}";
+          this.MessageLabel.Content = $"미디어 타입 : {result}";
         }
         else
         {
           this.AcceptButton.IsEnabled = false;
-          this.MessageLabel.Content = "타입을 알 수 없습니다.";
+          this.MessageLabel.Content = "지원하지 않는 미디어 타입입니다.";
         }
       }
       else
@@ -72,6 +80,38 @@ namespace CMP2.Controller.Dialog
 
       this.ProgressRing.Visibility = Visibility.Collapsed;
       IsWorkDelay = false;
+    }
+
+    private async void OpenFileDialogButton_Click(object sender, RoutedEventArgs e)
+    {
+      string defaultPath = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
+      if (!Directory.Exists(defaultPath))
+        defaultPath = string.Empty;
+
+      var filepath = DialogHelper.OpenFileDialog("로컬 미디어 파일열기", "Music File | *.mp3;*.flac", true, defaultPath);
+      if (filepath != null)
+      {
+        if (filepath.Length == 1)
+          this.UserTextBox.Text = filepath[0];
+        else
+        {
+          Close?.Invoke();
+          string errorFilePath = string.Empty;
+          MediaType type;
+          for (int i = 0; i < filepath.Length; i++)
+          {
+            type = Checker.MediaTypeChecker(filepath[i]);
+            if (type != MediaType.NotSupport)
+              await MainMediaPlayer.PlayList.Add(new Media(type, filepath[i]));
+            else
+              errorFilePath += $"{filepath[i]}\n";
+          }
+          if (!string.IsNullOrWhiteSpace(errorFilePath))
+            Log.Warn($"미디어 추가 완료\n하나 이상의 오류가 있습니다.\nPath Count : [{filepath.Length}]\n-----Path-----\n{errorFilePath}--------------");
+          else
+            Log.Info($"미디어 추가 완료\nPath Count : [{filepath.Length}]");
+        }
+      }
     }
 
     public Dictionary<string, string> GetResult()

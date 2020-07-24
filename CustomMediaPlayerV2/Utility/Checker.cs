@@ -44,14 +44,27 @@ namespace CMP2.Utility
     /// </summary>
     /// <param name="path">체크할 미디어의 위치</param>
     /// <returns>없을 시 Null</returns>
-    public static MediaType? MediaTypeChecker(string path)
+    public static MediaType MediaTypeChecker(string path)
     {
       if (File.Exists(path))
+      {
+        string ext = Path.GetExtension(path).ToLower();
+        string[] extArray = { ".mp3", ".flac" };
+
+        for(int i = 0; i < extArray.Length; i++)
+        {
+          if (extArray[i].Equals(ext))
+            break;
+          if (i == extArray.Length - 1)
+            return MediaType.NotSupport;
+        }
+
         return MediaType.Local;
+      }
       else if (VideoId.TryParse(path).HasValue)
         return MediaType.Youtube;
       else
-        return null;
+        return MediaType.NotSupport;
     }
   }
 }

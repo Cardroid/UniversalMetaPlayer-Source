@@ -28,7 +28,7 @@ namespace CMP2.Controller.Dialog
 
       this.AcceptButton.IsEnabled = false;
       this.UserTextBox.TextChanged += MediaLocationTextBox_TextChanged;
-      this.OpenFileDialogButton.Click += OpenFileDialogButton_Click; ;
+      this.OpenFileDialogButton.Click += OpenFileDialogButton_Click;
       this.MouseDown += (s, e) => { this.UserTextBox.Focus(); };
       this.UserTextBox.Focus();
     }
@@ -78,13 +78,13 @@ namespace CMP2.Controller.Dialog
 
     private void OpenFileDialogButton_Click(object sender, RoutedEventArgs e)
     {
-      string defaultPath = Path.Combine(GlobalProperty.FileSavePath, "PlayList");
+      string defaultPath = Path.Combine(Environment.CurrentDirectory, GlobalProperty.FileSavePath, "PlayList");
       if (!Directory.Exists(defaultPath))
         defaultPath = string.Empty;
 
-      var filepath = DialogHelper.OpenFileDialog("플레이 리스트 파일열기", "M3U8 File | *.m3u8", defaultPath);
-      if (!string.IsNullOrWhiteSpace(filepath))
-        this.UserTextBox.Text = filepath;
+      var filepath = DialogHelper.OpenFileDialog("플레이 리스트 파일열기", "PlayList File | *.m3u8", false, defaultPath);
+      if (filepath != null)
+        this.UserTextBox.Text = filepath[0];
     }
 
     public Dictionary<string, string> GetResult()

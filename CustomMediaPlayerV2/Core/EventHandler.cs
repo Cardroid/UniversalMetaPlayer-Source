@@ -6,12 +6,13 @@ using System.Windows.Input;
 
 namespace CMP2.Core
 {
+  public delegate void CMP_VoidEventHandler();
   public delegate void CMP_PropertyChangedEventHandler(string propertyname);
   public delegate void CMP_KeyDownEventHandler(KeyEventArgs e);
 
   public static class GlobalEvent
   {
-    private static bool KeyDownEventHandled = false;
+    public static bool KeyDownEventHandled { get; set; } = false;
     /// <summary>
     /// 전역 키 누름 이벤트
     /// </summary>

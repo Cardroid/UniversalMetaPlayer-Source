@@ -10,11 +10,13 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+
 using CMP2.Controller.Dialog;
 using CMP2.Controller.ViewModel;
 using CMP2.Core;
 using CMP2.Core.Model;
 using CMP2.Utility;
+
 using MaterialDesignThemes.Wpf;
 
 namespace CMP2.Controller
@@ -40,11 +42,27 @@ namespace CMP2.Controller
       this.PlayListReloadButton.Tag = PlayListControlType.Reload;
       this.PlayListResetButton.Tag = PlayListControlType.Reset;
 
-      this.PlayListAddButton   .Click += PlayListControlButton_Click;
-      this.PlayListSaveButton  .Click += PlayListControlButton_Click;
-      this.PlayListLoadButton  .Click += PlayListControlButton_Click;
+      this.PlayListAddButton.Click += PlayListControlButton_Click;
+      this.PlayListSaveButton.Click += PlayListControlButton_Click;
+      this.PlayListLoadButton.Click += PlayListControlButton_Click;
       this.PlayListReloadButton.Click += PlayListControlButton_Click;
-      this.PlayListResetButton .Click += PlayListControlButton_Click;
+      this.PlayListResetButton.Click += PlayListControlButton_Click;
+
+      // 플레이 리스트 이름 변경
+      this.PlayListName.MouseDoubleClick += (_, e) =>
+      {
+        if (e.LeftButton == MouseButtonState.Pressed)
+        {
+          this.PlayListName.IsReadOnly = false;
+          GlobalEvent.KeyDownEventHandled = true;
+        }
+      };
+      this.PlayListName.KeyDown += (_, e) => { if (e.Key == Key.Enter) this.Focus(); };
+      this.PlayListName.LostFocus += (_, e) =>
+      {
+        this.PlayListName.IsReadOnly = true;
+        GlobalEvent.KeyDownEventHandled = false;
+      };
 
       // 헤더 설정
       this.Title.Header = "제목";
@@ -68,6 +86,7 @@ namespace CMP2.Controller
           case PlayListControlType.Add:
             EnableControl(false);
             var addView = new PlayListAddDialog();
+            addView.Close += () => { this.PlayListDialog.IsOpen = false; };
 
             var addResultObj = await this.PlayListDialog.ShowDialog(addView);
             if (addResultObj is bool ddResult && ddResult)
@@ -75,10 +94,10 @@ namespace CMP2.Controller
               if (addView.GetResult().TryGetValue("MediaLocation", out string addValue))
               {
                 var mediatype = Checker.MediaTypeChecker(addValue);
-                if (mediatype.HasValue)
-                  await ViewModel.PlayList.Add(new Media(mediatype.Value, addValue));
+                if (mediatype != Core.Model.MediaType.NotSupport)
+                  await ViewModel.PlayList.Add(new Media(mediatype, addValue));
                 else
-                  Log.Error($"미디어 타입을 알 수 없습니다.\nPath : [{addValue}]");
+                  Log.Error($"지원하지 않는 미디어 타입입니다.\nPath : [{addValue}]");
               }
             }
             EnableControl(true);
@@ -93,16 +112,23 @@ namespace CMP2.Controller
             var loadResultObj = await this.PlayListDialog.ShowDialog(loadView);
             if (loadResultObj is bool loadResult && loadResult)
             {
+              if (loadView.SaveCurrentPlayList.IsChecked.GetValueOrDefault())
+                await ViewModel.PlayList.Save();
+
+              bool loadContinue = loadView.LoadContinue.IsChecked.GetValueOrDefault();
+              if (!loadContinue)
+                ViewModel.PlayList.Clear();
+
               if (loadView.GetResult().TryGetValue("PlayListFilePath", out string loadValue))
-              {
-                await ViewModel.PlayList.Load(loadValue);
-              }
+                await ViewModel.PlayList.Load(loadValue, !loadContinue);
             }
             EnableControl(true);
             break;
           case PlayListControlType.Reload:
+            await ViewModel.PlayList.ReloadAsync();
             break;
           case PlayListControlType.Reset:
+            ViewModel.PlayList.Clear();
             break;
         }
       }
@@ -144,18 +170,19 @@ namespace CMP2.Controller
         PlayList.UnselectAll();
     }
 
-    private void PlayList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    private async void PlayList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
       if (0 <= ViewModel.PlayListSelectIndex && ViewModel.PlayList.Count > ViewModel.PlayListSelectIndex)
       {
-        if (MainMediaPlayer.PlayList[ViewModel.PlayListSelectIndex].LoadedCheck == Core.Model.LoadState.Loaded)
+        if (ViewModel.PlayList[ViewModel.PlayListSelectIndex].LoadedCheck == LoadState.Loaded)
         {
           MainMediaPlayer.PlayListPlayMediaIndex = ViewModel.PlayListSelectIndex;
-          MainMediaPlayer.Init(new Core.Model.Media(MainMediaPlayer.PlayList[ViewModel.PlayListSelectIndex].MediaType, MainMediaPlayer.PlayList[ViewModel.PlayListSelectIndex].MediaLocation));
+          if (await MainMediaPlayer.Init(new Media(ViewModel.PlayList[ViewModel.PlayListSelectIndex].MediaType, ViewModel.PlayList[ViewModel.PlayListSelectIndex].MediaLocation)))
+            MainMediaPlayer.PlayListEigenValue = ViewModel.PlayList.EigenValue;
         }
         else
         {
-          var info = MainMediaPlayer.PlayList[ViewModel.PlayListSelectIndex];
+          var info = ViewModel.PlayList[ViewModel.PlayListSelectIndex];
           Log.Error($"<{info.MediaType}>[{info.Title}] 미디어 정보가 로드되지 않았거나 로드에 실패 했습니다.");
         }
       }

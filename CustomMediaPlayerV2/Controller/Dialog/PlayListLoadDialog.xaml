@@ -14,12 +14,14 @@
     TextElement.FontSize="14"
     FontFamily="{Binding FontFamily}"
     mc:Ignorable="d">
-    
+
     <Grid
         Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition
                 Height="*" />
+            <RowDefinition
+                Height="Auto" />
             <RowDefinition
                 Height="*" />
         </Grid.RowDefinitions>
@@ -44,46 +46,69 @@
                         IsIndeterminate="True" />
                 </materialDesign:Card>
             </StackPanel>
-            <TextBox
-                x:Name="UserTextBox"
-                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
-                Margin="0,8,0,0"
-                FontSize="16"
-                Cursor="IBeam" />
+            <CheckBox
+                x:Name="SaveCurrentPlayList"
+                Style="{StaticResource MaterialDesignAccentCheckBox}"
+                Content="현재 재생목록 저장"
+                IsChecked="True" />
+            <CheckBox
+                x:Name="LoadContinue"
+                Style="{StaticResource MaterialDesignAccentCheckBox}"
+                Content="현재 재생목록에 이어서 추가" />
+            <Grid
+                Margin="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition
+                        Width="*" />
+                    <ColumnDefinition
+                        Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBox
+                    x:Name="UserTextBox"
+                    Style="{DynamicResource MaterialDesignTextBox}"
+                    Margin="0,0,8,0"
+                    MinWidth="200"
+                    FontSize="16"
+                    Cursor="IBeam"
+                    Grid.Column="0" />
+                <Button
+                    x:Name="OpenFileDialogButton"
+                    Style="{DynamicResource MaterialDesignFlatAccentBgButton}"
+                    Content="찾아보기"
+                    Grid.Column="1" />
+            </Grid>
         </StackPanel>
 
         <Border
-            HorizontalAlignment="Right"
             BorderBrush="{DynamicResource AttentionToActionBrush}"
-            Grid.Row="1">
-            <StackPanel
-                Orientation="Horizontal"
-                Margin="0,16,0,0">
-                <Button
-                    x:Name="OpenFileDialogButton"
-                    Style="{DynamicResource MaterialDesignFlatButton}"
-                    Content="찾아보기" />
-                <Button
-                    x:Name="AcceptButton"
-                    IsDefault="True"
-                    Style="{DynamicResource MaterialDesignFlatButton}"
-                    Command="{x:Static wpf:DialogHost.CloseDialogCommand}">
-                    <Button.CommandParameter>
-                        <system:Boolean>True</system:Boolean>
-                    </Button.CommandParameter>
-                    확인
-                </Button>
-                <Button
-                    IsCancel="True"
-                    Margin="8 0 0 0"
-                    Style="{DynamicResource MaterialDesignFlatButton}"
-                    Command="{x:Static wpf:DialogHost.CloseDialogCommand}">
-                    <Button.CommandParameter>
-                        <system:Boolean>False</system:Boolean>
-                    </Button.CommandParameter>
-                    취소
-                </Button>
-            </StackPanel>
-        </Border>
+            BorderThickness="1"
+            Grid.Row="1" />
+
+        <StackPanel
+            Orientation="Horizontal"
+            HorizontalAlignment="Right"
+            Margin="0,8,0,0"
+            Grid.Row="2">
+            <Button
+                x:Name="AcceptButton"
+                IsDefault="True"
+                Style="{DynamicResource MaterialDesignFlatAccentBgButton}"
+                Command="{x:Static wpf:DialogHost.CloseDialogCommand}">
+                <Button.CommandParameter>
+                    <system:Boolean>True</system:Boolean>
+                </Button.CommandParameter>
+                확인
+            </Button>
+            <Button
+                IsCancel="True"
+                Margin="8 0 0 0"
+                Style="{DynamicResource MaterialDesignFlatAccentBgButton}"
+                Command="{x:Static wpf:DialogHost.CloseDialogCommand}">
+                <Button.CommandParameter>
+                    <system:Boolean>False</system:Boolean>
+                </Button.CommandParameter>
+                취소
+            </Button>
+        </StackPanel>
     </Grid>
 </UserControl>

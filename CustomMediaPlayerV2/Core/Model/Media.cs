@@ -74,6 +74,8 @@ namespace CMP2.Core.Model
     {
       if (string.IsNullOrWhiteSpace(medialocation))
         throw new NullReferenceException("미디어 위치정보는 비어있을 수 없습니다.");
+      if(mediaType == MediaType.NotSupport)
+        throw new NotSupportedException("지원하지 않는 미디어타입 입니다.");
 
       Infomation = new MediaInfomation()
       {
@@ -108,14 +110,14 @@ namespace CMP2.Core.Model
     /// 일부 정보 로드 시도
     /// </summary>
     /// <returns>성공시 true 반환</returns>
-    public async Task<bool> TryInfoPartialLoadAsync()
+    public async Task<bool> TryInfoPartialLoadAsync(bool useCache = true)
     {
       // 로컬 파일
       if (Infomation.MediaType == MediaType.Local)
         return TryFileInfomationLoad(Infomation.MediaLocation, false);
       // YouTube
       else if (Infomation.MediaType == MediaType.Youtube)
-        return await TryYouTubeInfomationLoadAsync(false);
+        return await TryYouTubeInfomationLoadAsync(false, useCache);
       return false;
     }
 
@@ -123,28 +125,28 @@ namespace CMP2.Core.Model
     /// 모든 정보 로드 시도
     /// </summary>
     /// <returns>성공시 true 반환</returns>
-    public async Task<bool> TryInfoAllLoadAsync()
+    public async Task<bool> TryInfoAllLoadAsync(bool useCache = true)
     {
       // 로컬 파일
       if (Infomation.MediaType == MediaType.Local)
         return TryFileInfomationLoad(Infomation.MediaLocation, true);
       // YouTube
       else if (Infomation.MediaType == MediaType.Youtube)
-        return await TryYouTubeInfomationLoadAsync(true);
+        return await TryYouTubeInfomationLoadAsync(true, useCache);
       return false;
     }
 
     /// <summary>
     /// 미디어 스트림의 저장 경로
     /// </summary>
-    public async Task<string> GetStreamPath()
+    public async Task<string> GetStreamPath(bool useCache = true)
     {
       // 로컬 파일
       if (Infomation.MediaType == MediaType.Local)
         return Infomation.MediaLocation;
       // YouTube
       else if (Infomation.MediaType == MediaType.Youtube)
-        return await GetYouTubeMediaAsync(true);
+        return await GetYouTubeMediaAsync(useCache);
       return string.Empty;
     }
 
@@ -435,13 +437,13 @@ namespace CMP2.Core.Model
     #endregion
 
     #region Other Function
-    private const string MEDIA_INFO_NULL = "(null)";
+    public const string MEDIA_INFO_NULL = "(null)";
     /// <summary>
     /// 미디어 로드에 실패했을 경우 호출
     /// </summary>
     public void LoadFailProcess()
     {
-      if (!Infomation.Title.ToLower().StartsWith(MEDIA_INFO_NULL))
+      if (!Infomation.Title.ToLower().StartsWith(MEDIA_INFO_NULL.ToLower()))
         Infomation.Title = $"{MEDIA_INFO_NULL} {Infomation.Title}";
     }
     #endregion
@@ -483,6 +485,7 @@ namespace CMP2.Core.Model
   }
   public enum MediaType
   {
+    NotSupport,
     Local,
     Youtube
   }

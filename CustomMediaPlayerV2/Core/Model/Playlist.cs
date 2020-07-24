@@ -23,8 +23,8 @@ namespace CMP2.Core.Model
     /// <summary>
     /// 플레이 리스트 구별을 위한 고유 값
     /// </summary>
-    public string EigenValue { get; }
-    
+    public string EigenValue { get; private set; }
+
     /// <summary>
     /// 플레이 리스트 이름
     /// </summary>
@@ -37,7 +37,7 @@ namespace CMP2.Core.Model
         OnPropertyChanged("PlayListName");
       }
     }
-    public string _PlayListName;
+    private string _PlayListName;
 
     /// <summary>
     /// 플레이 리스트의 총 길이
@@ -89,7 +89,7 @@ namespace CMP2.Core.Model
 
       string m3uData = PlaylistToTextHelper.ToText(playlist);
 
-      var savepath = Path.Combine(!string.IsNullOrWhiteSpace(path) ? path : GlobalProperty.FileSavePath, "PlayList");
+      var savepath = Path.Combine(!string.IsNullOrWhiteSpace(path) ? path : Path.Combine(GlobalProperty.FileSavePath, "PlayList"));
       if (!Directory.Exists(savepath))
         Directory.CreateDirectory(savepath);
       playlist.Path = savepath;
@@ -104,7 +104,7 @@ namespace CMP2.Core.Model
     /// </summary>
     /// <param name="Properties">처리할 플레이리스트 정보</param>
     /// <returns>성공 여부</returns>
-    public async Task<bool> Load(string path)
+    public async Task<bool> Load(string path, bool newPlaylist = true)
     {
       if (File.Exists(path))
       {
@@ -115,6 +115,7 @@ namespace CMP2.Core.Model
         {
           playListStream = new FileStream(path, FileMode.Open, FileAccess.Read);
           playListData = parser.GetFromStream(playListStream);
+          playListData.FileName = Path.GetFileNameWithoutExtension(path);
         }
         catch (Exception e)
         {
@@ -133,7 +134,8 @@ namespace CMP2.Core.Model
           return false;
         }
 
-        PlayListName = playListData.FileName ?? "Nameless";
+        if (newPlaylist)
+          PlayListName = playListData.FileName ?? "Nameless";
 
         List<string> paths = playListData.GetTracksPaths();
         if (paths.Count <= 0)
@@ -145,11 +147,15 @@ namespace CMP2.Core.Model
         for (int i = 0; i < paths.Count; i++)
         {
           var mediatype = Checker.MediaTypeChecker(paths[i]);
-          if (mediatype.HasValue)
-            await Add(new Media(mediatype.Value, paths[i]));
+          if (mediatype != MediaType.NotSupport)
+            await Add(new Media(mediatype, paths[i]));
           else
-            Log.Warn($"타입을 알 수 없는 미디어를 건너뛰었습니다.\nPath : [{paths[i]}]");
+            Log.Warn($"지원하지 않는 타입의 미디어를 건너뛰었습니다.\nPath : [{paths[i]}]");
         }
+
+        if (newPlaylist)
+          EigenValue = RandomFunc.RandomString();
+
         Log.Info($"플레이 리스트 로드 성공.\nSuccessful loading PlayList from path\nPath : [{path}]");
         return true;
       }
@@ -160,6 +166,12 @@ namespace CMP2.Core.Model
       }
     }
     #endregion
+
+    public new void Add(MediaInfomation infomation)
+    {
+      this.TotalDuration += infomation.Duration;
+      base.Add(infomation);
+    }
 
     /// <summary>
     /// 리스트 추가
@@ -222,6 +234,22 @@ namespace CMP2.Core.Model
         base.Insert(index, item);
         TotalDuration += item.Duration;
       }
+    }
+
+    public async Task ReloadAsync()
+    {
+      for(int i = 0; i < base.Count; i++)
+      {
+        var media = new Media(base[i].MediaType, base[i].MediaLocation);
+        await media.TryInfoPartialLoadAsync(false);
+        base[i] = media.GetInfomation();
+      }
+    }
+
+    public new void Clear()
+    {
+      this.TotalDuration = TimeSpan.Zero;
+      base.Clear();
     }
   }
 }

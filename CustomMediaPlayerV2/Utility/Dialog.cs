@@ -8,12 +8,20 @@ namespace CMP2.Utility
 {
   public static class DialogHelper
   {
-    public static string OpenFileDialog(string title, string filter, string defaultPath = "")
+    /// <summary>
+    /// FileDialog 창 열기
+    /// </summary>
+    /// <param name="title">창의 이름</param>
+    /// <param name="filter">필터</param>
+    /// <param name="multiselect">다중 선택 허용 여부</param>
+    /// <param name="defaultPath">기본 경로</param>
+    /// <returns>선택한 파일의 경로 문자열 배열</returns>
+    public static string[] OpenFileDialog(string title, string filter, bool multiselect = false, string defaultPath = "")
     {
       OpenFileDialog openFile = new OpenFileDialog
       {
         Title = title,
-        Multiselect = false,
+        Multiselect = multiselect,
         Filter = filter,
         CheckPathExists = true,
         CheckFileExists = true
@@ -25,10 +33,10 @@ namespace CMP2.Utility
       var result = openFile.ShowDialog();
       if (result.HasValue && result.Value)
       {
-        return openFile.FileName;
+        return openFile.FileNames;
       }
       else
-        return string.Empty;
+        return null;
     }
   }
 }

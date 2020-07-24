@@ -17,21 +17,30 @@ namespace CMP2.Controller.ViewModel
     }
 
     public PlayList PlayList => MainMediaPlayer.PlayList;
+    public string PlayListName
+    {
+      get => PlayList.PlayListName;
+      set
+      {
+        PlayList.PlayListName = value;
+        OnPropertyChanged("PlayListName");
+      }
+    }
 
     public int PlayListSelectIndex { get; set; }
 
     #region UI갱신
     private void MainMediaPlayer_PropertyChangedEvent(string propertyname)
     {
-      if(propertyname == "PlayList") 
+      switch (propertyname)
       {
-        ApplyUI();
+        case "PlayList":
+          OnPropertyChanged("PlayList");
+          break;
+        case "PlayListName":
+          OnPropertyChanged("PlayListName");
+          break;
       }
-    }
-
-    public void ApplyUI()
-    {
-      OnPropertyChanged("Playlist");
     }
     #endregion
   }
