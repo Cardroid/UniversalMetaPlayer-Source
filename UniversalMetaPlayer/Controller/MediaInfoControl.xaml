@@ -1,0 +1,51 @@
+﻿<UserControl
+    x:Class="UMP.Controller.MediaInfoControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:model="clr-namespace:UMP.Controller.ViewModel"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+    TextElement.FontWeight="Medium"
+    TextElement.FontSize="14"
+    FontFamily="{Binding FontFamily}"
+    Background="Transparent"
+    mc:Ignorable="d">
+
+    <UserControl.DataContext>
+        <model:MediaInfoControlViewModel />
+    </UserControl.DataContext>
+
+    <Grid>
+        <Grid.Background>
+            <ImageBrush
+                Opacity="0.3"
+                Stretch="UniformToFill"
+                ImageSource="{Binding AlbumImage}"/>
+        </Grid.Background>
+        <StackPanel
+            x:Name="InfoPanel"
+            Orientation="Vertical"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            Margin="30,0,30,30">
+            <Label
+                x:Name="SongTitleLabel"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Bottom"
+                Content="{Binding MediaTitle}"
+                FontSize="24" />
+            <Label
+                x:Name="AlbumTitleLabel"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Bottom"
+                Content="{Binding AlbumTitle}" />
+            <Label
+                x:Name="AlbumArtistLabel"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Bottom"
+                Content="{Binding AlbumArtist}" />
+        </StackPanel>
+    </Grid>
+</UserControl>

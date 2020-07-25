@@ -1,0 +1,263 @@
+﻿<UserControl
+    x:Class="UMP.Controller.MediaControllerControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    xmlns:model="clr-namespace:UMP.Controller.ViewModel"
+    xmlns:Utility="clr-namespace:UMP.Utility"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+    Background="Transparent"
+    TextElement.FontWeight="Medium"
+    TextElement.FontSize="14"
+    FontFamily="{Binding FontFamily}"
+    mc:Ignorable="d"
+    MinWidth="550">
+
+    <UserControl.DataContext>
+        <model:MediaControllerControlViewModel />
+    </UserControl.DataContext>
+
+    <UserControl.Resources>
+        <Utility:TimeSpanStringConverter
+            x:Key="TimeSpanStringConverter" />
+    </UserControl.Resources>
+
+    <Grid
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Center"
+        Grid.Column="0"
+        Grid.Row="1"
+        Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition
+                Height="Auto" />
+            <RowDefinition
+                Height="*" />
+            <RowDefinition
+                Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition
+                    x:Name="ProgressLabelWidth"
+                    Width="{Binding Width, ElementName=TotalTimeLabel}" />
+                <ColumnDefinition
+                    Width="*" />
+                <ColumnDefinition
+                    Width="{Binding Width, ElementName=TotalTimeLabel}" />
+            </Grid.ColumnDefinitions>
+            <Label
+                x:Name="ProgressLabel"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                Content="{Binding CurrentPostion, Converter={StaticResource TimeSpanStringConverter}, Mode=OneWay}"
+                Grid.Column="0" />
+            <Slider
+                x:Name="ProgressSlider"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                IsMoveToPointEnabled="True"
+                Value="{Binding CurrentPostion.TotalMilliseconds, Mode=OneWay}"
+                Maximum="{Binding DurationTime.TotalMilliseconds, Mode=OneWay}"
+                TickFrequency="10000"
+                TickPlacement="BottomRight"
+                Focusable="False"
+                Margin="5,5,5,0"
+                Cursor="Hand"
+                Grid.Column="1" />
+            <Label
+                x:Name="TotalTimeLabel"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                VerticalContentAlignment="Center"
+                HorizontalContentAlignment="Center"
+                Content="{Binding DurationTimestring}"
+                Cursor="Hand"
+                Padding="0,0,3,0"
+                Grid.Column="2" />
+        </Grid>
+        <Grid
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Grid.Row="1">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition
+                    Width="Auto" />
+                <ColumnDefinition
+                    Width="Auto" />
+                <ColumnDefinition
+                    Width="Auto" />
+                <ColumnDefinition
+                    Width="Auto" />
+                <ColumnDefinition
+                    Width="Auto" />
+                <ColumnDefinition
+                    Width="Auto" />
+                <ColumnDefinition
+                    Width="Auto" />
+                <ColumnDefinition
+                    Width="Auto" />
+                <ColumnDefinition
+                    Width="Auto" />
+                <ColumnDefinition
+                    Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <materialDesign:PopupBox
+                x:Name="VolumeMuteButton"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Style="{StaticResource MaterialDesignMultiFloatingActionAccentPopupBox}"
+                Foreground="{Binding Foreground, ElementName=PlayPauseButton}"
+                Background="Transparent"
+                BorderBrush="Transparent"
+                ToolTip="볼륨 / Volume"
+                PlacementMode="TopAndAlignCentres"
+                Focusable="False"
+                Cursor="Hand"
+                Width="{Binding Width, ElementName=ShuffleButton}"
+                Height="{Binding Height, ElementName=ShuffleButton}"
+                Grid.Column="0">
+                <materialDesign:PopupBox.ToggleContent>
+                    <materialDesign:PackIcon
+                        Kind="{Binding VolumeMuteButtonIcon}"
+                        Width="35"
+                        Height="35" />
+                </materialDesign:PopupBox.ToggleContent>
+                <materialDesign:PopupBox.ToggleCheckedContent>
+                    <materialDesign:PackIcon
+                        Kind="Close"
+                        Width="35"
+                        Height="35" />
+                </materialDesign:PopupBox.ToggleCheckedContent>
+                <Grid>
+                    <Slider
+                        x:Name="VolumeSlider"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        TickFrequency="10"
+                        TickPlacement="BottomRight"
+                        Orientation="Vertical"
+                        IsMoveToPointEnabled="True"
+                        AutoToolTipPlacement="TopLeft"
+                        AutoToolTipPrecision="0"
+                        Value="{Binding Volume}"
+                        ToolTip="볼륨 / Volume"
+                        Focusable="False"
+                        Cursor="Hand"
+                        Maximum="100"
+                        Height="100" />
+                    <Border 
+                        Background="Black"
+                        Panel.ZIndex="-999"
+                        Opacity="0.3" />
+                </Grid>
+            </materialDesign:PopupBox>
+            <Button
+                x:Name="ShuffleButton"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Style="{StaticResource MaterialDesignIconButton}"
+                Content="{Binding ShuffleIcon}"
+                ToolTip="셔플 / Shuffle"
+                Focusable="False"
+                Cursor="Hand"
+                Grid.Column="1" />
+            <Button
+                x:Name="RepeatButton"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Style="{StaticResource MaterialDesignIconButton}"
+                Content="{Binding RepeatPlayOptionIcon}"
+                ToolTip="반복 / Repeat"
+                Margin="0,0,20,0"
+                Focusable="False"
+                Cursor="Hand"
+                Grid.Column="2" />
+            <Button
+                x:Name="PreviousButton"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Style="{StaticResource MaterialDesignIconButton}"
+                Content="{materialDesign:PackIcon Kind=SkipPrevious, Size=40}"
+                ToolTip="이전 / Previous"
+                Focusable="False"
+                Cursor="Hand"
+                Grid.Column="3" />
+            <Button
+                x:Name="PlayPauseButton"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Style="{StaticResource MaterialDesignIconButton}"
+                Content="{Binding PlayPauseStateIcon}"
+                ToolTip="[재생 / 일시정지] / [Play / Pause]"
+                Focusable="False"
+                Cursor="Hand"
+                Grid.Column="4" />
+            <Button
+                x:Name="StopButton"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Style="{StaticResource MaterialDesignIconButton}"
+                Content="{materialDesign:PackIcon Kind=Stop, Size=45}"
+                ToolTip="정지 / Stop"
+                Focusable="False"
+                Cursor="Hand"
+                Grid.Column="5" />
+            <Button
+                x:Name="NextButton"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Style="{StaticResource MaterialDesignIconButton}"
+                Content="{materialDesign:PackIcon Kind=SkipNext, Size=40}"
+                ToolTip="다음 / Next"
+                Focusable="False"
+                Cursor="Hand"
+                Grid.Column="6" />
+            <CheckBox
+                x:Name="PlayListCheckBox"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Style="{StaticResource MaterialDesignActionCheckBox}"
+                Background="Transparent"
+                Foreground="{Binding Foreground, ElementName=PlayPauseButton}"
+                Content="{materialDesign:PackIcon Kind=PlaylistMusic, Size=30}"
+                IsChecked="{Binding IsPlayListWindowOpen}"
+                ToolTip="플레이리스트 / PlayList"
+                Margin="20,0,0,0"
+                Focusable="False"
+                Cursor="Hand"
+                Grid.Column="7" />
+            <Button
+                IsEnabled="False"
+                x:Name="SettingButton"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Style="{StaticResource MaterialDesignIconButton}"
+                Content="{materialDesign:PackIcon Kind=Settings, Size=30}"
+                ToolTip="설정 / Setting"
+                Focusable="False"
+                Cursor="Hand"
+                Grid.Column="8" />
+            <Label
+                x:Name="TotalDurationLabel"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                HorizontalContentAlignment="Right"
+                VerticalContentAlignment="Center"
+                Content="{Binding TotalDuration, Converter={StaticResource TimeSpanStringConverter}, Mode=OneWay}"
+                ToolTip="총 재생 길이 / Total Duration"
+                Grid.Row="1"
+                Grid.Column="9" />
+        </Grid>
+    </Grid>
+</UserControl>
