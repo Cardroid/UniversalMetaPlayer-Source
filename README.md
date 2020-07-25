@@ -1,2 +1,2 @@
-# CustomMediaPlayer
- CarbonSIX's CustomMediaPlayer
+# UniversalMetaPlayer
+ CarbonSIX's UniversalMetaPlayer
