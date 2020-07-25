@@ -9,13 +9,14 @@
     <ApplicationIcon>MainIcon.ico</ApplicationIcon>
     <Version>2.3.2</Version>
     <Authors>CarbonSIX</Authors>
-    <PackageIcon>IconCustomMusicPlayer.png</PackageIcon>
+    <PackageIcon>MainImage.png</PackageIcon>
     <Nullable>disable</Nullable>
     <Copyright>Copyright © CarbonSIX 2020</Copyright>
     <Company>CarbonSIX</Company>
     <StartupObject>UMP.App</StartupObject>
     <PackageId>Universal Meta Player</PackageId>
-    <Product>Universal Meta Player</Product> 
+    <Product>Universal Meta Player</Product>
+    <RepositoryUrl>https://github.com/Cardroid/UniversalMetaPlayer-Source</RepositoryUrl> 
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -36,6 +37,10 @@
     <None Remove="Resources\NoteImage.old.png" />
     <None Remove="Resources\NoteImage.png" />
     <None Remove="Resources\SplashScreen.png" />
+    <None Include="Resources\MainImage.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
