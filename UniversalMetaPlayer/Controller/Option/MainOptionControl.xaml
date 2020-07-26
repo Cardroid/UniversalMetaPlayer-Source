@@ -5,11 +5,85 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:optioncontrol="clr-namespace:UMP.Controller.Option.OptionControl"
-    mc:Ignorable="d"
-    Width="500"
-    Height="400">
+    mc:Ignorable="d">
 
-    <TabControl>
-        <optioncontrol:BasicOption />
-    </TabControl>
+    <GroupBox
+        Header="Option"
+        Style="{StaticResource MaterialDesignCardGroupBox}">
+    <TreeView
+        MinWidth="220">
+        <TreeViewItem
+            Header="Fruit">
+            <TreeViewItem>
+                <TreeViewItem.Header>
+                    <StackPanel
+                        Orientation="Horizontal">
+                        <TextBlock
+                            Margin="8 0 0 0">
+          Apple
+                        </TextBlock>
+                    </StackPanel>
+                </TreeViewItem.Header>
+            </TreeViewItem>
+            <TreeViewItem
+                Header="Banana" />
+            <TreeViewItem
+                Header="Grape">
+                <TextBlock>
+        <Run
+                        Text="Grapes for us" />
+                </TextBlock>
+            </TreeViewItem>
+            <TreeViewItem
+                Header="Peach" />
+            <TreeViewItem
+                Header="Pear" />
+            <TreeViewItem
+                Header="Strawberry" />
+        </TreeViewItem>
+        <TreeViewItem
+            Header="OS"
+            IsExpanded="True">
+            <TreeViewItem
+                Header="Amiga" />
+            <TreeViewItem>
+                <TreeViewItem.Header>
+                    <StackPanel
+                        Orientation="Horizontal">
+                        <TextBlock
+                            Margin="8 0 0 0">
+          Android
+                        </TextBlock>
+                    </StackPanel>
+                </TreeViewItem.Header>
+            </TreeViewItem>
+            <TreeViewItem
+                Header="iOS" />
+            <TreeViewItem>
+                <TreeViewItem.Header>
+                    <StackPanel
+                        Orientation="Horizontal">
+                        <TextBlock
+                            Margin="8 0 0 0">
+          Linux
+                        </TextBlock>
+                    </StackPanel>
+                </TreeViewItem.Header>
+            </TreeViewItem>
+            <TreeViewItem>
+                <TreeViewItem.Header>
+                    <StackPanel
+                        Orientation="Horizontal">
+                        <TextBlock
+                            Margin="8 0 0 0">
+          Windows
+                        </TextBlock>
+                    </StackPanel>
+                </TreeViewItem.Header>
+            </TreeViewItem>
+        </TreeViewItem>
+        <TreeViewItem
+            Header="Empty" />
+    </TreeView>
+    </GroupBox>
 </UserControl>

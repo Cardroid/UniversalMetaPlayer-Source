@@ -237,15 +237,18 @@
                 Focusable="False"
                 Cursor="Hand"
                 Grid.Column="7" />
-            <Button
-                IsEnabled="False"
-                x:Name="SettingButton"
+            <CheckBox
+                x:Name="SettingCheckBox"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                Style="{StaticResource MaterialDesignIconButton}"
+                Style="{StaticResource MaterialDesignActionCheckBox}"
+                Background="Transparent"
+                Foreground="{Binding Foreground, ElementName=PlayPauseButton}"
                 Content="{materialDesign:PackIcon Kind=Settings, Size=30}"
+                IsChecked="{Binding IsOptionWindowOpen}"
                 ToolTip="설정 / Setting"
                 Focusable="False"
+                Margin="10,0,0,0"
                 Cursor="Hand"
                 Grid.Column="8" />
             <Label
@@ -256,6 +259,7 @@
                 VerticalContentAlignment="Center"
                 Content="{Binding TotalDuration, Converter={StaticResource TimeSpanStringConverter}, Mode=OneWay}"
                 ToolTip="총 재생 길이 / Total Duration"
+                Margin="20,0,0,0"
                 Grid.Row="1"
                 Grid.Column="9" />
         </Grid>

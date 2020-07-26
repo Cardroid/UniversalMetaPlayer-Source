@@ -10,6 +10,7 @@
     <materialDesign:PopupBox
         Style="{StaticResource MaterialDesignMultiFloatingActionAccentPopupBox}"
         PlacementMode="LeftAndAlignMiddles"
+        PopupMode="MouseOver"
         Background="Transparent"
         BorderBrush="Transparent"
         Foreground="Red"

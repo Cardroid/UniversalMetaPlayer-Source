@@ -27,8 +27,8 @@
     </UserControl.Resources>
 
     <Grid>
-        <materialDesign:DialogHost 
-            x:Name="PlayListDialog"/>
+        <materialDesign:DialogHost
+            x:Name="PlayListDialog" />
 
         <Grid>
             <Grid.ColumnDefinitions>
@@ -72,6 +72,7 @@
                             Style="{StaticResource MaterialDesignMultiFloatingActionAccentPopupBox}"
                             Foreground="{Binding Theme.PrimaryMid}"
                             PlacementMode="LeftAndAlignMiddles"
+                            PopupMode="MouseOver"
                             Background="Transparent"
                             BorderBrush="Transparent"
                             ToolTip="추가기능"

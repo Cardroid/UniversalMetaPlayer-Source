@@ -45,7 +45,7 @@ namespace UMP.Controller
         this.RepeatButton.Tag = ControlType.Repeat;
         this.ShuffleButton.Tag = ControlType.Shuffle;
         this.PlayListCheckBox.Tag = ControlType.PlayList;
-        this.SettingButton.Tag = ControlType.Setting;
+        this.SettingCheckBox.Tag = ControlType.Setting;
 
         // 버튼 이벤트 연결
         this.PlayPauseButton.Click += ControllerButton_ClickHandler;
@@ -54,7 +54,6 @@ namespace UMP.Controller
         this.PreviousButton.Click += ControllerButton_ClickHandler;
         this.RepeatButton.Click += ControllerButton_ClickHandler;
         this.ShuffleButton.Click += ControllerButton_ClickHandler;
-        this.SettingButton.Click += ControllerButton_ClickHandler;
 
         Window parentWindow = Window.GetWindow(Parent);
 
@@ -83,6 +82,16 @@ namespace UMP.Controller
           MainMediaPlayer.Option.DurationViewStatus = !MainMediaPlayer.Option.DurationViewStatus;
           ViewModel.ApplyUI();
         };
+
+        this.SettingCheckBox.Click += (_, e) => 
+        {
+          var parentWindow = (MainWindow)Window.GetWindow(Parent);
+          if(this.SettingCheckBox.IsChecked.GetValueOrDefault())
+            parentWindow.MainOptionControl.Visibility = Visibility.Visible;
+          else
+            parentWindow.MainOptionControl.Visibility = Visibility.Collapsed;
+        };
+
       };
 
       this.Loaded += (s, e) =>

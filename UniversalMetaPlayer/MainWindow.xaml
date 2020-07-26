@@ -7,6 +7,7 @@
     xmlns:Controller="clr-namespace:UMP.Controller"
     xmlns:WindowButton="clr-namespace:UMP.Controller.WindowButton"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:option="clr-namespace:UMP.Controller.Option"
     TextElement.Foreground="{DynamicResource MaterialDesignBody}"
     Background="{DynamicResource MaterialDesignPaper}"
     TextElement.FontWeight="Medium"
@@ -27,6 +28,8 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition
+                Width="Auto" />
+            <ColumnDefinition
                 Width="*" />
             <ColumnDefinition
                 Width="Auto" />
@@ -37,16 +40,23 @@
             <RowDefinition
                 Height="*" />
         </Grid.RowDefinitions>
-
+        
         <WindowButton:WindowStyleButtonControl
             x:Name="MainWindowButton"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
             Panel.ZIndex="999"
             Grid.Column="1"
             Grid.Row="0" />
 
-        <Grid
+        <Controller:PlayListControl
+            x:Name="MainPlayListControl"
             Grid.Column="0"
-            Grid.ColumnSpan="2"
+            Grid.Row="0"
+            Grid.RowSpan="2"/>
+
+        <Grid
+            Grid.Column="1"
             Grid.Row="0"
             Grid.RowSpan="2">
             <Grid.ColumnDefinitions>
@@ -71,5 +81,12 @@
                 Grid.Column="0"
                 Grid.Row="1" />
         </Grid>
+        
+        <option:MainOptionControl
+            x:Name="MainOptionControl"
+            Visibility="Collapsed"
+            Grid.Column="2"
+            Grid.Row="0"
+            Grid.RowSpan="2"/>
     </Grid>
 </Window>

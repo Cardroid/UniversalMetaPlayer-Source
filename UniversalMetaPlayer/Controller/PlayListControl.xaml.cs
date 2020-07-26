@@ -184,11 +184,12 @@ namespace UMP.Controller
     private void PlayList_MouseDownUnSelect(object sender, MouseButtonEventArgs e)
     {
       HitTestResult r = VisualTreeHelper.HitTest(this, e.GetPosition(this));
-      if (r.VisualHit.GetType() == null || r.VisualHit.GetType() != typeof(ListBoxItem))
-      {
-        PlayList.UnselectAll();
-        ViewModel.PlayListSelectIndex = -1;
-      }
+      if (r != null)
+        if (r.VisualHit.GetType() == null || r.VisualHit.GetType() != typeof(ListBoxItem))
+        {
+          PlayList.UnselectAll();
+          ViewModel.PlayListSelectIndex = -1;
+        }
     }
 
     /// <summary>

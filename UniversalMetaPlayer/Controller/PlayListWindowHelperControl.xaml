@@ -27,6 +27,7 @@
                     <ColumnDefinition
                         Width="Auto" />
                 </Grid.ColumnDefinitions>
+                
                 <Label
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
