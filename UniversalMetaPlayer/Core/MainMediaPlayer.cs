@@ -43,7 +43,7 @@ namespace UMP.Core
       };
 
       // 스트림 끝에 오류가 있는 미디어 예방
-      TickEvent += (s, e) => 
+      TickEvent += (s, e) =>
       {
         if (AudioCurrentTime >= AudioTotalTime)
           WavePlayer.Stop();
@@ -114,7 +114,7 @@ namespace UMP.Core
       get => _MediaInfomation;
       set
       {
-        _MediaInfomation = value; 
+        _MediaInfomation = value;
 
         // 대표색 추출
         if (GlobalProperty.AverageColorProcessingOffset > 0 && _MediaInfomation.AlbumImage != null)
@@ -329,7 +329,7 @@ namespace UMP.Core
     /// </summary>
     public static async void Next()
     {
-      if (!MediaLoadedCheck)
+      if (!MediaLoadedCheck || PlayList.Count <= 0)
         return;
 
       if (PlayListPlayMediaIndex >= 0)
@@ -351,7 +351,7 @@ namespace UMP.Core
 
           if ((int)PlayList[index].LoadedCheck >= 2)
           {
-            if(await Init(new Media(PlayList[index].MediaType, PlayList[index].MediaLocation)))
+            if (await Init(new Media(PlayList[index].MediaType, PlayList[index].MediaLocation)))
             {
               PlayListEigenValue = PlayList.EigenValue;
               PlayListPlayMediaIndex = index;
@@ -375,7 +375,7 @@ namespace UMP.Core
     /// </summary>
     public static async void Previous()
     {
-      if (!MediaLoadedCheck)
+      if (!MediaLoadedCheck || PlayList.Count <= 0)
         return;
 
       if (AudioFile.CurrentTime > TimeSpan.FromSeconds(5))
@@ -402,7 +402,7 @@ namespace UMP.Core
 
           if ((int)PlayList[index].LoadedCheck >= 2)
           {
-            if(await Init(new Media(PlayList[index].MediaType, PlayList[index].MediaLocation)))
+            if (await Init(new Media(PlayList[index].MediaType, PlayList[index].MediaLocation)))
             {
               PlayListEigenValue = PlayList.EigenValue;
               PlayListPlayMediaIndex = index;

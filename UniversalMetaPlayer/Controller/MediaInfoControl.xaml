@@ -9,7 +9,7 @@
     TextElement.Foreground="{DynamicResource MaterialDesignBody}"
     TextElement.FontWeight="Medium"
     TextElement.FontSize="14"
-    FontFamily="{Binding FontFamily}"
+    FontFamily="{DynamicResource MainFontFamily}"
     Background="Transparent"
     mc:Ignorable="d">
 

@@ -73,8 +73,23 @@ namespace UMP.Controller
       Log.Debug("초기화 성공");
 
       this.PlayList.MouseDoubleClick += PlayList_MouseDoubleClick;
-      this.PlayList.PreviewMouseDown += PlayList_MouseDownUnSelect;
       this.PlayListGroupBox.PreviewMouseDown += PlayList_MouseDownUnSelect;
+      this.PlayList.KeyDown += PlayListControl_KeyDown;
+    }
+
+    private void PlayListControl_KeyDown(object sender, KeyEventArgs e)
+    {
+      switch (e.Key)
+      {
+        case Key.Delete:
+          if (this.PlayList.SelectedIndex >= 0)
+          {
+            var deleteItemList = this.PlayList.SelectedItems;
+            for (int i = deleteItemList.Count - 1; i >= 0; i--)
+              ViewModel.PlayList.Remove((MediaInfomation)deleteItemList[i]);
+          }
+          break;
+      }
     }
 
     /// <summary>

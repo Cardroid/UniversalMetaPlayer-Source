@@ -12,7 +12,7 @@
     Background="{DynamicResource MaterialDesignPaper}"
     TextElement.FontWeight="Medium"
     TextElement.FontSize="14"
-    FontFamily="{Binding FontFamily}"
+    FontFamily="{DynamicResource MainFontFamily}"
     mc:Ignorable="d">
 
     <UserControl.DataContext>

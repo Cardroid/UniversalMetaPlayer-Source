@@ -30,6 +30,7 @@
                 <ResourceDictionary
                     Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ToggleButton.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <FontFamily x:Key="MainFontFamily">NanumGothic</FontFamily>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
