@@ -156,18 +156,10 @@ namespace UMP.Controller
 
     private void EnableControl(bool isEnable)
     {
-      var parentWindow = (PlayListWindow)Window.GetWindow(Parent);
-
       if (isEnable)
-      {
-        parentWindow.MainPlayListWindowHelperControl.IsEnabled = true;
         this.PlayListGroupBox.IsEnabled = true;
-      }
       else
-      {
-        parentWindow.MainPlayListWindowHelperControl.IsEnabled = false;
         this.PlayListGroupBox.IsEnabled = false;
-      }
     }
 
     /// <summary>

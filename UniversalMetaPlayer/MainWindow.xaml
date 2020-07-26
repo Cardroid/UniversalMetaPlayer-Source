@@ -28,7 +28,7 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition
-                Width="Auto" />
+                Width="Auto"/>
             <ColumnDefinition
                 Width="*" />
             <ColumnDefinition
@@ -51,6 +51,7 @@
 
         <Controller:PlayListControl
             x:Name="MainPlayListControl"
+            Visibility="Collapsed"
             Grid.Column="0"
             Grid.Row="0"
             Grid.RowSpan="2"/>

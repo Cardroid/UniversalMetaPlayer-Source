@@ -83,15 +83,14 @@ namespace UMP.Controller
           ViewModel.ApplyUI();
         };
 
-        this.SettingCheckBox.Click += (_, e) => 
+        this.SettingCheckBox.Click += (_, e) =>
         {
-          var parentWindow = (MainWindow)Window.GetWindow(Parent);
-          if(this.SettingCheckBox.IsChecked.GetValueOrDefault())
-            parentWindow.MainOptionControl.Visibility = Visibility.Visible;
-          else
-            parentWindow.MainOptionControl.Visibility = Visibility.Collapsed;
+          SettingControlOpen(this.SettingCheckBox.IsChecked.GetValueOrDefault());
         };
-
+        this.PlayListCheckBox.Click += (_, e) => 
+        {
+          PlayListControlOpen(this.PlayListCheckBox.IsChecked.GetValueOrDefault());
+        };
       };
 
       this.Loaded += (s, e) =>
@@ -99,6 +98,46 @@ namespace UMP.Controller
         Log log = new Log(typeof(MediaControllerControl));
         log.Debug("초기화 성공");
       };
+    }
+
+    private void SettingControlOpen(bool isOpen)
+    {
+      var parentWindow = (MainWindow)Window.GetWindow(Parent);
+      if (isOpen)
+      {
+        parentWindow.MainOptionControl.Visibility = Visibility.Visible;
+        parentWindow.Width += parentWindow.MainOptionControl.Width;
+        parentWindow.MinWidth += parentWindow.MainOptionControl.Width;
+        this.SettingCheckBox.IsChecked = true;
+      }
+      else
+      {
+        parentWindow.MainOptionControl.Visibility = Visibility.Collapsed;
+        parentWindow.MinWidth -= parentWindow.MainOptionControl.Width;
+        parentWindow.Width -= parentWindow.MainOptionControl.Width;
+        this.SettingCheckBox.IsChecked = false;
+      }
+    }
+
+    private void PlayListControlOpen(bool isOpen)
+    {
+      var parentWindow = (MainWindow)Window.GetWindow(Parent);
+      if (isOpen)
+      {
+        parentWindow.MainPlayListControl.Visibility = Visibility.Visible;
+        parentWindow.Width += parentWindow.MainPlayListControl.Width;
+        parentWindow.Left -= parentWindow.MainPlayListControl.Width;
+        parentWindow.MinWidth += parentWindow.MainPlayListControl.Width;
+        this.PlayListCheckBox.IsChecked = true;
+      }
+      else
+      {
+        parentWindow.MainPlayListControl.Visibility = Visibility.Collapsed;
+        parentWindow.MinWidth -= parentWindow.MainPlayListControl.Width;
+        parentWindow.Width -= parentWindow.MainPlayListControl.Width;
+        parentWindow.Left += parentWindow.MainPlayListControl.Width;
+        this.PlayListCheckBox.IsChecked = false;
+      }
     }
 
     /// <summary>
@@ -130,10 +169,11 @@ namespace UMP.Controller
           break;
         // PlayList
         case Key.L:
-          ViewModel.IsPlayListWindowOpen = !ViewModel.IsPlayListWindowOpen;
+          PlayListControlOpen(((MainWindow)Window.GetWindow(Parent)).MainPlayListControl.Visibility != Visibility.Visible);
           break;
         // Setting
         case Key.S:
+          SettingControlOpen(((MainWindow)Window.GetWindow(Parent)).MainOptionControl.Visibility != Visibility.Visible);
           break;
         // Mute
         case Key.M:

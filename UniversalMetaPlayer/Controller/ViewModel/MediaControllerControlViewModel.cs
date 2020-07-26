@@ -24,9 +24,6 @@ namespace UMP.Controller.ViewModel
       MainMediaPlayer.TickEvent += MainMediaPlayer_TickEvent;
       MainMediaPlayer.Option.PropertyChangedEvent += Option_PropertyChangedEvent;
       MainMediaPlayer.PlayList.PropertyChangedEvent += PlayList_PropertyChangedEvent;
-
-      PlayListWindow = new PlayListWindow { Visibility = Visibility.Collapsed };
-      PlayListWindow.Closing += PlayListWindow_Closing;
     }
 
     #region 볼륨
@@ -137,41 +134,6 @@ namespace UMP.Controller.ViewModel
       ? MainMediaPlayer.AudioCurrentTime
       : TimeSpan.Zero;
     public string CurrentPostionstring => Converter.TimeSpanStringConverter(CurrentPostion);
-    #endregion
-
-    #region PlayList 창 관련
-    private static PlayListWindow PlayListWindow { get; set; }
-
-    private void PlayListWindow_Closing(object sender, CancelEventArgs e) => IsPlayListWindowOpen = false;
-
-    /// <summary>
-    /// 플레이리스트 창이 열렸는지 여부
-    /// </summary>
-    public bool IsPlayListWindowOpen 
-    {
-      get => _IsPlayListWindowOpen;
-      set
-      {
-        PlayListWindowManager(value);
-        OnPropertyChanged("IsPlayListWindowOpen");
-      }
-    }
-    private bool _IsPlayListWindowOpen = false;
-
-    public void PlayListWindowManager(bool isopen)
-    {
-      if (isopen)
-      {
-        PlayListWindow.Visibility = Visibility.Visible;
-        PlayListWindow.Focus();
-      }
-      else
-        PlayListWindow.Visibility = Visibility.Collapsed;
-      _IsPlayListWindowOpen = isopen;
-    }
-    #endregion
-
-    #region Option 창 관련
     #endregion
 
     #region 동기화 메소드
