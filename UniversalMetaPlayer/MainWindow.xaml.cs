@@ -13,6 +13,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using MaterialDesignColors;
+using MaterialDesignColors.ColorManipulation;
+
 using UMP.Core;
 using UMP.Test;
 using UMP.Utility;
@@ -25,13 +28,7 @@ namespace UMP
     public MainWindow()
     {
       App.MainLog.Info("############### Start application ###############");
-
-      MainMediaPlayer.PropertyChangedEvent += (e) =>
-      {
-        if (e == "MediaInfomation")
-          this.BorderBrush = new SolidColorBrush(MainMediaPlayer.AverageColor);
-      };
-
+      GlobalProperty.Load();
       InitializeComponent();
       this.KeyDown += (_, e) => GlobalEvent.KeyDownEventInvoke(e);
       this.Loaded += MainWindow_Loaded;
@@ -74,6 +71,19 @@ namespace UMP
       PlayTest test = new PlayTest();
       test.StartTest();
 #endif
+
+      this.BorderBrush = new SolidColorBrush(ThemeHelper.PrimaryColor);
+      MainMediaPlayer.PropertyChangedEvent += (e) =>
+      {
+        if (e == "AverageColor")
+          this.BorderBrush = new SolidColorBrush(MainMediaPlayer.AverageColor);
+        if (e == "AverageColor" && GlobalProperty.IsAverageColorTheme)
+        {
+          var color = MainMediaPlayer.AverageColor;
+          ThemeHelper.ChangePrimaryColor(color.Lighten(2));
+          ThemeHelper.ChangeSecondaryColor(color.Darken(2));
+        }
+      };
     }
     private void MainWindow_WindowDrag(object sender, MouseButtonEventArgs e) { this.DragMove(); e.Handled = true; }
 

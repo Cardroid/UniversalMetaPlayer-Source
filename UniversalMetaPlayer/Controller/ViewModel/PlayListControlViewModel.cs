@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Resources;
 using System.Text;
 using System.Windows;
+using System.Windows.Media;
 
 using UMP.Core;
 using UMP.Core.Model;
+using UMP.Utility;
 
 namespace UMP.Controller.ViewModel
 {

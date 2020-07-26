@@ -26,8 +26,6 @@ namespace UMP.Core
       MainFontFamily = new FontFamily(new Uri("pack://application:,,,/"), "./Resources/Font/#NanumGothic");
       LogoImage = new BitmapImage(new Uri("pack://application:,,,/UniversalMetaPlayer;component/Resources/MainImage.png", UriKind.RelativeOrAbsolute));
       LogoNoteImage = new BitmapImage(new Uri("pack://application:,,,/UniversalMetaPlayer;component/Resources/NoteImage.png", UriKind.RelativeOrAbsolute));
-
-      Load();
       Log.Info("메인 설정 초기화 완료.");
     }
 
@@ -39,7 +37,9 @@ namespace UMP.Core
       CachePath = "Cache";
       FileSavePath = "Save";
       GlobalKeyboardHook = false;
-      
+      AverageColorProcessingOffset = 30;
+      IsAverageColorTheme = true;
+
       KeyEventDelay = 20;
     }
 
@@ -80,7 +80,10 @@ namespace UMP.Core
         {
           string josn = File.ReadAllText("UMP_Settings.json", Encoding.UTF8);
           var loadedSettings = JsonConvert.DeserializeObject<Dictionary<string, string>>(josn);
-          Settings = loadedSettings;
+
+          foreach (var pair in loadedSettings)
+            Settings[pair.Key] = pair.Value;
+
           Log.Info("메인 설정 불러오기 성공.");
         }
         catch (Exception e)
@@ -165,6 +168,24 @@ namespace UMP.Core
     {
       get => int.Parse(Settings["KeyEventDelay"]);
       set => Settings["KeyEventDelay"] = value.ToString();
+    }
+
+    /// <summary>
+    /// 평균색 추출 오프셋 (0 이면 Off)
+    /// </summary>
+    public static int AverageColorProcessingOffset
+    {
+      get => int.Parse(Settings["AverageColorProcessingOffset"]);
+      set => Settings["AverageColorProcessingOffset"] = value.ToString();
+    }
+
+    /// <summary>
+    /// 평균색 테마 적용 여부
+    /// </summary>
+    public static bool IsAverageColorTheme
+    {
+      get => bool.Parse(Settings["IsAverageColorTheme"]);
+      set => Settings["IsAverageColorTheme"] = value.ToString();
     }
 
     #region Not Save

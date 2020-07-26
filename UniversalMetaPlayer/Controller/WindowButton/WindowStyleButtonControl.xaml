@@ -18,24 +18,24 @@
         Height="40">
         <materialDesign:PopupBox.ToggleContent>
             <materialDesign:PackIcon
-                Foreground="Red"
+                Foreground="{DynamicResource MaterialDesignBody}"
                 Kind="Plus"
                 Width="30"
                 Height="30" />
         </materialDesign:PopupBox.ToggleContent>
         <Border
-            BorderBrush="Red"
-            BorderThickness="2"
+            x:Name="ButtonPanelBorder"
+            BorderThickness="1"
             Height="40">
             <StackPanel
                 Orientation="Horizontal"
-                Background="Black">
+                Background="{DynamicResource MaterialDesignPaper}">
                 <Button
                     x:Name="MinimizeButton"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Style="{StaticResource MaterialDesignIconButton}"
-                    Content="{materialDesign:PackIcon Kind=WindowMinimize, Size=15}"
+                    Content="{materialDesign:PackIcon Kind=WindowMinimize, Size=20}"
                     Foreground="Green"
                     ToolTip="최소화"
                     Focusable="False"
@@ -46,7 +46,7 @@
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Style="{StaticResource MaterialDesignIconButton}"
-                    Content="{materialDesign:PackIcon Kind=WindowMaximize, Size=15}"
+                    Content="{materialDesign:PackIcon Kind=WindowMaximize, Size=20}"
                     Foreground="Yellow"
                     ToolTip="최대화"
                     Focusable="False"
@@ -57,7 +57,7 @@
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Style="{StaticResource MaterialDesignIconButton}"
-                    Content="{materialDesign:PackIcon Kind=WindowClose, Size=15}"
+                    Content="{materialDesign:PackIcon Kind=WindowClose, Size=20}"
                     Foreground="Red"
                     ToolTip="닫기"
                     Focusable="False"

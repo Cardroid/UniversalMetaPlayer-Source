@@ -10,6 +10,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using UMP.Core;
+using UMP.Utility;
 
 namespace UMP.Controller.WindowButton
 {
@@ -22,6 +24,13 @@ namespace UMP.Controller.WindowButton
     {
       InitializeComponent();
       this.Loaded += WindowStyleButtonControl_Loaded;
+
+      this.ButtonPanelBorder.BorderBrush = new SolidColorBrush(ThemeHelper.PrimaryColor);
+      MainMediaPlayer.PropertyChangedEvent += (e) =>
+      {
+        if (e == "AverageColor")
+          this.ButtonPanelBorder.BorderBrush = new SolidColorBrush(MainMediaPlayer.AverageColor);
+      };
     }
 
     private void WindowStyleButtonControl_Loaded(object sender, RoutedEventArgs e)

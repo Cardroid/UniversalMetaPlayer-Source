@@ -61,7 +61,7 @@
                         </Grid.ColumnDefinitions>
                         <TextBox
                             x:Name="PlayListName"
-                            Foreground="{Binding Theme.TextFieldBoxBackground, Mode=OneWay}"
+                            Foreground="{DynamicResource MaterialDesignPaper}"
                             Text="{Binding PlayListName}"
                             IsReadOnly="True"
                             FontSize="16"
