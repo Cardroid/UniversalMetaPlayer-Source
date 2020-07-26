@@ -32,7 +32,27 @@ namespace UMP.Controller.Dialog
       this.MouseDown += (s, e) => { this.UserTextBox.Focus(); };
       this.UserTextBox.Focus();
 
-      this.SaveCurrentPlayList.IsChecked = true;
+      this.SaveCurrentPlayList.IsChecked = TempProperty.SaveCurrentPlayList;
+      this.LoadContinue.IsChecked = TempProperty.LoadContinue;
+
+      this.SaveCurrentPlayList.Click += CheckBox_Click_Save;
+      this.LoadContinue.Click += CheckBox_Click_Save;
+    }
+
+    private void CheckBox_Click_Save(object sender, RoutedEventArgs e)
+    {
+      if(sender is CheckBox checkBox)
+      {
+        switch (checkBox.Name)
+        {
+          case "SaveCurrentPlayList":
+            TempProperty.SaveCurrentPlayList = checkBox.IsChecked.GetValueOrDefault();
+            break;
+          case "LoadContinue":
+            TempProperty.LoadContinue = checkBox.IsChecked.GetValueOrDefault();
+            break;
+        }
+      }
     }
 
     private bool IsWorkDelay = false;

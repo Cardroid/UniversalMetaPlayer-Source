@@ -6,6 +6,8 @@ using System.Windows.Media;
 
 using MaterialDesignThemes.Wpf;
 
+using UMP.Utility;
+
 namespace UMP.Core.Model
 {
   public class ViewModelBase : INotifyPropertyChanged
@@ -13,6 +15,6 @@ namespace UMP.Core.Model
     public event PropertyChangedEventHandler PropertyChanged;
     protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     public FontFamily FontFamily => GlobalProperty.MainFontFamily;
-    public ITheme Theme => GlobalProperty.Theme;
+    public ITheme Theme => ThemeHelper.Theme;
   }
 }

@@ -10,6 +10,7 @@ using UMP.Utility;
 using NAudio.Wave;
 
 using Newtonsoft.Json;
+using System.Windows.Media.Imaging;
 
 namespace UMP.Core
 {
@@ -100,7 +101,7 @@ namespace UMP.Core
 
     public delegate void PlayStateChangedEventHandler(PlaybackState state);
     public static event PlayStateChangedEventHandler PlayStateChangedEvent;
-    public static event CMP_PropertyChangedEventHandler PropertyChangedEvent;
+    public static event UMP_PropertyChangedEventHandler PropertyChangedEvent;
     private static void OnPropertyChanged(string name) => PropertyChangedEvent?.Invoke(name);
 
     public static bool MediaLoadedCheck => AudioFile != null;
@@ -114,10 +115,16 @@ namespace UMP.Core
       set
       {
         _MediaInfomation = value;
+        AverageColor = ImageProcessing.GetAverageColor(_MediaInfomation.AlbumImage as BitmapSource, 25);
         OnPropertyChanged("MediaInfomation");
       }
     }
     private static MediaInfomation _MediaInfomation;
+
+    /// <summary>
+    /// 미디어 이미지 대표색
+    /// </summary>
+    public static Color AverageColor { get; private set; }
 
     /// <summary>
     /// 오디오 파일 (약한참조)
@@ -207,7 +214,7 @@ namespace UMP.Core
         OnPropertyChanged("Volume");
       }
     }
-    public static float _Volume;
+    private static float _Volume;
 
     /// <summary>
     /// 현재 재생 상태
@@ -406,6 +413,7 @@ namespace UMP.Core
     {
       AudioFile?.Dispose();
       WavePlayer?.Dispose();
+      Log.Debug("리소스 해제 완료");
     }
   }
 

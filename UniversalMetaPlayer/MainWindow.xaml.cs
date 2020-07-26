@@ -24,9 +24,14 @@ namespace UMP
   {
     public MainWindow()
     {
-      App.MainLog.Info("### Start application ###");
-      GlobalProperty.SetDefault();
-      Hook.Start();
+      App.MainLog.Info("############### Start application ###############");
+
+      MainMediaPlayer.PropertyChangedEvent += (e) =>
+      {
+        if (e == "MediaInfomation")
+          this.BorderBrush = new SolidColorBrush(MainMediaPlayer.AverageColor);
+      };
+
       InitializeComponent();
       this.KeyDown += (_, e) => GlobalEvent.KeyDownEventInvoke(e);
       this.Loaded += MainWindow_Loaded;
@@ -79,7 +84,8 @@ namespace UMP
     {
       Hook.Dispose();
       MainMediaPlayer.Dispose();
-      App.MainLog.Info("### Exit application ###\n\n\n");
+      GlobalProperty.Save();
+      App.MainLog.Info("############### Exit application ###############");
       Application.Current.Shutdown();
     }
   }

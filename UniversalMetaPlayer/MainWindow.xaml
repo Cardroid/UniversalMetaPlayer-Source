@@ -18,6 +18,7 @@
     WindowStyle="None"
     ResizeMode="CanResizeWithGrip"
     AllowsTransparency="True"
+    BorderThickness="1"
     Width="800"
     Height="450"
     MinWidth="550"

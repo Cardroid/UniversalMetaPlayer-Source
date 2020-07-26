@@ -77,6 +77,9 @@ namespace UMP.Controller
       this.PlayListGroupBox.PreviewMouseDown += PlayList_MouseDownUnSelect;
     }
 
+    /// <summary>
+    /// 플레이 리스트 버튼들 처리
+    /// </summary>
     private async void PlayListControlButton_Click(object sender, RoutedEventArgs e)
     {
       if (((Button)sender).Tag is PlayListControlType type)
@@ -160,6 +163,9 @@ namespace UMP.Controller
       Add, Save, Load, Reload, Reset
     }
 
+    /// <summary>
+    /// 플레이 리스트 빈 곳 클릭시 선택해제 처리
+    /// </summary>
     private void PlayList_MouseDownUnSelect(object sender, MouseButtonEventArgs e)
     {
       HitTestResult r = VisualTreeHelper.HitTest(this, e.GetPosition(this));
@@ -170,6 +176,9 @@ namespace UMP.Controller
       }
     }
 
+    /// <summary>
+    /// 플레이 리스트 더블 클릭시 재생 처리
+    /// </summary>
     private async void PlayList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
       if (0 <= ViewModel.PlayListSelectIndex && ViewModel.PlayList.Count > ViewModel.PlayListSelectIndex)

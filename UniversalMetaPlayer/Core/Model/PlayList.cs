@@ -17,7 +17,7 @@ namespace UMP.Core.Model
   public class PlayList : ObservableCollection<MediaInfomation>
   {
     private Log Log { get; }
-    public event CMP_PropertyChangedEventHandler PropertyChangedEvent;
+    public event UMP_PropertyChangedEventHandler PropertyChangedEvent;
     private void OnPropertyChanged(string name) => PropertyChangedEvent?.Invoke(name);
 
     /// <summary>

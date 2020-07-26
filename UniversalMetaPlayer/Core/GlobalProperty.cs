@@ -5,27 +5,30 @@ using System.Text;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-
 using MaterialDesignThemes.Wpf;
-
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using UMP.Utility;
 
 namespace UMP.Core
 {
   /// <summary>
   /// 프로그램 전체 설정
   /// </summary>
-  [JsonObject]
   public static class GlobalProperty
   {
+    private static Log Log;
     static GlobalProperty()
     {
+      Log = new Log(typeof(GlobalProperty));
+      Log.Debug("메인 설정 초기화 시작.");
+      ThemeHelper.ThemeChangedEvent += ThemeHelper_ThemeChangedEvent;
       MainFontFamily = new FontFamily(new Uri("pack://application:,,,/"), "./Resources/Font/#NanumGothic");
       LogoImage = new BitmapImage(new Uri("pack://application:,,,/UniversalMetaPlayer;component/Resources/MainImage.png", UriKind.RelativeOrAbsolute));
       LogoNoteImage = new BitmapImage(new Uri("pack://application:,,,/UniversalMetaPlayer;component/Resources/NoteImage.png", UriKind.RelativeOrAbsolute));
 
-      CachePath = "Cache";
-      FileSavePath = "Save";
+      Load();
+      Log.Info("메인 설정 초기화 완료.");
     }
 
     /// <summary>
@@ -33,63 +36,150 @@ namespace UMP.Core
     /// </summary>
     public static void SetDefault()
     {
-      // 테마 기본 설정
-      var theme = new CustomColorTheme();
-      theme.BaseTheme = BaseTheme.Dark;
-      theme.PrimaryColor = Colors.LightGreen;
-      theme.SecondaryColor = Colors.DarkSeaGreen;
-      Theme = theme.GetTheme();
-
       CachePath = "Cache";
       FileSavePath = "Save";
-
+      GlobalKeyboardHook = false;
+      
       KeyEventDelay = 20;
     }
 
-    public static int KeyEventDelay { get; set; }
-
-    #region 테마
     /// <summary>
-    /// 테마
+    /// 설정을 저장 합니다.
     /// </summary>
-    [JsonProperty]
-    public static ITheme Theme
+    public static void Save()
     {
-      get => _paletteHelper.GetTheme();
-      set => _paletteHelper.SetTheme(value);
+      try
+      {
+        var json = JsonConvert.SerializeObject(Settings);
+        File.WriteAllText("UMP_Settings.json", json);
+        Log.Info("메인 설정 저장 완료.");
+      }
+      catch (Exception e)
+      {
+        Log.Error("메인 설정 저장 실패.", e);
+      }
     }
-    #endregion
+
+    /// <summary>
+    /// 설정을 불러옵니다.
+    /// </summary>
+    /// <returns>성공시 true 반환</returns>
+    public static void Load()
+    {
+      if (NowLoading)
+        return;
+      NowLoading = true;
+
+      SetDefault();
+      ThemeHelper.SetDefaultTheme();
+
+      if (File.Exists("UMP_Settings.json"))
+      {
+        // 설정 불러오기
+        try
+        {
+          string josn = File.ReadAllText("UMP_Settings.json", Encoding.UTF8);
+          var loadedSettings = JsonConvert.DeserializeObject<Dictionary<string, string>>(josn);
+          Settings = loadedSettings;
+          Log.Info("메인 설정 불러오기 성공.");
+        }
+        catch (Exception e)
+        {
+          Log.Error("메인 설정 불러오기 실패.", e);
+          SetDefault();
+        }
+
+        // 테마 적용하기
+        try
+        {
+          ThemeHelper.IsDarkMode = bool.Parse(Settings["IsDarkMode"]);
+          ThemeHelper.ChangePrimaryColor((Color)ColorConverter.ConvertFromString(Settings["PrimaryColor"]));
+          ThemeHelper.ChangeSecondaryColor((Color)ColorConverter.ConvertFromString(Settings["SecondaryColor"]));
+          Log.Info("메인 테마 불러오기 성공.");
+        }
+        catch (Exception e)
+        {
+          Log.Error("메인 테마 불러오기 실패.", e);
+          ThemeHelper.SetDefaultTheme();
+        }
+      }
+      else
+      {
+        Log.Error("저장된 메인 설정 파일이 없습니다.");
+      }
+      NowLoading = false;
+    }
+
+    private static bool NowLoading = false;
+
+    private static Dictionary<string, string> Settings = new Dictionary<string, string>();
+
+    private static void ThemeHelper_ThemeChangedEvent(ThemeHelper.ThemeProperty e)
+    {
+      if (!NowLoading)
+      {
+        Settings["IsDarkMode"] = e.IsDarkMode.ToString();
+        Settings["PrimaryColor"] = e.PrimaryColor.ToString();
+        Settings["SecondaryColor"] = e.SecondaryColor.ToString();
+      }
+    }
 
     /// <summary>
     /// 캐쉬저장 폴더 경로
     /// </summary>
-    [JsonProperty]
-    public static string CachePath { get; set; }
+    public static string CachePath
+    {
+      get => Settings["CachePath"];
+      set => Settings["CachePath"] = value;
+    }
 
     /// <summary>
     /// 캐쉬를 재외한 파일 저장 폴더 경로
     /// </summary>
-    [JsonProperty]
-    public static string FileSavePath { get; set; }
+    public static string FileSavePath
+    {
+      get => Settings["FileSavePath"];
+      set => Settings["FileSavePath"] = value;
+    }
+
+    /// <summary>
+    /// 전역 키보드 후킹 여부
+    /// </summary>
+    public static bool GlobalKeyboardHook
+    {
+      get => bool.Parse(Settings["GlobalKeyboardHook"]);
+      set
+      {
+        Settings["GlobalKeyboardHook"] = value.ToString();
+        if (value)
+          Hook.Start();
+        else
+          Hook.Dispose();
+      }
+    }
+
+    /// <summary>
+    /// 키보드 입력 딜레이
+    /// </summary>
+    public static int KeyEventDelay
+    {
+      get => int.Parse(Settings["KeyEventDelay"]);
+      set => Settings["KeyEventDelay"] = value.ToString();
+    }
 
     #region Not Save
     /// <summary>
     /// 폰트
     /// </summary>
-    [JsonIgnore]
-    public static FontFamily MainFontFamily { get; }
+    public static FontFamily MainFontFamily { get; private set; }
     /// <summary>
     /// 로고 이미지
     /// </summary>
-    [JsonIgnore]
-    public static ImageSource LogoImage { get; }
+    public static ImageSource LogoImage { get; private set; }
     /// <summary>
     /// 로고 음표 이미지
     /// </summary>
-    [JsonIgnore]
-    public static ImageSource LogoNoteImage { get; }
+    public static ImageSource LogoNoteImage { get; private set; }
     #endregion
-
-    private static readonly PaletteHelper _paletteHelper = new PaletteHelper();
   }
 }

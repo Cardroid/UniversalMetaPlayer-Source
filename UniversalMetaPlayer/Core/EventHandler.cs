@@ -4,11 +4,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
+using MaterialDesignThemes.Wpf;
+using UMP.Utility;
+
 namespace UMP.Core
 {
-  public delegate void CMP_VoidEventHandler();
-  public delegate void CMP_PropertyChangedEventHandler(string propertyname);
-  public delegate void CMP_KeyDownEventHandler(KeyEventArgs e);
+  public delegate void UMP_VoidEventHandler();
+  public delegate void UMP_PropertyChangedEventHandler(string propertyname);
+  public delegate void UMP_KeyDownEventHandler(KeyEventArgs e);
+  public delegate void UMP_ThemeEventHandler(ThemeHelper.ThemeProperty e);
 
   public static class GlobalEvent
   {
@@ -16,7 +20,7 @@ namespace UMP.Core
     /// <summary>
     /// 전역 키 누름 이벤트
     /// </summary>
-    public static event CMP_KeyDownEventHandler KeyDownEvent;
+    public static event UMP_KeyDownEventHandler KeyDownEvent;
 
     /// <summary>
     /// 전역 키 누름 이벤트 호출

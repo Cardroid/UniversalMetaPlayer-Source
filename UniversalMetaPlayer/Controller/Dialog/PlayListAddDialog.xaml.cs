@@ -24,7 +24,7 @@ namespace UMP.Controller.Dialog
   /// </summary>
   public partial class PlayListAddDialog : UserControl
   {
-    public CMP_VoidEventHandler Close;
+    public UMP_VoidEventHandler Close;
     public PlayListAddDialog()
     {
       InitializeComponent();

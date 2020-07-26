@@ -22,26 +22,36 @@ namespace UMP.Utility
     {
       keyboardReceiver = new KeyboardEventReceiver();
       inputSource = new InputSource(keyboardReceiver);
+      Started = false;
     }
 
     private static InputSource inputSource { get; set; }
     private static KeyboardEventReceiver keyboardReceiver { get; }
+    private static bool Started;
 
     public static void Start()
     {
+      if (Started)
+        return;
+
       var log = new Log(typeof(Hook));
-      log.Info("전역 키보드 후킹을 시작하였습니다.");
       if (inputSource == null)
         inputSource = new InputSource(keyboardReceiver);
       inputSource.Listen();
+      Started = true;
+      log.Info("전역 키보드 후킹을 시작하였습니다.");
     }
 
     public static void Dispose()
     {
+      if (!Started)
+        return;
+
       var log = new Log(typeof(Hook));
-      log.Info("전역 키보드 후킹을 종료하였습니다.");
       inputSource?.Dispose();
       inputSource = null;
+      Started = false;
+      log.Info("전역 키보드 후킹을 종료하였습니다.");
     }
 
     public static event KeyboardEventHandler KeyboardEvent
