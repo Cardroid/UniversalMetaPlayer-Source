@@ -319,39 +319,100 @@ namespace UMP.Core.Model
     {
       if (Checker.CheckForInternetConnection())
       {
+        if (!File.Exists(mp3filepath))
+        {
+          log.Error("Mp3 파일이 없습니다.", new FileNotFoundException($"File Not Found\nPath : [{mp3filepath}]"));
+          return;
+        }
+
         var youtube = new YoutubeClient();
+        Video videoinfo;
         try
         {
-          var videoinfo = await youtube.Videos.GetAsync(url);
+          videoinfo = await youtube.Videos.GetAsync(url);
+        }
+        catch (Exception e)
+        {
+          log.Error("온라인 정보 로드 실패.", e);
+          return;
+        }
 
-          using (var Fileinfo = TagLib.File.Create(mp3filepath))
+        TagLib.File Fileinfo = null;
+        try
+        {
+          Fileinfo = TagLib.File.Create(mp3filepath);
+        }
+        catch (Exception e)
+        {
+          log.Error("Mp3 파일 열기 또는 메타정보 로드 실패.", e);
+          Fileinfo?.Dispose();
+          return;
+        }
+
+        // 기본정보 처리
+        Fileinfo.Tag.Title = videoinfo.Title;
+        Fileinfo.Tag.AlbumArtists = new string[] { videoinfo.Author };
+        Fileinfo.Tag.Description = $"\"{url}\" form YouTube";
+
+        // 썸네일 처리
+        byte[] imagedata = null;
+
+        using (WebClient webClient = new WebClient())
+        {
+          try
           {
-            Fileinfo.Tag.Title = videoinfo.Title;
-            Fileinfo.Tag.AlbumArtists = new string[] { videoinfo.Author };
-
-            using (WebClient webClient = new WebClient())
+            imagedata = await webClient.DownloadDataTaskAsync(videoinfo.Thumbnails.MaxResUrl);
+          }
+          catch (Exception e)
+          {
+            log.Error("썸네일 추출 중 오류가 발생했습니다. 일반 화질로 다시시도 합니다.", e);
+            try
             {
-              var imagedata = await webClient.DownloadDataTaskAsync(videoinfo.Thumbnails.MaxResUrl);
-              Fileinfo.Tag.Pictures = new TagLib.IPicture[]
-              {
+              imagedata = await webClient.DownloadDataTaskAsync(videoinfo.Thumbnails.StandardResUrl);
+            }
+            catch (Exception ex)
+            {
+              log.Error("보통 화질 썸네일 추출 중 오류가 발생했습니다.", ex);
+            }
+          }
+        }
+
+        if (imagedata != null)
+        {
+          try
+          {
+            Fileinfo.Tag.Pictures = new TagLib.IPicture[]
+            {
                 new TagLib.Picture(new TagLib.ByteVector(imagedata))
                 {
                   Type = TagLib.PictureType.FrontCover,
                   Description = "Cover"
                 }
-              };
-            }
-
-            Fileinfo.Tag.Description = $"\"{url}\" form YouTube";
-
-            Fileinfo.Save();
+            };
           }
-          log.Info("YouTube에서 Mp3 메타 데이터 저장 성공.");
+          catch (Exception e)
+          {
+            log.Error("메타데이터에 썸네일 정보등록을 실패했습니다.", e);
+          }
+        }
+        else
+          log.Error("썸네일 정보가 Null 입니다.", new NullReferenceException("Image data is Null"));
+
+        try
+        {
+          Fileinfo.Save();
         }
         catch (Exception e)
         {
-          log.Error("온라인 정보 로드 실패.", e);
+          log.Error("메타데이터에 작성에 실패했습니다.", e);
+          return;
         }
+        finally
+        {
+          Fileinfo.Dispose();
+        }
+        
+        log.Info("YouTube에서 Mp3 메타 데이터 저장 완료.");
       }
       else
       {
