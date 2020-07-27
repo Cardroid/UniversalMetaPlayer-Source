@@ -7,7 +7,7 @@
     <RootNamespace>UMP</RootNamespace>
     <AssemblyName>UniversalMetaPlayer</AssemblyName>
     <ApplicationIcon>MainIcon.ico</ApplicationIcon>
-    <Version>2.3.3</Version>
+    <Version>2.4.3</Version>
     <Authors>CarbonSIX</Authors>
     <PackageIcon>MainImage.png</PackageIcon>
     <Nullable>disable</Nullable>
