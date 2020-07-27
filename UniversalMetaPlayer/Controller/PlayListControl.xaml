@@ -68,6 +68,7 @@
                             FontSize="16"
                             Grid.Column="0" />
                         <materialDesign:PopupBox
+                            x:Name="PlayListPopupBox"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             Style="{StaticResource MaterialDesignMultiFloatingActionAccentPopupBox}"
@@ -141,8 +142,7 @@
                 </GroupBox.Header>
                 <ListView
                     x:Name="PlayList"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
+                    SelectionMode="Extended"
                     Style="{StaticResource MaterialDesignListView}"
                     ItemsSource="{Binding PlayList, Mode=OneWay}"
                     dd:DragDrop.IsDragSource="True"

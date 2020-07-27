@@ -18,6 +18,7 @@ using UMP.Core.Model;
 using UMP.Utility;
 
 using MaterialDesignThemes.Wpf;
+using GongSolutions.Wpf.DragDrop.Utilities;
 
 namespace UMP.Controller
 {
@@ -67,6 +68,8 @@ namespace UMP.Controller
       this.PlayList.MouseDoubleClick += PlayList_MouseDoubleClick;
       this.PlayListGroupBox.PreviewMouseDown += PlayList_MouseDownUnSelect;
       this.PlayList.KeyDown += PlayListControl_KeyDown;
+      this.PlayListPopupBox.MouseEnter += (_, e) => { UnselectActive = false; };
+      this.PlayListPopupBox.MouseLeave += (_, e) => { UnselectActive = true; };
 
       // 로그 설정
       Log.Debug("초기화 성공");
@@ -127,7 +130,7 @@ namespace UMP.Controller
             {
               var result = loadView.GetResult();
 
-              if (result.TryGetValue("SaveCurrentPlayList", out string saveCurrentPlayList )&& saveCurrentPlayList.ToLower() == bool.TrueString)
+              if (result.TryGetValue("SaveCurrentPlayList", out string saveCurrentPlayList) && saveCurrentPlayList.ToLower() == bool.TrueString)
                 await ViewModel.PlayList.Save();
 
               bool loadContinue = result.TryGetValue("LoadContinue", out string _loadContinue) && _loadContinue.ToLower() == bool.TrueString;
@@ -140,10 +143,21 @@ namespace UMP.Controller
             EnableControl(true);
             break;
           case PlayListControlType.Reload:
-            await ViewModel.PlayList.ReloadAsync();
+            EnableControl(false);
+            var selectedList = this.PlayList.SelectedItems;
+            if (selectedList != null)
+            {
+              for (int i = selectedList.Count - 1; i >= 0; i--)
+                await ViewModel.PlayList.ReloadAsync((MediaInfomation)selectedList[i]);
+            }
+            else
+              await ViewModel.PlayList.ReloadAllAsync();
+            EnableControl(true);
             break;
           case PlayListControlType.Reset:
+            EnableControl(false);
             ViewModel.PlayList.Clear();
+            EnableControl(true);
             break;
         }
       }
@@ -170,14 +184,18 @@ namespace UMP.Controller
     /// </summary>
     private void PlayList_MouseDownUnSelect(object sender, MouseButtonEventArgs e)
     {
-      HitTestResult r = VisualTreeHelper.HitTest(this, e.GetPosition(this));
-      if (r != null)
-        if (r.VisualHit.GetType() == null || r.VisualHit.GetType() != typeof(ListBoxItem))
-        {
-          PlayList.UnselectAll();
-          ViewModel.PlayListSelectIndex = -1;
-        }
+      if (UnselectActive)
+      {
+        HitTestResult r = VisualTreeHelper.HitTest(this, e.GetPosition(this));
+        if (r != null)
+          if (r.VisualHit.GetType() == null || r.VisualHit.GetType() != typeof(ListBoxItem))
+          {
+            PlayList.UnselectAll();
+            ViewModel.PlayListSelectIndex = -1;
+          }
+      }
     }
+    private bool UnselectActive = true;
 
     /// <summary>
     /// 플레이 리스트 더블 클릭시 재생 처리

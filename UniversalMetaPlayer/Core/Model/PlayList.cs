@@ -236,13 +236,38 @@ namespace UMP.Core.Model
       }
     }
 
-    public async Task ReloadAsync()
+    public async Task ReloadAtAsync(int index)
+    {
+      if(base.Count > index && index >= 0)
+      {
+        var item = base[index];
+        TotalDuration -= item.Duration;
+        var media = new Media(item.MediaType, item.MediaLocation);
+        await media.TryInfoPartialLoadAsync(false);
+        item = media.GetInfomation();
+        TotalDuration += item.Duration;
+        base[index] = item;
+      }
+    }
+
+    public async Task ReloadAsync(MediaInfomation item)
+    {
+      int index = base.IndexOf(item);
+      if(index >= 0)
+        await ReloadAtAsync(index);
+    }
+
+    public async Task ReloadAllAsync()
     {
       for(int i = 0; i < base.Count; i++)
       {
-        var media = new Media(base[i].MediaType, base[i].MediaLocation);
+        var item = base[i];
+        TotalDuration -= item.Duration;
+        var media = new Media(item.MediaType, item.MediaLocation);
         await media.TryInfoPartialLoadAsync(false);
-        base[i] = media.GetInfomation();
+        item = media.GetInfomation();
+        TotalDuration += item.Duration;
+        base[i] = item;
       }
     }
 
