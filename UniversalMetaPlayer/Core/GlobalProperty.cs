@@ -17,7 +17,9 @@ namespace UMP.Core
   /// </summary>
   public static class GlobalProperty
   {
-    private static Log Log;
+    private static readonly Log Log;
+    public static UMP_PropertyChangedEventHandler PropertyChanged;
+    private static void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(propertyName);
     static GlobalProperty()
     {
       Log = new Log(typeof(GlobalProperty));
@@ -84,6 +86,8 @@ namespace UMP.Core
           foreach (var pair in loadedSettings)
             Settings[pair.Key] = pair.Value;
 
+          GlobalKeyboardHook = bool.TryParse(loadedSettings["GlobalKeyboardHook"], out bool globalKeyboardHookOption) && globalKeyboardHookOption;
+
           Log.Info("메인 설정 불러오기 성공.");
         }
         catch (Exception e)
@@ -105,6 +109,7 @@ namespace UMP.Core
           Log.Error("메인 테마 불러오기 실패.", e);
           ThemeHelper.SetDefaultTheme();
         }
+        OnPropertyChanged("Loaded");
       }
       else
       {
@@ -115,7 +120,7 @@ namespace UMP.Core
 
     private static bool NowLoading = false;
 
-    private static Dictionary<string, string> Settings = new Dictionary<string, string>();
+    private static readonly Dictionary<string, string> Settings = new Dictionary<string, string>();
 
     private static void ThemeHelper_ThemeChangedEvent(ThemeHelper.ThemeProperty e)
     {
@@ -124,6 +129,7 @@ namespace UMP.Core
         Settings["IsDarkMode"] = e.IsDarkMode.ToString();
         Settings["PrimaryColor"] = e.PrimaryColor.ToString();
         Settings["SecondaryColor"] = e.SecondaryColor.ToString();
+        OnPropertyChanged("Theme");
       }
     }
 
@@ -133,7 +139,9 @@ namespace UMP.Core
     public static string CachePath
     {
       get => Settings["CachePath"];
-      set => Settings["CachePath"] = value;
+      set { Settings["CachePath"] = value;
+        OnPropertyChanged("CachePath");
+      }
     }
 
     /// <summary>
@@ -142,7 +150,11 @@ namespace UMP.Core
     public static string FileSavePath
     {
       get => Settings["FileSavePath"];
-      set => Settings["FileSavePath"] = value;
+      set
+      {
+        Settings["FileSavePath"] = value;
+        OnPropertyChanged("FileSavePath");
+      }
     }
 
     /// <summary>
@@ -158,6 +170,7 @@ namespace UMP.Core
           Hook.Start();
         else
           Hook.Dispose();
+        OnPropertyChanged("GlobalKeyboardHook");
       }
     }
 
@@ -167,7 +180,11 @@ namespace UMP.Core
     public static int KeyEventDelay
     {
       get => int.Parse(Settings["KeyEventDelay"]);
-      set => Settings["KeyEventDelay"] = value.ToString();
+      set
+      {
+        Settings["KeyEventDelay"] = value.ToString();
+        OnPropertyChanged("KeyEventDelay");
+      }
     }
 
     /// <summary>
@@ -176,7 +193,11 @@ namespace UMP.Core
     public static int AverageColorProcessingOffset
     {
       get => int.Parse(Settings["AverageColorProcessingOffset"]);
-      set => Settings["AverageColorProcessingOffset"] = value.ToString();
+      set
+      {
+        Settings["AverageColorProcessingOffset"] = value.ToString();
+        OnPropertyChanged("AverageColorProcessingOffset");
+      }
     }
 
     /// <summary>
@@ -185,7 +206,13 @@ namespace UMP.Core
     public static bool IsAverageColorTheme
     {
       get => bool.Parse(Settings["IsAverageColorTheme"]);
-      set => Settings["IsAverageColorTheme"] = value.ToString();
+      set
+      {
+        Settings["IsAverageColorTheme"] = value.ToString();
+        if (value)
+          MainMediaPlayer.GetAverageColor();
+        OnPropertyChanged("IsAverageColorTheme");
+      }
     }
 
     #region Not Save

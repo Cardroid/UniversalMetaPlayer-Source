@@ -5,87 +5,55 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:optioncontrol="clr-namespace:UMP.Controller.Option.OptionControl"
+    xmlns:model="clr-namespace:UMP.Controller.Option"
     mc:Ignorable="d"
-    Width="200"
-    MinWidth="200">
+    Width="500"
+    MinWidth="400">
 
-    <GroupBox
-        Header="Option"
-        Style="{StaticResource MaterialDesignCardGroupBox}">
-    <TreeView
-        MinWidth="220">
-        <TreeViewItem
-            Header="Fruit">
-            <TreeViewItem>
-                <TreeViewItem.Header>
-                    <StackPanel
-                        Orientation="Horizontal">
-                        <TextBlock
-                            Margin="8 0 0 0">
-          Apple
-                        </TextBlock>
-                    </StackPanel>
-                </TreeViewItem.Header>
-            </TreeViewItem>
-            <TreeViewItem
-                Header="Banana" />
-            <TreeViewItem
-                Header="Grape">
-                <TextBlock>
-        <Run
-                        Text="Grapes for us" />
-                </TextBlock>
-            </TreeViewItem>
-            <TreeViewItem
-                Header="Peach" />
-            <TreeViewItem
-                Header="Pear" />
-            <TreeViewItem
-                Header="Strawberry" />
-        </TreeViewItem>
-        <TreeViewItem
-            Header="OS"
-            IsExpanded="True">
-            <TreeViewItem
-                Header="Amiga" />
-            <TreeViewItem>
-                <TreeViewItem.Header>
-                    <StackPanel
-                        Orientation="Horizontal">
-                        <TextBlock
-                            Margin="8 0 0 0">
-          Android
-                        </TextBlock>
-                    </StackPanel>
-                </TreeViewItem.Header>
-            </TreeViewItem>
-            <TreeViewItem
-                Header="iOS" />
-            <TreeViewItem>
-                <TreeViewItem.Header>
-                    <StackPanel
-                        Orientation="Horizontal">
-                        <TextBlock
-                            Margin="8 0 0 0">
-          Linux
-                        </TextBlock>
-                    </StackPanel>
-                </TreeViewItem.Header>
-            </TreeViewItem>
-            <TreeViewItem>
-                <TreeViewItem.Header>
-                    <StackPanel
-                        Orientation="Horizontal">
-                        <TextBlock
-                            Margin="8 0 0 0">
-          Windows
-                        </TextBlock>
-                    </StackPanel>
-                </TreeViewItem.Header>
-            </TreeViewItem>
-        </TreeViewItem>
-        <TreeViewItem
-            Header="Empty" />
-    </TreeView>
-    </GroupBox>
+    <UserControl.DataContext>
+        <model:MainOptionControlViewModel />
+    </UserControl.DataContext>
+    
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition
+                Width="Auto" />
+            <ColumnDefinition
+                Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <GroupBox
+            Header="Option"
+            Style="{StaticResource MaterialDesignCardGroupBox}"
+            Grid.Column="0">
+            <TreeView
+                Margin="-10,0,0,0"
+                MinWidth="120">
+                <TreeViewItem
+                    Header="옵션"
+                    IsExpanded="True">
+                    <TreeViewItem
+                        x:Name="Basic"
+                        Header="일반"
+                        Tag="Basic" />
+                    <TreeViewItem
+                        x:Name="Keyboard"
+                        Header="키보드"
+                        Tag="Keyboard" />
+                    <TreeViewItem
+                        x:Name="Theme"
+                        Header="테마"
+                        Tag="Theme" />
+                    <TreeViewItem
+                        x:Name="Debug"
+                        Header="디버그"
+                        Tag="Debug" />
+                </TreeViewItem>
+            </TreeView>
+        </GroupBox>
+
+        <UserControl
+            Content="{Binding OptionPanel}"
+            Grid.Column="1" />
+    </Grid>
 </UserControl>

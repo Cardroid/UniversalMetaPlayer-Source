@@ -88,10 +88,28 @@
     <Compile Update="Controller\Dialog\PlayListLoadDialog.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Controller\Option\OptionControl\DebugOption.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Controller\Option\OptionControl\ThemeOption.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Controller\Option\OptionControl\KeyboardOption.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   
   <ItemGroup>
     <Page Update="Controller\Dialog\PlayListLoadDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Controller\Option\OptionControl\DebugOption.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Controller\Option\OptionControl\ThemeOption.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Controller\Option\OptionControl\KeyboardOption.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

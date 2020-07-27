@@ -115,17 +115,22 @@ namespace UMP.Core
       set
       {
         _MediaInfomation = value;
-
-        // 대표색 추출
-        if (GlobalProperty.AverageColorProcessingOffset > 0 && _MediaInfomation.AlbumImage != null)
-          AverageColor = ImageProcessing.GetAverageColor(_MediaInfomation.AlbumImage as BitmapSource, GlobalProperty.AverageColorProcessingOffset);
-        else
-          AverageColor = ThemeHelper.PrimaryColor;
-
+        GetAverageColor();
         OnPropertyChanged("MediaInfomation");
       }
     }
     private static MediaInfomation _MediaInfomation;
+
+    /// <summary>
+    /// 대표색 추출
+    /// </summary>
+    public static void GetAverageColor()
+    {
+      if (GlobalProperty.AverageColorProcessingOffset > 0 && _MediaInfomation.AlbumImage != null)
+        AverageColor = ImageProcessing.GetAverageColor(_MediaInfomation.AlbumImage as BitmapSource, GlobalProperty.AverageColorProcessingOffset);
+      else
+        AverageColor = ThemeHelper.PrimaryColor;
+    }
 
     /// <summary>
     /// 미디어 이미지 대표색
@@ -267,7 +272,15 @@ namespace UMP.Core
         AudioFile = null;
       }
 
-      AudioFile = new MediaFoundationReader(path);
+      try
+      {
+        AudioFile = new MediaFoundationReader(path);
+      }
+      catch (Exception e)
+      {
+        Log.Error("미디어 파일 로드중 오류가 발생했습니다.", e);
+        return false;
+      }
       MediaInfomation = info;
 
       StopButtonActive = false;

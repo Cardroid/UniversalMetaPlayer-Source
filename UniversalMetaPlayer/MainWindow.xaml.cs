@@ -63,7 +63,7 @@ namespace UMP
       #endregion
 
       // 창 드레그 움직임
-      this.MouseLeftButtonDown += MainWindow_WindowDrag;
+      this.MainInfoControl.MouseLeftButtonDown += MainWindow_WindowDrag;
 
       // 디버그 전용 코드
       // 오류시 제거 요망
@@ -85,6 +85,7 @@ namespace UMP
         }
       };
     }
+
     private void MainWindow_WindowDrag(object sender, MouseButtonEventArgs e) { this.DragMove(); e.Handled = true; }
 
     /// <summary>

@@ -125,17 +125,15 @@ namespace UMP.Controller
       if (isOpen)
       {
         parentWindow.MainPlayListControl.Visibility = Visibility.Visible;
-        parentWindow.Width += parentWindow.MainPlayListControl.Width;
-        parentWindow.Left -= parentWindow.MainPlayListControl.Width;
-        parentWindow.MinWidth += parentWindow.MainPlayListControl.Width;
+        parentWindow.Height += parentWindow.MainPlayListControl.Height;
+        parentWindow.MinHeight += parentWindow.MainPlayListControl.Height;
         this.PlayListCheckBox.IsChecked = true;
       }
       else
       {
         parentWindow.MainPlayListControl.Visibility = Visibility.Collapsed;
-        parentWindow.MinWidth -= parentWindow.MainPlayListControl.Width;
-        parentWindow.Width -= parentWindow.MainPlayListControl.Width;
-        parentWindow.Left += parentWindow.MainPlayListControl.Width;
+        parentWindow.MinHeight -= parentWindow.MainPlayListControl.Height;
+        parentWindow.Height -= parentWindow.MainPlayListControl.Height;
         this.PlayListCheckBox.IsChecked = false;
       }
     }

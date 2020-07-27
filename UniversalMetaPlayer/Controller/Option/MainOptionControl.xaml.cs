@@ -11,6 +11,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using UMP.Controller.Option.OptionControl;
+
 namespace UMP.Controller.Option
 {
   /// <summary>
@@ -18,9 +20,37 @@ namespace UMP.Controller.Option
   /// </summary>
   public partial class MainOptionControl : UserControl
   {
+    private MainOptionControlViewModel ViewModel { get; }
+
     public MainOptionControl()
     {
       InitializeComponent();
+
+      ViewModel = (MainOptionControlViewModel)this.DataContext;
+
+      this.Basic.PreviewMouseLeftButtonDown += MainOptionControl_MouseDown;
+      this.Keyboard.PreviewMouseLeftButtonDown += MainOptionControl_MouseDown;
+      this.Theme.PreviewMouseLeftButtonDown += MainOptionControl_MouseDown;
+      this.Debug.PreviewMouseLeftButtonDown += MainOptionControl_MouseDown;
+    }
+
+    private void MainOptionControl_MouseDown(object sender, MouseButtonEventArgs e)
+    {
+      switch ((string)((TreeViewItem)sender).Tag)
+      {
+        case "Basic":
+          ViewModel.OptionPanel = new BasicOption();
+          break;
+        case "Keyboard":
+          ViewModel.OptionPanel = new KeyboardOption();
+          break;
+        case "Theme":
+          ViewModel.OptionPanel = new ThemeOption();
+          break;
+        case "Debug":
+          ViewModel.OptionPanel = new DebugOption();
+          break;
+      }
     }
   }
 }

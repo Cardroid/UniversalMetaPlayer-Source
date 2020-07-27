@@ -64,17 +64,12 @@ namespace UMP.Controller
         GlobalEvent.KeyDownEventHandled = false;
       };
 
-      // 헤더 설정
-      this.Title.Header = "제목";
-      this.MediaType.Header = "타입";
-      this.Duration.Header = "길이";
-
-      // 로그 설정
-      Log.Debug("초기화 성공");
-
       this.PlayList.MouseDoubleClick += PlayList_MouseDoubleClick;
       this.PlayListGroupBox.PreviewMouseDown += PlayList_MouseDownUnSelect;
       this.PlayList.KeyDown += PlayListControl_KeyDown;
+
+      // 로그 설정
+      Log.Debug("초기화 성공");
     }
 
     private void PlayListControl_KeyDown(object sender, KeyEventArgs e)

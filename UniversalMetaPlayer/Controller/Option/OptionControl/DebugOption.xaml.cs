@@ -14,9 +14,9 @@ using UMP.Core;
 
 namespace UMP.Controller.Option.OptionControl
 {
-  public partial class BasicOption : UserControl
+  public partial class DebugOption : UserControl
   {
-    public BasicOption()
+    public DebugOption()
     {
       InitializeComponent();
 

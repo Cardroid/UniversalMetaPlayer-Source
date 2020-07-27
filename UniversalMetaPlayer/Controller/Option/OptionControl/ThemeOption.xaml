@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="UMP.Controller.Option.OptionControl.BasicOption"
+    x:Class="UMP.Controller.Option.OptionControl.ThemeOption"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -11,20 +11,12 @@
         Orientation="Horizontal"
         Margin="5">
         
-        <!-- 복사용 -->
-        <!--<WrapPanel
-            Orientation="Horizontal">
-            <Label
-                Content="테스트 버튼" />
-            <ToggleButton
-                Style="{StaticResource MaterialDesignSwitchToggleButton}" />
-        </WrapPanel>-->
-        
         <WrapPanel
             Orientation="Horizontal">
             <Label
-                Content="일반 테스트 버튼" />
+                Content="대표색 테마 사용" />
             <ToggleButton
+                x:Name="IsAverageColorTheme"
                 Style="{StaticResource MaterialDesignSwitchToggleButton}" />
         </WrapPanel>
     </WrapPanel>

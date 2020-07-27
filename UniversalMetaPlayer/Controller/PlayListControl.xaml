@@ -14,8 +14,7 @@
     TextElement.FontSize="14"
     FontFamily="{DynamicResource MainFontFamily}"
     mc:Ignorable="d"
-    Width="400"
-    MinWidth="300">
+    Height="350">
 
     <UserControl.DataContext>
         <model:PlayListControlViewModel />
@@ -154,26 +153,40 @@
                     dd:DragDrop.DropHandler="{Binding}"
                     SelectedIndex="{Binding PlayListSelectIndex}"
                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                    AllowDrop="True">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn
-                                x:Name="Title"
-                                HeaderContainerStyle="{StaticResource MaterialDesignToolButton}"
-                                DisplayMemberBinding="{Binding Title}">
-                            </GridViewColumn>
-                            <GridViewColumn
-                                x:Name="MediaType"
-                                HeaderContainerStyle="{StaticResource MaterialDesignToolButton}"
-                                DisplayMemberBinding="{Binding MediaType}">
-                            </GridViewColumn>
-                            <GridViewColumn
-                                x:Name="Duration"
-                                HeaderContainerStyle="{StaticResource MaterialDesignToolButton}"
-                                DisplayMemberBinding="{Binding Duration, Converter={StaticResource TimeSpanStringConverter}}">
-                            </GridViewColumn>
-                        </GridView>
-                    </ListView.View>
+                    AllowDrop="True"
+                    Margin="-8">
+
+                    <ListView.ItemContainerStyle>
+                        <Style
+                            TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment"
+                                    Value="Stretch"/>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition
+                                        Width="*" />
+                                    <ColumnDefinition
+                                        Width="Auto" />
+                                    <ColumnDefinition
+                                        Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                
+                                <Label
+                                    Content="{Binding Title}"
+                                    Grid.Column="0" />
+                                <Label
+                                    Content="{Binding MediaType}"
+                                    Grid.Column="1" />
+                                <Label
+                                    Content="{Binding Duration, Converter={StaticResource TimeSpanStringConverter}}"
+                                    Grid.Column="2" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
                 </ListView>
             </GroupBox>
         </Grid>
