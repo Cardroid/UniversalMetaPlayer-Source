@@ -13,7 +13,7 @@
     <UserControl.DataContext>
         <model:MainOptionControlViewModel />
     </UserControl.DataContext>
-    
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition
@@ -34,20 +34,16 @@
                     IsExpanded="True">
                     <TreeViewItem
                         x:Name="Basic"
-                        Header="일반"
-                        Tag="Basic" />
+                        Header="일반" />
                     <TreeViewItem
                         x:Name="Keyboard"
-                        Header="키보드"
-                        Tag="Keyboard" />
+                        Header="키보드" />
                     <TreeViewItem
                         x:Name="Theme"
-                        Header="테마"
-                        Tag="Theme" />
+                        Header="테마" />
                     <TreeViewItem
                         x:Name="Debug"
-                        Header="디버그"
-                        Tag="Debug" />
+                        Header="디버그" />
                 </TreeViewItem>
             </TreeView>
         </GroupBox>

@@ -36,7 +36,7 @@ namespace UMP.Controller.Option
 
     private void MainOptionControl_MouseDown(object sender, MouseButtonEventArgs e)
     {
-      switch ((string)((TreeViewItem)sender).Tag)
+      switch (((TreeViewItem)sender).Name)
       {
         case "Basic":
           ViewModel.OptionPanel = new BasicOption();
