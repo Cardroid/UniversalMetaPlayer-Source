@@ -41,9 +41,6 @@
                     <TreeViewItem
                         x:Name="Theme"
                         Header="테마" />
-                    <TreeViewItem
-                        x:Name="Debug"
-                        Header="디버그" />
                 </TreeViewItem>
             </TreeView>
         </GroupBox>

@@ -119,7 +119,7 @@ namespace UMP.Core.Model
         }
         catch (Exception e)
         {
-          Log.Error($"플레이 리스트 로드 중 오류 발생. (Parsing Error)\nPath : [{path}]", e);
+          Log.Error("플레이 리스트 로드 중 오류 발생. (Parsing Error)", e, $"Path : [{path}]");
           return false;
         }
         finally
@@ -130,7 +130,7 @@ namespace UMP.Core.Model
 
         if (playListData == null)
         {
-          Log.Error($"플레이 리스트 로드 중 오류 발생. (Data is Null)\nPath : [{path}]");
+          Log.Error("플레이 리스트 로드 중 오류 발생. (Data is Null)", $"Path : [{path}]");
           return false;
         }
 
@@ -138,9 +138,9 @@ namespace UMP.Core.Model
           PlayListName = playListData.FileName ?? "Nameless";
 
         List<string> paths = playListData.GetTracksPaths();
-        if (paths.Count <= 0)
+        if (paths.Count < 0)
         {
-          Log.Error("플레이 리스트 로드 중 오류 발생.", new NullReferenceException($"(PlayList Count <= 0) is Impossible.\nPlayList Name : [{playListData}]\nPath : [{path}]"));
+          Log.Error("플레이 리스트 로드 중 오류 발생.", new NullReferenceException("(PlayList Count < 0) is Impossible."), $"PlayList Name : [{playListData}]\nPath : [{path}]");
           return false;
         }
 
@@ -150,18 +150,18 @@ namespace UMP.Core.Model
           if (mediatype != MediaType.NotSupport)
             await Add(new Media(mediatype, paths[i]));
           else
-            Log.Warn($"지원하지 않는 타입의 미디어를 건너뛰었습니다.\nPath : [{paths[i]}]");
+            Log.Warn("지원하지 않는 타입의 미디어를 건너뛰었습니다.",$"Path : [{paths[i]}]");
         }
 
         if (newPlaylist)
           EigenValue = RandomFunc.RandomString();
 
-        Log.Info($"플레이 리스트 로드 성공.\nSuccessful loading PlayList from path\nPath : [{path}]");
+        Log.Info("플레이 리스트 로드 성공.\nSuccessful loading PlayList from path", $"Path : [{path}]");
         return true;
       }
       else
       {
-        Log.Error("플레이 리스트 로드 중 오류 발생.", new FileNotFoundException($"File Not Found\nPath : [{path}]"));
+        Log.Error("플레이 리스트 로드 중 오류 발생.", new FileNotFoundException("File Not Found"), $"Path : [{path}]");
         return false;
       }
     }
@@ -171,6 +171,7 @@ namespace UMP.Core.Model
     {
       this.TotalDuration += infomation.Duration;
       base.Add(infomation);
+      Log.Info($"[{infomation.Title}](을)를 플레이 리스트에 등록 성공.");
     }
 
     /// <summary>
@@ -179,17 +180,17 @@ namespace UMP.Core.Model
     /// <param name="media">추가할 미디어</param>
     public async Task Add(Media media)
     {
-      Log.Debug($"[{media.GetInfomation().Title}](을)를 미디어 리스트에 등록 시도.");
+      Log.Debug("플레이 리스트 항목 추가 시도.", $"Title : [{media.GetInfomation().Title}]");
       if ((int)media.LoadedCheck < 2)
-          await media.TryInfoPartialLoadAsync();
-      
+        await media.TryInfoPartialLoadAsync();
+
       var info = media.GetInfomation();
       base.Add(info);
       TotalDuration += info.Duration;
       if (media.LoadedCheck == LoadState.Fail)
-        Log.Warn($"[{info.Title}](을)를 미디어 리스트에 등록중 오류가 발생했습니다.");
+        Log.Warn("플레이 리스트 항목 추가 오류 발생.", $"Title : [{info.Title}]");
       else
-        Log.Info($"[{info.Title}](을)를 미디어 리스트에 등록 성공.");
+        Log.Info("플레이 리스트 항목 추가 성공.", $"Title : [{info.Title}]");
     }
 
     /// <summary>
@@ -198,15 +199,15 @@ namespace UMP.Core.Model
     /// <param name="media">제거할 미디어 정보</param>
     public new void Remove(MediaInfomation mediaInfo)
     {
-      Log.Debug($"[{mediaInfo.Title}](을)를 미디어 리스트에서 제거 시도.");
+      Log.Debug("플레이 리스트 항목 제거 시도.", $"Title : [{mediaInfo.Title}]");
       if (base.Contains(mediaInfo))
       {
         base.Remove(mediaInfo);
         TotalDuration -= mediaInfo.Duration;
-        Log.Info($"[{mediaInfo.Title}](을)를 미디어 리스트에서 제거 성공.");
+        Log.Info("플레이 리스트 항목 제거 성공.", $"Title : [{mediaInfo.Title}]");
       }
       else
-        Log.Error($"[{mediaInfo.Title}](을)를 미디어 리스트에서 제거 실패.", new NullReferenceException($"Unlisted Media.\nTitle : [{mediaInfo.Title}]"));
+        Log.Error("플레이 리스트 항목 제거 실패.", new NullReferenceException("Unlisted Media."), $"Title : [{mediaInfo.Title}]");
     }
 
     /// <summary>
@@ -215,21 +216,21 @@ namespace UMP.Core.Model
     /// <param name="index">제거할 미디어 정보 Index</param>
     public new void RemoveAt(int index)
     {
-      Log.Debug($"[{index}]번째 미디어를 미디어 리스트에서 제거 시도.");
-      if (base.Count >= index && index >= 0)
+      Log.Debug($"플레이 리스트 Index 항목 제거 시도.\nIndex : [{index}]");
+      if (base.Count > index && index >= 0)
       {
         index--;
-        TotalDuration -= base[index].Duration;
         base.RemoveAt(index);
-        Log.Info($"[{index}]번째 미디어를 미디어 리스트에서 제거 성공.");
+        TotalDuration -= base[index].Duration;
+        Log.Info($"플레이 리스트 Index 항목 제거 성공.\nIndex : [{index}]");
       }
       else
-        Log.Error($"[{index}]번째 미디어를 미디어 리스트에서 제거 실패.", new IndexOutOfRangeException($"Index Out Of Range.\nBase Count : [{base.Count}]\nIndex : [{index}]"));
+        Log.Error($"플레이 리스트 Index 항목 제거 실패.", new IndexOutOfRangeException($"Index Out Of Range.\nBase Count : [{base.Count}]\nIndex : [{index}]"));
     }
 
     public new void Insert(int index, MediaInfomation item)
     {
-      if (base.Count >= index && index >= 0)
+      if (base.Count > index && index >= 0)
       {
         base.Insert(index, item);
         TotalDuration += item.Duration;
@@ -247,6 +248,7 @@ namespace UMP.Core.Model
         item = media.GetInfomation();
         TotalDuration += item.Duration;
         base[index] = item;
+        Log.Info("플레이 리스트 리로드 성공.",$"Title : [{item.Title}]\nLocation : [{item.MediaLocation}]");
       }
     }
 
@@ -268,6 +270,7 @@ namespace UMP.Core.Model
         item = media.GetInfomation();
         TotalDuration += item.Duration;
         base[i] = item;
+        Log.Info($"플레이 리스트 전체 리로드 성공.");
       }
     }
 

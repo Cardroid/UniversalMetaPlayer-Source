@@ -113,7 +113,7 @@ namespace UMP.Controller
                 if (mediatype != Core.Model.MediaType.NotSupport)
                   await ViewModel.PlayList.Add(new Media(mediatype, addValue));
                 else
-                  Log.Error($"지원하지 않는 미디어 타입입니다.\nPath : [{addValue}]");
+                  Log.Error("지원하지 않는 미디어 타입입니다.", $"Path : [{addValue}]");
               }
             }
             EnableControl(true);
@@ -213,7 +213,7 @@ namespace UMP.Controller
         else
         {
           var info = ViewModel.PlayList[ViewModel.PlayListSelectIndex];
-          Log.Error($"<{info.MediaType}>[{info.Title}] 미디어 정보가 로드되지 않았거나 로드에 실패 했습니다.");
+          Log.Error("미디어 정보가 로드되지 않았거나 로드에 실패 했습니다.", $"<{info.MediaType}>[{info.Title}]");
         }
       }
     }

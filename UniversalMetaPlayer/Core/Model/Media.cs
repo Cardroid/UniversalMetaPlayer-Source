@@ -74,7 +74,7 @@ namespace UMP.Core.Model
     {
       if (string.IsNullOrWhiteSpace(medialocation))
         throw new NullReferenceException("미디어 위치정보는 비어있을 수 없습니다.");
-      if(mediaType == MediaType.NotSupport)
+      if (mediaType == MediaType.NotSupport)
         throw new NotSupportedException("지원하지 않는 미디어타입 입니다.");
 
       Infomation = new MediaInfomation()
@@ -167,17 +167,17 @@ namespace UMP.Core.Model
         {
           if (TryFileInfomationLoad(streamCachePath, fullload))
           {
-            Log.Info($"캐쉬에서 미디어 정보 로드 성공. Full : {fullload}");
+            Log.Info($"캐시에서 미디어 정보 로드 성공. Full : {fullload}");
             return true;
           }
           else
-            Log.Warn($"캐쉬된 미디어 정보 로드 실패. 온라인에서 다운로드를 시도합니다. Full : {fullload}");
+            Log.Warn($"캐시된 미디어 정보 로드 실패. 온라인에서 다운로드를 시도합니다. Full : {fullload}");
         }
         else
-          Log.Warn($"캐쉬된 미디어 정보 로드 실패. 온라인에서 다운로드를 시도합니다. Full : {fullload}");
+          Log.Warn($"캐시된 미디어 정보 로드 실패. 온라인에서 다운로드를 시도합니다. Full : {fullload}");
       }
       else
-        Log.Info($"캐쉬사용이 꺼져있습니다. 온라인에서 다운로드를 시도합니다. Full : {fullload}");
+        Log.Info($"캐시사용이 {useCache}입니다. 온라인에서 다운로드를 시도합니다. Full : {fullload}");
 
       string cachepath = await GetYouTubeMediaAsync(false);
 
@@ -191,7 +191,7 @@ namespace UMP.Core.Model
       // 임시저장된 정보를 로드
       if (TryFileInfomationLoad(cachepath, fullload))
       {
-        Log.Info($"캐쉬에서 미디어 정보 로드 성공. Full : {fullload}");
+        Log.Info($"캐시에서 미디어 정보 로드 성공. Full : {fullload}");
         LoadedCheck = LoadState.Loaded;
         return true;
       }
@@ -213,10 +213,10 @@ namespace UMP.Core.Model
     /// <summary>
     /// YouTube 미디어 스트림 & 정보 다운로드시도
     /// </summary>
-    /// <returns>스트림 캐쉬 저장 경로</returns>
+    /// <returns>스트림 캐시 저장 경로</returns>
     private async Task<string> GetYouTubeMediaAsync(bool useCache)
     {
-      // 캐쉬폴더가 존재하지 않을시 생성
+      // 캐시폴더가 존재하지 않을시 생성
       Checker.DirectoryCheck(CacheYouTubeDirectoryPath);
 
       // 임시저장된 정보를 로드
@@ -225,26 +225,28 @@ namespace UMP.Core.Model
         string streamCachePath = TrySearchCachedMedia();
         if (!string.IsNullOrWhiteSpace(streamCachePath))
         {
-          Log.Debug("캐쉬에서 미디어가 확인됨.");
+          Log.Debug("캐시에서 미디어가 확인됨.");
           return streamCachePath;
         }
         else
-          Log.Warn("캐쉬된 미디어 로드 실패. 온라인에서 다운로드를 시도합니다.");
+          Log.Warn("캐시된 미디어 로드 실패. 온라인에서 다운로드를 시도합니다.");
       }
 
       if (Checker.CheckForInternetConnection())
       {
+        string streampath = string.Empty;
         string mp3FilePath = Path.Combine(CacheYouTubeDirectoryPath, $"{GetYouTubeVideoID()}.mp3");
+
         try
         {
           // 유튜브 스트림 다운로드
-          string streampath = await TryDownloadYouTubeStreamAsync(CacheYouTubeDirectoryPath);
+          streampath = await TryDownloadYouTubeStreamAsync(CacheYouTubeDirectoryPath);
           if (string.IsNullOrWhiteSpace(streampath))
             throw new Exception("Failed to download YouTube stream.");
 
           // Mp3로 변환
           if (!await Converter.ConvertToMP3Async(streampath, mp3FilePath))
-            throw new FileNotFoundException($"File is Null\nSourceFile : [{streampath}]\nTargetFile : [{mp3FilePath}]");
+            throw new FileNotFoundException("File is Null");
           File.Delete(streampath);
           Log.Info("미디어 스트림 Mp3 변환 성공.");
 
@@ -255,7 +257,7 @@ namespace UMP.Core.Model
         }
         catch (Exception e)
         {
-          Log.Error("미디어 스트림 다운로드 & 변환 실패.", e);
+          Log.Error("미디어 스트림 다운로드 & 변환 실패.", e, $"SourceFile : [{streampath}]\nTargetFile : [{mp3FilePath}]");
         }
         return mp3FilePath;
       }
@@ -321,7 +323,7 @@ namespace UMP.Core.Model
       {
         if (!File.Exists(mp3filepath))
         {
-          log.Error("Mp3 파일이 없습니다.", new FileNotFoundException($"File Not Found\nPath : [{mp3filepath}]"));
+          log.Error("Mp3 파일이 없습니다.", new FileNotFoundException("File Not Found"), $"Path : [{mp3filepath}]");
           return;
         }
 
@@ -411,7 +413,7 @@ namespace UMP.Core.Model
         {
           Fileinfo.Dispose();
         }
-        
+
         log.Info("YouTube에서 Mp3 메타 데이터 저장 완료.");
       }
       else
@@ -421,9 +423,9 @@ namespace UMP.Core.Model
     }
 
     /// <summary>
-    /// 미디어 스트림 캐쉬가 있을 경우 경로를 return
+    /// 미디어 스트림 캐시가 있을 경우 경로를 return
     /// </summary>
-    /// <returns>미디어 스트림 캐쉬 경로</returns>
+    /// <returns>미디어 스트림 캐시 경로</returns>
     private string TrySearchCachedMedia()
     {
       if (Directory.Exists(CacheYouTubeDirectoryPath))
@@ -475,6 +477,7 @@ namespace UMP.Core.Model
           // 모든 정보 로드
           if (fullload)
           {
+            // 엘범 이미지 추출
             try { Infomation.AlbumImage = BitmapFrame.Create(new MemoryStream(Fileinfo.Tag.Pictures[0].Data.Data)); }
             catch { Infomation.AlbumImage = null; }
             if (Infomation.MediaType == MediaType.Youtube)
@@ -490,7 +493,7 @@ namespace UMP.Core.Model
       }
       else
       {
-        Log.Error($"미디어 파일이 없습니다.\nMediaLocation : {path}");
+        Log.Error("미디어 파일이 없습니다.", $"MediaLocation : [{path}]");
         LoadedCheck = LoadState.Fail;
         return false;
       }

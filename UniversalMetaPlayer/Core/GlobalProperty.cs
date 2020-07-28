@@ -5,9 +5,12 @@ using System.Text;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+
 using MaterialDesignThemes.Wpf;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+
 using UMP.Utility;
 
 namespace UMP.Core
@@ -36,13 +39,17 @@ namespace UMP.Core
     /// </summary>
     public static void SetDefault()
     {
-      CachePath = "Cache";
-      FileSavePath = "Save";
-      GlobalKeyboardHook = false;
-      AverageColorProcessingOffset = 30;
-      IsAverageColorTheme = true;
+      Settings.Clear();
 
-      KeyEventDelay = 20;
+      //CachePath = "Cache";
+      //FileSavePath = "Save";
+      //PrivateLogging = true;
+
+      //GlobalKeyboardHook = false;
+      //KeyEventDelay = 20;
+
+      //IsAverageColorTheme = true;
+      //AverageColorProcessingOffset = 30;
     }
 
     /// <summary>
@@ -84,9 +91,13 @@ namespace UMP.Core
           var loadedSettings = JsonConvert.DeserializeObject<Dictionary<string, string>>(josn);
 
           foreach (var pair in loadedSettings)
-            Settings[pair.Key] = pair.Value;
+            SetSetting(pair.Key, pair.Value);
 
-          GlobalKeyboardHook = bool.TryParse(loadedSettings["GlobalKeyboardHook"], out bool globalKeyboardHookOption) && globalKeyboardHookOption;
+          GlobalKeyboardHook = loadedSettings.TryGetValue("GlobalKeyboardHook", out string value)
+            ? (bool.TryParse(value, out bool result)
+            ? result
+            : DefaultGlobalKeyboardHook)
+            : DefaultGlobalKeyboardHook;
 
           Log.Info("메인 설정 불러오기 성공.");
         }
@@ -121,51 +132,134 @@ namespace UMP.Core
     private static bool NowLoading = false;
 
     private static readonly Dictionary<string, string> Settings = new Dictionary<string, string>();
+    private static void SetSetting(string key, string value) => Settings[key] = value;
+    private static bool TryGetSetting(string key, out string value) => Settings.TryGetValue(key, out value);
 
+    #region 일반
+    /// <summary>
+    /// 캐시저장 폴더 경로
+    /// </summary>
+    public static string CachePath
+    {
+      get => TryGetSetting("CachePath", out string value)
+        ? (!string.IsNullOrWhiteSpace(value)
+        ? value
+        : DefaultCachePath)
+        : DefaultCachePath;
+      set
+      {
+        SetSetting("CachePath", value);
+        OnPropertyChanged("CachePath");
+      }
+    }
+    private const string DefaultCachePath = "Cache";
+
+    /// <summary>
+    /// 캐시를 재외한 파일 저장 폴더 경로
+    /// </summary>
+    public static string FileSavePath
+    {
+      get => TryGetSetting("FileSavePath", out string value)
+        ? (!string.IsNullOrWhiteSpace(value)
+        ? value
+        : DefaultFileSavePath)
+        : DefaultFileSavePath;
+      set
+      {
+        SetSetting("FileSavePath", value);
+        OnPropertyChanged("FileSavePath");
+      }
+    }
+    private const string DefaultFileSavePath = "Save";
+
+    /// <summary>
+    /// 개인정보(곡 정보, 경로 등) 로깅 여부
+    /// </summary>
+    public static bool PrivateLogging
+    {
+      get => TryGetSetting("PrivateLogging", out string value)
+        ? (bool.TryParse(value, out bool result)
+        ? result
+        : DefaultPrivateLogging)
+        : DefaultPrivateLogging;
+      set
+      {
+        SetSetting("PrivateLogging", value.ToString());
+        OnPropertyChanged("PrivateLogging");
+      }
+    }
+    private const bool DefaultPrivateLogging = true;
+    #endregion
+
+    #region 테마
+    /// <summary>
+    /// 테마 변경되면 자동저장
+    /// </summary>
+    /// <param name="e">변경 후 테마</param>
     private static void ThemeHelper_ThemeChangedEvent(ThemeHelper.ThemeProperty e)
     {
       if (!NowLoading)
       {
-        Settings["IsDarkMode"] = e.IsDarkMode.ToString();
-        Settings["PrimaryColor"] = e.PrimaryColor.ToString();
-        Settings["SecondaryColor"] = e.SecondaryColor.ToString();
+        SetSetting("IsDarkMode", e.IsDarkMode.ToString());
+        SetSetting("PrimaryColor", e.PrimaryColor.ToString());
+        SetSetting("SecondaryColor", e.SecondaryColor.ToString());
         OnPropertyChanged("Theme");
       }
     }
 
     /// <summary>
-    /// 캐쉬저장 폴더 경로
+    /// 대표(평균)색 테마 적용 여부
     /// </summary>
-    public static string CachePath
+    public static bool IsAverageColorTheme
     {
-      get => Settings["CachePath"];
-      set { Settings["CachePath"] = value;
-        OnPropertyChanged("CachePath");
-      }
-    }
-
-    /// <summary>
-    /// 캐쉬를 재외한 파일 저장 폴더 경로
-    /// </summary>
-    public static string FileSavePath
-    {
-      get => Settings["FileSavePath"];
+      get => TryGetSetting("IsAverageColorTheme", out string value)
+        ? (bool.TryParse(value, out bool result)
+        ? result
+        : DefaultIsAverageColorTheme)
+        : DefaultIsAverageColorTheme;
       set
       {
-        Settings["FileSavePath"] = value;
-        OnPropertyChanged("FileSavePath");
+        SetSetting("IsAverageColorTheme", value.ToString());
+        if (value)
+          MainMediaPlayer.GetAverageColor();
+        OnPropertyChanged("IsAverageColorTheme");
       }
     }
+    private const bool DefaultIsAverageColorTheme = true;
 
+    /// <summary>
+    /// 대표(평균)색 추출 오프셋 (0 이면 Off)
+    /// </summary>
+    public static int AverageColorProcessingOffset
+    {
+      get => TryGetSetting("AverageColorProcessingOffset", out string value)
+        ? (int.TryParse(value, out int result)
+        ? result
+        : DefaultAverageColorProcessingOffset)
+        : DefaultAverageColorProcessingOffset;
+      set
+      {
+        SetSetting("AverageColorProcessingOffset", value.ToString());
+        OnPropertyChanged("AverageColorProcessingOffset");
+      }
+    }
+    private const int DefaultAverageColorProcessingOffset = 30;
+    #endregion
+
+    #region 키보드
     /// <summary>
     /// 전역 키보드 후킹 여부
     /// </summary>
     public static bool GlobalKeyboardHook
     {
-      get => bool.Parse(Settings["GlobalKeyboardHook"]);
+      get => TryGetSetting("GlobalKeyboardHook", out string value)
+        ? (bool.TryParse(value, out bool result)
+        ? result
+        : DefaultGlobalKeyboardHook)
+        : DefaultGlobalKeyboardHook;
       set
       {
-        Settings["GlobalKeyboardHook"] = value.ToString();
+        SetSetting("GlobalKeyboardHook", value.ToString());
         if (value)
           Hook.Start();
         else
@@ -173,47 +267,26 @@ namespace UMP.Core
         OnPropertyChanged("GlobalKeyboardHook");
       }
     }
+    private const bool DefaultGlobalKeyboardHook = false;
 
     /// <summary>
     /// 키보드 입력 딜레이
     /// </summary>
     public static int KeyEventDelay
     {
-      get => int.Parse(Settings["KeyEventDelay"]);
+      get => TryGetSetting("KeyEventDelay", out string value)
+        ? (int.TryParse(value, out int result)
+        ? result
+        : DefaultKeyEventDelay)
+        : DefaultKeyEventDelay;
       set
       {
-        Settings["KeyEventDelay"] = value.ToString();
+        SetSetting("KeyEventDelay", value.ToString());
         OnPropertyChanged("KeyEventDelay");
       }
     }
-
-    /// <summary>
-    /// 평균색 추출 오프셋 (0 이면 Off)
-    /// </summary>
-    public static int AverageColorProcessingOffset
-    {
-      get => int.Parse(Settings["AverageColorProcessingOffset"]);
-      set
-      {
-        Settings["AverageColorProcessingOffset"] = value.ToString();
-        OnPropertyChanged("AverageColorProcessingOffset");
-      }
-    }
-
-    /// <summary>
-    /// 평균색 테마 적용 여부
-    /// </summary>
-    public static bool IsAverageColorTheme
-    {
-      get => bool.Parse(Settings["IsAverageColorTheme"]);
-      set
-      {
-        Settings["IsAverageColorTheme"] = value.ToString();
-        if (value)
-          MainMediaPlayer.GetAverageColor();
-        OnPropertyChanged("IsAverageColorTheme");
-      }
-    }
+    private const int DefaultKeyEventDelay = 20;
+    #endregion
 
     #region Not Save
     /// <summary>

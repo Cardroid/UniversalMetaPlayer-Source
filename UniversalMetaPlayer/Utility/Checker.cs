@@ -35,7 +35,7 @@ namespace UMP.Utility
       if (!Directory.Exists(path))
       {
         Directory.CreateDirectory(path);
-        App.MainLog.Info($"[{path}]폴더가 생성되었습니다.");
+        App.MainLog.Info("폴더가 생성되었습니다.", $"Path : [{path}]");
       }
     }
 

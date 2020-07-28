@@ -31,7 +31,6 @@ namespace UMP.Controller.Option
       this.Basic.PreviewMouseLeftButtonDown += MainOptionControl_MouseDown;
       this.Keyboard.PreviewMouseLeftButtonDown += MainOptionControl_MouseDown;
       this.Theme.PreviewMouseLeftButtonDown += MainOptionControl_MouseDown;
-      this.Debug.PreviewMouseLeftButtonDown += MainOptionControl_MouseDown;
     }
 
     private void MainOptionControl_MouseDown(object sender, MouseButtonEventArgs e)
@@ -46,9 +45,6 @@ namespace UMP.Controller.Option
           break;
         case "Theme":
           ViewModel.OptionPanel = new ThemeOption();
-          break;
-        case "Debug":
-          ViewModel.OptionPanel = new DebugOption();
           break;
       }
     }

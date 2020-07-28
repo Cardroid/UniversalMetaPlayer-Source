@@ -249,7 +249,8 @@ namespace UMP.Core
     {
       if (media.GetInfomation().Title.ToLower().StartsWith(Media.MEDIA_INFO_NULL.ToLower()))
       {
-        Log.Error("미디어 정보에 오류가 있습니다.", new NullReferenceException("Media is Null"));
+        var errorInfo = media.GetInfomation();
+        Log.Error("미디어 정보에 오류가 있습니다.", new NullReferenceException("Null Processed Media"), $"Title : [{errorInfo.Title}]\nLocation : [{errorInfo.MediaLocation}]");
         return false;
       }
 
@@ -257,7 +258,8 @@ namespace UMP.Core
 
       if (string.IsNullOrWhiteSpace(path))
       {
-        Log.Error("미디어 위치정보가 누락 되었습니다.", new NullReferenceException("Path is Null"));
+        var errorInfo = media.GetInfomation();
+        Log.Error("미디어 위치정보가 누락 되었습니다.", new NullReferenceException("Stream Path is Null"), $"Title : [{errorInfo.Title}]\nLocation : [{errorInfo.MediaLocation}]");
         return false;
       }
 
@@ -291,7 +293,7 @@ namespace UMP.Core
       WavePlayer.Volume = _Volume;
       WavePlayer.Init(AudioFile);
 
-      Log.Debug($"[{(string.IsNullOrWhiteSpace(media.GetYouTubeVideoID()) ? System.IO.Path.GetFileNameWithoutExtension(info.MediaLocation) : $"\"{media.GetYouTubeVideoID()}\" {info.Title}")}] 메인 미디어 플레이어에 로드 성공.");
+      Log.Debug("메인 미디어 플레이어에 로드 성공.", $"Info : [{(string.IsNullOrWhiteSpace(media.GetYouTubeVideoID()) ? System.IO.Path.GetFileNameWithoutExtension(info.MediaLocation) : $"\"{media.GetYouTubeVideoID()}\" {info.Title}")}]");
 
       PropertyChangedEvent?.Invoke("MainPlayerInitialized");
       return true;

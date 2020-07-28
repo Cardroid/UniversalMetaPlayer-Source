@@ -41,7 +41,6 @@ namespace UMP.Utility
 
       theme.PrimaryColor = primaryColor;
       theme.SecondaryColor = secondaryColor;
-
       theme.BaseTheme = BaseTheme.Dark;
 
       paletteHelper.SetTheme(theme.GetTheme());

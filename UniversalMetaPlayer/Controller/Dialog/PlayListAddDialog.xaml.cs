@@ -93,16 +93,21 @@ namespace UMP.Controller.Dialog
           Close?.Invoke();
           string errorFilePath = string.Empty;
           MediaType type;
+          int errorCount = 0;
+
           for (int i = 0; i < filepath.Length; i++)
           {
             type = Checker.MediaTypeChecker(filepath[i]);
             if (type != MediaType.NotSupport)
               await MainMediaPlayer.PlayList.Add(new Media(type, filepath[i]));
             else
-              errorFilePath += $"{filepath[i]}\n";
+            {
+              errorFilePath += $"Count : [{i}] Path : [{filepath[i]}]\n";
+              errorCount++;
+            }
           }
-          if (!string.IsNullOrWhiteSpace(errorFilePath))
-            Log.Warn($"미디어 추가 완료\n하나 이상의 오류가 있습니다.\nPath Count : [{filepath.Length}]\n-----Path-----\n{errorFilePath}--------------");
+          if (errorCount > 0)
+            Log.Warn($"미디어 추가 완료\n하나 이상의 오류가 있습니다.\nPath Count : [{filepath.Length}]\nError Count : [{errorCount}]", $"-----Path-----\n{errorFilePath}--------------");
           else
             Log.Info($"미디어 추가 완료\nPath Count : [{filepath.Length}]");
         }
