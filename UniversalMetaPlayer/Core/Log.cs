@@ -62,15 +62,15 @@ namespace UMP.Core
     public static PatternLayout Layout { get; }
     private ILog Logger { get; }
 
-    public void Fatal(string message, string privateData = "") => Logger.Fatal(GlobalProperty.PrivateLogging && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}=============" : message);
-    public void Error(string message, string privateData = "") => Logger.Error(GlobalProperty.PrivateLogging && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}=============" : message);
-    public void Warn(string message, string privateData = "") => Logger.Warn(GlobalProperty.PrivateLogging && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}=============" : message);
-    public void Info(string message, string privateData = "") => Logger.Info(GlobalProperty.PrivateLogging && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}=============" : message);
-    public void Debug(string message, string privateData = "") => Logger.Debug(GlobalProperty.PrivateLogging && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}=============" : message);
-    public void Fatal(string message, Exception exception, string privateData = "") => Logger.Fatal(GlobalProperty.PrivateLogging && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}=============" : message, exception);
-    public void Error(string message, Exception exception, string privateData = "") => Logger.Error(GlobalProperty.PrivateLogging && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}=============" : message, exception);
-    public void Warn(string message, Exception exception, string privateData = "") => Logger.Warn(GlobalProperty.PrivateLogging && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}=============" : message, exception);
-    public void Info(string message, Exception exception, string privateData = "") => Logger.Info(GlobalProperty.PrivateLogging && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}=============" : message, exception);
-    public void Debug(string message, Exception exception, string privateData = "") => Logger.Debug(GlobalProperty.PrivateLogging && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}=============" : message, exception);
+    public void Fatal(string message, string privateData = "") => Logger.Fatal(GlobalProperty.PrivateLogging && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}\n=============" : message);
+    public void Error(string message, string privateData = "") => Logger.Error(GlobalProperty.PrivateLogging && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}\n=============" : message);
+    public void Warn(string message, string privateData = "") => Logger.Warn(GlobalProperty.PrivateLogging && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}\n=============" : message);
+    public void Info(string message, string privateData = "") => Logger.Info(GlobalProperty.PrivateLogging && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}\n=============" : message);
+    public void Debug(string message, string privateData = "") => Logger.Debug(GlobalProperty.PrivateLogging && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}\n=============" : message);
+    public void Fatal(string message, Exception exception, string privateData = "") => Logger.Fatal(GlobalProperty.PrivateLogging && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}\n=============" : message, exception);
+    public void Error(string message, Exception exception, string privateData = "") => Logger.Error(GlobalProperty.PrivateLogging && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}\n=============" : message, exception);
+    public void Warn(string message, Exception exception, string privateData = "") => Logger.Warn(GlobalProperty.PrivateLogging && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}\n=============" : message, exception);
+    public void Info(string message, Exception exception, string privateData = "") => Logger.Info(GlobalProperty.PrivateLogging && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}\n=============" : message, exception);
+    public void Debug(string message, Exception exception, string privateData = "") => Logger.Debug(GlobalProperty.PrivateLogging && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}\n=============" : message, exception);
   }
 }

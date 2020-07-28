@@ -59,7 +59,7 @@
                         Style="{StaticResource MaterialDesignMultiFloatingActionAccentPopupBox}"
                         Foreground="{Binding Theme.PrimaryMid}"
                         PlacementMode="LeftAndAlignMiddles"
-                        PopupMode="MouseOver"
+                        PopupMode="MouseOverEager"
                         Background="Transparent"
                         BorderBrush="Transparent"
                         ToolTip="추가기능"
