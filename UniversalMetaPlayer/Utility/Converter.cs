@@ -122,5 +122,24 @@ namespace UMP.Utility
       });
       return result;
     }
+
+    /// <summary>
+    /// 오디오 파일을 Mp3파일로 변환합니다.
+    /// </summary>
+    /// <param name="sourceFilename">소스가 될 파일 경로</param>
+    /// <param name="targetFilename">타겟파일 경로</param>
+    /// <returns>성공시 true</returns>
+    public static async Task<bool> ConvertToMP3Async(string sourceFilename, string targetFilename)
+    {
+      if (File.Exists(sourceFilename))
+      {
+        using var reader = new NAudio.Wave.AudioFileReader(sourceFilename);
+        using var writer = new NAudio.Lame.LameMP3FileWriter(targetFilename, reader.WaveFormat, NAudio.Lame.LAMEPreset.STANDARD);
+        await reader.CopyToAsync(writer);
+        return true;
+      }
+      else
+        return false;
+    }
   }
 }

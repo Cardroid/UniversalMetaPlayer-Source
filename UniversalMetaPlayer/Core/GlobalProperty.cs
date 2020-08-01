@@ -269,6 +269,31 @@ namespace UMP.Core
     private const int DefaultKeyEventDelay = 20;
     #endregion
 
+    #region 온라인
+    /// <summary>
+    /// 사용할 미디어 로드 엔진
+    /// </summary>
+    public static MediaLoadEngineType MediaLoadEngine
+    {
+      get => TryGetSetting("MediaLoadEngine", out string value)
+        ? (Enum.TryParse(value, out MediaLoadEngineType result)
+        ? result
+        : DefaultMediaLoadEngineType)
+        : DefaultMediaLoadEngineType;
+      set
+      {
+        SetSetting("MediaLoadEngine", value.ToString());
+        OnPropertyChanged("MediaLoadEngine");
+      }
+    }
+    private const MediaLoadEngineType DefaultMediaLoadEngineType = MediaLoadEngineType.Native;
+    public enum MediaLoadEngineType
+    {
+      Native, YoutubeDL
+    }
+
+    #endregion
+
     #region Not Save
     /// <summary>
     /// 폰트
@@ -282,6 +307,12 @@ namespace UMP.Core
     /// 로고 음표 이미지
     /// </summary>
     public static ImageSource LogoNoteImage { get; private set; }
+
+    /// <summary>
+    /// 미디어 Null Process 때 접두어
+    /// </summary>
+    public const string MEDIA_INFO_NULL = "(null)";
+
     /// <summary>
     /// 라이브러리 폴더
     /// </summary>
@@ -290,6 +321,22 @@ namespace UMP.Core
     /// 캐시 폴더
     /// </summary>
     public const string CACHE_PATH = @"Core\Cache";
+    /// <summary>
+    /// 다운로드 캐시
+    /// </summary>
+    public static string DownloadCachePath => Path.Combine(CACHE_PATH, "DownloadCache");
+    /// <summary>
+    /// 온라인에서 다운로드한 미디어 저장 캐시
+    /// </summary>
+    public static string OnlineMediaCachePath => Path.Combine(CACHE_PATH, "OnlineMedia");
+    /// <summary>
+    /// YouTube-dl 라이브러리 저장 폴더
+    /// </summary>
+    public static string YTDL_PATH => Path.Combine(LIBRARY_PATH, "YTDL", "youtube-dl.exe");
+    /// <summary>
+    /// FFmpeg 라이브러리 저장 폴더
+    /// </summary>
+    public static string FFMPEG_PATH => Path.Combine(LIBRARY_PATH, "FFmpeg");
     #endregion
   }
 }

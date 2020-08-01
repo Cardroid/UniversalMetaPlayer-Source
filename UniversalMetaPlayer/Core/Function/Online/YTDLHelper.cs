@@ -5,6 +5,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
 using NYoutubeDL;
 using NYoutubeDL.Helpers;
 using NYoutubeDL.Options;
@@ -15,11 +19,6 @@ namespace UMP.Core.Function.Online
 {
   public class YTDLHelper
   {
-    private readonly string YTDL_PATH = Path.Combine(GlobalProperty.LIBRARY_PATH, "YTDL", "youtube-dl.exe");
-    private readonly string FFMPEG_PATH = Path.Combine(GlobalProperty.LIBRARY_PATH, "FFmpeg");
-
-    private readonly string CachePath = Path.Combine(GlobalProperty.CACHE_PATH, "DownloadCache");
-
     public event EventHandler<string> ErrorEvent;
     public event EventHandler<string> OutPutEvent;
     public event PropertyChangedEventHandler InfoChangedEvent;
@@ -31,7 +30,7 @@ namespace UMP.Core.Function.Online
 
       if (Checker.CheckForInternetConnection())
       {
-        YoutubeDL ytdl = new YoutubeDL(YTDL_PATH) { VideoUrl = uri };
+        YoutubeDL ytdl = new YoutubeDL(GlobalProperty. YTDL_PATH) { VideoUrl = uri };
         string error = string.Empty;
 
         string id;
@@ -51,7 +50,7 @@ namespace UMP.Core.Function.Online
         // 변환 실패 오류 패치
         //ytdl.Options.PostProcessingOptions.EmbedThumbnail = true;
 
-        ytdl.Options.PostProcessingOptions.FfmpegLocation = FFMPEG_PATH;
+        ytdl.Options.PostProcessingOptions.FfmpegLocation = GlobalProperty.FFMPEG_PATH;
         ytdl.Options.PostProcessingOptions.AudioQuality = quality.ToString();
         ytdl.Options.PostProcessingOptions.ExtractAudio = true;
         ytdl.Options.PostProcessingOptions.AudioFormat = Enums.AudioFormat.mp3;
@@ -69,8 +68,8 @@ namespace UMP.Core.Function.Online
           return new GenericResult<string>(false);
         }
 
-        Checker.DirectoryCheck(Path.GetDirectoryName(CachePath));
-        string saveStreamPath = Path.Combine(CachePath, $"{id}.%(ext)s");
+        Checker.DirectoryCheck(Path.GetDirectoryName(GlobalProperty.DownloadCachePath));
+        string saveStreamPath = Path.Combine(GlobalProperty.DownloadCachePath, $"{id}.%(ext)s");
         ytdl.Options.FilesystemOptions.Output = saveStreamPath;
 
         ytdl.StandardErrorEvent += (s, e) => { error = $"{e}\n"; ErrorEvent?.Invoke(s, e); };
@@ -80,7 +79,7 @@ namespace UMP.Core.Function.Online
         await ytdl.DownloadAsync();
 
         string result = string.Empty;
-        string[] resultPath = Directory.GetFiles(CachePath, $"{id}.mp3", SearchOption.TopDirectoryOnly);
+        string[] resultPath = Directory.GetFiles(GlobalProperty.DownloadCachePath, $"{id}.mp3", SearchOption.TopDirectoryOnly);
         if (resultPath.Length <= 0)
           error += "Download Fail (Download File is Not Exists.)\n";
         else
@@ -122,7 +121,7 @@ namespace UMP.Core.Function.Online
 
       if (Checker.CheckForInternetConnection())
       {
-        YoutubeDL ytdl = new YoutubeDL(YTDL_PATH) { VideoUrl = uri };
+        YoutubeDL ytdl = new YoutubeDL(GlobalProperty.YTDL_PATH) { VideoUrl = uri };
 
         ytdl.Options.VerbositySimulationOptions.Simulate = true;
         ytdl.Options.VerbositySimulationOptions.SkipDownload = true;
@@ -152,6 +151,53 @@ namespace UMP.Core.Function.Online
       {
         log.Error(PredefineMessage.UnableNetwork, $"Uri : [{uri}]");
         return new GenericResult<string>(false);
+      }
+    }
+
+    public async Task<GenericResult<JObject>> GetJsonInfoAsync(string uri)
+    {
+      Log log = new Log("IDParser");
+
+      if (Checker.CheckForInternetConnection())
+      {
+        YoutubeDL ytdl = new YoutubeDL(GlobalProperty.YTDL_PATH) { VideoUrl = uri };
+
+        ytdl.Options.VerbositySimulationOptions.Simulate = true;
+        ytdl.Options.VerbositySimulationOptions.SkipDownload = true;
+        ytdl.Options.VerbositySimulationOptions.GetId = true;
+        ytdl.Options.VerbositySimulationOptions.GetDescription = true;
+        ytdl.Options.VerbositySimulationOptions.GetDuration = true;
+        ytdl.Options.VerbositySimulationOptions.GetFilename = true;
+        ytdl.Options.VerbositySimulationOptions.GetFormat = true;
+        ytdl.Options.VerbositySimulationOptions.GetThumbnail = true;
+        ytdl.Options.VerbositySimulationOptions.GetTitle = true;
+        ytdl.Options.VerbositySimulationOptions.GetUrl = true;
+        ytdl.Options.VerbositySimulationOptions.DumpSingleJson = true;
+
+        string result = string.Empty;
+        string error = string.Empty;
+
+        ytdl.StandardErrorEvent += (s, e) => { error = $"{e}\n"; ErrorEvent?.Invoke(s, e); };
+        ytdl.StandardOutputEvent += (s, e) => { result = e; OutPutEvent?.Invoke(s, e); };
+
+        await ytdl.DownloadAsync();
+
+        if (!string.IsNullOrWhiteSpace(result))
+        {
+          if (!string.IsNullOrWhiteSpace(error))
+            log.Warn($"JsonInfo 파싱 경고\n{error[0..^1]}", $"Uri : [{uri}]");
+          return new GenericResult<JObject>(true, JsonConvert.DeserializeObject<JObject>(result));
+        }
+        else
+        {
+          log.Error($"JsonInfo 파싱 실패\n{error[0..^1]}", $"Uri : [{uri}]");
+          return new GenericResult<JObject>(false);
+        }
+      }
+      else
+      {
+        log.Error(PredefineMessage.UnableNetwork, $"Uri : [{uri}]");
+        return new GenericResult<JObject>(false);
       }
     }
   }

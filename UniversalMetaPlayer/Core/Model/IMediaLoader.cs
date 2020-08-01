@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO;
+using System.Threading.Tasks;
 
 namespace UMP.Core.Model
 {
@@ -14,7 +15,7 @@ namespace UMP.Core.Model
     /// 미디어 스트림 경로를 가져옵니다.
     /// </summary>
     /// <returns>성공시 true, 미디어 스트림 경로</returns>
-    public abstract Task<GenericResult<string>> GetStreamPathAsync();
+    public abstract Task<GenericResult<string>> GetStreamPathAsync(bool useCache);
     /// <summary>
     /// 온라인 미디어의 ID 가져오기
     /// </summary>

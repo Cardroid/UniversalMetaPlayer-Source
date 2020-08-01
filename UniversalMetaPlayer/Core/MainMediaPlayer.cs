@@ -30,7 +30,7 @@ namespace UMP.Core
       };
 
       PlayListPlayMediaIndex = -1;
-      Volume = 0.5f;
+      Volume = 0.3f;
       OptionDefault();
       // 오토 플레이 옵션
       PropertyChangedEvent += (e) =>
@@ -250,7 +250,7 @@ namespace UMP.Core
       if (!info.LoadState)
         Log.Warn("미디어 정보에 오류가 있습니다", new NullReferenceException("Null Processed Media"), $"Title : [{info.Title}]\nLocation : [{info.MediaLocation}]");
 
-      GenericResult<string> streamResult = await mediaLoader.GetStreamPathAsync();
+      GenericResult<string> streamResult = await mediaLoader.GetStreamPathAsync(true);
       if (!streamResult)
       {
         Log.Error("미디어 스트림 로드에 실패했습니다", new FileLoadException("Media Stream Path is Null"), $"Title : [{info.Title}]\nLocation : [{info.MediaLocation}]");

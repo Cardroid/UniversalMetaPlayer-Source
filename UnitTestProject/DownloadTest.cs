@@ -33,7 +33,7 @@ namespace UnitTestProject
     [TestMethod]
     public void GetID()
     {
-      var result = new MediaLoader("https://www.youtube.com/watch?v=kJQP7kiw5Fk").GetID().GetAwaiter().GetResult();
+      var result = new YTDLMediaLoader("https://www.youtube.com/watch?v=kJQP7kiw5Fk").GetID().GetAwaiter().GetResult();
       Assert.IsTrue(result.Success);
     }
 

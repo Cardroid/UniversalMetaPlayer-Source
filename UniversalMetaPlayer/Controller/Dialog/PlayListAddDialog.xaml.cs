@@ -60,35 +60,25 @@ namespace UMP.Controller.Dialog
       for (int i = 0; i < Invalid.Length; i++)
         text = text.Replace(Invalid[i].ToString(), "");
 
-      if (Checker.IsLocalPath(text))
+      if (!text.ToLower().StartsWith("http"))
       {
-        try
-        {
-          this.UserTextBox.Text = Path.GetFileName(text);
-        }
-        catch
-        {
-          this.MessageLabel.Content = "경로에 오류가 있습니다";
-          this.AcceptButton.IsEnabled = false;
-        }
-
         if (File.Exists(text))
         {
           SelectFilePaths = new string[] { text };
-          this.MessageLabel.Content += "파일이 확인되었습니다";
+          this.MessageLabel.Content = "파일이 확인되었습니다";
           this.AcceptButton.IsEnabled = true;
         }
         else
         {
           this.AcceptButton.IsEnabled = false;
-          this.MessageLabel.Content += "파일을 확인 할 수 없습니다";
+          this.MessageLabel.Content = "파일을 확인 할 수 없습니다";
         }
       }
       else
       {
         this.UserTextBox.Text = text;
         SelectFilePaths = new string[] { text };
-        this.MessageLabel.Content += "온라인 경로가 확인되었습니다";
+        this.MessageLabel.Content = "온라인 경로가 확인되었습니다";
         this.AcceptButton.IsEnabled = true;
       }
 
