@@ -26,12 +26,12 @@ namespace UMP.Core
     static GlobalProperty()
     {
       Log = new Log(typeof(GlobalProperty));
-      Log.Debug("메인 설정 초기화 시작.");
+      Log.Debug("메인 설정 초기화 시작");
       ThemeHelper.ThemeChangedEvent += ThemeHelper_ThemeChangedEvent;
       MainFontFamily = new FontFamily(new Uri("pack://application:,,,/"), "./Resources/Font/#NanumGothic");
       LogoImage = new BitmapImage(new Uri("pack://application:,,,/UniversalMetaPlayer;component/Resources/MainImage.png", UriKind.RelativeOrAbsolute));
       LogoNoteImage = new BitmapImage(new Uri("pack://application:,,,/UniversalMetaPlayer;component/Resources/NoteImage.png", UriKind.RelativeOrAbsolute));
-      Log.Info("메인 설정 초기화 완료.");
+      Log.Info("메인 설정 초기화 완료");
     }
 
     /// <summary>
@@ -41,7 +41,6 @@ namespace UMP.Core
     {
       Settings.Clear();
 
-      //CachePath = "Cache";
       //FileSavePath = "Save";
       //PrivateLogging = true;
 
@@ -61,11 +60,11 @@ namespace UMP.Core
       {
         var json = JsonConvert.SerializeObject(Settings);
         File.WriteAllText("UMP_Settings.json", json);
-        Log.Info("메인 설정 저장 완료.");
+        Log.Info("메인 설정 저장 완료");
       }
       catch (Exception e)
       {
-        Log.Error("메인 설정 저장 실패.", e);
+        Log.Error("메인 설정 저장 실패", e);
       }
     }
 
@@ -99,11 +98,11 @@ namespace UMP.Core
             : DefaultGlobalKeyboardHook)
             : DefaultGlobalKeyboardHook;
 
-          Log.Info("메인 설정 불러오기 성공.");
+          Log.Info("메인 설정 불러오기 완료");
         }
         catch (Exception e)
         {
-          Log.Error("메인 설정 불러오기 실패.", e);
+          Log.Error("메인 설정 불러오기 실패", e);
           SetDefault();
         }
 
@@ -113,18 +112,18 @@ namespace UMP.Core
           ThemeHelper.IsDarkMode = bool.Parse(Settings["IsDarkMode"]);
           ThemeHelper.ChangePrimaryColor((Color)ColorConverter.ConvertFromString(Settings["PrimaryColor"]));
           ThemeHelper.ChangeSecondaryColor((Color)ColorConverter.ConvertFromString(Settings["SecondaryColor"]));
-          Log.Info("메인 테마 불러오기 성공.");
+          Log.Info("메인 테마 불러오기 완료");
         }
         catch (Exception e)
         {
-          Log.Error("메인 테마 불러오기 실패.", e);
+          Log.Error("메인 테마 불러오기 실패", e);
           ThemeHelper.SetDefaultTheme();
         }
         OnPropertyChanged("Loaded");
       }
       else
       {
-        Log.Error("저장된 메인 설정 파일이 없습니다.");
+        Log.Error("저장된 메인 설정 파일이 없습니다");
       }
       NowLoading = false;
     }
@@ -136,24 +135,6 @@ namespace UMP.Core
     private static bool TryGetSetting(string key, out string value) => Settings.TryGetValue(key, out value);
 
     #region 일반
-    /// <summary>
-    /// 캐시저장 폴더 경로
-    /// </summary>
-    public static string CachePath
-    {
-      get => TryGetSetting("CachePath", out string value)
-        ? (!string.IsNullOrWhiteSpace(value)
-        ? value
-        : DefaultCachePath)
-        : DefaultCachePath;
-      set
-      {
-        SetSetting("CachePath", value);
-        OnPropertyChanged("CachePath");
-      }
-    }
-    private const string DefaultCachePath = "Cache";
-
     /// <summary>
     /// 캐시를 재외한 파일 저장 폴더 경로
     /// </summary>
@@ -301,6 +282,14 @@ namespace UMP.Core
     /// 로고 음표 이미지
     /// </summary>
     public static ImageSource LogoNoteImage { get; private set; }
+    /// <summary>
+    /// 라이브러리 폴더
+    /// </summary>
+    public const string LIBRARY_PATH = @"Core\Library";
+    /// <summary>
+    /// 캐시 폴더
+    /// </summary>
+    public const string CACHE_PATH = @"Core\Cache";
     #endregion
   }
 }

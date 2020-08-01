@@ -11,6 +11,7 @@ using UMP.Utility;
 
 using PlaylistsNET.Content;
 using PlaylistsNET.Models;
+using UMP.Core.Function;
 
 namespace UMP.Core.Model
 {
@@ -57,9 +58,9 @@ namespace UMP.Core.Model
     {
       EigenValue = RandomFunc.RandomString();
       PlayListName = name;
-      Log = new Log($"{typeof(PlayList)} - ({EigenValue})[{PlayListName}]");
+      Log = new Log($"{typeof(PlayList)} - ({EigenValue})");
     }
-    
+
     #region Save & Load
     /// <summary>
     /// 플레이리스트 정보 직렬화
@@ -67,21 +68,18 @@ namespace UMP.Core.Model
     /// <returns>직렬화된 플레이리스트 정보</returns>
     public async Task Save(string path = "")
     {
-      M3uPlaylist playlist = new M3uPlaylist();
-      playlist.IsExtended = true;
+      M3uPlaylist playlist = new M3uPlaylist { IsExtended = true };
 
       for (int i = 0; i < base.Count; i++)
       {
         var entry = new M3uPlaylistEntry()
         {
-          Album = base[i].AlbumTitle,
-          AlbumArtist = base[i].AlbumArtist,
+          Album = base[i].Tags[MediaInfoType.AlbumTitle],
+          AlbumArtist = base[i].Tags[MediaInfoType.AlbumArtist],
           Duration = base[i].Duration,
           Path = base[i].MediaLocation,
           Title = base[i].Title
         };
-
-        entry.CustomProperties.Add("MediaType", base[i].MediaType.ToString());
 
         playlist.PlaylistEntries.Add(entry);
       }
@@ -96,7 +94,7 @@ namespace UMP.Core.Model
 
       await File.WriteAllTextAsync(Path.Combine(savepath, $"{PlayListName}.m3u8"), m3uData, Encoding.UTF8);
 
-      Log.Info("플레이 리스트 저장 성공");
+      Log.Info("플레이 리스트 저장 완료");
     }
 
     /// <summary>
@@ -140,57 +138,56 @@ namespace UMP.Core.Model
         List<string> paths = playListData.GetTracksPaths();
         if (paths.Count < 0)
         {
-          Log.Error("플레이 리스트 로드 중 오류 발생.", new NullReferenceException("(PlayList Count < 0) is Impossible."), $"PlayList Name : [{playListData}]\nPath : [{path}]");
+          Log.Error("플레이 리스트 로드 중 오류 발생", new Exception("(PlayList Count < 0) is Impossible"), $"PlayList Name : [{playListData.FileName}]\nPath : [{path}]");
           return false;
         }
 
         for (int i = 0; i < paths.Count; i++)
         {
-          var mediatype = Checker.MediaTypeChecker(paths[i]);
-          if (mediatype != MediaType.NotSupport)
-            await Add(new Media(mediatype, paths[i]));
-          else
-            Log.Warn("지원하지 않는 타입의 미디어를 건너뛰었습니다.",$"Path : [{paths[i]}]");
+          var media = new MediaLoader(paths[i]);
+          var info = await media.GetInfomationAsync(false);
+          base.Add(info);
+          TotalDuration += info.Duration;
+          if (!info.LoadState)
+            Log.Warn($"플레이 리스트 로드 경고 IsLoaded : [{info.LoadState}]", $"Title : [{info.Title}]\nPath : [{paths[i]}]");
         }
 
         if (newPlaylist)
           EigenValue = RandomFunc.RandomString();
 
-        Log.Info("플레이 리스트 로드 성공.\nSuccessful loading PlayList from path", $"Path : [{path}]");
+        Log.Info($"플레이 리스트 로드 완료 MediaCount : [{paths.Count}]", $"Path : [{path}]");
         return true;
       }
       else
       {
-        Log.Error("플레이 리스트 로드 중 오류 발생.", new FileNotFoundException("File Not Found"), $"Path : [{path}]");
+        Log.Error("플레이 리스트 로드 중 오류 발생", new FileNotFoundException("File Not Found"), $"Path : [{path}]");
         return false;
       }
     }
     #endregion
 
-    public new void Add(MediaInfomation infomation)
+    public new async Task Add(MediaInfomation infomation)
     {
+      if (!infomation.LoadState)
+        infomation = await new MediaLoader(infomation.MediaLocation).GetInfomationAsync(false);
       this.TotalDuration += infomation.Duration;
       base.Add(infomation);
-      Log.Info($"[{infomation.Title}](을)를 플레이 리스트에 등록 성공.");
+      Log.Info($"플레이 리스트 항목 추가 완료 IsLoaded : [{infomation.LoadState}]", $"Title : [{infomation.Title}]\nFileName : {Path.GetFileName(infomation.MediaLocation)}");
     }
 
     /// <summary>
     /// 리스트 추가
     /// </summary>
-    /// <param name="media">추가할 미디어</param>
-    public async Task Add(Media media)
+    /// <param name="mediaPath">추가할 미디어의 위치</param>
+    public async Task Add(string mediaPath)
     {
-      Log.Debug("플레이 리스트 항목 추가 시도.", $"Title : [{media.GetInfomation().Title}]");
-      if ((int)media.LoadedCheck < 2)
-        await media.TryInfoPartialLoadAsync();
+      var loader = new MediaLoader(mediaPath);
+      Log.Debug("플레이 리스트 항목 추가 시도", $"Path : [{mediaPath}]");
 
-      var info = media.GetInfomation();
-      base.Add(info);
+      var info = await loader.GetInfomationAsync(false);
       TotalDuration += info.Duration;
-      if (media.LoadedCheck == LoadState.Fail)
-        Log.Warn("플레이 리스트 항목 추가 오류 발생.", $"Title : [{info.Title}]");
-      else
-        Log.Info("플레이 리스트 항목 추가 성공.", $"Title : [{info.Title}]");
+      base.Add(info);
+      Log.Info($"플레이 리스트 항목 추가 완료 IsLoaded : [{info.LoadState}]", $"Title : [{info.Title}]\nFileName : {Path.GetFileName(mediaPath)}");
     }
 
     /// <summary>
@@ -199,15 +196,15 @@ namespace UMP.Core.Model
     /// <param name="media">제거할 미디어 정보</param>
     public new void Remove(MediaInfomation mediaInfo)
     {
-      Log.Debug("플레이 리스트 항목 제거 시도.", $"Title : [{mediaInfo.Title}]");
+      Log.Debug("플레이 리스트 항목 제거 시도", $"Title : [{mediaInfo.Title}]");
       if (base.Contains(mediaInfo))
       {
         base.Remove(mediaInfo);
         TotalDuration -= mediaInfo.Duration;
-        Log.Info("플레이 리스트 항목 제거 성공.", $"Title : [{mediaInfo.Title}]");
+        Log.Info("플레이 리스트 항목 제거 완료", $"Title : [{mediaInfo.Title}]");
       }
       else
-        Log.Error("플레이 리스트 항목 제거 실패.", new NullReferenceException("Unlisted Media."), $"Title : [{mediaInfo.Title}]");
+        Log.Error("플레이 리스트 항목 제거 실패", new NullReferenceException("Unlisted Media"), $"Title : [{mediaInfo.Title}]");
     }
 
     /// <summary>
@@ -222,10 +219,10 @@ namespace UMP.Core.Model
         index--;
         base.RemoveAt(index);
         TotalDuration -= base[index].Duration;
-        Log.Info($"플레이 리스트 Index 항목 제거 성공.\nIndex : [{index}]");
+        Log.Info($"플레이 리스트 Index 항목 제거 완료.\nIndex : [{index}]");
       }
       else
-        Log.Error($"플레이 리스트 Index 항목 제거 실패.", new IndexOutOfRangeException($"Index Out Of Range.\nBase Count : [{base.Count}]\nIndex : [{index}]"));
+        Log.Error($"플레이 리스트 Index 항목 제거 실패", new IndexOutOfRangeException($"Index Out Of Range.\nBase Count : [{base.Count}]\nIndex : [{index}]"));
     }
 
     public new void Insert(int index, MediaInfomation item)
@@ -239,38 +236,34 @@ namespace UMP.Core.Model
 
     public async Task ReloadAtAsync(int index)
     {
-      if(base.Count > index && index >= 0)
+      if (base.Count > index && index >= 0)
       {
         var item = base[index];
         TotalDuration -= item.Duration;
-        var media = new Media(item.MediaType, item.MediaLocation);
-        await media.TryInfoPartialLoadAsync(false);
-        item = media.GetInfomation();
+        item = await new MediaLoader(item.MediaLocation).GetInfomationAsync(false);
         TotalDuration += item.Duration;
         base[index] = item;
-        Log.Info("플레이 리스트 리로드 성공.",$"Title : [{item.Title}]\nLocation : [{item.MediaLocation}]");
+        Log.Info($"플레이 리스트 리로드 완료 Index : [{index}] IsLoaded : [{item.LoadState}]", $"Title : [{item.Title}]\nLocation : [{item.MediaLocation}]");
       }
     }
 
     public async Task ReloadAsync(MediaInfomation item)
     {
       int index = base.IndexOf(item);
-      if(index >= 0)
+      if (index >= 0)
         await ReloadAtAsync(index);
     }
 
     public async Task ReloadAllAsync()
     {
-      for(int i = 0; i < base.Count; i++)
+      for (int i = 0; i < base.Count; i++)
       {
         var item = base[i];
         TotalDuration -= item.Duration;
-        var media = new Media(item.MediaType, item.MediaLocation);
-        await media.TryInfoPartialLoadAsync(false);
-        item = media.GetInfomation();
+        item = await new MediaLoader(item.MediaLocation).GetInfomationAsync(false);
         TotalDuration += item.Duration;
         base[i] = item;
-        Log.Info($"플레이 리스트 전체 리로드 성공.");
+        Log.Info("플레이 리스트 전체 리로드 완료");
       }
     }
 

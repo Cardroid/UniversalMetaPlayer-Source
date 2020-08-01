@@ -39,7 +39,7 @@ namespace UMP.Utility
         inputSource = new InputSource(keyboardReceiver);
       inputSource.Listen();
       Started = true;
-      log.Info("전역 키보드 후킹을 시작하였습니다.");
+      log.Info("전역 키보드 후킹을 시작하였습니다");
     }
 
     public static void Dispose()
@@ -51,7 +51,7 @@ namespace UMP.Utility
       inputSource?.Dispose();
       inputSource = null;
       Started = false;
-      log.Info("전역 키보드 후킹을 종료하였습니다.");
+      log.Info("전역 키보드 후킹을 종료하였습니다");
     }
 
     public static event KeyboardEventHandler KeyboardEvent

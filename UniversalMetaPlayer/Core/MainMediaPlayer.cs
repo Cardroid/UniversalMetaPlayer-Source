@@ -11,6 +11,8 @@ using NAudio.Wave;
 
 using Newtonsoft.Json;
 using System.Windows.Media.Imaging;
+using UMP.Core.Function;
+using System.IO;
 
 namespace UMP.Core
 {
@@ -22,13 +24,9 @@ namespace UMP.Core
       PlayList = new PlayList();
       MediaInfomation = new MediaInfomation()
       {
-        LoadedCheck = LoadState.NotTryed,
         Title = string.Empty,
         Duration = TimeSpan.Zero,
-        AlbumImage = null,
-        AlbumTitle = string.Empty,
-        AlbumArtist = string.Empty,
-        Lyrics = string.Empty
+        AlbumImage = null
       };
 
       PlayListPlayMediaIndex = -1;
@@ -49,7 +47,7 @@ namespace UMP.Core
           WavePlayer.Stop();
       };
 
-      Log.Debug("초기화 성공");
+      Log.Debug("초기화 완료");
     }
     private static Log Log { get; } = new Log(typeof(MainMediaPlayer));
 
@@ -245,27 +243,21 @@ namespace UMP.Core
     /// 미디어로 초기화하고 재생을 준비합니다
     /// </summary>
     /// <param name="media">재생할 미디어</param>
-    public static async Task<bool> Init(Media media)
+    public static async Task<bool> Init(IMediaLoader mediaLoader)
     {
-      if (media.GetInfomation().Title.ToLower().StartsWith(Media.MEDIA_INFO_NULL.ToLower()))
-      {
-        var errorInfo = media.GetInfomation();
-        Log.Error("미디어 정보에 오류가 있습니다.", new NullReferenceException("Null Processed Media"), $"Title : [{errorInfo.Title}]\nLocation : [{errorInfo.MediaLocation}]");
-        return false;
-      }
-
-      string path = await media.GetStreamPath();
-
-      if (string.IsNullOrWhiteSpace(path))
-      {
-        var errorInfo = media.GetInfomation();
-        Log.Error("미디어 위치정보가 누락 되었습니다.", new NullReferenceException("Stream Path is Null"), $"Title : [{errorInfo.Title}]\nLocation : [{errorInfo.MediaLocation}]");
-        return false;
-      }
-
       // 모든 정보로드
-      await media.TryInfoAllLoadAsync();
-      var info = media.GetInfomation();
+      var info = await mediaLoader.GetInfomationAsync(true);
+      if (!info.LoadState)
+        Log.Warn("미디어 정보에 오류가 있습니다", new NullReferenceException("Null Processed Media"), $"Title : [{info.Title}]\nLocation : [{info.MediaLocation}]");
+
+      GenericResult<string> streamResult = await mediaLoader.GetStreamPathAsync();
+      if (!streamResult)
+      {
+        Log.Error("미디어 스트림 로드에 실패했습니다", new FileLoadException("Media Stream Path is Null"), $"Title : [{info.Title}]\nLocation : [{info.MediaLocation}]");
+        return false;
+      }
+
+      string path = streamResult.Result;
 
       Stop();
       if (AudioFile != null)
@@ -280,7 +272,7 @@ namespace UMP.Core
       }
       catch (Exception e)
       {
-        Log.Error("미디어 파일 로드중 오류가 발생했습니다.", e);
+        Log.Error("미디어 파일 로드중 오류가 발생했습니다", e);
         return false;
       }
       MediaInfomation = info;
@@ -293,7 +285,7 @@ namespace UMP.Core
       WavePlayer.Volume = _Volume;
       WavePlayer.Init(AudioFile);
 
-      Log.Debug("메인 미디어 플레이어에 로드 성공.", $"Info : [{(string.IsNullOrWhiteSpace(media.GetYouTubeVideoID()) ? System.IO.Path.GetFileNameWithoutExtension(info.MediaLocation) : $"\"{media.GetYouTubeVideoID()}\" {info.Title}")}]");
+      Log.Debug("미디어 재생 준비 완료", $"Info : [{(mediaLoader.Online ? $"ID : [{mediaLoader.GetID()}]" : $"FileName : [{Path.GetFileName(info.MediaLocation)}]")}]\nTitle : [{info.Title}]");
 
       PropertyChangedEvent?.Invoke("MainPlayerInitialized");
       return true;
@@ -364,9 +356,9 @@ namespace UMP.Core
           if (index >= PlayList.Count)
             index = 0;
 
-          if ((int)PlayList[index].LoadedCheck >= 2)
+          if (PlayList[index].LoadState)
           {
-            if (await Init(new Media(PlayList[index].MediaType, PlayList[index].MediaLocation)))
+            if (await Init(new MediaLoader(PlayList[index])))
             {
               PlayListEigenValue = PlayList.EigenValue;
               PlayListPlayMediaIndex = index;
@@ -415,9 +407,9 @@ namespace UMP.Core
           if (index < 0)
             index = PlayList.Count - 1;
 
-          if ((int)PlayList[index].LoadedCheck >= 2)
+          if (PlayList[index].LoadState)
           {
-            if (await Init(new Media(PlayList[index].MediaType, PlayList[index].MediaLocation)))
+            if (await Init(new MediaLoader(PlayList[index])))
             {
               PlayListEigenValue = PlayList.EigenValue;
               PlayListPlayMediaIndex = index;

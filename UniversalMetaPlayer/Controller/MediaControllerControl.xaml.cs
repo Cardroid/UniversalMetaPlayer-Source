@@ -96,7 +96,7 @@ namespace UMP.Controller
       this.Loaded += (s, e) =>
       {
         Log log = new Log(typeof(MediaControllerControl));
-        log.Debug("초기화 성공");
+        log.Debug("초기화 완료");
       };
     }
 

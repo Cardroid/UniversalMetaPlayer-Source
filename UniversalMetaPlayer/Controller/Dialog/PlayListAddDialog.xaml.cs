@@ -29,24 +29,24 @@ namespace UMP.Controller.Dialog
     {
       InitializeComponent();
 
-      Log = new Log(typeof(PlayListAddDialog));
-
       this.AcceptButton.IsEnabled = false;
       this.UserTextBox.TextChanged += UserTextBox_TextChanged;
+      this.AcceptButton.Click += AcceptButton_Click;
+      this.CancelButton.Click += CancelButton_Click;
       this.OpenFileDialogButton.Click += OpenFileDialogButton_Click;
-      this.MouseDown += (s, e) => { this.UserTextBox.Focus(); };
+      this.Loaded += (s, e) => { this.UserTextBox.Focus(); };
       this.UserTextBox.Focus();
     }
-    private Log Log;
 
     private bool IsWorkDelay = false;
     private readonly string Invalid = $"{new string(Path.GetInvalidPathChars())}\"";
+    private string[] SelectFilePaths { get; set; }
 
     private void UserTextBox_TextChanged(object sender, TextChangedEventArgs e)
     {
       if (string.IsNullOrWhiteSpace(this.UserTextBox.Text))
       {
-        this.MessageLabel.Content = "미디어의 위치";
+        this.MessageLabel.Content = "미디어의 위치를 입력하세요";
         return;
       }
 
@@ -59,67 +59,89 @@ namespace UMP.Controller.Dialog
       string text = this.UserTextBox.Text;
       for (int i = 0; i < Invalid.Length; i++)
         text = text.Replace(Invalid[i].ToString(), "");
-      this.UserTextBox.Text = text;
 
-      var result = Checker.MediaTypeChecker(text);
-      if (result != MediaType.NotSupport)
+      if (Checker.IsLocalPath(text))
       {
-        this.AcceptButton.IsEnabled = true;
-        this.MessageLabel.Content = $"미디어 타입 : {result}";
+        try
+        {
+          this.UserTextBox.Text = Path.GetFileName(text);
+        }
+        catch
+        {
+          this.MessageLabel.Content = "경로에 오류가 있습니다";
+          this.AcceptButton.IsEnabled = false;
+        }
+
+        if (File.Exists(text))
+        {
+          SelectFilePaths = new string[] { text };
+          this.MessageLabel.Content += "파일이 확인되었습니다";
+          this.AcceptButton.IsEnabled = true;
+        }
+        else
+        {
+          this.AcceptButton.IsEnabled = false;
+          this.MessageLabel.Content += "파일을 확인 할 수 없습니다";
+        }
       }
       else
       {
-        this.AcceptButton.IsEnabled = false;
-        this.MessageLabel.Content = "지원하지 않는 미디어 타입입니다.";
+        this.UserTextBox.Text = text;
+        SelectFilePaths = new string[] { text };
+        this.MessageLabel.Content += "온라인 경로가 확인되었습니다";
+        this.AcceptButton.IsEnabled = true;
       }
 
       this.ProgressRing.Visibility = Visibility.Collapsed;
       IsWorkDelay = false;
     }
 
-    private async void OpenFileDialogButton_Click(object sender, RoutedEventArgs e)
+    private void OpenFileDialogButton_Click(object sender, RoutedEventArgs e)
     {
       string defaultPath = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
       if (!Directory.Exists(defaultPath))
         defaultPath = string.Empty;
 
-      var filepath = DialogHelper.OpenFileDialog("로컬 미디어 파일열기", "Music File | *.mp3;*.flac", true, defaultPath);
-      if (filepath != null)
+      var filePaths = DialogHelper.OpenFileDialog("로컬 미디어 파일열기", "Music File | *.mp3;*.flac", true, defaultPath);
+      if(filePaths != null)
       {
-        if (filepath.Length == 1)
-          this.UserTextBox.Text = filepath[0];
-        else
-        {
-          Close?.Invoke();
-          string errorFilePath = string.Empty;
-          MediaType type;
-          int errorCount = 0;
+        this.ProgressRing.Visibility = Visibility.Visible;
 
-          for (int i = 0; i < filepath.Length; i++)
-          {
-            type = Checker.MediaTypeChecker(filepath[i]);
-            if (type != MediaType.NotSupport)
-              await MainMediaPlayer.PlayList.Add(new Media(type, filepath[i]));
-            else
-            {
-              errorFilePath += $"Count : [{i}] Path : [{filepath[i]}]\n";
-              errorCount++;
-            }
-          }
-          if (errorCount > 0)
-            Log.Warn($"미디어 추가 완료\n하나 이상의 오류가 있습니다.\nPath Count : [{filepath.Length}]\nError Count : [{errorCount}]", $"-----Path-----\n{errorFilePath}--------------");
-          else
-            Log.Info($"미디어 추가 완료\nPath Count : [{filepath.Length}]");
-        }
+        // 텍스트 입력을 비활성화
+        this.UserTextBox.TextChanged -= UserTextBox_TextChanged;
+        this.UserTextBox.Focusable = false;
+        this.UserTextBox.IsHitTestVisible = false;
+        this.UserTextBox.IsReadOnly = true;
+        this.UserTextBox.IsReadOnlyCaretVisible = false;
+
+        SelectFilePaths = filePaths;
+        this.UserTextBox.Text = $"[{filePaths.Length}] 개의 파일이 확인되었습니다";
+        this.ProgressRing.Visibility = Visibility.Collapsed;
       }
     }
 
-    public Dictionary<string, string> GetResult()
+    private async void AcceptButton_Click(object sender, RoutedEventArgs e)
     {
-      var result = new Dictionary<string, string>();
+      this.ProgressRing.Visibility = Visibility.Visible;
+      this.UserTextBox.IsEnabled = false;
+      this.AcceptButton.IsEnabled = false;
+      this.OpenFileDialogButton.IsEnabled = false;
+      this.CancelButton.IsEnabled = false;
+      if (SelectFilePaths != null)
+      {
+        for (int i = 0; i < SelectFilePaths.Length; i++)
+        {
+          this.MessageLabel.Content = $"{i + 1}번째 추가 중...";
+          await MainMediaPlayer.PlayList.Add(SelectFilePaths[i]);
+        }
+      }
+      this.ProgressRing.Visibility = Visibility.Collapsed;
+      Close.Invoke();
+    }
 
-      result.Add("MediaLocation", this.UserTextBox.Text);
-      return result;
+    private void CancelButton_Click(object sender, RoutedEventArgs e)
+    {
+      Close.Invoke();
     }
   }
 }

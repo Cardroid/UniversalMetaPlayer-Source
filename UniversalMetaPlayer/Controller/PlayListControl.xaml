@@ -30,7 +30,7 @@
     <Grid>
         <materialDesign:DialogHost
             x:Name="PlayListDialog" />
-        
+
         <GroupBox
             x:Name="PlayListGroupBox"
             Style="{StaticResource MaterialDesignGroupBox}">

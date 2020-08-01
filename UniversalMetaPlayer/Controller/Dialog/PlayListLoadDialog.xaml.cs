@@ -83,16 +83,16 @@ namespace UMP.Controller.Dialog
         {
           case ".m3u8":
             this.AcceptButton.IsEnabled = true;
-            this.MessageLabel.Content = $"[{result.ToLower()}] 타입이 확인 되었습니다.";
+            this.MessageLabel.Content = $"[{result.ToLower()}] 타입이 확인 되었습니다";
             break;
           default:
             this.AcceptButton.IsEnabled = false;
-            this.MessageLabel.Content = "지원하지 않는 파일 입니다.";
+            this.MessageLabel.Content = "지원하지 않는 파일 입니다";
             break;
         }
       }
       else
-        this.MessageLabel.Content = "존재하지 않는 파일 입니다.";
+        this.MessageLabel.Content = "존재하지 않는 파일 입니다";
 
       this.ProgressRing.Visibility = Visibility.Collapsed;
       IsWorkDelay = false;

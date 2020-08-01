@@ -19,6 +19,7 @@ using UMP.Utility;
 
 using MaterialDesignThemes.Wpf;
 using GongSolutions.Wpf.DragDrop.Utilities;
+using UMP.Core.Function;
 
 namespace UMP.Controller
 {
@@ -72,7 +73,7 @@ namespace UMP.Controller
       this.PlayListPopupBox.MouseLeave += (_, e) => { UnselectActive = true; };
 
       // 로그 설정
-      Log.Debug("초기화 성공");
+      Log.Debug("초기화 완료");
     }
 
     private void PlayListControl_KeyDown(object sender, KeyEventArgs e)
@@ -103,19 +104,8 @@ namespace UMP.Controller
             EnableControl(false);
             var addView = new PlayListAddDialog();
             addView.Close += () => { this.PlayListDialog.IsOpen = false; };
-
-            var addResultObj = await this.PlayListDialog.ShowDialog(addView);
-            if (addResultObj is bool ddResult && ddResult)
-            {
-              if (addView.GetResult().TryGetValue("MediaLocation", out string addValue))
-              {
-                var mediatype = Checker.MediaTypeChecker(addValue);
-                if (mediatype != Core.Model.MediaType.NotSupport)
-                  await ViewModel.PlayList.Add(new Media(mediatype, addValue));
-                else
-                  Log.Error("지원하지 않는 미디어 타입입니다.", $"Path : [{addValue}]");
-              }
-            }
+            await this.PlayListDialog.ShowDialog(addView);
+            this.PlayListDialog = null;
             EnableControl(true);
             break;
           case PlayListControlType.Save:
@@ -204,16 +194,16 @@ namespace UMP.Controller
     {
       if (0 <= ViewModel.PlayListSelectIndex && ViewModel.PlayList.Count > ViewModel.PlayListSelectIndex)
       {
-        if (ViewModel.PlayList[ViewModel.PlayListSelectIndex].LoadedCheck == LoadState.Loaded)
+        if (ViewModel.PlayList[ViewModel.PlayListSelectIndex].LoadState)
         {
           MainMediaPlayer.PlayListPlayMediaIndex = ViewModel.PlayListSelectIndex;
-          if (await MainMediaPlayer.Init(new Media(ViewModel.PlayList[ViewModel.PlayListSelectIndex].MediaType, ViewModel.PlayList[ViewModel.PlayListSelectIndex].MediaLocation)))
+          if (await MainMediaPlayer.Init(new MediaLoader(ViewModel.PlayList[ViewModel.PlayListSelectIndex])))
             MainMediaPlayer.PlayListEigenValue = ViewModel.PlayList.EigenValue;
         }
         else
         {
           var info = ViewModel.PlayList[ViewModel.PlayListSelectIndex];
-          Log.Error("미디어 정보가 로드되지 않았거나 로드에 실패 했습니다.", $"<{info.MediaType}>[{info.Title}]");
+          Log.Error("미디어 정보가 로드되지 않았거나 로드에 실패 했습니다", $"MediaLocation : [{info.MediaLocation}]\nTitle : [{info.Title}]");
         }
       }
     }

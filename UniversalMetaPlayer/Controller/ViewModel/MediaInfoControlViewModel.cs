@@ -42,16 +42,16 @@ namespace UMP.Controller.ViewModel
   #region 앨범 제목
     public string AlbumTitle =>
       MainMediaPlayer.MediaLoadedCheck
-        ? (!string.IsNullOrWhiteSpace(MainMediaPlayer.MediaInfomation.AlbumTitle)
-        ? MainMediaPlayer.MediaInfomation.AlbumTitle : INFO_NULL)
+        ? (!string.IsNullOrWhiteSpace(MainMediaPlayer.MediaInfomation.Tags[MediaInfoType.AlbumTitle])
+        ? MainMediaPlayer.MediaInfomation.Tags[MediaInfoType.AlbumTitle] : INFO_NULL)
         : "Error";
   #endregion
 
   #region 아티스트 이름
     public string AlbumArtist =>
       MainMediaPlayer.MediaLoadedCheck
-        ? (!string.IsNullOrWhiteSpace(MainMediaPlayer.MediaInfomation.AlbumArtist)
-        ? MainMediaPlayer.MediaInfomation.AlbumArtist : INFO_NULL)
+        ? (!string.IsNullOrWhiteSpace(MainMediaPlayer.MediaInfomation.Tags[MediaInfoType.AlbumArtist])
+        ? MainMediaPlayer.MediaInfomation.Tags[MediaInfoType.AlbumArtist] : INFO_NULL)
         : "Error";
   #endregion
 

@@ -5,7 +5,6 @@ using System.Net;
 using System.Text;
 
 using UMP.Core.Model;
-using YoutubeExplode.Videos;
 
 namespace UMP.Utility
 {
@@ -35,36 +34,20 @@ namespace UMP.Utility
       if (!Directory.Exists(path))
       {
         Directory.CreateDirectory(path);
-        App.MainLog.Info("폴더가 생성되었습니다.", $"Path : [{path}]");
+        App.MainLog.Info("폴더가 생성되었습니다", $"Path : [{path}]");
       }
     }
 
-    /// <summary>
-    /// 미디어 타입이 판별기
-    /// </summary>
-    /// <param name="path">체크할 미디어의 위치</param>
-    /// <returns>없을 시 Null</returns>
-    public static MediaType MediaTypeChecker(string path)
+    public static bool IsLocalPath(string path) => new Uri(path).IsFile;
+
+    public static bool CheckYTDL() => File.Exists(Path.Combine("Core", "Library", "YTDL", "youtube-dl.exe"));
+    public static bool CheckFFmpeg()
     {
-      if (File.Exists(path))
-      {
-        string ext = Path.GetExtension(path).ToLower();
-        string[] extArray = { ".mp3", ".flac" };
-
-        for(int i = 0; i < extArray.Length; i++)
-        {
-          if (extArray[i].Equals(ext))
-            break;
-          if (i == extArray.Length - 1)
-            return MediaType.NotSupport;
-        }
-
-        return MediaType.Local;
-      }
-      else if (VideoId.TryParse(path).HasValue)
-        return MediaType.Youtube;
-      else
-        return MediaType.NotSupport;
+      bool result = false;
+      result &= File.Exists(Path.Combine("Core", "Library", "FFmpeg", "ffmpeg.exe"));
+      result &= File.Exists(Path.Combine("Core", "Library", "FFmpeg", "ffplay.exe"));
+      result &= File.Exists(Path.Combine("Core", "Library", "FFmpeg", "ffprobe.exe"));
+      return result;
     }
   }
 }

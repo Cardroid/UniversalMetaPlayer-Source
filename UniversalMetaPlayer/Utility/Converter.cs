@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -76,24 +77,50 @@ namespace UMP.Utility
     }
 
     /// <summary>
-    /// 오디오 파일을 Mp3파일로 변환합니다.
+    /// ZIP 파일 추출하기
     /// </summary>
-    /// <param name="sourceFilename">소스가 될 파일 경로</param>
-    /// <param name="targetFilename">타겟파일 경로</param>
-    /// <returns>성공하면 true를 반환</returns>
-    public static async Task<bool> ConvertToMP3Async(string sourceFilename, string targetFilename)
+    /// <param name="zipFilePath">ZIP 파일 경로</param>
+    /// <param name="targetFilePath">백업 폴더</param>
+    public static async Task<bool> ExtractZIPFileAsync(string zipFilePath, string targetFilePath)
     {
-      if (File.Exists(sourceFilename))
+      bool result = false;
+      Log log = new Log($"{typeof(Converter)} <ZIP_Extractor>");
+      await Task.Run(() =>
       {
-        using (var reader = new NAudio.Wave.AudioFileReader(sourceFilename))
-        using (var writer = new NAudio.Lame.LameMP3FileWriter(targetFilename, reader.WaveFormat, NAudio.Lame.LAMEPreset.STANDARD))
+        if (File.Exists(zipFilePath))
         {
-          await reader.CopyToAsync(writer);
+          try
+          {
+            using (ZipArchive zipArchive = ZipFile.OpenRead(zipFilePath))
+            {
+              // 압축 풀 폴더에 이미 존재하면 삭제
+              if (Directory.Exists(Path.Combine(targetFilePath, zipArchive.Entries[0].FullName)))
+                Directory.Delete(Path.Combine(targetFilePath, zipArchive.Entries[0].FullName), true);
+
+              foreach (ZipArchiveEntry zipArchiveEntry in zipArchive.Entries)
+              {
+                string folderPath = Path.GetDirectoryName(Path.Combine(targetFilePath, zipArchiveEntry.FullName));
+
+                if (!Directory.Exists(folderPath))
+                  Directory.CreateDirectory(folderPath);
+
+                // 경로명은 제외
+                if (!string.IsNullOrWhiteSpace(zipArchiveEntry.FullName) && !zipArchiveEntry.FullName.EndsWith("\\") && !zipArchiveEntry.FullName.EndsWith("/"))
+                  zipArchiveEntry.ExtractToFile(Path.Combine(targetFilePath, zipArchiveEntry.FullName));
+              }
+            }
+            result = true;
+          }
+          catch (Exception e)
+          {
+            log.Error("압축 풀기 오류 발생", e, $"Zip Path : [{zipFilePath}]\nTarget Path : [{targetFilePath}]");
+            result = false;
+          }
         }
-        return true;
-      }
-      else
-        return false;
+        else
+          result = false;
+      });
+      return result;
     }
   }
 }

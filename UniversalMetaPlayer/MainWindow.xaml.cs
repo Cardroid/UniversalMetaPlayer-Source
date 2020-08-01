@@ -27,7 +27,8 @@ namespace UMP
   {
     public MainWindow()
     {
-      App.MainLog.Info("############### Start application ###############");
+      App.MainLog.Info("############### Start application ###############", 
+        $"Start Path : [{AppDomain.CurrentDomain.BaseDirectory}]\nTask Path : [{Environment.CurrentDirectory}]");
       GlobalProperty.Load();
       InitializeComponent();
       this.KeyDown += (_, e) => GlobalEvent.KeyDownEventInvoke(e);
