@@ -51,20 +51,38 @@ namespace UMP.Controller
       this.PlayListResetButton.Click += PlayListControlButton_Click;
 
       // 플레이 리스트 이름 변경
-      this.PlayListName.MouseDoubleClick += (_, e) =>
+      this.PlayListNameEditButton.Click += (_, e) =>
       {
-        if (e.LeftButton == MouseButtonState.Pressed)
+        if (this.PlayListName.IsReadOnly)
         {
+          this.PlayListName.Focusable = true;
           this.PlayListName.IsReadOnly = false;
+          this.PlayListName.IsReadOnlyCaretVisible = true;
           GlobalEvent.KeyDownEventHandled = true;
+          this.PlayListName.Focus();
+          this.PlayListName.CaretIndex = this.PlayListName.Text.Length;
+          this.PlayListNameEditButton.Content = new PackIcon() { Kind = PackIconKind.EditOff, Width = 20, Height = 20 };
+        }
+        else
+        {
+          this.PlayListName.Focusable = false;
+          this.PlayListName.IsReadOnly = true;
+          this.PlayListName.IsReadOnlyCaretVisible = false;
+          GlobalEvent.KeyDownEventHandled = false;
+          this.PlayListNameEditButton.Content = new PackIcon() { Kind = PackIconKind.Edit, Width = 20, Height = 20 };
         }
       };
-      this.PlayListName.KeyDown += (_, e) => { if (e.Key == Key.Enter) this.Focus(); };
-      this.PlayListName.LostFocus += (_, e) =>
-      {
-        this.PlayListName.IsReadOnly = true;
-        GlobalEvent.KeyDownEventHandled = false;
-      };
+      this.PlayListName.KeyDown += (_, e) =>
+       {
+         if (!this.PlayListName.IsReadOnly && e.Key == Key.Enter)
+         {
+           this.PlayListName.Focusable = false;
+           this.PlayListName.IsReadOnly = true;
+           this.PlayListName.IsReadOnlyCaretVisible = false;
+           GlobalEvent.KeyDownEventHandled = false;
+           this.PlayListNameEditButton.Content = new PackIcon() { Kind = PackIconKind.Edit, Width = 20, Height = 20 };
+         }
+       };
 
       this.PlayList.MouseDoubleClick += PlayList_MouseDoubleClick;
       this.PlayListGroupBox.PreviewMouseDown += PlayList_MouseDownUnSelect;
@@ -156,9 +174,15 @@ namespace UMP.Controller
     private void EnableControl(bool isEnable)
     {
       if (isEnable)
+      {
+        GlobalEvent.KeyDownEventHandled = false;
         this.PlayListGroupBox.IsEnabled = true;
+      }
       else
+      {
+        GlobalEvent.KeyDownEventHandled = true;
         this.PlayListGroupBox.IsEnabled = false;
+      }
     }
 
     /// <summary>

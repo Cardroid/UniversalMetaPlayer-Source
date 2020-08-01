@@ -88,8 +88,7 @@ namespace UMP.Core.Model
       string m3uData = PlaylistToTextHelper.ToText(playlist);
 
       var savepath = Path.Combine(!string.IsNullOrWhiteSpace(path) ? path : Path.Combine(GlobalProperty.FileSavePath, "PlayList"));
-      if (!Directory.Exists(savepath))
-        Directory.CreateDirectory(savepath);
+      Checker.DirectoryCheck(savepath);
       playlist.Path = savepath;
 
       await File.WriteAllTextAsync(Path.Combine(savepath, $"{PlayListName}.m3u8"), m3uData, Encoding.UTF8);

@@ -36,21 +36,36 @@
             Style="{StaticResource MaterialDesignGroupBox}">
             <GroupBox.Header>
                 <Grid>
-                    
+
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition
+                            Width="Auto" />
                         <ColumnDefinition
                             Width="*" />
                         <ColumnDefinition
                             Width="Auto" />
                     </Grid.ColumnDefinitions>
                     
+                    <Button
+                        x:Name="PlayListNameEditButton"
+                        Style="{StaticResource MaterialDesignFloatingActionButton}"
+                        Content="{materialDesign:PackIcon Kind=Edit, Size=20}"
+                        Margin="-5,0,5,0"
+                        ToolTip="이름바꾸기"
+                        Focusable="False"
+                        Cursor="Hand"
+                        Width="30"
+                        Height="30"/>
                     <TextBox
                         x:Name="PlayListName"
                         Foreground="{DynamicResource MaterialDesignPaper}"
+                        CaretBrush="{DynamicResource MaterialDesignBody}"
                         Text="{Binding PlayListName}"
+                        Focusable="False"
                         IsReadOnly="True"
+                        IsReadOnlyCaretVisible="False"
                         FontSize="16"
-                        Grid.Column="0" />
+                        Grid.Column="1" />
                     
                     <materialDesign:PopupBox
                         x:Name="PlayListPopupBox"
@@ -65,7 +80,7 @@
                         ToolTip="추가기능"
                         Width="20"
                         Height="20"
-                        Grid.Column="1">
+                        Grid.Column="2">
                         
                         <materialDesign:PopupBox.ToggleContent>
                             <materialDesign:PackIcon
