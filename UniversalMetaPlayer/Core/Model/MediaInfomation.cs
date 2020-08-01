@@ -14,7 +14,7 @@ using System.Net;
 namespace UMP.Core.Model
 {
   /// <summary>
-  /// 미디어 정보 인터페이스
+  /// 미디어 정보 구조체
   /// </summary>
   public struct MediaInfomation
   {

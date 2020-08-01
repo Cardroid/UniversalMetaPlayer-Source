@@ -17,7 +17,6 @@ using MaterialDesignColors;
 using MaterialDesignColors.ColorManipulation;
 
 using UMP.Core;
-using UMP.Test;
 using UMP.Utility;
 using UMP.Utility.Effect;
 
@@ -69,7 +68,7 @@ namespace UMP
       // 디버그 전용 코드
       // 오류시 제거 요망
 #if DEBUG
-      PlayTest test = new PlayTest();
+      UMP.Test.PlayTest test = new UMP.Test.PlayTest();
       test.StartTest();
 #endif
 

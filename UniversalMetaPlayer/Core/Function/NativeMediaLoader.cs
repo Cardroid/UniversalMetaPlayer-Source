@@ -194,7 +194,6 @@ namespace UMP.Core.Function
       }
     }
 
-
     /// <summary>
     /// 온라인에서 유튜브 스트림 다운로드를 시도합니다.
     /// </summary>
