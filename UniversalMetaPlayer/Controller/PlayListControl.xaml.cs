@@ -103,7 +103,7 @@ namespace UMP.Controller
           {
             var deleteItemList = this.PlayList.SelectedItems;
             for (int i = deleteItemList.Count - 1; i >= 0; i--)
-              ViewModel.PlayList.Remove((MediaInfomation)deleteItemList[i]);
+              ViewModel.PlayList.Remove((MediaInformation)deleteItemList[i]);
           }
           break;
       }
@@ -156,7 +156,7 @@ namespace UMP.Controller
             if (selectedList != null)
             {
               for (int i = selectedList.Count - 1; i >= 0; i--)
-                await ViewModel.PlayList.ReloadAsync((MediaInfomation)selectedList[i]);
+                await ViewModel.PlayList.ReloadAsync((MediaInformation)selectedList[i]);
             }
             else
               await ViewModel.PlayList.ReloadAllAsync();

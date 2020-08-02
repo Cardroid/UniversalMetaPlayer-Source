@@ -110,7 +110,7 @@ namespace UMP.Controller.ViewModel
     // 재생길이 (단일 파일)
     public TimeSpan DurationTime => 
       MainMediaPlayer.MediaLoadedCheck
-      ? MainMediaPlayer.MediaInfomation.Duration 
+      ? MainMediaPlayer.MediaInformation.Duration 
       : TimeSpan.Zero;
     // 전채 재생길이 (복수 파일)
     public TimeSpan TotalDuration => 

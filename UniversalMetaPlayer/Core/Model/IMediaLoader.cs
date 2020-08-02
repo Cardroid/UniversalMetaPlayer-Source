@@ -9,8 +9,8 @@ namespace UMP.Core.Model
     /// 미디어 정보를 가져옵니다.
     /// </summary>
     /// <param name="fullLoad">모든 정보 로드 여부</param>
-    /// <returns>로드된 <see cref="MediaInfomation"/></returns>
-    public abstract Task<MediaInfomation> GetInfomationAsync(bool fullLoad);
+    /// <returns>로드된 <see cref="MediaInformation"/></returns>
+    public abstract Task<MediaInformation> GetInformationAsync(bool fullLoad);
     /// <summary>
     /// 미디어 스트림 경로를 가져옵니다.
     /// </summary>

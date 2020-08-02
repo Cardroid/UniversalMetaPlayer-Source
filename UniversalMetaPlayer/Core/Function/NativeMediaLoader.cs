@@ -20,14 +20,14 @@ namespace UMP.Core.Function
     /// <summary>
     /// 정보 구조체
     /// </summary>
-    private MediaInfomation Infomation;
+    private MediaInformation Information;
     public bool Online { get; private set; }
 
     public NativeMediaLoader(string mediaLocation)
     {
       Log = new Log($"{typeof(NativeMediaLoader)}");
 
-      Infomation = new MediaInfomation()
+      Information = new MediaInformation()
       {
         Title = string.Empty,
         Duration = TimeSpan.Zero,
@@ -37,29 +37,29 @@ namespace UMP.Core.Function
 
       if (!string.IsNullOrWhiteSpace(mediaLocation))
       {
-        Infomation.MediaLocation = mediaLocation;
+        Information.MediaLocation = mediaLocation;
         if (Checker.IsLocalPath(mediaLocation) && File.Exists(mediaLocation))
         {
           Online = false;
-          Infomation.MediaStreamPath = Infomation.MediaLocation;
+          Information.MediaStreamPath = Information.MediaLocation;
         }
         else
           Online = true;
       }
     }
-    public NativeMediaLoader(MediaInfomation mediainfo)
+    public NativeMediaLoader(MediaInformation mediainfo)
     {
       Log = new Log($"{typeof(NativeMediaLoader)}");
 
-      Infomation = mediainfo;
+      Information = mediainfo;
 
       if (!string.IsNullOrWhiteSpace(mediainfo.MediaLocation))
       {
-        Infomation.MediaLocation = mediainfo.MediaLocation;
+        Information.MediaLocation = mediainfo.MediaLocation;
         if (Checker.IsLocalPath(mediainfo.MediaLocation) && File.Exists(mediainfo.MediaLocation))
         {
           Online = false;
-          Infomation.MediaStreamPath = Infomation.MediaLocation;
+          Information.MediaStreamPath = Information.MediaLocation;
         }
         else
           Online = true;
@@ -75,7 +75,7 @@ namespace UMP.Core.Function
       }
 
       VideoId? id = null;
-      await Task.Run(() => { id = VideoId.TryParse(Infomation.MediaLocation); });
+      await Task.Run(() => { id = VideoId.TryParse(Information.MediaLocation); });
 
       if (id.HasValue)
         return new GenericResult<string>(true, id.Value.ToString());
@@ -83,22 +83,22 @@ namespace UMP.Core.Function
         return new GenericResult<string>(false);
     }
 
-    public async Task<MediaInfomation> GetInfomationAsync(bool fullLoad)
+    public async Task<MediaInformation> GetInformationAsync(bool fullLoad)
     {
       if (Online)
       {
         var result = await GetYouTubeMediaAsync(true);
         if (result)
-          Infomation.MediaStreamPath = result.Result;
+          Information.MediaStreamPath = result.Result;
       }
 
-      var resultInfo = await LocalMediaLoader.TryLoadInfoAsync(Infomation, fullLoad, Log);
+      var resultInfo = await LocalMediaLoader.TryLoadInfoAsync(Information, fullLoad, Log);
       if (resultInfo)
-        Infomation = resultInfo.Result;
+        Information = resultInfo.Result;
       else
         LoadFailProcess();
 
-      return Infomation;
+      return Information;
     }
 
     public async Task<GenericResult<string>> GetStreamPathAsync(bool useCache)
@@ -107,13 +107,13 @@ namespace UMP.Core.Function
       {
         var result = await GetYouTubeMediaAsync(useCache);
         if (result)
-          Infomation.MediaStreamPath = result.Result;
+          Information.MediaStreamPath = result.Result;
         return result;
       }
       else
       {
-        if (File.Exists(Infomation.MediaStreamPath))
-          return new GenericResult<string>(true, Infomation.MediaStreamPath);
+        if (File.Exists(Information.MediaStreamPath))
+          return new GenericResult<string>(true, Information.MediaStreamPath);
         else
           return new GenericResult<string>(false);
       }
@@ -166,10 +166,10 @@ namespace UMP.Core.Function
             throw new FileNotFoundException($"File is Null\nSourceFile : [{streampath}]\nTargetFile : [{mp3FilePath}]");
           File.Delete(streampath);
           if (File.Exists(mp3FilePath))
-            Infomation.MediaStreamPath = mp3FilePath;
+            Information.MediaStreamPath = mp3FilePath;
           else
           {
-            Log.Error("미디어 스트림 Mp3 변환 오류",new FileNotFoundException("변환을 완료 했지만, 파일을 찾을 수 없습니다."), $"Mp3Path : [{mp3FilePath}]\nStreamPath : [{streampath}]\nMediaLocation : [{Infomation.MediaLocation}]");
+            Log.Error("미디어 스트림 Mp3 변환 오류",new FileNotFoundException("변환을 완료 했지만, 파일을 찾을 수 없습니다."), $"Mp3Path : [{mp3FilePath}]\nStreamPath : [{streampath}]\nMediaLocation : [{Information.MediaLocation}]");
             return new GenericResult<string>(false);
           }
           Log.Info("미디어 스트림 Mp3 변환 완료");
@@ -182,7 +182,7 @@ namespace UMP.Core.Function
         }
         catch (Exception e)
         {
-          Log.Error("미디어 스트림 다운로드 & 변환 실패", e, $"MediaLocation : [{Infomation.MediaLocation}]");
+          Log.Error("미디어 스트림 다운로드 & 변환 실패", e, $"MediaLocation : [{Information.MediaLocation}]");
         }
 
         return new GenericResult<string>(true, mp3FilePath);
@@ -208,7 +208,7 @@ namespace UMP.Core.Function
         var youtube = new YoutubeClient();
         try
         {
-          var streamManifest = await youtube.Videos.Streams.GetManifestAsync(Infomation.MediaLocation);
+          var streamManifest = await youtube.Videos.Streams.GetManifestAsync(Information.MediaLocation);
           var streamInfo = streamManifest.GetAudioOnly().WithHighestBitrate();
           if (streamInfo == null)
             return new GenericResult<string>(false);
@@ -245,9 +245,9 @@ namespace UMP.Core.Function
         return false;
       }
 
-      if (!File.Exists(Infomation.MediaStreamPath))
+      if (!File.Exists(Information.MediaStreamPath))
       {
-        Log.Error("파일이 없습니다", new FileNotFoundException("File Not Found"), $"Path : [{Infomation.MediaStreamPath}]");
+        Log.Error("파일이 없습니다", new FileNotFoundException("File Not Found"), $"Path : [{Information.MediaStreamPath}]");
         return false;
       }
 
@@ -259,7 +259,7 @@ namespace UMP.Core.Function
           Video videoinfo;
           try
           {
-            videoinfo = await youtube.Videos.GetAsync(Infomation.MediaLocation);
+            videoinfo = await youtube.Videos.GetAsync(Information.MediaLocation);
           }
           catch (Exception e)
           {
@@ -269,7 +269,7 @@ namespace UMP.Core.Function
           TagLib.File Fileinfo = null;
           try
           {
-            Fileinfo = TagLib.File.Create(Infomation.MediaStreamPath);
+            Fileinfo = TagLib.File.Create(Information.MediaStreamPath);
           }
           catch (Exception e)
           {
@@ -343,7 +343,7 @@ namespace UMP.Core.Function
           Log.Info("YouTube에서 Mp3 메타 데이터 저장 완료");
           return true;
         });
-        Log.Error("YouTube에서 Mp3 메타 데이터 저장 중 알 수 없는 오류 발생", $"StreamPath : [{Path.GetFullPath(Infomation.MediaStreamPath)}]\nPath : [{Infomation.MediaLocation}]");
+        Log.Error("YouTube에서 Mp3 메타 데이터 저장 중 알 수 없는 오류 발생", $"StreamPath : [{Path.GetFullPath(Information.MediaStreamPath)}]\nPath : [{Information.MediaLocation}]");
         return false;
       }
       else
@@ -360,14 +360,14 @@ namespace UMP.Core.Function
     /// </summary>
     private void LoadFailProcess()
     {
-      if (!Infomation.Title.ToLower().StartsWith(GlobalProperty.MEDIA_INFO_NULL.ToLower()))
+      if (!Information.Title.ToLower().StartsWith(GlobalProperty.MEDIA_INFO_NULL.ToLower()))
       {
-        if (string.IsNullOrWhiteSpace(Infomation.Title))
-          Infomation.Title = $"{GlobalProperty.MEDIA_INFO_NULL} {Path.GetFileNameWithoutExtension(Infomation.MediaLocation)}";
+        if (string.IsNullOrWhiteSpace(Information.Title))
+          Information.Title = $"{GlobalProperty.MEDIA_INFO_NULL} {Path.GetFileNameWithoutExtension(Information.MediaLocation)}";
         else
-          Infomation.Title = $"{GlobalProperty.MEDIA_INFO_NULL} {Infomation.Title}";
+          Information.Title = $"{GlobalProperty.MEDIA_INFO_NULL} {Information.Title}";
       }
-      Infomation.MediaStreamPath = string.Empty;
+      Information.MediaStreamPath = string.Empty;
     }
     #endregion
   }

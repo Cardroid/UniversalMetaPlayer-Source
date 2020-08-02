@@ -20,7 +20,7 @@ namespace UMP.Core.Function
     /// <summary>
     /// 정보 구조체
     /// </summary>
-    private MediaInfomation Infomation;
+    private MediaInformation Information;
     public bool Online { get; private set; }
     /// <summary>
     /// 온라인에서 파싱된 Json 오브젝트
@@ -31,7 +31,7 @@ namespace UMP.Core.Function
     {
       Log = new Log($"{typeof(YTDLMediaLoader)}");
 
-      Infomation = new MediaInfomation()
+      Information = new MediaInformation()
       {
         Title = string.Empty,
         Duration = TimeSpan.Zero,
@@ -41,64 +41,64 @@ namespace UMP.Core.Function
 
       if (!string.IsNullOrWhiteSpace(medialocation))
       {
-        Infomation.MediaLocation = medialocation;
+        Information.MediaLocation = medialocation;
         if (Checker.IsLocalPath(medialocation) && File.Exists(medialocation))
         {
           Online = false;
-          Infomation.MediaStreamPath = Infomation.MediaLocation; 
+          Information.MediaStreamPath = Information.MediaLocation; 
         }
         else
           Online = true;
       }
     }
-    public YTDLMediaLoader(MediaInfomation mediainfo)
+    public YTDLMediaLoader(MediaInformation mediainfo)
     {
       Log = new Log($"{typeof(YTDLMediaLoader)}");
 
-      Infomation = mediainfo;
+      Information = mediainfo;
 
       if (!string.IsNullOrWhiteSpace(mediainfo.MediaLocation))
       {
-        Infomation.MediaLocation = mediainfo.MediaLocation;
+        Information.MediaLocation = mediainfo.MediaLocation;
         if (Checker.IsLocalPath(mediainfo.MediaLocation) && File.Exists(mediainfo.MediaLocation))
         {
           Online = false;
-          Infomation.MediaStreamPath = Infomation.MediaLocation; 
+          Information.MediaStreamPath = Information.MediaLocation; 
         }
         else
           Online = true;
       }
     }
 
-    public async Task<MediaInfomation> GetInfomationAsync(bool fullLoad)
+    public async Task<MediaInformation> GetInformationAsync(bool fullLoad)
     {
       if (Online)
       {
         var result = await TryGetMediaStreamAsync(true);
         if (result)
-          Infomation.MediaStreamPath = result.Result;
+          Information.MediaStreamPath = result.Result;
         else
-          Infomation.MediaStreamPath = string.Empty;
+          Information.MediaStreamPath = string.Empty;
       }
-      Infomation.LoadState = await TryLoadInfoAsync(fullLoad);
+      Information.LoadState = await TryLoadInfoAsync(fullLoad);
 
-      if (!Infomation.LoadState)
+      if (!Information.LoadState)
         LoadFailProcess();
 
-      return Infomation;
+      return Information;
     }
 
     public async Task<GenericResult<string>> GetStreamPathAsync(bool useCache)
     {
-      if(File.Exists(Infomation.MediaStreamPath))
-        return new GenericResult<string>(true, Infomation.MediaStreamPath);
+      if(File.Exists(Information.MediaStreamPath))
+        return new GenericResult<string>(true, Information.MediaStreamPath);
 
       if (Online)
       {
         var result = await TryGetMediaStreamAsync(useCache);
         if (result)
         {
-          Infomation.MediaStreamPath = result.Result;
+          Information.MediaStreamPath = result.Result;
           return result;
         }
         else
@@ -106,9 +106,9 @@ namespace UMP.Core.Function
       }
       else
       {
-        Infomation.MediaStreamPath = Infomation.MediaLocation;
-        if (File.Exists(Infomation.MediaStreamPath))
-          return new GenericResult<string>(true, Infomation.MediaStreamPath);
+        Information.MediaStreamPath = Information.MediaLocation;
+        if (File.Exists(Information.MediaStreamPath))
+          return new GenericResult<string>(true, Information.MediaStreamPath);
         else
         {
           LoadFailProcess();
@@ -119,7 +119,7 @@ namespace UMP.Core.Function
 
     #region Core
 
-    #region Infomation
+    #region Information
     /// <summary>
     /// 미디어 정보 로드 시도
     /// </summary>
@@ -127,7 +127,7 @@ namespace UMP.Core.Function
     /// <returns>로드 성공 여부</returns>
     private async Task<bool> TryLoadInfoAsync(bool fullLoad)
     {
-      var path = Infomation.MediaStreamPath;
+      var path = Information.MediaStreamPath;
 
       if (File.Exists(path))
       {
@@ -135,22 +135,22 @@ namespace UMP.Core.Function
         {
           using var Fileinfo = TagLib.File.Create(path);
           // 미디어 정보를 정보 클래스에 저장
-          Infomation.Title = !string.IsNullOrWhiteSpace(Fileinfo.Tag.Title) ? Fileinfo.Tag.Title : Infomation.Title;
-          Infomation.Duration = Fileinfo.Properties.Duration;
+          Information.Title = !string.IsNullOrWhiteSpace(Fileinfo.Tag.Title) ? Fileinfo.Tag.Title : Information.Title;
+          Information.Duration = Fileinfo.Properties.Duration;
 
           // 모든 정보 로드
           if (fullLoad)
           {
-            try { Infomation.AlbumImage = BitmapFrame.Create(new MemoryStream(Fileinfo.Tag.Pictures[0].Data.Data)); }
-            catch { Infomation.AlbumImage = null; }
+            try { Information.AlbumImage = BitmapFrame.Create(new MemoryStream(Fileinfo.Tag.Pictures[0].Data.Data)); }
+            catch { Information.AlbumImage = null; }
             if (Online && !string.IsNullOrWhiteSpace(Fileinfo.Tag.Album))
-              Infomation.Tags[MediaInfoType.AlbumTitle] = Fileinfo.Tag.Album;
+              Information.Tags[MediaInfoType.AlbumTitle] = Fileinfo.Tag.Album;
             else
-              Infomation.Tags[MediaInfoType.AlbumTitle] = Fileinfo.Tag.Album;
-            Infomation.Tags[MediaInfoType.AlbumArtist] = Fileinfo.Tag.FirstAlbumArtist;
-            Infomation.Tags[MediaInfoType.Lyrics] = Fileinfo.Tag.Lyrics;
+              Information.Tags[MediaInfoType.AlbumTitle] = Fileinfo.Tag.Album;
+            Information.Tags[MediaInfoType.AlbumArtist] = Fileinfo.Tag.FirstAlbumArtist;
+            Information.Tags[MediaInfoType.Lyrics] = Fileinfo.Tag.Lyrics;
           }
-          Infomation.LoadState = true;
+          Information.LoadState = true;
         });
         return true;
       }
@@ -185,7 +185,7 @@ namespace UMP.Core.Function
       if (Checker.CheckForInternetConnection())
       {
         YTDLHelper ytdlHelper = new YTDLHelper();
-        return await ytdlHelper.DownloadAudioAsync(Infomation.MediaLocation, GlobalProperty.OnlineMediaCachePath);
+        return await ytdlHelper.DownloadAudioAsync(Information.MediaLocation, GlobalProperty.OnlineMediaCachePath);
       }
       else
         return new GenericResult<string>(false);
@@ -215,14 +215,14 @@ namespace UMP.Core.Function
     /// </summary>
     private void LoadFailProcess()
     {
-      if (!Infomation.Title.ToLower().StartsWith(GlobalProperty.MEDIA_INFO_NULL.ToLower()))
+      if (!Information.Title.ToLower().StartsWith(GlobalProperty.MEDIA_INFO_NULL.ToLower()))
       {
-        if (string.IsNullOrWhiteSpace(Infomation.Title))
-          Infomation.Title = $"{GlobalProperty.MEDIA_INFO_NULL} {Path.GetFileNameWithoutExtension(Infomation.MediaLocation)}";
+        if (string.IsNullOrWhiteSpace(Information.Title))
+          Information.Title = $"{GlobalProperty.MEDIA_INFO_NULL} {Path.GetFileNameWithoutExtension(Information.MediaLocation)}";
         else
-          Infomation.Title = $"{GlobalProperty.MEDIA_INFO_NULL} {Infomation.Title}";
+          Information.Title = $"{GlobalProperty.MEDIA_INFO_NULL} {Information.Title}";
       }
-      Infomation.MediaStreamPath = string.Empty;
+      Information.MediaStreamPath = string.Empty;
     }
 
     public async Task<GenericResult<string>> GetID()
@@ -237,7 +237,7 @@ namespace UMP.Core.Function
         return new GenericResult<string>(true, ID);
       else
       {
-        var result = await new YTDLHelper().GetIDAsync(Infomation.MediaLocation);
+        var result = await new YTDLHelper().GetIDAsync(Information.MediaLocation);
         if (result)
         {
           ID = result.Result;

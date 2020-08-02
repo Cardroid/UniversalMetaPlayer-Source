@@ -24,7 +24,7 @@ namespace UMP.Core.Function
           break;
       }
     }
-    public MediaLoader(MediaInfomation info)
+    public MediaLoader(MediaInformation info)
     {
       switch (GlobalProperty.MediaLoadEngine)
       {
@@ -42,7 +42,7 @@ namespace UMP.Core.Function
 
     public async Task<GenericResult<string>> GetID() => await Loader.GetID();
 
-    public async Task<MediaInfomation> GetInfomationAsync(bool fullLoad) => await Loader.GetInfomationAsync(fullLoad);
+    public async Task<MediaInformation> GetInformationAsync(bool fullLoad) => await Loader.GetInformationAsync(fullLoad);
 
     public async Task<GenericResult<string>> GetStreamPathAsync(bool useCache) => await Loader.GetStreamPathAsync(useCache);
   }

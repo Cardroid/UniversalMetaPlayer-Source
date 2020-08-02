@@ -15,7 +15,7 @@ using UMP.Core.Function;
 
 namespace UMP.Core.Model
 {
-  public class PlayList : ObservableCollection<MediaInfomation>
+  public class PlayList : ObservableCollection<MediaInformation>
   {
     private Log Log { get; }
     public event UMP_PropertyChangedEventHandler PropertyChangedEvent;
@@ -144,7 +144,7 @@ namespace UMP.Core.Model
         for (int i = 0; i < paths.Count; i++)
         {
           var media = new MediaLoader(paths[i]);
-          var info = await media.GetInfomationAsync(false);
+          var info = await media.GetInformationAsync(false);
           base.Add(info);
           TotalDuration += info.Duration;
           if (!info.LoadState)
@@ -165,13 +165,13 @@ namespace UMP.Core.Model
     }
     #endregion
 
-    public new async Task Add(MediaInfomation infomation)
+    public new async Task Add(MediaInformation Information)
     {
-      if (!infomation.LoadState)
-        infomation = await new MediaLoader(infomation.MediaLocation).GetInfomationAsync(false);
-      this.TotalDuration += infomation.Duration;
-      base.Add(infomation);
-      Log.Info($"플레이 리스트 항목 추가 완료 IsLoaded : [{infomation.LoadState}]", $"Title : [{infomation.Title}]\nFileName : {Path.GetFileName(infomation.MediaLocation)}");
+      if (!Information.LoadState)
+        Information = await new MediaLoader(Information.MediaLocation).GetInformationAsync(false);
+      this.TotalDuration += Information.Duration;
+      base.Add(Information);
+      Log.Info($"플레이 리스트 항목 추가 완료 IsLoaded : [{Information.LoadState}]", $"Title : [{Information.Title}]\nFileName : {Path.GetFileName(Information.MediaLocation)}");
     }
 
     /// <summary>
@@ -183,17 +183,17 @@ namespace UMP.Core.Model
       var loader = new MediaLoader(mediaPath);
       Log.Debug("플레이 리스트 항목 추가 시도", $"Path : [{mediaPath}]");
 
-      var info = await loader.GetInfomationAsync(false);
+      var info = await loader.GetInformationAsync(false);
       TotalDuration += info.Duration;
       base.Add(info);
       Log.Info($"플레이 리스트 항목 추가 완료 IsLoaded : [{info.LoadState}]", $"Title : [{info.Title}]\nFileName : {Path.GetFileName(mediaPath)}");
     }
 
     /// <summary>
-    /// 리스트에서 <seealso cref="MediaInfomation"/>를 제거합니다.
+    /// 리스트에서 <seealso cref="MediaInformation"/>를 제거합니다.
     /// </summary>
     /// <param name="media">제거할 미디어 정보</param>
-    public new void Remove(MediaInfomation mediaInfo)
+    public new void Remove(MediaInformation mediaInfo)
     {
       Log.Debug("플레이 리스트 항목 제거 시도", $"Title : [{mediaInfo.Title}]");
       if (base.Contains(mediaInfo))
@@ -224,7 +224,7 @@ namespace UMP.Core.Model
         Log.Error($"플레이 리스트 Index 항목 제거 실패", new IndexOutOfRangeException($"Index Out Of Range.\nBase Count : [{base.Count}]\nIndex : [{index}]"));
     }
 
-    public new void Insert(int index, MediaInfomation item)
+    public new void Insert(int index, MediaInformation item)
     {
       if (base.Count > index && index >= 0)
       {
@@ -239,14 +239,14 @@ namespace UMP.Core.Model
       {
         var item = base[index];
         TotalDuration -= item.Duration;
-        item = await new MediaLoader(item.MediaLocation).GetInfomationAsync(false);
+        item = await new MediaLoader(item.MediaLocation).GetInformationAsync(false);
         TotalDuration += item.Duration;
         base[index] = item;
         Log.Info($"플레이 리스트 리로드 완료 Index : [{index}] IsLoaded : [{item.LoadState}]", $"Title : [{item.Title}]\nLocation : [{item.MediaLocation}]");
       }
     }
 
-    public async Task ReloadAsync(MediaInfomation item)
+    public async Task ReloadAsync(MediaInformation item)
     {
       int index = base.IndexOf(item);
       if (index >= 0)
@@ -259,7 +259,7 @@ namespace UMP.Core.Model
       {
         var item = base[i];
         TotalDuration -= item.Duration;
-        item = await new MediaLoader(item.MediaLocation).GetInfomationAsync(false);
+        item = await new MediaLoader(item.MediaLocation).GetInformationAsync(false);
         TotalDuration += item.Duration;
         base[i] = item;
         Log.Info("플레이 리스트 전체 리로드 완료");

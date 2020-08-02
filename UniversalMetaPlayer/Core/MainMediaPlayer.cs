@@ -22,7 +22,7 @@ namespace UMP.Core
     {
       Option = new PlayerOption();
       PlayList = new PlayList();
-      MediaInfomation = new MediaInfomation()
+      MediaInformation = new MediaInformation()
       {
         Title = string.Empty,
         Duration = TimeSpan.Zero,
@@ -107,25 +107,25 @@ namespace UMP.Core
     /// <summary>
     /// 미디어 파일 정보
     /// </summary>
-    public static MediaInfomation MediaInfomation
+    public static MediaInformation MediaInformation
     {
-      get => _MediaInfomation;
+      get => _MediaInformation;
       set
       {
-        _MediaInfomation = value;
+        _MediaInformation = value;
         GetAverageColor();
-        OnPropertyChanged("MediaInfomation");
+        OnPropertyChanged("MediaInformation");
       }
     }
-    private static MediaInfomation _MediaInfomation;
+    private static MediaInformation _MediaInformation;
 
     /// <summary>
     /// 대표색 추출
     /// </summary>
     public static void GetAverageColor()
     {
-      if (GlobalProperty.AverageColorProcessingOffset > 0 && _MediaInfomation.AlbumImage != null)
-        AverageColor = ImageProcessing.GetAverageColor(_MediaInfomation.AlbumImage as BitmapSource, GlobalProperty.AverageColorProcessingOffset);
+      if (GlobalProperty.AverageColorProcessingOffset > 0 && _MediaInformation.AlbumImage != null)
+        AverageColor = ImageProcessing.GetAverageColor(_MediaInformation.AlbumImage as BitmapSource, GlobalProperty.AverageColorProcessingOffset);
       else
         AverageColor = ThemeHelper.PrimaryColor;
     }
@@ -246,7 +246,7 @@ namespace UMP.Core
     public static async Task<bool> Init(IMediaLoader mediaLoader)
     {
       // 모든 정보로드
-      var info = await mediaLoader.GetInfomationAsync(true);
+      var info = await mediaLoader.GetInformationAsync(true);
       if (!info.LoadState)
         Log.Warn("미디어 정보에 오류가 있습니다", new NullReferenceException("Null Processed Media"), $"Title : [{info.Title}]\nLocation : [{info.MediaLocation}]");
 
@@ -275,7 +275,7 @@ namespace UMP.Core
         Log.Error("미디어 파일 로드중 오류가 발생했습니다", e);
         return false;
       }
-      MediaInfomation = info;
+      MediaInformation = info;
 
       StopButtonActive = false;
 

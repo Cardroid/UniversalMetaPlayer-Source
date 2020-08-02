@@ -14,11 +14,11 @@ namespace UMP.Core.Function
     /// <summary>
     /// 로컬 미디어 로드 시도
     /// </summary>
-    /// <param name="info">Location이 포함된 <see cref="MediaInfomation"/></param>
+    /// <param name="info">Location이 포함된 <see cref="MediaInformation"/></param>
     /// <param name="fullLoad">모두 로드 할지 여부 (메모리 소모량 많아 짐)</param>
     /// <param name="log">로거 <see cref="Log"/></param>
     /// <returns>성공시 true</returns>
-    public static async Task<GenericResult<MediaInfomation>> TryLoadInfoAsync(MediaInfomation info, bool fullLoad, Log log = null)
+    public static async Task<GenericResult<MediaInformation>> TryLoadInfoAsync(MediaInformation info, bool fullLoad, Log log = null)
     {
       var path = info.MediaStreamPath;
 
@@ -46,13 +46,13 @@ namespace UMP.Core.Function
           }
           info.LoadState = true;
         });
-        return new GenericResult<MediaInfomation>(true, info);
+        return new GenericResult<MediaInformation>(true, info);
       }
       else
       {
         if (log != null)
           log.Error("미디어 파일이 없습니다", new FileNotFoundException(), $"MediaLocation : [{path}]");
-        return new GenericResult<MediaInfomation>(false);
+        return new GenericResult<MediaInformation>(false);
       }
     }
 

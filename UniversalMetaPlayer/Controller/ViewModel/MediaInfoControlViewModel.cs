@@ -20,7 +20,7 @@ namespace UMP.Controller.ViewModel
 
     private void MainMediaPlayer_PropertyChangedEvent(string propertyname)
     {
-      if (propertyname == "MediaInfomation")
+      if (propertyname == "MediaInformation")
       {
         OnPropertyChanged("MediaTitle");
         OnPropertyChanged("AlbumTitle");
@@ -34,24 +34,24 @@ namespace UMP.Controller.ViewModel
   #region 미디어 제목
     public string MediaTitle =>
       MainMediaPlayer.MediaLoadedCheck
-        ? (!string.IsNullOrWhiteSpace(MainMediaPlayer.MediaInfomation.Title)
-        ? MainMediaPlayer.MediaInfomation.Title : INFO_NULL)
+        ? (!string.IsNullOrWhiteSpace(MainMediaPlayer.MediaInformation.Title)
+        ? MainMediaPlayer.MediaInformation.Title : INFO_NULL)
         : "재생 중인 미디어가 없습니다";
   #endregion
 
   #region 앨범 제목
     public string AlbumTitle =>
       MainMediaPlayer.MediaLoadedCheck
-        ? (!string.IsNullOrWhiteSpace(MainMediaPlayer.MediaInfomation.Tags[MediaInfoType.AlbumTitle])
-        ? MainMediaPlayer.MediaInfomation.Tags[MediaInfoType.AlbumTitle] : INFO_NULL)
+        ? (!string.IsNullOrWhiteSpace(MainMediaPlayer.MediaInformation.Tags[MediaInfoType.AlbumTitle])
+        ? MainMediaPlayer.MediaInformation.Tags[MediaInfoType.AlbumTitle] : INFO_NULL)
         : "Error";
   #endregion
 
   #region 아티스트 이름
     public string AlbumArtist =>
       MainMediaPlayer.MediaLoadedCheck
-        ? (!string.IsNullOrWhiteSpace(MainMediaPlayer.MediaInfomation.Tags[MediaInfoType.AlbumArtist])
-        ? MainMediaPlayer.MediaInfomation.Tags[MediaInfoType.AlbumArtist] : INFO_NULL)
+        ? (!string.IsNullOrWhiteSpace(MainMediaPlayer.MediaInformation.Tags[MediaInfoType.AlbumArtist])
+        ? MainMediaPlayer.MediaInformation.Tags[MediaInfoType.AlbumArtist] : INFO_NULL)
         : "Error";
   #endregion
 
@@ -60,10 +60,10 @@ namespace UMP.Controller.ViewModel
     {
       get
       {
-        if (MainMediaPlayer.MediaLoadedCheck && MainMediaPlayer.MediaInfomation.AlbumImage != null)
+        if (MainMediaPlayer.MediaLoadedCheck && MainMediaPlayer.MediaInformation.AlbumImage != null)
         {
           ImageMargin = new Thickness(0);
-          return MainMediaPlayer.MediaInfomation.AlbumImage;
+          return MainMediaPlayer.MediaInformation.AlbumImage;
         }
         else
         {

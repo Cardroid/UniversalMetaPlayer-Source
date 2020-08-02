@@ -16,7 +16,7 @@ namespace UMP.Core.Model
   /// <summary>
   /// 미디어 정보 구조체
   /// </summary>
-  public struct MediaInfomation
+  public struct MediaInformation
   {
     /// <summary>
     /// 정보 로드 여부
