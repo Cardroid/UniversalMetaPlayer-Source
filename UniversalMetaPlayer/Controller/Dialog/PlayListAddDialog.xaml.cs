@@ -71,7 +71,7 @@ namespace UMP.Controller.Dialog
         else
         {
           this.AcceptButton.IsEnabled = false;
-          this.MessageLabel.Content = "파일을 확인 할 수 없습니다";
+          this.MessageLabel.Content = "미디어를 확인 할 수 없습니다";
         }
       }
       else

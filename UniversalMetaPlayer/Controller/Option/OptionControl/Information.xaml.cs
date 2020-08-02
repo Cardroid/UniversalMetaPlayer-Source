@@ -11,6 +11,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using UMP.Core;
+
 namespace UMP.Controller.Option.OptionControl
 {
   /// <summary>
@@ -21,6 +23,11 @@ namespace UMP.Controller.Option.OptionControl
     public Information()
     {
       InitializeComponent();
+
+      this.Mainlogo.Source = GlobalProperty.LogoImage;
+
+      this.CoreVersionLabel.Content = GlobalProperty.CoreVersion;
+      this.FileVersionLabel.Content = GlobalProperty.FileVersion;
     }
   }
 }

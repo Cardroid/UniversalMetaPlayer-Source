@@ -123,7 +123,6 @@ namespace UMP.Controller
             var addView = new PlayListAddDialog();
             addView.Close += () => { this.PlayListDialog.IsOpen = false; };
             await this.PlayListDialog.ShowDialog(addView);
-            this.PlayListDialog = null;
             EnableControl(true);
             break;
           case PlayListControlType.Save:

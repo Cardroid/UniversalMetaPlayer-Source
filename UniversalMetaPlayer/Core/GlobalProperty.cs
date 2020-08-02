@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Windows;
 using System.Windows.Media;
@@ -337,6 +339,17 @@ namespace UMP.Core
     /// FFmpeg 라이브러리 저장 폴더
     /// </summary>
     public static string FFMPEG_PATH => Path.Combine(LIBRARY_PATH, "FFmpeg");
+    #endregion
+
+    #region Version
+    /// <summary>
+    /// 코어 버전
+    /// </summary>
+    public static string CoreVersion => Assembly.GetExecutingAssembly().GetName().Version.ToString();
+    /// <summary>
+    /// 파일 버전
+    /// </summary>
+    public static string FileVersion => FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion.ToString();
     #endregion
   }
 }

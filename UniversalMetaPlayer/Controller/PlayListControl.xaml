@@ -101,7 +101,7 @@
                                 x:Name="PlayListResetButton"
                                 Style="{StaticResource MaterialDesignIconButton}"
                                 Content="{materialDesign:PackIcon Kind=DeleteEmpty, Size=20}"
-                                Foreground="{Binding Theme.PrimaryMid}"
+                                Foreground="Red"
                                 ToolTip="초기화"
                                 Focusable="False"
                                 Margin="0,0,15,0"
