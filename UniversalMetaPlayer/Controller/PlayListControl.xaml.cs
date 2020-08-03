@@ -114,7 +114,7 @@ namespace UMP.Controller
     /// </summary>
     private async void PlayListControlButton_Click(object sender, RoutedEventArgs e)
     {
-      if (((Button)sender).Tag is PlayListControlType type)
+      if (((Button)sender).Tag is PlayListControlType type && GlobalProperty.IsControllable)
       {
         switch (type)
         {
@@ -131,28 +131,13 @@ namespace UMP.Controller
           case PlayListControlType.Load:
             EnableControl(false);
             var loadView = new PlayListLoadDialog();
-
-            var loadResultObj = await this.PlayListDialog.ShowDialog(loadView);
-            if (loadResultObj is bool loadResult && loadResult)
-            {
-              var result = loadView.GetResult();
-              GlobalProperty.IsControllable = false;
-
-              if (result.TryGetValue("SaveCurrentPlayList", out string saveCurrentPlayList) && saveCurrentPlayList.ToLower() == bool.TrueString)
-                await ViewModel.PlayList.Save();
-
-              bool loadContinue = result.TryGetValue("LoadContinue", out string _loadContinue) && _loadContinue.ToLower() == bool.TrueString;
-              if (!loadContinue)
-                ViewModel.PlayList.Clear();
-
-              if (result.TryGetValue("PlayListFilePath", out string loadValue))
-                await ViewModel.PlayList.Load(loadValue, !loadContinue);
-              GlobalProperty.IsControllable = true;
-            }
+            loadView.Close += () => { this.PlayListDialog.IsOpen = false; };
+            await this.PlayListDialog.ShowDialog(loadView);
             EnableControl(true);
             break;
           case PlayListControlType.Reload:
             EnableControl(false);
+
             var selectedList = this.PlayList.SelectedItems;
             if (selectedList != null)
             {
@@ -178,11 +163,13 @@ namespace UMP.Controller
       {
         GlobalEvent.KeyDownEventHandled = false;
         this.PlayListGroupBox.IsEnabled = true;
+        GlobalProperty.IsControllable = true;
       }
       else
       {
         GlobalEvent.KeyDownEventHandled = true;
         this.PlayListGroupBox.IsEnabled = false;
+        GlobalProperty.IsControllable = false;
       }
     }
 

@@ -54,6 +54,7 @@ namespace UMP.Utility
       {
         Title = title,
         DefaultDirectory = defaultPath,
+        InitialDirectory = defaultPath,
         IsFolderPicker = true 
       };
 

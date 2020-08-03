@@ -285,8 +285,6 @@ namespace UMP.Core
       WavePlayer.Volume = _Volume;
       WavePlayer.Init(AudioFile);
 
-      Log.Debug("미디어 재생 준비 완료", $"Info : [{(mediaLoader.Online ? $"ID : [{mediaLoader.GetID()}]" : $"FileName : [{Path.GetFileName(info.MediaLocation)}]")}]\nTitle : [{info.Title}]");
-
       PropertyChangedEvent?.Invoke("MainPlayerInitialized");
       return true;
     }

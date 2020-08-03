@@ -91,21 +91,14 @@
             <Button
                 x:Name="AcceptButton"
                 IsDefault="True"
-                Style="{DynamicResource MaterialDesignFlatAccentBgButton}"
-                Command="{x:Static wpf:DialogHost.CloseDialogCommand}">
-                <Button.CommandParameter>
-                    <system:Boolean>True</system:Boolean>
-                </Button.CommandParameter>
+                Style="{DynamicResource MaterialDesignFlatAccentBgButton}">
                 확인
             </Button>
             <Button
+                x:Name="CancelButton"
                 IsCancel="True"
                 Margin="8 0 0 0"
-                Style="{DynamicResource MaterialDesignFlatAccentBgButton}"
-                Command="{x:Static wpf:DialogHost.CloseDialogCommand}">
-                <Button.CommandParameter>
-                    <system:Boolean>False</system:Boolean>
-                </Button.CommandParameter>
+                Style="{DynamicResource MaterialDesignFlatAccentBgButton}">
                 취소
             </Button>
         </StackPanel>

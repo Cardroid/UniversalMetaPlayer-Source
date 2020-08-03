@@ -94,7 +94,7 @@ namespace UMP.Controller.Dialog
         defaultPath = string.Empty;
 
       var filePaths = DialogHelper.OpenFileDialog("로컬 미디어 파일열기", "Music File | *.mp3;*.flac", true, defaultPath);
-      if(filePaths)
+      if (filePaths)
       {
         this.ProgressRing.Visibility = Visibility.Visible;
 
@@ -115,7 +115,6 @@ namespace UMP.Controller.Dialog
     private async void AcceptButton_Click(object sender, RoutedEventArgs e)
     {
       this.ProgressRing.Visibility = Visibility.Visible;
-      GlobalProperty.IsControllable = false;
       this.UserTextBox.IsEnabled = false;
       this.AcceptButton.IsEnabled = false;
       this.OpenFileDialogButton.IsEnabled = false;
@@ -128,14 +127,10 @@ namespace UMP.Controller.Dialog
           await MainMediaPlayer.PlayList.Add(SelectFilePaths[i]);
         }
       }
-      GlobalProperty.IsControllable = true;
       this.ProgressRing.Visibility = Visibility.Collapsed;
       Close.Invoke();
     }
 
-    private void CancelButton_Click(object sender, RoutedEventArgs e)
-    {
-      Close.Invoke();
-    }
+    private void CancelButton_Click(object sender, RoutedEventArgs e) => Close.Invoke();
   }
 }

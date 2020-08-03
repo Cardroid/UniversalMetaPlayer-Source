@@ -124,7 +124,7 @@ namespace UMP.Core.Function
     /// <summary>
     /// YouTube 미디어 스트림 & 정보 다운로드시도
     /// </summary>
-    /// <returns>스트림 캐쉬 저장 경로</returns>
+    /// <returns>스트림 캐시 저장 경로</returns>
     private async Task<GenericResult<string>> GetYouTubeMediaAsync(bool useCache)
     {
       if (!Online)
@@ -139,16 +139,16 @@ namespace UMP.Core.Function
         var streamCachePathResult = LocalMediaLoader.TryGetOnlineMediaCacheAsync((await GetID()).Result);
         if (streamCachePathResult)
         {
-          Log.Debug("캐쉬에서 미디어가 확인됨");
+          Log.Debug("캐시에서 미디어가 확인됨");
           return new GenericResult<string>(true, streamCachePathResult.Result);
         }
         else
-          Log.Warn("캐쉬된 미디어 로드 실패. 온라인에서 다운로드를 시도합니다");
+          Log.Warn("캐시된 미디어 로드 실패. 온라인에서 다운로드를 시도합니다");
       }
 
       if (Checker.CheckForInternetConnection())
       {
-        // 캐쉬폴더가 존재하지 않을시 생성
+        // 캐시폴더가 존재하지 않을시 생성
         Checker.DirectoryCheck(GlobalProperty.OnlineMediaCachePath);
 
         string mp3FilePath = Path.Combine(GlobalProperty.OnlineMediaCachePath, $"{(await GetID()).Result}.mp3");
@@ -267,6 +267,7 @@ namespace UMP.Core.Function
           {
             Log.Fatal("온라인 정보 로드 실패", e);
             success = false;
+            return;
           }
           TagLib.File Fileinfo = null;
           try
@@ -278,6 +279,7 @@ namespace UMP.Core.Function
             Log.Fatal("Mp3 파일 열기 또는 메타정보 로드 실패", e);
             Fileinfo?.Dispose();
             success = false;
+            return;
           }
 
           // 기본정보 처리
@@ -337,6 +339,7 @@ namespace UMP.Core.Function
           {
             Log.Fatal("메타데이터에 작성 & 저장에 실패했습니다", e);
             success = false;
+            return;
           }
           finally
           {
@@ -345,6 +348,7 @@ namespace UMP.Core.Function
 
           Log.Info("YouTube에서 Mp3 메타 데이터 저장 완료");
           success = true;
+          return;
         });
         return success;
       }

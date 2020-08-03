@@ -22,6 +22,7 @@ namespace UMP.Controller.Dialog
   /// </summary>
   public partial class PlayListLoadDialog : UserControl
   {
+    public UMP_VoidEventHandler Close;
     public PlayListLoadDialog()
     {
       InitializeComponent();
@@ -41,7 +42,7 @@ namespace UMP.Controller.Dialog
 
     private void CheckBox_Click_Save(object sender, RoutedEventArgs e)
     {
-      if(sender is CheckBox checkBox)
+      if (sender is CheckBox checkBox)
       {
         switch (checkBox.Name)
         {
@@ -55,6 +56,7 @@ namespace UMP.Controller.Dialog
       }
     }
 
+    private string PlayListFilePath { get; set; }
     private bool IsWorkDelay = false;
     private readonly string Invalid = $"{new string(Path.GetInvalidPathChars())}\"";
 
@@ -84,15 +86,23 @@ namespace UMP.Controller.Dialog
           case ".m3u8":
             this.AcceptButton.IsEnabled = true;
             this.MessageLabel.Content = $"[{result.ToLower()}] 타입이 확인 되었습니다";
+            PlayListFilePath = text;
+            this.AcceptButton.IsEnabled = true;
             break;
           default:
             this.AcceptButton.IsEnabled = false;
             this.MessageLabel.Content = "지원하지 않는 파일 입니다";
+            PlayListFilePath = string.Empty;
+            this.AcceptButton.IsEnabled = false;
             break;
         }
       }
       else
+      {
         this.MessageLabel.Content = "존재하지 않는 파일 입니다";
+        PlayListFilePath = string.Empty;
+        this.AcceptButton.IsEnabled = false;
+      }
 
       this.ProgressRing.Visibility = Visibility.Collapsed;
       IsWorkDelay = false;
@@ -106,17 +116,35 @@ namespace UMP.Controller.Dialog
 
       var filepath = DialogHelper.OpenFileDialog("플레이 리스트 파일열기", "PlayList File | *.m3u8", false, defaultPath);
       if (filepath)
+      {
         this.UserTextBox.Text = filepath.Result[0];
+        this.AcceptButton.IsEnabled = true;
+      }
+      else
+        this.AcceptButton.IsEnabled = false;
     }
 
-    public Dictionary<string, string> GetResult()
+    private async void AcceptButton_Click(object sender, RoutedEventArgs e)
     {
-      var result = new Dictionary<string, string>();
+      this.ProgressRing.Visibility = Visibility.Visible;
+      this.UserTextBox.IsEnabled = false;
+      this.AcceptButton.IsEnabled = false;
+      this.OpenFileDialogButton.IsEnabled = false;
+      this.CancelButton.IsEnabled = false;
 
-      result.Add("PlayListFilePath", this.UserTextBox.Text);
-      result.Add("SaveCurrentPlayList", this.SaveCurrentPlayList.IsChecked.GetValueOrDefault().ToString());
-      result.Add("LoadContinue", this.LoadContinue.IsChecked.GetValueOrDefault().ToString());
-      return result;
+      if (this.SaveCurrentPlayList.IsChecked.GetValueOrDefault())
+        await MainMediaPlayer.PlayList.Save();
+
+      if (!this.LoadContinue.IsChecked.GetValueOrDefault())
+        MainMediaPlayer.PlayList.Clear();
+
+      if (!string.IsNullOrWhiteSpace(PlayListFilePath))
+        await MainMediaPlayer.PlayList.Load(PlayListFilePath, !this.LoadContinue.IsChecked.GetValueOrDefault());
+
+      this.ProgressRing.Visibility = Visibility.Collapsed;
+      Close.Invoke();
     }
+
+    private void CancelButton_Click(object sender, RoutedEventArgs e) => Close.Invoke();
   }
 }

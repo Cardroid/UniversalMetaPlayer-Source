@@ -238,32 +238,26 @@ namespace UMP.Core.Model
       if (base.Count > index && index >= 0)
       {
         var item = base[index];
+        if(MainMediaPlayer.MediaLoadedCheck && MainMediaPlayer.PlayListPlayMediaIndex == index)
+        {
+          Log.Error($"플레이 리스트 항목 리로드 실패 \n재생 중인 항목은 리로드 할 수 없습니다.\nIndex : [{index}]\nIsLoaded : [{item.LoadState}]", $"Title : [{item.Title}]\nLocation : [{item.MediaLocation}]");
+          return;
+        }
         TotalDuration -= item.Duration;
+        await new MediaLoader(item.MediaLocation).GetStreamPathAsync(false);
         item = await new MediaLoader(item.MediaLocation).GetInformationAsync(false);
         TotalDuration += item.Duration;
         base[index] = item;
-        Log.Info($"플레이 리스트 리로드 완료 Index : [{index}] IsLoaded : [{item.LoadState}]", $"Title : [{item.Title}]\nLocation : [{item.MediaLocation}]");
+        Log.Info($"플레이 리스트 항목 리로드 완료 Index : [{index}] IsLoaded : [{item.LoadState}]", $"Title : [{item.Title}]\nLocation : [{item.MediaLocation}]");
       }
     }
 
-    public async Task ReloadAsync(MediaInformation item)
-    {
-      int index = base.IndexOf(item);
-      if (index >= 0)
-        await ReloadAtAsync(index);
-    }
+    public async Task ReloadAsync(MediaInformation item) => await ReloadAtAsync(base.IndexOf(item));
 
     public async Task ReloadAllAsync()
     {
       for (int i = 0; i < base.Count; i++)
-      {
-        var item = base[i];
-        TotalDuration -= item.Duration;
-        item = await new MediaLoader(item.MediaLocation).GetInformationAsync(false);
-        TotalDuration += item.Duration;
-        base[i] = item;
-        Log.Info("플레이 리스트 전체 리로드 완료");
-      }
+        await ReloadAtAsync(i);
     }
 
     public new void Clear()

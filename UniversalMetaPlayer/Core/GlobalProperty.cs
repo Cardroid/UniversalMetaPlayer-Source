@@ -331,7 +331,7 @@ namespace UMP.Core
         OnPropertyChanged("IsControllable");
       }
     }
-    private static bool _IsControllable;
+    private static bool _IsControllable = true;
     /// <summary>
     /// 폰트
     /// </summary>
