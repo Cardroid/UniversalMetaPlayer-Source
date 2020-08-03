@@ -47,6 +47,7 @@ namespace UMP.Core.Function
           Online = true;
       }
     }
+
     public NativeMediaLoader(MediaInformation mediainfo)
     {
       Log = new Log($"{typeof(NativeMediaLoader)}");

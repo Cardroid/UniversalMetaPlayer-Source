@@ -34,13 +34,20 @@
                     IsExpanded="True">
                     <TreeViewItem
                         x:Name="Basic"
-                        Header="일반" />
+                        Header="일반"
+                        PreviewMouseLeftButtonDown="MainOptionControl_MouseDown"/>
                     <TreeViewItem
                         x:Name="Keyboard"
-                        Header="키보드" />
+                        Header="키보드"
+                        PreviewMouseLeftButtonDown="MainOptionControl_MouseDown"/>
                     <TreeViewItem
                         x:Name="Theme"
-                        Header="테마" />
+                        Header="테마"
+                        PreviewMouseLeftButtonDown="MainOptionControl_MouseDown" />
+                    <TreeViewItem
+                        x:Name="Information"
+                        Header="정보"
+                        PreviewMouseLeftButtonDown="MainOptionControl_MouseDown"/>
                 </TreeViewItem>
             </TreeView>
         </GroupBox>

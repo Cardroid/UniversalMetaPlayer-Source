@@ -26,11 +26,15 @@ namespace UMP.Core.Function
       {
         await Task.Run(() =>
         {
+          bool online = info.MediaLocation.ToLower().StartsWith("http");
+
           using var Fileinfo = TagLib.File.Create(path);
           // 미디어 정보를 정보 클래스에 저장
-          info.Title = !string.IsNullOrWhiteSpace(Fileinfo.Tag.Title) 
-          ? Fileinfo.Tag.Title 
-          : $"{info.MediaStreamPath} form Online";
+          info.Title = string.IsNullOrWhiteSpace(Fileinfo.Tag.Title)
+          ? online
+          ? $"{info.MediaLocation} form Online"
+          : Path.GetFileNameWithoutExtension(info.MediaLocation)
+          : Fileinfo.Tag.Title;
           info.Duration = Fileinfo.Properties.Duration;
 
           // 모든 정보 로드
@@ -38,9 +42,11 @@ namespace UMP.Core.Function
           {
             try { info.AlbumImage = BitmapFrame.Create(new MemoryStream(Fileinfo.Tag.Pictures[0].Data.Data)); }
             catch { info.AlbumImage = null; }
-            info.Tags[MediaInfoType.AlbumTitle] = !string.IsNullOrWhiteSpace(Fileinfo.Tag.Album) 
-            ? Fileinfo.Tag.Album 
-            : $"{info.MediaStreamPath} form Online";
+            info.Tags[MediaInfoType.AlbumTitle] = string.IsNullOrWhiteSpace(Fileinfo.Tag.Album)
+            ? online
+            ? $"{info.MediaLocation} form Online"
+            : Path.GetFileNameWithoutExtension(info.MediaLocation)
+            : Fileinfo.Tag.Album;
             info.Tags[MediaInfoType.AlbumArtist] = Fileinfo.Tag.FirstAlbumArtist;
             info.Tags[MediaInfoType.Lyrics] = Fileinfo.Tag.Lyrics;
           }

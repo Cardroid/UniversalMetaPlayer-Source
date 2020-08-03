@@ -66,6 +66,7 @@ namespace UMP.Controller.Dialog
         {
           SelectFilePaths = new string[] { text };
           this.MessageLabel.Content = "파일이 확인되었습니다";
+          this.UserTextBox.Text = text;
           this.AcceptButton.IsEnabled = true;
         }
         else
@@ -107,6 +108,7 @@ namespace UMP.Controller.Dialog
         SelectFilePaths = filePaths;
         this.UserTextBox.Text = $"[{filePaths.Length}] 개의 파일이 확인되었습니다";
         this.ProgressRing.Visibility = Visibility.Collapsed;
+        this.AcceptButton.IsEnabled = true;
       }
     }
 

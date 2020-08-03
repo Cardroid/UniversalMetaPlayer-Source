@@ -18,7 +18,7 @@ namespace UMP.Core
       // 로그 매니져 세팅
       Hierarchy = (Hierarchy)LogManager.CreateRepository("MainLoggerRepository");
 
-      string logSavePath = Path.Combine(Environment.CurrentDirectory, "Core", "Log");
+      string logSavePath = Path.Combine(Environment.CurrentDirectory, "Log");
       if (!Directory.Exists(logSavePath))
         Directory.CreateDirectory(logSavePath);
 

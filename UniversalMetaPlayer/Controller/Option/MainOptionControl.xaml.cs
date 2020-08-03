@@ -15,9 +15,6 @@ using UMP.Controller.Option.OptionControl;
 
 namespace UMP.Controller.Option
 {
-  /// <summary>
-  /// MainOptionControl.xaml에 대한 상호 작용 논리
-  /// </summary>
   public partial class MainOptionControl : UserControl
   {
     private MainOptionControlViewModel ViewModel { get; }
@@ -25,27 +22,28 @@ namespace UMP.Controller.Option
     public MainOptionControl()
     {
       InitializeComponent();
-
       ViewModel = (MainOptionControlViewModel)this.DataContext;
-
-      this.Basic.PreviewMouseLeftButtonDown += MainOptionControl_MouseDown;
-      this.Keyboard.PreviewMouseLeftButtonDown += MainOptionControl_MouseDown;
-      this.Theme.PreviewMouseLeftButtonDown += MainOptionControl_MouseDown;
     }
 
     private void MainOptionControl_MouseDown(object sender, MouseButtonEventArgs e)
     {
-      switch (((TreeViewItem)sender).Name)
+      if (sender is TreeViewItem item)
       {
-        case "Basic":
-          ViewModel.OptionPanel = new BasicOption();
-          break;
-        case "Keyboard":
-          ViewModel.OptionPanel = new KeyboardOption();
-          break;
-        case "Theme":
-          ViewModel.OptionPanel = new ThemeOption();
-          break;
+        switch (item.Name)
+        {
+          case "Basic":
+            ViewModel.OptionPanel = new BasicOption();
+            break;
+          case "Keyboard":
+            ViewModel.OptionPanel = new KeyboardOption();
+            break;
+          case "Theme":
+            ViewModel.OptionPanel = new ThemeOption();
+            break;
+          case "Information":
+            ViewModel.OptionPanel = new InformationOption();
+            break;
+        }
       }
     }
   }
