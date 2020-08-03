@@ -23,7 +23,7 @@ namespace UMP.Core
   public static class GlobalProperty
   {
     private static readonly Log Log;
-    public static UMP_PropertyChangedEventHandler PropertyChanged;
+    public static event UMP_PropertyChangedEventHandler PropertyChanged;
     private static void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(propertyName);
     static GlobalProperty()
     {
@@ -233,6 +233,28 @@ namespace UMP.Core
     /// <summary>
     /// 전역 키보드 후킹 여부
     /// </summary>
+    public static bool HotKey
+    {
+      get => TryGetSetting("HotKey", out string value)
+        ? (bool.TryParse(value, out bool result)
+        ? result
+        : DefaultHotKey)
+        : DefaultHotKey;
+      set
+      {
+        SetSetting("HotKey", value.ToString());
+        if (value)
+          Hook.Start();
+        else
+          Hook.Dispose();
+        OnPropertyChanged("HotKey");
+      }
+    }
+    private const bool DefaultHotKey = false;
+
+    /// <summary>
+    /// 전역 키보드 후킹 여부
+    /// </summary>
     public static bool GlobalKeyboardHook
     {
       get => TryGetSetting("GlobalKeyboardHook", out string value)
@@ -271,7 +293,7 @@ namespace UMP.Core
     private const int DefaultKeyEventDelay = 20;
     #endregion
 
-    #region 온라인
+    #region 엔진
     /// <summary>
     /// 사용할 미디어 로드 엔진
     /// </summary>
@@ -297,6 +319,19 @@ namespace UMP.Core
     #endregion
 
     #region Not Save
+    /// <summary>
+    /// 컨트롤 가능 여부 (로딩 중 조작 금지용)
+    /// </summary>
+    public static bool IsControllable
+    {
+      get => _IsControllable;
+      set
+      {
+        _IsControllable = value;
+        OnPropertyChanged("IsControllable");
+      }
+    }
+    private static bool _IsControllable;
     /// <summary>
     /// 폰트
     /// </summary>

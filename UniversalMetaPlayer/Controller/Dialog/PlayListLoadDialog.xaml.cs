@@ -105,8 +105,8 @@ namespace UMP.Controller.Dialog
         defaultPath = string.Empty;
 
       var filepath = DialogHelper.OpenFileDialog("플레이 리스트 파일열기", "PlayList File | *.m3u8", false, defaultPath);
-      if (filepath != null)
-        this.UserTextBox.Text = filepath[0];
+      if (filepath)
+        this.UserTextBox.Text = filepath.Result[0];
     }
 
     public Dictionary<string, string> GetResult()

@@ -87,9 +87,17 @@ namespace UMP.Controller
         {
           SettingControlOpen(this.SettingCheckBox.IsChecked.GetValueOrDefault());
         };
-        this.PlayListCheckBox.Click += (_, e) => 
+        this.PlayListCheckBox.Click += (_, e) =>
         {
           PlayListControlOpen(this.PlayListCheckBox.IsChecked.GetValueOrDefault());
+        };
+
+        GlobalProperty.PropertyChanged += (e) =>
+        {
+          if (e == "IsControllable")
+          {
+            ControlPanel.IsEnabled = GlobalProperty.IsControllable;
+          }
         };
       };
 
@@ -143,56 +151,59 @@ namespace UMP.Controller
     /// </summary>
     private void GlobalEvent_KeyDownEvent(KeyEventArgs e)
     {
-      switch (e.Key)
+      if (GlobalProperty.HotKey && GlobalProperty.IsControllable)
       {
-        // Play/Pause
-        case Key.Space:
-        case Key.Pause:
-        case Key.P:
-          if (MainMediaPlayer.PlaybackState == NAudio.Wave.PlaybackState.Playing)
-            MainMediaPlayer.Pause();
-          else
-            MainMediaPlayer.Play();
-          break;
-        // Stop
-        case Key.O:
-          MainMediaPlayer.Stop();
-          break;
-        // Repeat
-        case Key.I:
-          ++MainMediaPlayer.Option.RepeatPlayOption;
-          break;
-        // Shuffle
-        case Key.U:
-          break;
-        // PlayList
-        case Key.L:
-          PlayListControlOpen(((MainWindow)Window.GetWindow(Parent)).MainPlayListControl.Visibility != Visibility.Visible);
-          break;
-        // Setting
-        case Key.S:
-          SettingControlOpen(((MainWindow)Window.GetWindow(Parent)).MainOptionControl.Visibility != Visibility.Visible);
-          break;
-        // Mute
-        case Key.M:
-          if (ViewModel.Volume > 0)
-            ViewModel.Volume = 0;
-          else
-            ViewModel.Volume = ViewModel.BeforeVolume;
-          break;
+        switch (e.Key)
+        {
+          // Play/Pause
+          case Key.Space:
+          case Key.Pause:
+          case Key.P:
+            if (MainMediaPlayer.PlaybackState == NAudio.Wave.PlaybackState.Playing)
+              MainMediaPlayer.Pause();
+            else
+              MainMediaPlayer.Play();
+            break;
+          // Stop
+          case Key.O:
+            MainMediaPlayer.Stop();
+            break;
+          // Repeat
+          case Key.I:
+            ++MainMediaPlayer.Option.RepeatPlayOption;
+            break;
+          // Shuffle
+          case Key.U:
+            break;
+          // PlayList
+          case Key.L:
+            PlayListControlOpen(((MainWindow)Window.GetWindow(Parent)).MainPlayListControl.Visibility != Visibility.Visible);
+            break;
+          // Setting
+          case Key.S:
+            SettingControlOpen(((MainWindow)Window.GetWindow(Parent)).MainOptionControl.Visibility != Visibility.Visible);
+            break;
+          // Mute
+          case Key.M:
+            if (ViewModel.Volume > 0)
+              ViewModel.Volume = 0;
+            else
+              ViewModel.Volume = ViewModel.BeforeVolume;
+            break;
 
-        case Key.Left:
-          MediaPositionChanger(-TimeSpan.FromSeconds(5));
-          break;
-        case Key.Right:
-          MediaPositionChanger(TimeSpan.FromSeconds(5));
-          break;
-        case Key.Up:
-          ViewModel.Volume += 5;
-          break;
-        case Key.Down:
-          ViewModel.Volume -= 5;
-          break;
+          case Key.Left:
+            MediaPositionChanger(-TimeSpan.FromSeconds(5));
+            break;
+          case Key.Right:
+            MediaPositionChanger(TimeSpan.FromSeconds(5));
+            break;
+          case Key.Up:
+            ViewModel.Volume += 5;
+            break;
+          case Key.Down:
+            ViewModel.Volume -= 5;
+            break;
+        }
       }
     }
 
@@ -216,7 +227,7 @@ namespace UMP.Controller
     /// </summary>
     private void Hook_KeyboardEvent(KeyboardEvent e)
     {
-      if (e.State == NeatInput.Windows.Processing.Keyboard.Enums.KeyStates.Down)
+      if (e.State == NeatInput.Windows.Processing.Keyboard.Enums.KeyStates.Down && GlobalProperty.IsControllable)
       {
         switch (e.Key)
         {
@@ -273,7 +284,7 @@ namespace UMP.Controller
     /// </summary>
     private void ControllerButton_ClickHandler(object sender, RoutedEventArgs e)
     {
-      if (((Button)sender).Tag is ControlType type)
+      if (((Button)sender).Tag is ControlType type && GlobalProperty.IsControllable)
       {
         switch (type)
         {
@@ -311,12 +322,14 @@ namespace UMP.Controller
     /// </summary>
     private void ProgressSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
-      if (MainMediaPlayer.MediaLoadedCheck)
+      if (MainMediaPlayer.MediaLoadedCheck && GlobalProperty.IsControllable)
+      {
         if (this.ProgressSlider.IsMouseOver && Mouse.LeftButton == MouseButtonState.Pressed)
         {
           // 진행 슬라이더를 클릭 또는 드래그 하여 미디어 재생 위치 변경
           MainMediaPlayer.AudioCurrentTime = TimeSpan.FromMilliseconds(e.NewValue);
         }
+      }
     }
   }
 }

@@ -12,7 +12,8 @@
         Margin="5">
         
         <WrapPanel
-            Orientation="Horizontal">
+            Orientation="Horizontal"
+            Margin="5,5,0,0">
             <Label
                 Content="전역 키보드 감시" />
             <ToggleButton

@@ -28,13 +28,21 @@ namespace UMP.Controller.Option.OptionControl
         OptionSync();
       };
 
-      this.GlobalKeyboardHook.Click += (_, e) =>
+      this.GlobalKeyboardHook.Click += ToggleButton_Click;
+    }
+
+    private void ToggleButton_Click(object sender, RoutedEventArgs e)
+    {
+
+      if (sender is ToggleButton button)
       {
-        if (this.GlobalKeyboardHook.IsChecked.HasValue && this.GlobalKeyboardHook.IsChecked.Value)
-          GlobalProperty.GlobalKeyboardHook = true;
-        else
-          GlobalProperty.GlobalKeyboardHook = false;
-      };
+        switch (button.Name)
+        {
+          case "GlobalKeyboardHook":
+            GlobalProperty.GlobalKeyboardHook = !GlobalProperty.GlobalKeyboardHook;
+            break;
+        }
+      }
     }
 
     /// <summary>

@@ -12,7 +12,8 @@
         Margin="5">
         
         <WrapPanel
-            Orientation="Horizontal">
+            Orientation="Horizontal"
+            Margin="5,5,0,0">
             <Label
                 Content="대표색 테마 사용" />
             <ToggleButton

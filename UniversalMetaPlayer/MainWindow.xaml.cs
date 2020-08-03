@@ -26,7 +26,7 @@ namespace UMP
   {
     public MainWindow()
     {
-      App.MainLog.Info("############### Start application ###############", 
+      App.MainLog.Info("############### Start application ###############",
         $"Start Path : [{AppDomain.CurrentDomain.BaseDirectory}]\nTask Path : [{Environment.CurrentDirectory}]");
       GlobalProperty.Load();
       InitializeComponent();
@@ -68,13 +68,21 @@ namespace UMP
       this.BorderBrush = new SolidColorBrush(ThemeHelper.PrimaryColor);
       MainMediaPlayer.PropertyChangedEvent += (e) =>
       {
-        if (e == "AverageColor")
-          this.BorderBrush = new SolidColorBrush(MainMediaPlayer.AverageColor);
         if (e == "AverageColor" && GlobalProperty.IsAverageColorTheme)
         {
-          var color = MainMediaPlayer.AverageColor;
-          ThemeHelper.ChangePrimaryColor(color.Lighten(2));
-          ThemeHelper.ChangeSecondaryColor(color.Darken(2));
+          if (MainMediaPlayer.MediaLoadedCheck)
+          {
+            var color = MainMediaPlayer.AverageColor;
+            this.BorderBrush = new SolidColorBrush(color);
+            ThemeHelper.ChangePrimaryColor(color.Lighten(2));
+            ThemeHelper.ChangeSecondaryColor(color.Darken(2));
+          }
+          else
+          {
+            this.BorderBrush = new SolidColorBrush(Colors.White);
+            ThemeHelper.ChangePrimaryColor(Colors.White);
+            ThemeHelper.ChangeSecondaryColor(Colors.White);
+          }
         }
       };
     }

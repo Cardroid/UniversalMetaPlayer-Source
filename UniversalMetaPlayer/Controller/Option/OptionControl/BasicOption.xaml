@@ -8,23 +8,28 @@
     mc:Ignorable="d">
 
     <WrapPanel
-        Orientation="Horizontal"
+        Orientation="Vertical"
         Margin="5">
-        
-        <!-- 복사용 -->
-        <!--<WrapPanel
-            Orientation="Horizontal">
-            <Label
-                Content="테스트 버튼" />
-            <ToggleButton
-                Style="{StaticResource MaterialDesignSwitchToggleButton}" />
-        </WrapPanel>-->
-        
+
         <WrapPanel
-            Orientation="Horizontal">
+            x:Name="FileSavePathPanel"
+            Orientation="Horizontal"
+            Margin="5,5,0,0">
             <Label
-                Content="일반 테스트 버튼" />
+                Content="저장 폴더" />
+            <Button
+                x:Name="OpenDirectoryDialogButton"
+                Style="{DynamicResource MaterialDesignFlatAccentBgButton}"
+                Content="찾아보기" />
+        </WrapPanel>
+        <WrapPanel
+            Orientation="Horizontal"
+            ToolTip="로그에 더 자세한 사항을 기록합니다.&#10;개인 정보가 포함 될 수 있으나, 모든 정보는 익명으로 저장됩니다."
+            Margin="5,5,0,0">
+            <Label
+                Content="더욱 자세한 로깅" />
             <ToggleButton
+                x:Name="PrivateLogging"
                 Style="{StaticResource MaterialDesignSwitchToggleButton}" />
         </WrapPanel>
     </WrapPanel>

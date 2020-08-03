@@ -94,7 +94,7 @@ namespace UMP.Controller.Dialog
         defaultPath = string.Empty;
 
       var filePaths = DialogHelper.OpenFileDialog("로컬 미디어 파일열기", "Music File | *.mp3;*.flac", true, defaultPath);
-      if(filePaths != null)
+      if(filePaths)
       {
         this.ProgressRing.Visibility = Visibility.Visible;
 
@@ -105,8 +105,8 @@ namespace UMP.Controller.Dialog
         this.UserTextBox.IsReadOnly = true;
         this.UserTextBox.IsReadOnlyCaretVisible = false;
 
-        SelectFilePaths = filePaths;
-        this.UserTextBox.Text = $"[{filePaths.Length}] 개의 파일이 확인되었습니다";
+        SelectFilePaths = filePaths.Result;
+        this.UserTextBox.Text = $"[{filePaths.Result.Length}] 개의 파일이 확인되었습니다";
         this.ProgressRing.Visibility = Visibility.Collapsed;
         this.AcceptButton.IsEnabled = true;
       }
@@ -115,6 +115,7 @@ namespace UMP.Controller.Dialog
     private async void AcceptButton_Click(object sender, RoutedEventArgs e)
     {
       this.ProgressRing.Visibility = Visibility.Visible;
+      GlobalProperty.IsControllable = false;
       this.UserTextBox.IsEnabled = false;
       this.AcceptButton.IsEnabled = false;
       this.OpenFileDialogButton.IsEnabled = false;
@@ -127,6 +128,7 @@ namespace UMP.Controller.Dialog
           await MainMediaPlayer.PlayList.Add(SelectFilePaths[i]);
         }
       }
+      GlobalProperty.IsControllable = true;
       this.ProgressRing.Visibility = Visibility.Collapsed;
       Close.Invoke();
     }

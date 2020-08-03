@@ -85,6 +85,7 @@
                 Grid.Column="2" />
         </Grid>
         <Grid
+            x:Name="ControlPanel"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             Grid.Row="1">

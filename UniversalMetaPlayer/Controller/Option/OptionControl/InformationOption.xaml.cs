@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Net;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -50,10 +52,12 @@ namespace UMP.Controller.Option.OptionControl
 
     private void Url_RequestNavigate(object sender, RequestNavigateEventArgs e)
     {
-      if (Checker.CheckForInternetConnection())
+      ProcessStartInfo ps = new ProcessStartInfo
       {
-        Process.Start(e.Uri.AbsoluteUri);
-      }
+        FileName = e.Uri.AbsoluteUri,
+        UseShellExecute = true
+      };
+      Process.Start(ps);
     }
   }
 }

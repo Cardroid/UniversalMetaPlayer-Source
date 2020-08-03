@@ -28,13 +28,20 @@ namespace UMP.Controller.Option.OptionControl
         OptionSync();
       };
 
-      this.IsAverageColorTheme.Click += (_, e) =>
+      this.IsAverageColorTheme.Click += ToggleButton_Click;
+    }
+
+    private void ToggleButton_Click(object sender, RoutedEventArgs e)
+    {
+      if (sender is ToggleButton button)
       {
-        if (this.IsAverageColorTheme.IsChecked.HasValue && this.IsAverageColorTheme.IsChecked.Value)
-          GlobalProperty.IsAverageColorTheme = true;
-        else
-          GlobalProperty.IsAverageColorTheme = false;
-      };
+        switch (button.Name)
+        {
+          case "IsAverageColorTheme":
+            GlobalProperty.IsAverageColorTheme = !GlobalProperty.IsAverageColorTheme;
+            break;
+        }
+      }
     }
 
     /// <summary>

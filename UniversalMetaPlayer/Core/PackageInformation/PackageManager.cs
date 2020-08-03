@@ -23,6 +23,7 @@ namespace UMP.Core.PackageInformation
       packageInformationModel.Add("NYoutubeDL", "https://gitlab.com/BrianAllred/NYoutubeDL", "MIT", "https://licenses.nuget.org/MIT");
       packageInformationModel.Add("PlaylistsNET", "https://github.com/tmk907/PlaylistsNET", "MIT", "https://licenses.nuget.org/MIT");
       packageInformationModel.Add("TagLibSharp", "https://github.com/mono/taglib-sharp", "LGPL-2.1-only", "https://licenses.nuget.org/LGPL-2.1-only");
+      packageInformationModel.Add("WindowsAPICodePack-Shell", "https://github.com/aybe/Windows-API-Code-Pack-1.1", "Custom License", "https://github.com/aybe/Windows-API-Code-Pack-1.1/blob/master/LICENCE");
       packageInformationModel.Add("YoutubeExplode", "https://github.com/Tyrrrz/YoutubeExplode", "LGPL-3.0-only", "https://licenses.nuget.org/LGPL-3.0-only");
       return packageInformationModel;
     }

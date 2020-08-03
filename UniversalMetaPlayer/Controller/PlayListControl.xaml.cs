@@ -136,6 +136,7 @@ namespace UMP.Controller
             if (loadResultObj is bool loadResult && loadResult)
             {
               var result = loadView.GetResult();
+              GlobalProperty.IsControllable = false;
 
               if (result.TryGetValue("SaveCurrentPlayList", out string saveCurrentPlayList) && saveCurrentPlayList.ToLower() == bool.TrueString)
                 await ViewModel.PlayList.Save();
@@ -146,6 +147,7 @@ namespace UMP.Controller
 
               if (result.TryGetValue("PlayListFilePath", out string loadValue))
                 await ViewModel.PlayList.Load(loadValue, !loadContinue);
+              GlobalProperty.IsControllable = true;
             }
             EnableControl(true);
             break;
