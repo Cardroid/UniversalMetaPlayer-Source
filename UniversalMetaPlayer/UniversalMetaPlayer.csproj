@@ -9,7 +9,7 @@
     <RootNamespace>UMP</RootNamespace>
     <AssemblyName>UniversalMetaPlayer</AssemblyName>
     <ApplicationIcon>MainIcon.ico</ApplicationIcon>
-    <Version>2.5.2.56</Version>
+    <Version>2.5.3.0</Version>
     <Authors>CarbonSIX</Authors>
     <PackageIcon>MainImage.png</PackageIcon>
     <Nullable>disable</Nullable>
@@ -20,7 +20,8 @@
     <Product>Universal Meta Player</Product>
     <RepositoryUrl></RepositoryUrl>
     <Platforms>x64;AnyCPU</Platforms>
-    <AssemblyVersion>2.5.1.0</AssemblyVersion> 
+    <AssemblyVersion>2.5.1.0</AssemblyVersion>
+    <FileVersion>2.5.3.0</FileVersion> 
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

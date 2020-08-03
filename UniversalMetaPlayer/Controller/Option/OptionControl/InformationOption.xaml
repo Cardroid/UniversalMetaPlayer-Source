@@ -83,7 +83,8 @@
             Grid.Row="1">
             <Expander
                 HorizontalAlignment="Stretch"
-                Header="이 프로젝트에 쓰인 라이브러리">
+                Header="이 프로젝트에 쓰인 라이브러리"
+                IsExpanded="True">
 
                 <ListView
                     x:Name="PackageList"

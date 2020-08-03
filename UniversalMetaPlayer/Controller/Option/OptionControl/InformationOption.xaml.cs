@@ -36,10 +36,9 @@ namespace UMP.Controller.Option.OptionControl
       this.CoreVersionLabel.Content = GlobalProperty.CoreVersion;
       this.FileVersionLabel.Content = GlobalProperty.FileVersion;
 
-      this.ProjectRepositoryUrlLabel.Content = "프로젝트 리포지토리";
       this.ProjectRepositoryUrl.NavigateUri = new Uri("https://github.com/Cardroid/UniversalMetaPlayer");
       this.ProjectRepositoryUrl.ToolTip = "https://github.com/Cardroid/UniversalMetaPlayer 으로 이동합니다.";
-      this.ProjectRepositoryUrl.Inlines.Add("Github");
+      this.ProjectRepositoryUrl.Inlines.Add("프로젝트 리포지토리");
       this.ProjectRepositoryUrl.RequestNavigate += Url_RequestNavigate;
 
       List<PackageInformation> packages = new List<PackageInformation>();
@@ -47,12 +46,6 @@ namespace UMP.Controller.Option.OptionControl
       foreach (var item in allPackages.Values)
         packages.Add(item);
       this.PackageList.ItemsSource = packages;
-
-      #region UpdateLog
-      this.UpdateLogLabel.Text =
-        $"v2.5.2.56" +
-        $"최초 릴리스";
-      #endregion
     }
 
     private void Url_RequestNavigate(object sender, RequestNavigateEventArgs e)
