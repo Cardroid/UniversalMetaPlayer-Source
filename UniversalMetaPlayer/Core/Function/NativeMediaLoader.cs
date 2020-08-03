@@ -254,10 +254,11 @@ namespace UMP.Core.Function
 
       if (Checker.CheckForInternetConnection())
       {
+        bool success = false;
         await Task.Run(async () =>
         {
           var youtube = new YoutubeClient();
-          Video videoinfo;
+          Video videoinfo = null;
           try
           {
             videoinfo = await youtube.Videos.GetAsync(Information.MediaLocation);
@@ -265,7 +266,7 @@ namespace UMP.Core.Function
           catch (Exception e)
           {
             Log.Fatal("온라인 정보 로드 실패", e);
-            return false;
+            success = false;
           }
           TagLib.File Fileinfo = null;
           try
@@ -276,7 +277,7 @@ namespace UMP.Core.Function
           {
             Log.Fatal("Mp3 파일 열기 또는 메타정보 로드 실패", e);
             Fileinfo?.Dispose();
-            return false;
+            success = false;
           }
 
           // 기본정보 처리
@@ -335,7 +336,7 @@ namespace UMP.Core.Function
           catch (Exception e)
           {
             Log.Fatal("메타데이터에 작성 & 저장에 실패했습니다", e);
-            return false;
+            success = false;
           }
           finally
           {
@@ -343,10 +344,9 @@ namespace UMP.Core.Function
           }
 
           Log.Info("YouTube에서 Mp3 메타 데이터 저장 완료");
-          return true;
+          success = true;
         });
-        Log.Fatal("YouTube에서 Mp3 메타 데이터 저장 중 알 수 없는 오류 발생", $"StreamPath : [{Path.GetFullPath(Information.MediaStreamPath)}]\nPath : [{Information.MediaLocation}]");
-        return false;
+        return success;
       }
       else
       {
