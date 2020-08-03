@@ -66,7 +66,7 @@ namespace UMP.Core
       }
       catch (Exception e)
       {
-        Log.Error("메인 설정 저장 실패", e);
+        Log.Fatal("메인 설정 저장 실패", e);
       }
     }
 
@@ -104,7 +104,7 @@ namespace UMP.Core
         }
         catch (Exception e)
         {
-          Log.Error("메인 설정 불러오기 실패", e);
+          Log.Fatal("메인 설정 불러오기 실패", e);
           SetDefault();
         }
 
@@ -118,14 +118,14 @@ namespace UMP.Core
         }
         catch (Exception e)
         {
-          Log.Error("메인 테마 불러오기 실패", e);
+          Log.Fatal("메인 테마 불러오기 실패", e);
           ThemeHelper.SetDefaultTheme();
         }
         OnPropertyChanged("Loaded");
       }
       else
       {
-        Log.Error("저장된 메인 설정 파일이 없습니다");
+        Log.Warn("저장된 메인 설정 파일이 없습니다");
       }
       NowLoading = false;
     }

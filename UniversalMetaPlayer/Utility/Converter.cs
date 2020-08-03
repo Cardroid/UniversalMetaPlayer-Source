@@ -113,7 +113,7 @@ namespace UMP.Utility
           }
           catch (Exception e)
           {
-            log.Error("압축 풀기 오류 발생", e, $"Zip Path : [{zipFilePath}]\nTarget Path : [{targetFilePath}]");
+            log.Fatal("압축 풀기 오류 발생", e, $"Zip Path : [{zipFilePath}]\nTarget Path : [{targetFilePath}]");
             result = false;
           }
         }

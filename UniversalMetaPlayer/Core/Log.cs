@@ -32,7 +32,7 @@ namespace UMP.Core
         Name = "LogFileAppender",
         // 시스템이 기동되면 파일을 추가해서 할 것인가? 새로 작성할 것인가?
         AppendToFile = true,
-        File = logSavePath + "\\Log_",
+        File = logSavePath + "\\UMP_Log_",
         DatePattern = "yyyy-MM-dd'.log'",
         MaxSizeRollBackups = 10,
         MaximumFileSize = "100MB",

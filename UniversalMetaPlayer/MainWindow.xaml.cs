@@ -65,13 +65,6 @@ namespace UMP
       // 창 드레그 움직임
       this.MainInfoControl.MouseLeftButtonDown += MainWindow_WindowDrag;
 
-      // 디버그 전용 코드
-      // 오류시 제거 요망
-#if DEBUG
-      UMP.Test.PlayTest test = new UMP.Test.PlayTest();
-      test.StartTest();
-#endif
-
       this.BorderBrush = new SolidColorBrush(ThemeHelper.PrimaryColor);
       MainMediaPlayer.PropertyChangedEvent += (e) =>
       {

@@ -191,7 +191,7 @@ namespace UMP.Core
     private static void MediaPlayer_PlaybackStopped(object sender, StoppedEventArgs e)
     {
       if (e.Exception != null)
-        Log.Error("메인 플레이어 [PlaybackStopped]이벤트 처리오류", e.Exception);
+        Log.Fatal("메인 플레이어 [PlaybackStopped]이벤트 처리오류", e.Exception);
       if (WavePlayer.PlaybackState == PlaybackState.Stopped)
       {
         AudioFile.CurrentTime = TimeSpan.Zero;
@@ -253,7 +253,7 @@ namespace UMP.Core
       GenericResult<string> streamResult = await mediaLoader.GetStreamPathAsync(true);
       if (!streamResult)
       {
-        Log.Error("미디어 스트림 로드에 실패했습니다", new FileLoadException("Media Stream Path is Null"), $"Title : [{info.Title}]\nLocation : [{info.MediaLocation}]");
+        Log.Fatal("미디어 스트림 로드에 실패했습니다", new FileLoadException("Media Stream Path is Null"), $"Title : [{info.Title}]\nLocation : [{info.MediaLocation}]");
         return false;
       }
 
@@ -272,7 +272,7 @@ namespace UMP.Core
       }
       catch (Exception e)
       {
-        Log.Error("미디어 파일 로드중 오류가 발생했습니다", e);
+        Log.Fatal("미디어 파일 로드중 오류가 발생했습니다", e);
         return false;
       }
       MediaInformation = info;

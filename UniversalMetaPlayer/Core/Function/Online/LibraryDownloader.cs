@@ -32,7 +32,7 @@ namespace UMP.Core.Function.Online
       }
       catch (Exception e)
       {
-        log.Error("라이브러리 다운로드 오류", e);
+        log.Fatal("라이브러리 다운로드 오류", e);
         return false;
       }
       finally
@@ -58,7 +58,7 @@ namespace UMP.Core.Function.Online
 
           if (!Checker.CheckFFmpeg())
           {
-            log.Error("라이브러리 다운로드 중 알 수 없는 오류 발생", $"Cache Path : [{Path.GetFullPath(libraryCachePath)}]\nLibrary Path : [{Path.GetFullPath(libraryPath)}]");
+            log.Fatal("라이브러리 다운로드 중 알 수 없는 오류 발생", $"Cache Path : [{Path.GetFullPath(libraryCachePath)}]\nLibrary Path : [{Path.GetFullPath(libraryPath)}]");
             Directory.Delete(libraryCachePath, true);
             return false;
           }
@@ -68,13 +68,13 @@ namespace UMP.Core.Function.Online
         }
         else
         {
-          log.Error("라이브러리 압축 파일 추출 오류 발생");
+          log.Fatal("라이브러리 압축 파일 추출 오류 발생");
           return false;
         }
       }
       else
       {
-        log.Error("라이브러리 다운로드 오류", new FileNotFoundException("Not Found \"ffmpeg file\" in Cache"));
+        log.Fatal("라이브러리 다운로드 오류", new FileNotFoundException("Not Found \"ffmpeg file\" in Cache"));
         return false;
       }
     }
@@ -96,7 +96,7 @@ namespace UMP.Core.Function.Online
       }
       catch (Exception e)
       {
-        log.Error("라이브러리 다운로드 오류", e);
+        log.Fatal("라이브러리 다운로드 오류", e);
         return false;
       }
       finally
@@ -113,7 +113,7 @@ namespace UMP.Core.Function.Online
 
         if (!Checker.CheckYTDL())
         {
-          log.Error("라이브러리 다운로드 중 알 수 없는 오류 발생", $"Cache Path : [{Path.GetFullPath(libraryCachePath)}]\nLibrary Path : [{Path.GetFullPath(libraryPath)}]");
+          log.Fatal("라이브러리 다운로드 중 알 수 없는 오류 발생", $"Cache Path : [{Path.GetFullPath(libraryCachePath)}]\nLibrary Path : [{Path.GetFullPath(libraryPath)}]");
           Directory.Delete(libraryCachePath, true);
           return false;
         }
@@ -123,7 +123,7 @@ namespace UMP.Core.Function.Online
       }
       else
       {
-        log.Error("라이브러리 다운로드 오류", new FileNotFoundException($"Not Found \"{ytdlFileName}\" in Cache"));
+        log.Fatal("라이브러리 다운로드 오류", new FileNotFoundException($"Not Found \"{ytdlFileName}\" in Cache"));
         return false;
       }
     }

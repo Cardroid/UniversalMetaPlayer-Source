@@ -37,7 +37,7 @@ namespace UMP.Core.Function.Online
         var idResult = await GetIDAsync(uri);
         if (!idResult.Success)
         {
-          log.Error("오디오 ID 파싱 오류 발생", $"Uri : [{uri}]\nPath : [{savePath}]");
+          log.Fatal("오디오 ID 파싱 오류 발생", $"Uri : [{uri}]\nPath : [{savePath}]");
           return new GenericResult<string>(false);
         }
         else
@@ -64,7 +64,7 @@ namespace UMP.Core.Function.Online
         }
         catch (Exception e)
         {
-          log.Error("저장 경로 파싱 오류 발생", e, $"Uri : [{uri}]\nPath : [{savePath}]");
+          log.Fatal("저장 경로 파싱 오류 발생", e, $"Uri : [{uri}]\nPath : [{savePath}]");
           return new GenericResult<string>(false);
         }
 
@@ -93,7 +93,7 @@ namespace UMP.Core.Function.Online
           catch (Exception e)
           {
             error += $"{e}\n";
-            log.Error("파일 이동 오류", e, $"Result Path : [{resultPath[0]}]");
+            log.Fatal("파일 이동 오류", e, $"Result Path : [{resultPath[0]}]");
           }
         }
 
@@ -104,7 +104,7 @@ namespace UMP.Core.Function.Online
         }
         else
         {
-          log.Error($"오디오 다운로드 오류 발생.\n{error[0..^1]}", $"Uri : [{uri}]\nPath : [{savePath}]");
+          log.Fatal($"오디오 다운로드 오류 발생.\n{error[0..^1]}", $"Uri : [{uri}]\nPath : [{savePath}]");
           return new GenericResult<string>(false);
         }
       }
@@ -143,7 +143,7 @@ namespace UMP.Core.Function.Online
         }
         else
         {
-          log.Error($"ID 파싱 실패\n{error[0..^1]}", $"Uri : [{uri}]");
+          log.Fatal($"ID 파싱 실패\n{error[0..^1]}", $"Uri : [{uri}]");
           return new GenericResult<string>(false);
         }
       }
@@ -190,7 +190,7 @@ namespace UMP.Core.Function.Online
         }
         else
         {
-          log.Error($"JsonInfo 파싱 실패\n{error[0..^1]}", $"Uri : [{uri}]");
+          log.Fatal($"JsonInfo 파싱 실패\n{error[0..^1]}", $"Uri : [{uri}]");
           return new GenericResult<JObject>(false);
         }
       }

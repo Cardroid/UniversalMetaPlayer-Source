@@ -57,7 +57,7 @@ namespace UMP.Core.Function
       else
       {
         if (log != null)
-          log.Error("미디어 파일이 없습니다", new FileNotFoundException(), $"MediaLocation : [{path}]");
+          log.Fatal("미디어 파일이 없습니다", new FileNotFoundException(), $"MediaLocation : [{path}]");
         return new GenericResult<MediaInformation>(false);
       }
     }

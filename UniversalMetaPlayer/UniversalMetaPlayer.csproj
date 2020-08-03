@@ -32,7 +32,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Test\Mirror.cs" />
+    <Compile Remove="Test\**" />
+    <EmbeddedResource Remove="Test\**" />
+    <None Remove="Test\**" />
+    <Page Remove="Test\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -53,7 +56,6 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
-    <None Include="Test\Mirror.cs" />
   </ItemGroup>
 
   <ItemGroup>

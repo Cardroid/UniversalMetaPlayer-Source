@@ -226,7 +226,7 @@ namespace UMP.Controller
         else
         {
           var info = ViewModel.PlayList[ViewModel.PlayListSelectIndex];
-          Log.Error("미디어 정보가 로드되지 않았거나 로드에 실패 했습니다", $"MediaLocation : [{info.MediaLocation}]\nTitle : [{info.Title}]");
+          Log.Fatal("미디어 정보가 로드되지 않았거나 로드에 실패 했습니다", $"MediaLocation : [{info.MediaLocation}]\nTitle : [{info.Title}]");
         }
       }
     }

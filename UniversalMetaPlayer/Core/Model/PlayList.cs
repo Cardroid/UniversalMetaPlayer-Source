@@ -116,7 +116,7 @@ namespace UMP.Core.Model
         }
         catch (Exception e)
         {
-          Log.Error("플레이 리스트 로드 중 오류 발생. (Parsing Error)", e, $"Path : [{path}]");
+          Log.Fatal("플레이 리스트 로드 중 오류 발생. (Parsing Error)", e, $"Path : [{path}]");
           return false;
         }
         finally
@@ -127,7 +127,7 @@ namespace UMP.Core.Model
 
         if (playListData == null)
         {
-          Log.Error("플레이 리스트 로드 중 오류 발생. (Data is Null)", $"Path : [{path}]");
+          Log.Fatal("플레이 리스트 로드 중 오류 발생. (Data is Null)", $"Path : [{path}]");
           return false;
         }
 
@@ -137,7 +137,7 @@ namespace UMP.Core.Model
         List<string> paths = playListData.GetTracksPaths();
         if (paths.Count < 0)
         {
-          Log.Error("플레이 리스트 로드 중 오류 발생", new Exception("(PlayList Count < 0) is Impossible"), $"PlayList Name : [{playListData.FileName}]\nPath : [{path}]");
+          Log.Fatal("플레이 리스트 로드 중 오류 발생", new Exception("(PlayList Count < 0) is Impossible"), $"PlayList Name : [{playListData.FileName}]\nPath : [{path}]");
           return false;
         }
 
@@ -159,7 +159,7 @@ namespace UMP.Core.Model
       }
       else
       {
-        Log.Error("플레이 리스트 로드 중 오류 발생", new FileNotFoundException("File Not Found"), $"Path : [{path}]");
+        Log.Fatal("플레이 리스트 로드 중 오류 발생", new FileNotFoundException("File Not Found"), $"Path : [{path}]");
         return false;
       }
     }
@@ -203,7 +203,7 @@ namespace UMP.Core.Model
         Log.Info("플레이 리스트 항목 제거 완료", $"Title : [{mediaInfo.Title}]");
       }
       else
-        Log.Error("플레이 리스트 항목 제거 실패", new NullReferenceException("Unlisted Media"), $"Title : [{mediaInfo.Title}]");
+        Log.Fatal("플레이 리스트 항목 제거 실패", new NullReferenceException("Unlisted Media"), $"Title : [{mediaInfo.Title}]");
     }
 
     /// <summary>
@@ -221,7 +221,7 @@ namespace UMP.Core.Model
         Log.Info($"플레이 리스트 Index 항목 제거 완료.\nIndex : [{index}]");
       }
       else
-        Log.Error($"플레이 리스트 Index 항목 제거 실패", new IndexOutOfRangeException($"Index Out Of Range.\nBase Count : [{base.Count}]\nIndex : [{index}]"));
+        Log.Fatal($"플레이 리스트 Index 항목 제거 실패", new IndexOutOfRangeException($"Index Out Of Range.\nBase Count : [{base.Count}]\nIndex : [{index}]"));
     }
 
     public new void Insert(int index, MediaInformation item)

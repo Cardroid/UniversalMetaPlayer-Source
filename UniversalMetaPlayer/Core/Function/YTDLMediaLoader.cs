@@ -156,7 +156,7 @@ namespace UMP.Core.Function
       }
       else
       {
-        Log.Error("미디어 파일이 없습니다", $"MediaLocation : [{path}]");
+        Log.Fatal("미디어 파일이 없습니다", $"MediaLocation : [{path}]");
         return false;
       }
     }

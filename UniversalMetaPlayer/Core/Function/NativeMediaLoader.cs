@@ -170,7 +170,7 @@ namespace UMP.Core.Function
             Information.MediaStreamPath = mp3FilePath;
           else
           {
-            Log.Error("미디어 스트림 Mp3 변환 오류",new FileNotFoundException("변환을 완료 했지만, 파일을 찾을 수 없습니다."), $"Mp3Path : [{mp3FilePath}]\nStreamPath : [{streampath}]\nMediaLocation : [{Information.MediaLocation}]");
+            Log.Fatal("미디어 스트림 Mp3 변환 오류",new FileNotFoundException("변환을 완료 했지만, 파일을 찾을 수 없습니다."), $"Mp3Path : [{mp3FilePath}]\nStreamPath : [{streampath}]\nMediaLocation : [{Information.MediaLocation}]");
             return new GenericResult<string>(false);
           }
           Log.Info("미디어 스트림 Mp3 변환 완료");
@@ -179,11 +179,11 @@ namespace UMP.Core.Function
           if (await TryYouTubeMetaDataSave())
             Log.Info("미디어 메타데이터 다운로드 & 병합 완료");
           else
-            Log.Error("미디어 메타데이터 병합 중 오류 발생");
+            Log.Fatal("미디어 메타데이터 병합 중 오류 발생");
         }
         catch (Exception e)
         {
-          Log.Error("미디어 스트림 다운로드 & 변환 실패", e, $"MediaLocation : [{Information.MediaLocation}]");
+          Log.Fatal("미디어 스트림 다운로드 & 변환 실패", e, $"MediaLocation : [{Information.MediaLocation}]");
         }
 
         return new GenericResult<string>(true, mp3FilePath);
@@ -221,7 +221,7 @@ namespace UMP.Core.Function
         }
         catch (Exception e)
         {
-          Log.Error("미디어 스트림 다운로드 실패", e);
+          Log.Fatal("미디어 스트림 다운로드 실패", e);
           return new GenericResult<string>(false);
         }
       }
@@ -248,7 +248,7 @@ namespace UMP.Core.Function
 
       if (!File.Exists(Information.MediaStreamPath))
       {
-        Log.Error("파일이 없습니다", new FileNotFoundException("File Not Found"), $"Path : [{Information.MediaStreamPath}]");
+        Log.Fatal("파일이 없습니다", new FileNotFoundException("File Not Found"), $"Path : [{Information.MediaStreamPath}]");
         return false;
       }
 
@@ -264,7 +264,7 @@ namespace UMP.Core.Function
           }
           catch (Exception e)
           {
-            Log.Error("온라인 정보 로드 실패", e);
+            Log.Fatal("온라인 정보 로드 실패", e);
             return false;
           }
           TagLib.File Fileinfo = null;
@@ -274,7 +274,7 @@ namespace UMP.Core.Function
           }
           catch (Exception e)
           {
-            Log.Error("Mp3 파일 열기 또는 메타정보 로드 실패", e);
+            Log.Fatal("Mp3 파일 열기 또는 메타정보 로드 실패", e);
             Fileinfo?.Dispose();
             return false;
           }
@@ -302,7 +302,7 @@ namespace UMP.Core.Function
               }
               catch (Exception ex)
               {
-                Log.Error("일반 화질 썸네일 추출 중 오류가 발생했습니다", ex);
+                Log.Fatal("일반 화질 썸네일 추출 중 오류가 발생했습니다", ex);
               }
             }
           }
@@ -334,22 +334,23 @@ namespace UMP.Core.Function
           }
           catch (Exception e)
           {
-            Log.Error("메타데이터에 작성 & 저장에 실패했습니다", e);
+            Log.Fatal("메타데이터에 작성 & 저장에 실패했습니다", e);
             return false;
           }
           finally
           {
             Fileinfo.Dispose();
           }
+
           Log.Info("YouTube에서 Mp3 메타 데이터 저장 완료");
           return true;
         });
-        Log.Error("YouTube에서 Mp3 메타 데이터 저장 중 알 수 없는 오류 발생", $"StreamPath : [{Path.GetFullPath(Information.MediaStreamPath)}]\nPath : [{Information.MediaLocation}]");
+        Log.Fatal("YouTube에서 Mp3 메타 데이터 저장 중 알 수 없는 오류 발생", $"StreamPath : [{Path.GetFullPath(Information.MediaStreamPath)}]\nPath : [{Information.MediaLocation}]");
         return false;
       }
       else
       {
-        Log.Error("네트워크를 사용할 수 없습니다");
+        Log.Error(PredefineMessage.UnableNetwork);
         return false;
       }
     }
