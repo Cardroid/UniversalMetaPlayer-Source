@@ -185,7 +185,7 @@ namespace UMP.Core.Function
       if (Checker.CheckForInternetConnection())
       {
         YTDLHelper ytdlHelper = new YTDLHelper();
-        return await ytdlHelper.DownloadAudioAsync(Information.MediaLocation, GlobalProperty.OnlineMediaCachePath);
+        return await ytdlHelper.DownloadAudioAsync(Information.MediaLocation, GlobalProperty.StaticValues.OnlineMediaCachePath);
       }
       else
         return new GenericResult<string>(false);
@@ -215,12 +215,12 @@ namespace UMP.Core.Function
     /// </summary>
     private void LoadFailProcess()
     {
-      if (!Information.Title.ToLower().StartsWith(GlobalProperty.MEDIA_INFO_NULL.ToLower()))
+      if (!Information.Title.ToLower().StartsWith(GlobalProperty.StaticValues.MEDIA_INFO_NULL.ToLower()))
       {
         if (string.IsNullOrWhiteSpace(Information.Title))
-          Information.Title = $"{GlobalProperty.MEDIA_INFO_NULL} {Path.GetFileNameWithoutExtension(Information.MediaLocation)}";
+          Information.Title = $"{GlobalProperty.StaticValues.MEDIA_INFO_NULL} {Path.GetFileNameWithoutExtension(Information.MediaLocation)}";
         else
-          Information.Title = $"{GlobalProperty.MEDIA_INFO_NULL} {Information.Title}";
+          Information.Title = $"{GlobalProperty.StaticValues.MEDIA_INFO_NULL} {Information.Title}";
       }
       Information.MediaStreamPath = string.Empty;
     }

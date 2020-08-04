@@ -87,7 +87,7 @@ namespace UMP.Core.Model
 
       string m3uData = PlaylistToTextHelper.ToText(playlist);
 
-      var savepath = Path.Combine(!string.IsNullOrWhiteSpace(path) ? path : Path.Combine(GlobalProperty.FileSavePath, "PlayList"));
+      var savepath = Path.Combine(!string.IsNullOrWhiteSpace(path) ? path : Path.Combine(GlobalProperty.Options.FileSavePath, "PlayList"));
       Checker.DirectoryCheck(savepath);
       playlist.Path = savepath;
 

@@ -13,9 +13,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-using MaterialDesignColors;
-using MaterialDesignColors.ColorManipulation;
-
 using UMP.Core;
 using UMP.Utility;
 using UMP.Utility.Effect;

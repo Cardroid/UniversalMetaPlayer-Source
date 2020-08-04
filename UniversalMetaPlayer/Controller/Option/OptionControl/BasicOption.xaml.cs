@@ -29,9 +29,9 @@ namespace UMP.Controller.Option.OptionControl
 
     private void OpenDirectoryDialogButton_Click(object sender, RoutedEventArgs e)
     {
-      var result = DialogHelper.OpenDirectoryDialog("저장 폴더 선택", GlobalProperty.FileSavePath);
+      var result = DialogHelper.OpenDirectoryDialog("저장 폴더 선택", GlobalProperty.Options.FileSavePath);
       if (result)
-        GlobalProperty.FileSavePath = result.Result;
+        GlobalProperty.Options.FileSavePath = result.Result;
     }
   }
 }

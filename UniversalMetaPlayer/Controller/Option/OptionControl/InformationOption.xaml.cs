@@ -31,12 +31,12 @@ namespace UMP.Controller.Option.OptionControl
 
       this.Mainlogo.Width = 120;
       this.Mainlogo.Height = 120;
-      this.Mainlogo.Source = GlobalProperty.LogoImage;
+      this.Mainlogo.Source = GlobalProperty.StaticValues.LogoImage;
 
       this.CoreVersionTitleLabel.Content = "코어 버전 : ";
       this.FileVersionTitleLabel.Content = "파일 버전 : ";
-      this.CoreVersionLabel.Content = GlobalProperty.CoreVersion;
-      this.FileVersionLabel.Content = GlobalProperty.FileVersion;
+      this.CoreVersionLabel.Content = GlobalProperty.StaticValues.CoreVersion;
+      this.FileVersionLabel.Content = GlobalProperty.StaticValues.FileVersion;
 
       this.ProjectRepositoryUrl.NavigateUri = new Uri("https://github.com/Cardroid/UniversalMetaPlayer");
       this.ProjectRepositoryUrl.ToolTip = "https://github.com/Cardroid/UniversalMetaPlayer 으로 이동합니다.";

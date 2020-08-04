@@ -149,14 +149,14 @@ namespace UMP.Core.Function
       if (Checker.CheckForInternetConnection())
       {
         // 캐시폴더가 존재하지 않을시 생성
-        Checker.DirectoryCheck(GlobalProperty.OnlineMediaCachePath);
+        Checker.DirectoryCheck(GlobalProperty.StaticValues.OnlineMediaCachePath);
 
-        string mp3FilePath = Path.Combine(GlobalProperty.OnlineMediaCachePath, $"{(await GetID()).Result}.mp3");
+        string mp3FilePath = Path.Combine(GlobalProperty.StaticValues.OnlineMediaCachePath, $"{(await GetID()).Result}.mp3");
         try
         {
           // 유튜브 스트림 다운로드
           string streampath;
-          var streamPathResult = await TryDownloadYouTubeStreamAsync(GlobalProperty.OnlineMediaCachePath);
+          var streamPathResult = await TryDownloadYouTubeStreamAsync(GlobalProperty.StaticValues.OnlineMediaCachePath);
           if (streamPathResult)
             streampath = streamPathResult.Result;
           else
@@ -366,12 +366,12 @@ namespace UMP.Core.Function
     /// </summary>
     private void LoadFailProcess()
     {
-      if (!Information.Title.ToLower().StartsWith(GlobalProperty.MEDIA_INFO_NULL.ToLower()))
+      if (!Information.Title.ToLower().StartsWith(GlobalProperty.StaticValues.MEDIA_INFO_NULL.ToLower()))
       {
         if (string.IsNullOrWhiteSpace(Information.Title))
-          Information.Title = $"{GlobalProperty.MEDIA_INFO_NULL} {Path.GetFileNameWithoutExtension(Information.MediaLocation)}";
+          Information.Title = $"{GlobalProperty.StaticValues.MEDIA_INFO_NULL} {Path.GetFileNameWithoutExtension(Information.MediaLocation)}";
         else
-          Information.Title = $"{GlobalProperty.MEDIA_INFO_NULL} {Information.Title}";
+          Information.Title = $"{GlobalProperty.StaticValues.MEDIA_INFO_NULL} {Information.Title}";
       }
       Information.MediaStreamPath = string.Empty;
     }

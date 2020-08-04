@@ -108,12 +108,20 @@ namespace UMP.Utility
     {
       if (MainMediaPlayer.MediaLoadedCheck)
       {
-        if (GlobalProperty.IsAverageColorTheme && MainMediaPlayer.MediaInformation.AlbumImage != null)
+        if (GlobalProperty.Options.IsAverageColorTheme && MainMediaPlayer.MediaInformation.AlbumImage != null)
         {
-          var color = ImageProcessing.GetAverageColor(MainMediaPlayer.MediaInformation.AlbumImage as BitmapSource, GlobalProperty.AverageColorProcessingOffset);
-          Application.Current.MainWindow.BorderBrush = new SolidColorBrush(color);
-          ChangePrimaryColor(color.Lighten(3));
-          ChangeSecondaryColor(color.Darken(3));
+          Log log = new Log(typeof(ThemeHelper));
+          try
+          {
+            var color = ImageProcessing.GetAverageColor(MainMediaPlayer.MediaInformation.AlbumImage as BitmapSource, GlobalProperty.Options.AverageColorProcessingOffset);
+            Application.Current.MainWindow.BorderBrush = new SolidColorBrush(color);
+            ChangePrimaryColor(color.Lighten(3));
+            ChangeSecondaryColor(color.Darken(3));
+          }
+          catch(Exception e)
+          {
+            log.Error("이미지 평균색 추출에 실패 했습니다.", e);
+          }
         }
       }
       else

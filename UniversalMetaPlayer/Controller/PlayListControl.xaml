@@ -72,7 +72,7 @@
                         HorizontalAlignment="Right"
                         VerticalAlignment="Center"
                         Style="{StaticResource MaterialDesignMultiFloatingActionAccentPopupBox}"
-                        Foreground="{Binding Theme.PrimaryMid}"
+                        Foreground="{DynamicResource MaterialDesignPaper}"
                         PlacementMode="LeftAndAlignMiddles"
                         PopupMode="MouseOverEager"
                         Background="Transparent"
@@ -110,7 +110,7 @@
                                 x:Name="PlayListAddButton"
                                 Style="{StaticResource MaterialDesignIconButton}"
                                 Content="{materialDesign:PackIcon Kind=PlaylistAdd, Size=20}"
-                                Foreground="{Binding Theme.PrimaryMid}"
+                                Foreground="{DynamicResource MaterialDesignPaper}"
                                 ToolTip="추가"
                                 Focusable="False"
                                 Cursor="Hand" />
@@ -118,7 +118,7 @@
                                 x:Name="PlayListSaveButton"
                                 Style="{StaticResource MaterialDesignIconButton}"
                                 Content="{materialDesign:PackIcon Kind=ContentSave, Size=20}"
-                                Foreground="{Binding Theme.PrimaryMid}"
+                                Foreground="{DynamicResource MaterialDesignPaper}"
                                 ToolTip="저장"
                                 Focusable="False"
                                 Cursor="Hand" />
@@ -126,7 +126,7 @@
                                 x:Name="PlayListLoadButton"
                                 Style="{StaticResource MaterialDesignIconButton}"
                                 Content="{materialDesign:PackIcon Kind=FileUpload, Size=20}"
-                                Foreground="{Binding Theme.PrimaryMid}"
+                                Foreground="{DynamicResource MaterialDesignPaper}"
                                 ToolTip="불러오기"
                                 Focusable="False"
                                 Cursor="Hand" />
@@ -134,7 +134,7 @@
                                 x:Name="PlayListReloadButton"
                                 Style="{StaticResource MaterialDesignIconButton}"
                                 Content="{materialDesign:PackIcon Kind=Reload, Size=20}"
-                                Foreground="{Binding Theme.PrimaryMid}"
+                                Foreground="{DynamicResource MaterialDesignPaper}"
                                 ToolTip="새로고침"
                                 Focusable="False"
                                 Cursor="Hand" />
@@ -157,6 +157,8 @@
                 dd:DragDrop.DropHandler="{Binding}"
                 SelectedIndex="{Binding PlayListSelectIndex}"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                materialDesign:ScrollViewerAssist.IsAutoHideEnabled="True"
+                materialDesign:ScrollBarAssist.ButtonsVisibility="Collapsed"
                 AllowDrop="True"
                 Margin="-8">
 
@@ -177,19 +179,14 @@
                                     Width="*" />
                                 <ColumnDefinition
                                     Width="Auto" />
-                                <ColumnDefinition
-                                    Width="Auto" />
                             </Grid.ColumnDefinitions>
 
                             <Label
-                                Content="{Binding Title}"
+                                Content="{Binding Title, Mode=OneWay}"
                                 Grid.Column="0" />
                             <Label
-                                Content="{Binding MediaType}"
+                                Content="{Binding Duration, Converter={StaticResource TimeSpanStringConverter}, Mode=OneWay}"
                                 Grid.Column="1" />
-                            <Label
-                                Content="{Binding Duration, Converter={StaticResource TimeSpanStringConverter}}"
-                                Grid.Column="2" />
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>

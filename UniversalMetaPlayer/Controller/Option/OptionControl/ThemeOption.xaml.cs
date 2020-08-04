@@ -30,7 +30,7 @@ namespace UMP.Controller.Option.OptionControl
       ViewModel = (ThemeOptionViewModel)this.DataContext;
 
       this.AverageColorProcessingOffsetTextBox.PreviewKeyDown += AverageColorProcessingOffsetTextBox_PreviewKeyDown;
-      this.AverageColorProcessingOffsetTextBox.Text = GlobalProperty.AverageColorProcessingOffset.ToString();
+      this.AverageColorProcessingOffsetTextBox.Text = GlobalProperty.Options.AverageColorProcessingOffset.ToString();
     }
 
     private async void AverageColorProcessingOffsetTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -44,7 +44,7 @@ namespace UMP.Controller.Option.OptionControl
           result = Math.Clamp(result, 1, 501);
         else
           result = 30;
-        GlobalProperty.AverageColorProcessingOffset = result;
+        GlobalProperty.Options.AverageColorProcessingOffset = result;
         this.AverageColorProcessingOffsetTextBox.Text = result.ToString();
         await Task.Delay(500);
         this.AverageColorProcessingOffsetTextBox.IsReadOnlyCaretVisible = true;

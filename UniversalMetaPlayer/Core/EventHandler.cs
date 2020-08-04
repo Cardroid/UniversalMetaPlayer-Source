@@ -31,7 +31,7 @@ namespace UMP.Core
         return;
       KeyDownEventHandled = true;
       KeyDownEvent?.Invoke(e);
-      await Task.Delay(GlobalProperty.KeyEventDelay);
+      await Task.Delay(GlobalProperty.Options.KeyEventDelay);
       KeyDownEventHandled = false;
     }
   }

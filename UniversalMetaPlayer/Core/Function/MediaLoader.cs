@@ -13,12 +13,12 @@ namespace UMP.Core.Function
 
     public MediaLoader(string mediaLocation)
     {
-      switch (GlobalProperty.MediaLoadEngine)
+      switch (GlobalProperty.Options.MediaLoadEngine)
       {
-        case GlobalProperty.MediaLoadEngineType.YoutubeDL:
+        case GlobalProperty.Options.Enums.MediaLoadEngineType.YoutubeDL:
           this.Loader = new YTDLMediaLoader(mediaLocation);
           break;
-        case GlobalProperty.MediaLoadEngineType.Native:
+        case GlobalProperty.Options.Enums.MediaLoadEngineType.Native:
         default:
           this.Loader = new NativeMediaLoader(mediaLocation);
           break;
@@ -26,12 +26,12 @@ namespace UMP.Core.Function
     }
     public MediaLoader(MediaInformation info)
     {
-      switch (GlobalProperty.MediaLoadEngine)
+      switch (GlobalProperty.Options.MediaLoadEngine)
       {
-        case GlobalProperty.MediaLoadEngineType.YoutubeDL:
+        case GlobalProperty.Options.Enums.MediaLoadEngineType.YoutubeDL:
           this.Loader = new YTDLMediaLoader(info);
           break;
-        case GlobalProperty.MediaLoadEngineType.Native:
+        case GlobalProperty.Options.Enums.MediaLoadEngineType.Native:
         default:
           this.Loader = new NativeMediaLoader(info);
           break;

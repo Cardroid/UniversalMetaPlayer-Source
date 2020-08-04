@@ -68,7 +68,7 @@ namespace UMP.Controller.ViewModel
         else
         {
           ImageMargin = new Thickness(70);
-          return GlobalProperty.LogoNoteImage;
+          return GlobalProperty.StaticValues.LogoNoteImage;
         }
       }
     }

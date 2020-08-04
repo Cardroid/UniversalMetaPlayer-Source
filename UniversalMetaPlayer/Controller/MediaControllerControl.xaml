@@ -245,7 +245,7 @@
                 Style="{StaticResource MaterialDesignActionCheckBox}"
                 Background="Transparent"
                 Foreground="{Binding Foreground, ElementName=PlayPauseButton}"
-                Content="{materialDesign:PackIcon Kind=Settings, Size=30}"
+                Content="{materialDesign:PackIcon Kind=DotsHorizontal, Size=30}"
                 IsChecked="{Binding IsOptionWindowOpen}"
                 ToolTip="설정 / Setting"
                 Focusable="False"

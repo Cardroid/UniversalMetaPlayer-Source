@@ -12,25 +12,20 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using UMP.Controller.Dialog;
-using UMP.Controller.ViewModel;
 using UMP.Core;
 using UMP.Core.Model;
-using UMP.Utility;
 
 using MaterialDesignThemes.Wpf;
-using GongSolutions.Wpf.DragDrop.Utilities;
 using UMP.Core.Function;
 
 namespace UMP.Controller
 {
   public partial class PlayListControl : UserControl
   {
-    private PlayListControlViewModel ViewModel { get; set; }
     private Log Log { get; }
     public PlayListControl()
     {
       InitializeComponent();
-      ViewModel = (PlayListControlViewModel)this.DataContext;
       Log = new Log(typeof(PlayListControl));
 
       this.Loaded += PlayListControl_Loaded;
@@ -38,12 +33,6 @@ namespace UMP.Controller
 
     private void PlayListControl_Loaded(object sender, RoutedEventArgs e)
     {
-      this.PlayListAddButton.Tag = PlayListControlType.Add;
-      this.PlayListSaveButton.Tag = PlayListControlType.Save;
-      this.PlayListLoadButton.Tag = PlayListControlType.Load;
-      this.PlayListReloadButton.Tag = PlayListControlType.Reload;
-      this.PlayListResetButton.Tag = PlayListControlType.Reset;
-
       this.PlayListAddButton.Click += PlayListControlButton_Click;
       this.PlayListSaveButton.Click += PlayListControlButton_Click;
       this.PlayListLoadButton.Click += PlayListControlButton_Click;
@@ -103,7 +92,7 @@ namespace UMP.Controller
           {
             var deleteItemList = this.PlayList.SelectedItems;
             for (int i = deleteItemList.Count - 1; i >= 0; i--)
-              ViewModel.PlayList.Remove((MediaInformation)deleteItemList[i]);
+              MainMediaPlayer.PlayList.Remove((MediaInformation)deleteItemList[i]);
           }
           break;
       }
@@ -114,42 +103,42 @@ namespace UMP.Controller
     /// </summary>
     private async void PlayListControlButton_Click(object sender, RoutedEventArgs e)
     {
-      if (((Button)sender).Tag is PlayListControlType type && GlobalProperty.IsControllable)
+      if (GlobalProperty.IsControllable && sender is Button button)
       {
-        switch (type)
+        switch (button.Name)
         {
-          case PlayListControlType.Add:
+          case "PlayListAddButton":
             EnableControl(false);
             var addView = new PlayListAddDialog();
             addView.Close += () => { this.PlayListDialog.IsOpen = false; };
             await this.PlayListDialog.ShowDialog(addView);
             EnableControl(true);
             break;
-          case PlayListControlType.Save:
-            await ViewModel.PlayList.Save();
+          case "PlayListSaveButton":
+            await MainMediaPlayer.PlayList.Save();
             break;
-          case PlayListControlType.Load:
+          case "PlayListLoadButton":
             EnableControl(false);
             var loadView = new PlayListLoadDialog();
             loadView.Close += () => { this.PlayListDialog.IsOpen = false; };
             await this.PlayListDialog.ShowDialog(loadView);
             EnableControl(true);
             break;
-          case PlayListControlType.Reload:
+          case "PlayListReloadButton":
             EnableControl(false);
             var selectedList = this.PlayList.SelectedItems;
             if (selectedList != null)
             {
               for (int i = selectedList.Count - 1; i >= 0; i--)
-                await ViewModel.PlayList.ReloadAsync((MediaInformation)selectedList[i]);
+                await MainMediaPlayer.PlayList.ReloadAsync((MediaInformation)selectedList[i]);
             }
             else
-              await ViewModel.PlayList.ReloadAllAsync();
+              await MainMediaPlayer.PlayList.ReloadAllAsync();
             EnableControl(true);
             break;
-          case PlayListControlType.Reset:
+          case "PlayListResetButton":
             EnableControl(false);
-            ViewModel.PlayList.Clear();
+            MainMediaPlayer.PlayList.Clear();
             EnableControl(true);
             break;
         }
@@ -173,14 +162,6 @@ namespace UMP.Controller
     }
 
     /// <summary>
-    /// 컨트롤 버튼 구분용 (버튼 테그)
-    /// </summary>
-    private enum PlayListControlType
-    {
-      Add, Save, Load, Reload, Reset
-    }
-
-    /// <summary>
     /// 플레이 리스트 빈 곳 클릭시 선택해제 처리
     /// </summary>
     private void PlayList_MouseDownUnSelect(object sender, MouseButtonEventArgs e)
@@ -192,7 +173,7 @@ namespace UMP.Controller
           if (r.VisualHit.GetType() == null || r.VisualHit.GetType() != typeof(ListBoxItem))
           {
             PlayList.UnselectAll();
-            ViewModel.PlayListSelectIndex = -1;
+            MainMediaPlayer.PlayListPlayMediaIndex = -1;
           }
       }
     }
@@ -203,17 +184,17 @@ namespace UMP.Controller
     /// </summary>
     private async void PlayList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
-      if (0 <= ViewModel.PlayListSelectIndex && ViewModel.PlayList.Count > ViewModel.PlayListSelectIndex)
+      if (0 <= this.PlayList.SelectedIndex && this.PlayList.SelectedIndex < MainMediaPlayer.PlayList.Count)
       {
-        if (ViewModel.PlayList[ViewModel.PlayListSelectIndex].LoadState)
+        if (MainMediaPlayer.PlayList[this.PlayList.SelectedIndex].LoadState)
         {
-          MainMediaPlayer.PlayListPlayMediaIndex = ViewModel.PlayListSelectIndex;
-          if (await MainMediaPlayer.Init(new MediaLoader(ViewModel.PlayList[ViewModel.PlayListSelectIndex])))
-            MainMediaPlayer.PlayListEigenValue = ViewModel.PlayList.EigenValue;
+          MainMediaPlayer.PlayListPlayMediaIndex = this.PlayList.SelectedIndex;
+          if (await MainMediaPlayer.Init(new MediaLoader(MainMediaPlayer.PlayList[this.PlayList.SelectedIndex])))
+            MainMediaPlayer.PlayListEigenValue = MainMediaPlayer.PlayList.EigenValue;
         }
         else
         {
-          var info = ViewModel.PlayList[ViewModel.PlayListSelectIndex];
+          var info = MainMediaPlayer.PlayList[MainMediaPlayer.PlayListPlayMediaIndex];
           Log.Fatal("미디어 정보가 로드되지 않았거나 로드에 실패 했습니다", $"MediaLocation : [{info.MediaLocation}]\nTitle : [{info.Title}]");
         }
       }

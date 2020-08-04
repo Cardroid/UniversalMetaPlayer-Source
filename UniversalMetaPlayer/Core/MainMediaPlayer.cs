@@ -21,6 +21,7 @@ namespace UMP.Core
     static MainMediaPlayer()
     {
       Option = new PlayerOption();
+      OptionDefault();
       PlayList = new PlayList();
       MediaInformation = new MediaInformation()
       {
@@ -30,8 +31,7 @@ namespace UMP.Core
       };
 
       PlayListPlayMediaIndex = -1;
-      Volume = 0.3f;
-      OptionDefault();
+      GlobalProperty.PropertyChanged += (e) => { if (e == "Loaded") Volume = Option.Volume; };
       // 오토 플레이 옵션
       PropertyChangedEvent += (e) =>
       {
@@ -62,6 +62,7 @@ namespace UMP.Core
 
     public static void OptionDefault()
     {
+      Option.Volume = 0.3f;
       Option.Shuffle = false;
       Option.AutoPlayOption = true;
       Option.RepeatPlayOption = 0;
@@ -197,16 +198,15 @@ namespace UMP.Core
     /// </summary>
     public static float Volume
     {
-      get => WavePlayer != null ? WavePlayer.Volume : _Volume;
+      get => WavePlayer != null ? WavePlayer.Volume : Option.Volume;
       set
       {
         if (WavePlayer != null)
           WavePlayer.Volume = value;
-        _Volume = value;
+        Option.Volume = value;
         OnPropertyChanged("Volume");
       }
     }
-    private static float _Volume;
 
     /// <summary>
     /// 현재 재생 상태
@@ -256,7 +256,7 @@ namespace UMP.Core
       WavePlayer?.Dispose();
       WavePlayer = new WaveOut();
       WavePlayer.PlaybackStopped += MediaPlayer_PlaybackStopped;
-      WavePlayer.Volume = _Volume;
+      WavePlayer.Volume = Volume;
       WavePlayer.Init(AudioFile);
 
       PropertyChangedEvent?.Invoke("MainPlayerInitialized");
@@ -414,7 +414,6 @@ namespace UMP.Core
   /// <summary>
   /// 플레이어 옵션
   /// </summary>
-  [JsonObject]
   public struct PlayerOption
   {
     public event PropertyChangedEventHandler PropertyChangedEvent;
@@ -427,9 +426,13 @@ namespace UMP.Core
     private bool _LastSongSaveOption;
 
     /// <summary>
+    /// 세이브 전용 볼륨값
+    /// </summary>
+    public float Volume;
+
+    /// <summary>
     /// 셔플 옵션
     /// </summary>
-    [JsonProperty]
     public bool Shuffle
     {
       get => _Shuffle;
@@ -443,7 +446,6 @@ namespace UMP.Core
     /// <summary>
     /// 반복 옵션 (0 = OFF, 1 = Once, 2 = All)
     /// </summary>
-    [JsonProperty]
     public int RepeatPlayOption
     {
       get => _RepeatPlayOption;
@@ -462,7 +464,6 @@ namespace UMP.Core
     /// <summary>
     /// 자동 재생 옵션
     /// </summary>
-    [JsonProperty]
     public bool AutoPlayOption
     {
       get => _AutoPlayOption;
@@ -476,7 +477,6 @@ namespace UMP.Core
     /// <summary>
     /// 남은시간 - 전체시간 전환 (ture = 전체시간, false = 남은시간)
     /// </summary>
-    [JsonProperty]
     public bool DurationViewStatus
     {
       get => _DurationViewStatus;
@@ -490,7 +490,6 @@ namespace UMP.Core
     /// <summary>
     /// 마지막 곡 저장
     /// </summary>
-    [JsonProperty]
     public bool LastSongSaveOption
     {
       get => _LastSongSaveOption;

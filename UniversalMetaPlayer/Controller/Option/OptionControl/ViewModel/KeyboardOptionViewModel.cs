@@ -11,10 +11,10 @@ namespace UMP.Controller.Option.OptionControl.ViewModel
   {
     public bool GlobalKeyboardHookIsChecked
     {
-      get => GlobalProperty.GlobalKeyboardHook;
+      get => GlobalProperty.Options.GlobalKeyboardHook;
       set
       {
-        GlobalProperty.GlobalKeyboardHook = value;
+        GlobalProperty.Options.GlobalKeyboardHook = value;
         OnPropertyChanged("GlobalKeyboardHook");
       }
     }

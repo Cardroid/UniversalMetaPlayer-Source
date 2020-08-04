@@ -11,10 +11,10 @@ namespace UMP.Controller.Option.OptionControl.ViewModel
   {
     public bool IsAverageColorThemeIsChecked
     {
-      get => GlobalProperty.IsAverageColorTheme;
+      get => GlobalProperty.Options.IsAverageColorTheme;
       set
       {
-        GlobalProperty.IsAverageColorTheme = value;
+        GlobalProperty.Options.IsAverageColorTheme = value;
         OnPropertyChanged("IsAverageColorThemeIsChecked");
       }
     }

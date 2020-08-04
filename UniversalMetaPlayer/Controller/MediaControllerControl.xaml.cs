@@ -151,7 +151,7 @@ namespace UMP.Controller
     /// </summary>
     private void GlobalEvent_KeyDownEvent(KeyEventArgs e)
     {
-      if (GlobalProperty.HotKey && GlobalProperty.IsControllable)
+      if (GlobalProperty.Options.HotKey && GlobalProperty.IsControllable)
       {
         switch (e.Key)
         {

@@ -18,14 +18,14 @@ namespace UMP.Controller.Option.OptionControl.ViewModel
       };
     }
 
-    public string FileSavePathToolTip => $"프로그램에서 저장하는 파일을 보관하는 폴더입니다.\n빈 폴더를 권장합니다.\n현재 설정 : \"{Path.GetFullPath(GlobalProperty.FileSavePath)}\"";
+    public string FileSavePathToolTip => $"프로그램에서 저장하는 파일을 보관하는 폴더입니다.\n빈 폴더를 권장합니다.\n현재 설정 : \"{Path.GetFullPath(GlobalProperty.Options.FileSavePath)}\"";
 
     public bool PrivateLoggingIsChecked
     {
-      get => GlobalProperty.PrivateLogging;
+      get => GlobalProperty.Options.PrivateLogging;
       set
       {
-        GlobalProperty.PrivateLogging = value;
+        GlobalProperty.Options.PrivateLogging = value;
         OnPropertyChanged("PrivateLoggingIsChecked");
       }
     }
