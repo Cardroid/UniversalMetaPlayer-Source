@@ -28,6 +28,8 @@ namespace UMP.Controller.Dialog
       InitializeComponent();
 
       this.AcceptButton.IsEnabled = false;
+      this.AcceptButton.Click += AcceptButton_Click;
+      this.CancelButton.Click += CancelButton_Click;
       this.UserTextBox.TextChanged += MediaLocationTextBox_TextChanged;
       this.OpenFileDialogButton.Click += OpenFileDialogButton_Click;
       this.MouseDown += (s, e) => { this.UserTextBox.Focus(); };

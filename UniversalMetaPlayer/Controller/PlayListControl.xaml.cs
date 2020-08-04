@@ -137,7 +137,6 @@ namespace UMP.Controller
             break;
           case PlayListControlType.Reload:
             EnableControl(false);
-
             var selectedList = this.PlayList.SelectedItems;
             if (selectedList != null)
             {

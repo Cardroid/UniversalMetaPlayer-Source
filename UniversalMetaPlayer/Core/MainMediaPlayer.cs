@@ -113,36 +113,10 @@ namespace UMP.Core
       set
       {
         _MediaInformation = value;
-        GetAverageColor();
         OnPropertyChanged("MediaInformation");
       }
     }
     private static MediaInformation _MediaInformation;
-
-    /// <summary>
-    /// 대표색 추출
-    /// </summary>
-    public static void GetAverageColor()
-    {
-      if (GlobalProperty.AverageColorProcessingOffset > 0 && _MediaInformation.AlbumImage != null)
-        AverageColor = ImageProcessing.GetAverageColor(_MediaInformation.AlbumImage as BitmapSource, GlobalProperty.AverageColorProcessingOffset);
-      else
-        AverageColor = ThemeHelper.PrimaryColor;
-    }
-
-    /// <summary>
-    /// 미디어 이미지 대표색
-    /// </summary>
-    public static Color AverageColor
-    {
-      get => _AverageColor;
-      private set
-      {
-        _AverageColor = value;
-        OnPropertyChanged("AverageColor");
-      }
-    }
-    private static Color _AverageColor;
 
     /// <summary>
     /// 오디오 파일 (약한참조)

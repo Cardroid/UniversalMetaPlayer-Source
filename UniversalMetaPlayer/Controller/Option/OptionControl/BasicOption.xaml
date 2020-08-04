@@ -5,15 +5,20 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:UMP.Controller.Option.OptionControl"
+    xmlns:viewmodel="clr-namespace:UMP.Controller.Option.OptionControl.ViewModel"
     mc:Ignorable="d">
 
+    <UserControl.DataContext>
+        <viewmodel:BasicOptionViewModel />
+    </UserControl.DataContext>
+    
     <WrapPanel
         Orientation="Vertical"
         Margin="5">
 
-        <WrapPanel
-            x:Name="FileSavePathPanel"
+        <StackPanel
             Orientation="Horizontal"
+            ToolTip="{Binding FileSavePathToolTip}"
             Margin="5,5,0,0">
             <Label
                 Content="저장 폴더" />
@@ -21,16 +26,17 @@
                 x:Name="OpenDirectoryDialogButton"
                 Style="{DynamicResource MaterialDesignFlatAccentBgButton}"
                 Content="찾아보기" />
-        </WrapPanel>
-        <WrapPanel
+        </StackPanel>
+        <StackPanel
             Orientation="Horizontal"
-            ToolTip="로그에 더 자세한 사항을 기록합니다.&#10;개인 정보가 포함 될 수 있으나, 모든 정보는 익명으로 저장됩니다."
+            ToolTip="{Binding PrivateLoggingToolTip}"
             Margin="5,5,0,0">
             <Label
                 Content="자세한 로깅" />
             <ToggleButton
                 x:Name="PrivateLogging"
+                IsChecked="{Binding PrivateLoggingIsChecked}"
                 Style="{StaticResource MaterialDesignSwitchToggleButton}" />
-        </WrapPanel>
+        </StackPanel>
     </WrapPanel>
 </UserControl>

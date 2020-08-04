@@ -66,25 +66,6 @@ namespace UMP
       this.MainInfoControl.MouseLeftButtonDown += MainWindow_WindowDrag;
 
       this.BorderBrush = new SolidColorBrush(ThemeHelper.PrimaryColor);
-      MainMediaPlayer.PropertyChangedEvent += (e) =>
-      {
-        if (e == "AverageColor" && GlobalProperty.IsAverageColorTheme)
-        {
-          if (MainMediaPlayer.MediaLoadedCheck)
-          {
-            var color = MainMediaPlayer.AverageColor;
-            this.BorderBrush = new SolidColorBrush(color);
-            ThemeHelper.ChangePrimaryColor(color.Lighten(2));
-            ThemeHelper.ChangeSecondaryColor(color.Darken(2));
-          }
-          else
-          {
-            this.BorderBrush = new SolidColorBrush(Colors.White);
-            ThemeHelper.ChangePrimaryColor(Colors.White);
-            ThemeHelper.ChangeSecondaryColor(Colors.White);
-          }
-        }
-      };
     }
 
     private void MainWindow_WindowDrag(object sender, MouseButtonEventArgs e) { this.DragMove(); e.Handled = true; }

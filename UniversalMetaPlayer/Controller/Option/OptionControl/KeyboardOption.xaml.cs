@@ -21,36 +21,6 @@ namespace UMP.Controller.Option.OptionControl
     public KeyboardOption()
     {
       InitializeComponent();
-
-      OptionSync();
-      GlobalProperty.PropertyChanged += (s) =>
-      {
-        OptionSync();
-      };
-
-      this.GlobalKeyboardHook.Click += ToggleButton_Click;
-    }
-
-    private void ToggleButton_Click(object sender, RoutedEventArgs e)
-    {
-
-      if (sender is ToggleButton button)
-      {
-        switch (button.Name)
-        {
-          case "GlobalKeyboardHook":
-            GlobalProperty.GlobalKeyboardHook = !GlobalProperty.GlobalKeyboardHook;
-            break;
-        }
-      }
-    }
-
-    /// <summary>
-    /// 옵션 - UI 동기화
-    /// </summary>
-    private void OptionSync()
-    {
-      this.GlobalKeyboardHook.IsChecked = GlobalProperty.GlobalKeyboardHook;
     }
   }
 }

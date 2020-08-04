@@ -191,7 +191,7 @@ namespace UMP.Core
     }
 
     /// <summary>
-    /// 대표(평균)색 테마 적용 여부
+    /// 평균색 테마 적용 여부
     /// </summary>
     public static bool IsAverageColorTheme
     {
@@ -204,7 +204,7 @@ namespace UMP.Core
       {
         SetSetting("IsAverageColorTheme", value.ToString());
         if (value)
-          MainMediaPlayer.GetAverageColor();
+          ThemeHelper.SetAverageColorTheme();
         OnPropertyChanged("IsAverageColorTheme");
       }
     }

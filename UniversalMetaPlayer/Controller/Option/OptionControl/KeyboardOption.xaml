@@ -5,20 +5,27 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:UMP.Controller.Option.OptionControl"
+    xmlns:viewmodel="clr-namespace:UMP.Controller.Option.OptionControl.ViewModel"
     mc:Ignorable="d">
 
+    <UserControl.DataContext>
+        <viewmodel:KeyboardOptionViewModel />
+    </UserControl.DataContext>
+    
     <WrapPanel
         Orientation="Horizontal"
         Margin="5">
-        
-        <WrapPanel
+
+        <StackPanel
             Orientation="Horizontal"
+            ToolTip="{Binding GlobalKeyboardHookToolTip}"
             Margin="5,5,0,0">
             <Label
-                Content="전역 키보드 감시" />
+                Content="전역 키보드 컨트롤" />
             <ToggleButton
                 x:Name="GlobalKeyboardHook"
+                IsChecked="{Binding GlobalKeyboardHookIsChecked}"
                 Style="{StaticResource MaterialDesignSwitchToggleButton}" />
-        </WrapPanel>
+        </StackPanel>
     </WrapPanel>
 </UserControl>

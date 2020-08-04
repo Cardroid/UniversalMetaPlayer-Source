@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 using MaterialDesignColors;
 using MaterialDesignColors.ColorManipulation;
@@ -14,6 +16,15 @@ namespace UMP.Utility
   {
     private static readonly PaletteHelper paletteHelper = new PaletteHelper();
     public static event UMP_ThemeEventHandler ThemeChangedEvent;
+
+    static ThemeHelper()
+    {
+      MainMediaPlayer.PropertyChangedEvent += (e) =>
+      {
+        if (e == "MediaInformation")
+          SetAverageColorTheme();
+      };
+    }
 
     public static ITheme Theme => paletteHelper.GetTheme();
     public static Color PrimaryColor { get; private set; }
@@ -89,7 +100,27 @@ namespace UMP.Utility
       ThemeChangedEvent?.Invoke(new ThemeProperty(PrimaryColor, SecondaryColor, IsDarkMode));
     }
 
-    public struct ThemeProperty
+
+    /// <summary>
+    /// 대표색 추출
+    /// </summary>
+    public static void SetAverageColorTheme()
+    {
+      if (MainMediaPlayer.MediaLoadedCheck)
+      {
+        if (GlobalProperty.IsAverageColorTheme && MainMediaPlayer.MediaInformation.AlbumImage != null)
+        {
+          var color = ImageProcessing.GetAverageColor(MainMediaPlayer.MediaInformation.AlbumImage as BitmapSource, GlobalProperty.AverageColorProcessingOffset);
+          Application.Current.MainWindow.BorderBrush = new SolidColorBrush(color);
+          ChangePrimaryColor(color.Lighten(3));
+          ChangeSecondaryColor(color.Darken(3));
+        }
+      }
+      else
+        SetDefaultTheme();
+    }
+
+  public struct ThemeProperty
     {
       public ThemeProperty(Color primaryColor, Color secondaryColor, bool isDarkMode)
       {

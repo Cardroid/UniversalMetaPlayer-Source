@@ -5,20 +5,48 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:UMP.Controller.Option.OptionControl"
+    xmlns:viewmodel="clr-namespace:UMP.Controller.Option.OptionControl.ViewModel"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     mc:Ignorable="d">
 
+    <UserControl.DataContext>
+        <viewmodel:ThemeOptionViewModel />
+    </UserControl.DataContext>
+
     <WrapPanel
-        Orientation="Horizontal"
+        Orientation="Vertical"
         Margin="5">
-        
+
         <WrapPanel
             Orientation="Horizontal"
-            Margin="5,5,0,0">
-            <Label
-                Content="대표색 테마 사용" />
-            <ToggleButton
-                x:Name="IsAverageColorTheme"
-                Style="{StaticResource MaterialDesignSwitchToggleButton}" />
+            Margin="5">
+            <StackPanel
+                Orientation="Horizontal"
+                ToolTip="{Binding IsAverageColorThemeToolTip}"
+                Margin="5,5,0,0">
+                <Label
+                    Content="적응형 색 테마 사용" />
+                <ToggleButton
+                    x:Name="IsAverageColorTheme"
+                    IsChecked="{Binding IsAverageColorThemeIsChecked}"
+                    Style="{StaticResource MaterialDesignSwitchToggleButton}" />
+            </StackPanel>
+
+            <StackPanel
+                Orientation="Horizontal"
+                ToolTip="{Binding AverageColorProcessingOffsetToolTip}"
+                Margin="5,5,0,0">
+                <Label
+                    Content="평균색 추출 오프셋" />
+                <TextBox
+                    x:Name="AverageColorProcessingOffsetTextBox"
+                    Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
+                    Text="{Binding AverageColorProcessingOffsetText, Mode=OneWay}"
+                    VerticalScrollBarVisibility="Auto"
+                    materialDesign:HintAssist.Hint="Offset"
+                    Width="80"/>
+            </StackPanel>
         </WrapPanel>
+
     </WrapPanel>
 </UserControl>

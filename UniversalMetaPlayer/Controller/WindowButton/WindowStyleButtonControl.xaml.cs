@@ -26,10 +26,9 @@ namespace UMP.Controller.WindowButton
       this.Loaded += WindowStyleButtonControl_Loaded;
 
       this.ButtonPanelBorder.BorderBrush = new SolidColorBrush(ThemeHelper.PrimaryColor);
-      MainMediaPlayer.PropertyChangedEvent += (e) =>
+      ThemeHelper.ThemeChangedEvent += (e) =>
       {
-        if (e == "AverageColor")
-          this.ButtonPanelBorder.BorderBrush = new SolidColorBrush(MainMediaPlayer.AverageColor);
+        this.ButtonPanelBorder.BorderBrush = new SolidColorBrush(e.PrimaryColor);
       };
     }
 
