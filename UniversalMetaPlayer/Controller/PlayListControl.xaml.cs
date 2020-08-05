@@ -194,11 +194,14 @@ namespace UMP.Controller
             MainMediaPlayer.PlayListEigenValue = MainMediaPlayer.PlayList.EigenValue;
             MainMediaPlayer.Play();
           }
+          else
+            GlobalEvent.GlobalMessageEventInvoke("재생 실패! [로그를 확인해주세요]");
         }
         else
         {
           var info = MainMediaPlayer.PlayList[MainMediaPlayer.PlayListPlayMediaIndex];
           Log.Fatal("미디어 정보가 로드되지 않았거나 로드에 실패 했습니다", $"MediaLocation : [{info.MediaLocation}]\nTitle : [{info.Title}]");
+          GlobalEvent.GlobalMessageEventInvoke("재생 실패! 미디어가 로드 되지 않음! [로그를 확인해주세요]");
         }
       }
     }

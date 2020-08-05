@@ -71,6 +71,7 @@ namespace UMP.Core
         string jText = $"# 이 설정 파일을 임의로 조작하지 마세요!\n# 임의로 설정파일을 조작하면, 프로그램에 오류가 발생할 수 있습니다!\n\n{jObj}";
         File.WriteAllText("UMP_Options.json", jText, Encoding.UTF8);
         Log.Info("메인 설정 저장 완료");
+        GlobalEvent.GlobalMessageEventInvoke("메인 설정 저장 완료", true);
       }
       catch (Exception e)
       {
@@ -164,6 +165,7 @@ namespace UMP.Core
           Log.Fatal("메인 테마 불러오기 실패", e);
           ThemeHelper.SetDefaultTheme();
         }
+
         OnPropertyChanged("Loaded");
       }
       else

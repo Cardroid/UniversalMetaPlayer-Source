@@ -210,21 +210,30 @@ namespace UMP.Controller
           case Keys.Play:
           case Keys.MediaPlayPause:
             if (MainMediaPlayer.PlaybackState == NAudio.Wave.PlaybackState.Playing)
+            {
               MainMediaPlayer.Pause();
+              GlobalEvent.GlobalMessageEventInvoke($"외부키 활성 : Pause", true);
+            }
             else
+            {
               MainMediaPlayer.Play();
+              GlobalEvent.GlobalMessageEventInvoke($"외부키 활성 : Play", true);
+            }
             break;
           // Stop
           case Keys.MediaStop:
             MainMediaPlayer.Stop();
+            GlobalEvent.GlobalMessageEventInvoke($"외부키 활성 : Stop", true);
             break;
           // Next
           case Keys.MediaNextTrack:
             MainMediaPlayer.Next();
+            GlobalEvent.GlobalMessageEventInvoke($"외부키 활성 : Next", true);
             break;
           // Previous
           case Keys.MediaPreviousTrack:
             MainMediaPlayer.Previous();
+            GlobalEvent.GlobalMessageEventInvoke($"외부키 활성 : Previous", true);
             break;
         }
       }

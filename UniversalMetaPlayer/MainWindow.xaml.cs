@@ -28,6 +28,17 @@ namespace UMP
       this.KeyDown += (_, e) => GlobalEvent.KeyDownEventInvoke(e);
       this.Loaded += MainWindow_Loaded;
       this.Closing += MainWindow_Closing;
+      GlobalEvent.GlobalMessageEvent += GlobalEvent_GlobalMessageEvent;
+      this.GlobalMessageBar.MouseLeftButtonDown += (_, e) =>
+      {
+        if (this.GlobalMessageBar.IsActive)
+          this.GlobalMessageBar.IsActive = false;
+      };
+
+      this.GlobalMessageBar.IsActive = true;
+      this.GlobalMessage.Content =
+        $"현재 버전은 [v{GlobalProperty.StaticValues.FileVersion}] 입니다\n" +
+        $"오류가 발생하면 로그파일과 함께 신고해주세요!\n";
     }
 
     /// <summary>
@@ -64,6 +75,17 @@ namespace UMP
     }
 
     private void MainWindow_WindowDrag(object sender, MouseButtonEventArgs e) { this.DragMove(); e.Handled = true; }
+
+    private async void GlobalEvent_GlobalMessageEvent(string message, bool autoClose)
+    {
+      this.GlobalMessageBar.IsActive = true;
+      this.GlobalMessage.Content = message;
+      if (autoClose)
+      {
+        await Task.Delay(3000);
+        this.GlobalMessageBar.IsActive = false;
+      }
+    }
 
     /// <summary>
     /// 메인 윈도우 종료 이벤트처리

@@ -94,6 +94,7 @@ namespace UMP.Core.Model
       await File.WriteAllTextAsync(Path.Combine(savepath, $"{PlayListName}.m3u8"), m3uData, Encoding.UTF8);
 
       Log.Info("플레이 리스트 저장 완료");
+      GlobalEvent.GlobalMessageEventInvoke("플레이 리스트 저장 완료", true);
     }
 
     /// <summary>
@@ -117,6 +118,7 @@ namespace UMP.Core.Model
         catch (Exception e)
         {
           Log.Fatal("플레이 리스트 로드 중 오류 발생. (Parsing Error)", e, $"Path : [{path}]");
+        GlobalEvent.GlobalMessageEventInvoke("플레이 리스트 로드 실패! [로그를 확인해주세요]");
           return false;
         }
         finally
@@ -128,6 +130,7 @@ namespace UMP.Core.Model
         if (playListData == null)
         {
           Log.Fatal("플레이 리스트 로드 중 오류 발생. (Data is Null)", $"Path : [{path}]");
+        GlobalEvent.GlobalMessageEventInvoke("플레이 리스트 로드 실패! [로그를 확인해주세요]");
           return false;
         }
 
@@ -138,9 +141,11 @@ namespace UMP.Core.Model
         if (paths.Count < 0)
         {
           Log.Fatal("플레이 리스트 로드 중 오류 발생", new Exception("(PlayList Count < 0) is Impossible"), $"PlayList Name : [{playListData.FileName}]\nPath : [{path}]");
+        GlobalEvent.GlobalMessageEventInvoke("플레이 리스트 로드 실패! [로그를 확인해주세요]");
           return false;
         }
 
+        bool loadErrorItemExists = false;
         for (int i = 0; i < paths.Count; i++)
         {
           var media = new MediaLoader(paths[i]);
@@ -148,18 +153,26 @@ namespace UMP.Core.Model
           base.Add(info);
           TotalDuration += info.Duration;
           if (!info.LoadState)
+          {
             Log.Warn($"플레이 리스트 로드 경고 IsLoaded : [{info.LoadState}]", $"Title : [{info.Title}]\nPath : [{paths[i]}]");
+            loadErrorItemExists = true;
+          }
         }
 
         if (newPlaylist)
           EigenValue = RandomFunc.RandomString();
 
-        Log.Info($"플레이 리스트 로드 완료 MediaCount : [{paths.Count}]", $"Path : [{path}]");
+        Log.Info($"플레이 리스트 로드 완료 MediaCount : [{paths.Count}] Loaded Warning [{loadErrorItemExists}]", $"Path : [{path}]");
+        if (loadErrorItemExists)
+          GlobalEvent.GlobalMessageEventInvoke("플레이 리스트 로드 완료 [오류 항목이 있습니다]", false);
+        else
+          GlobalEvent.GlobalMessageEventInvoke("플레이 리스트 로드 완료", true);
         return true;
       }
       else
       {
         Log.Fatal("플레이 리스트 로드 중 오류 발생", new FileNotFoundException("File Not Found"), $"Path : [{path}]");
+        GlobalEvent.GlobalMessageEventInvoke("플레이 리스트 로드 실패! [로그를 확인해주세요]");
         return false;
       }
     }
