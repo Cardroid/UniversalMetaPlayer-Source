@@ -37,16 +37,6 @@ namespace UMP.Controller
         // 재생 진행바 이벤트 연결
         this.ProgressSlider.ValueChanged += ProgressSlider_ValueChanged;
 
-        // 버튼 테그 추가
-        this.PlayPauseButton.Tag = ControlType.PlayPause;
-        this.StopButton.Tag = ControlType.Stop;
-        this.NextButton.Tag = ControlType.Next;
-        this.PreviousButton.Tag = ControlType.Previous;
-        this.RepeatButton.Tag = ControlType.Repeat;
-        this.ShuffleButton.Tag = ControlType.Shuffle;
-        this.PlayListCheckBox.Tag = ControlType.PlayList;
-        this.SettingCheckBox.Tag = ControlType.Setting;
-
         // 버튼 이벤트 연결
         this.PlayPauseButton.Click += ControllerButton_ClickHandler;
         this.StopButton.Click += ControllerButton_ClickHandler;
@@ -208,21 +198,6 @@ namespace UMP.Controller
     }
 
     /// <summary>
-    /// 컨트롤 버튼 구분용 (버튼 테그)
-    /// </summary>
-    private enum ControlType
-    {
-      PlayPause,
-      Stop,
-      Next,
-      Previous,
-      Repeat,
-      Shuffle,
-      PlayList,
-      Setting
-    }
-
-    /// <summary>
     /// 컨트롤 키보드 이벤트 처리 (전역 이벤트)
     /// </summary>
     private void Hook_KeyboardEvent(KeyboardEvent e)
@@ -284,34 +259,30 @@ namespace UMP.Controller
     /// </summary>
     private void ControllerButton_ClickHandler(object sender, RoutedEventArgs e)
     {
-      if (((Button)sender).Tag is ControlType type && GlobalProperty.IsControllable)
+      if (sender is Button button && GlobalProperty.IsControllable)
       {
-        switch (type)
+        switch (button.Name)
         {
-          case ControlType.PlayPause:
-            if (MainMediaPlayer.MediaLoadedCheck)
-              if (MainMediaPlayer.PlaybackState == NAudio.Wave.PlaybackState.Playing)
-                MainMediaPlayer.Pause();
-              else
-                MainMediaPlayer.Play();
+          case "PlayPauseButton":
+            if (MainMediaPlayer.PlaybackState == NAudio.Wave.PlaybackState.Playing)
+              MainMediaPlayer.Pause();
+            else
+              MainMediaPlayer.Play();
             break;
-          case ControlType.Stop:
-            if (MainMediaPlayer.MediaLoadedCheck)
-              MainMediaPlayer.Stop();
+          case "StopButton":
+            MainMediaPlayer.Stop();
             break;
-          case ControlType.Next:
+          case "NextButton":
             MainMediaPlayer.Next();
             break;
-          case ControlType.Previous:
+          case "PreviousButton":
             MainMediaPlayer.Previous();
             break;
-          case ControlType.Repeat:
+          case "RepeatButton":
             MainMediaPlayer.Option.RepeatPlayOption++;
             break;
-          case ControlType.Shuffle:
+          case "ShuffleButton":
             MainMediaPlayer.Option.Shuffle = !MainMediaPlayer.Option.Shuffle;
-            break;
-          case ControlType.Setting:
             break;
         }
       }

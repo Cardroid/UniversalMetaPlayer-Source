@@ -41,14 +41,18 @@ namespace UMP.Core
       };
 
       // 스트림 끝에 오류가 있는 미디어 예방
-      TickEvent += (s, e) =>
-      {
-        if (AudioCurrentTime >= AudioTotalTime)
-          WavePlayer.Stop();
-      };
+      //TickEvent += (s, e) =>
+      //{
+      //  if (MediaLoadedCheck && AudioCurrentTime > AudioTotalTime)
+      //  {
+      //    WavePlayer.Stop();
+      //    Tick.Stop();
+      //  }
+      //};
 
       Log.Debug("초기화 완료");
     }
+
     private static Log Log { get; } = new Log(typeof(MainMediaPlayer));
 
     /// <summary>
@@ -166,7 +170,7 @@ namespace UMP.Core
     private static void MediaPlayer_PlaybackStopped(object sender, StoppedEventArgs e)
     {
       if (e.Exception != null)
-        Log.Fatal("메인 플레이어 [PlaybackStopped]이벤트 처리오류", e.Exception);
+        Log.Fatal("메인 플레이어 [PlaybackStopped] 이벤트 처리오류", e.Exception);
       if (WavePlayer.PlaybackState == PlaybackState.Stopped)
       {
         AudioFile.CurrentTime = TimeSpan.Zero;
@@ -174,19 +178,12 @@ namespace UMP.Core
           StopButtonActive = false;
         else
         {
-          // 한 곡 반복
-          if (Option.RepeatPlayOption == 1)
-            Play();
-          // 전체 반복
-          else if (Option.RepeatPlayOption == 2)
+          if (Option.RepeatPlayOption == 2)
           {
             if (PlayListPlayMediaIndex == -1)
               Play();
             else
-            {
               Next();
-              Play();
-            }
           }
         }
       }
@@ -219,6 +216,9 @@ namespace UMP.Core
     /// <param name="media">재생할 미디어</param>
     public static async Task<bool> Init(IMediaLoader mediaLoader)
     {
+      var playState = PlaybackState;
+      bool stopButtonActive = StopButtonActive;
+
       // 모든 정보로드
       var info = await mediaLoader.GetInformationAsync(true);
       if (!info.LoadState)
@@ -260,6 +260,22 @@ namespace UMP.Core
       WavePlayer.Init(AudioFile);
 
       PropertyChangedEvent?.Invoke("MainPlayerInitialized");
+
+      if(MediaLoadedCheck && Option.RepeatPlayOption > 0)
+      {
+        switch (playState)
+        {
+          case PlaybackState.Playing:
+              Play();           break;
+          default:
+          case PlaybackState.Stopped:
+            if (stopButtonActive)
+              Stop();
+            else
+              Play();
+            break;
+        }
+      }
       return true;
     }
 
@@ -320,7 +336,6 @@ namespace UMP.Core
           PlayListPlayMediaIndex = RandomFunc.RandomInt(PlayListPlayMediaIndex, PlayListPlayMediaIndex, 0, PlayList.Count);
 
         int index = PlayListPlayMediaIndex + 1;
-        var beforeState = PlaybackState;
         bool InitComplete = false;
         NotAutoPlay = true;
         do
@@ -338,13 +353,11 @@ namespace UMP.Core
             }
           }
           else if (PlayListPlayMediaIndex == index)
-            return;
+            break;
 
           index++;
         }
         while (!InitComplete);
-        if (beforeState == PlaybackState.Playing)
-          Play();
       }
       NotAutoPlay = false;
     }
@@ -371,7 +384,6 @@ namespace UMP.Core
           PlayListPlayMediaIndex = RandomFunc.RandomInt(PlayListPlayMediaIndex, PlayListPlayMediaIndex, 0, PlayList.Count);
 
         int index = PlayListPlayMediaIndex - 1;
-        var beforeState = PlaybackState;
         bool InitComplete = false;
         NotAutoPlay = true;
         do
@@ -389,13 +401,11 @@ namespace UMP.Core
             }
           }
           else if (PlayListPlayMediaIndex == index)
-            return;
+            break;
 
           index--;
         }
         while (!InitComplete);
-        if (beforeState == PlaybackState.Playing)
-          Play();
       }
       NotAutoPlay = false;
     }

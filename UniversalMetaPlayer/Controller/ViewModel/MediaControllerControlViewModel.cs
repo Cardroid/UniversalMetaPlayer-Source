@@ -148,7 +148,7 @@ namespace UMP.Controller.ViewModel
     private void MainMediaPlayer_TickEvent(object sender, EventArgs e) => ApplyUI(false);
     private void MainMediaPlayer_PropertyChangedEvent(string propertyname)
     {
-      if (propertyname == "MediaInfo")
+      if (propertyname == "MainPlayerInitialized" || propertyname == "MediaInfo")
         ApplyUI();
     }
     private void PlayList_PropertyChangedEvent(string propertyname)

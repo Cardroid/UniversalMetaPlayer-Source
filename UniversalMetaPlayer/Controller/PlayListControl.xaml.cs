@@ -190,7 +190,10 @@ namespace UMP.Controller
         {
           MainMediaPlayer.PlayListPlayMediaIndex = this.PlayList.SelectedIndex;
           if (await MainMediaPlayer.Init(new MediaLoader(MainMediaPlayer.PlayList[this.PlayList.SelectedIndex])))
+          {
             MainMediaPlayer.PlayListEigenValue = MainMediaPlayer.PlayList.EigenValue;
+            MainMediaPlayer.Play();
+          }
         }
         else
         {
