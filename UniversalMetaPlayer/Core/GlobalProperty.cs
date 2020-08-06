@@ -45,15 +45,7 @@ namespace UMP.Core
     public static void SetDefault()
     {
       Options.Clear();
-
-      //FileSavePath = "Save";
-      //PrivateLogging = true;
-
-      //GlobalKeyboardHook = false;
-      //KeyEventDelay = 20;
-
-      //IsAverageColorTheme = true;
-      //AverageColorProcessingOffset = 30;
+      OnPropertyChanged("SetDefault");
     }
 
     /// <summary>
@@ -70,11 +62,13 @@ namespace UMP.Core
 
         string jText = $"# 이 설정 파일을 임의로 조작하지 마세요!\n# 임의로 설정파일을 조작하면, 프로그램에 오류가 발생할 수 있습니다!\n\n{jObj}";
         File.WriteAllText("UMP_Options.json", jText, Encoding.UTF8);
+
         Log.Info("메인 설정 저장 완료");
         GlobalEvent.GlobalMessageEventInvoke("메인 설정 저장 완료", true);
       }
       catch (Exception e)
       {
+        GlobalEvent.GlobalMessageEventInvoke("메인 설정 저장 실패", true);
         Log.Fatal("메인 설정 저장 실패", e);
       }
     }
@@ -156,8 +150,8 @@ namespace UMP.Core
         try
         {
           ThemeHelper.IsDarkMode = bool.Parse(Options.TryGetSetting("IsDarkMode", out string value) ? value : bool.TrueString);
-          ThemeHelper.ChangePrimaryColor((Color)ColorConverter.ConvertFromString(Options.TryGetSetting("PrimaryColor", out string primaryColor) ? value : Colors.Green.ToString()));
-          ThemeHelper.ChangeSecondaryColor((Color)ColorConverter.ConvertFromString(Options.TryGetSetting("SecondaryColor", out string secondaryColor) ? value : Colors.Green.ToString()));
+          ThemeHelper.ChangePrimaryColor((Color)ColorConverter.ConvertFromString(Options.TryGetSetting("PrimaryColor", out string primaryColor) ? value : Colors.Green.Lighten(3).ToString()));
+          ThemeHelper.ChangeSecondaryColor((Color)ColorConverter.ConvertFromString(Options.TryGetSetting("SecondaryColor", out string secondaryColor) ? value : Colors.Green.Darken(3).ToString()));
           Log.Info("메인 테마 불러오기 완료");
         }
         catch (Exception e)

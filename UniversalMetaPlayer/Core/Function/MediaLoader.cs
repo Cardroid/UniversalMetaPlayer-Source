@@ -24,6 +24,7 @@ namespace UMP.Core.Function
           break;
       }
     }
+
     public MediaLoader(MediaInformation info)
     {
       switch (GlobalProperty.Options.MediaLoadEngine)

@@ -36,19 +36,9 @@ namespace UMP.Core
       PropertyChangedEvent += (e) =>
       {
         if (e == "MainPlayerInitialized")
-          if (MediaLoadedCheck && Option.AutoPlayOption && !NotAutoPlay)
+          if (MediaLoadedCheck && Option.AutoPlayOption)
             Play();
       };
-
-      // 스트림 끝에 오류가 있는 미디어 예방
-      //TickEvent += (s, e) =>
-      //{
-      //  if (MediaLoadedCheck && AudioCurrentTime > AudioTotalTime)
-      //  {
-      //    WavePlayer.Stop();
-      //    Tick.Stop();
-      //  }
-      //};
 
       Log.Debug("초기화 완료");
     }
@@ -59,6 +49,7 @@ namespace UMP.Core
     /// 메인 플레이어
     /// </summary>
     private static IWavePlayer WavePlayer { get; set; }
+
     /// <summary>
     /// 플레이어 옵션
     /// </summary>
@@ -72,6 +63,7 @@ namespace UMP.Core
       Option.RepeatPlayOption = 0;
       Option.DurationViewStatus = true;
     }
+
     /// <summary>
     /// 플레이리스트
     /// </summary>
@@ -100,7 +92,6 @@ namespace UMP.Core
     }
 
     private static bool StopButtonActive { get; set; } = false;
-    private static bool NotAutoPlay { get; set; } = false;
 
     public delegate void PlayStateChangedEventHandler(PlaybackState state);
     public static event PlayStateChangedEventHandler PlayStateChangedEvent;
@@ -178,7 +169,9 @@ namespace UMP.Core
           StopButtonActive = false;
         else
         {
-          if (Option.RepeatPlayOption == 2)
+          if (Option.RepeatPlayOption == 1)
+            Play();
+          else if (Option.RepeatPlayOption == 2)
           {
             if (PlayListPlayMediaIndex == -1)
               Play();
@@ -216,9 +209,6 @@ namespace UMP.Core
     /// <param name="media">재생할 미디어</param>
     public static async Task<bool> Init(IMediaLoader mediaLoader)
     {
-      var playState = PlaybackState;
-      bool stopButtonActive = StopButtonActive;
-
       // 모든 정보로드
       var info = await mediaLoader.GetInformationAsync(true);
       if (!info.LoadState)
@@ -260,22 +250,6 @@ namespace UMP.Core
       WavePlayer.Init(AudioFile);
 
       PropertyChangedEvent?.Invoke("MainPlayerInitialized");
-
-      if(MediaLoadedCheck && Option.RepeatPlayOption > 0)
-      {
-        switch (playState)
-        {
-          case PlaybackState.Playing:
-              Play();           break;
-          default:
-          case PlaybackState.Stopped:
-            if (stopButtonActive)
-              Stop();
-            else
-              Play();
-            break;
-        }
-      }
       return true;
     }
 
@@ -324,7 +298,7 @@ namespace UMP.Core
     /// </summary>
     public static async void Next()
     {
-      if (!MediaLoadedCheck || PlayList.Count <= 0)
+      if (PlayList.Count <= 0)
         return;
 
       if (PlayListPlayMediaIndex >= 0)
@@ -332,12 +306,11 @@ namespace UMP.Core
         if (PlayListEigenValue != PlayList.EigenValue)
           PlayListPlayMediaIndex = 0;
 
-        if (Option.Shuffle && PlayListPlayMediaIndex >= 0)
+        if (Option.Shuffle)
           PlayListPlayMediaIndex = RandomFunc.RandomInt(PlayListPlayMediaIndex, PlayListPlayMediaIndex, 0, PlayList.Count);
 
         int index = PlayListPlayMediaIndex + 1;
         bool InitComplete = false;
-        NotAutoPlay = true;
         do
         {
           if (index >= PlayList.Count)
@@ -359,7 +332,6 @@ namespace UMP.Core
         }
         while (!InitComplete);
       }
-      NotAutoPlay = false;
     }
 
     /// <summary>
@@ -367,7 +339,7 @@ namespace UMP.Core
     /// </summary>
     public static async void Previous()
     {
-      if (!MediaLoadedCheck || PlayList.Count <= 0)
+      if (PlayList.Count <= 0)
         return;
 
       if (AudioFile.CurrentTime > TimeSpan.FromSeconds(5))
@@ -380,12 +352,11 @@ namespace UMP.Core
         if (PlayListEigenValue != PlayList.EigenValue)
           PlayListPlayMediaIndex = 0;
 
-        if (Option.Shuffle && PlayListPlayMediaIndex >= 0)
+        if (Option.Shuffle)
           PlayListPlayMediaIndex = RandomFunc.RandomInt(PlayListPlayMediaIndex, PlayListPlayMediaIndex, 0, PlayList.Count);
 
         int index = PlayListPlayMediaIndex - 1;
         bool InitComplete = false;
-        NotAutoPlay = true;
         do
         {
           if (index < 0)
@@ -407,7 +378,6 @@ namespace UMP.Core
         }
         while (!InitComplete);
       }
-      NotAutoPlay = false;
     }
 
     /// <summary>

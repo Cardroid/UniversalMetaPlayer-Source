@@ -6,37 +6,99 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:UMP.Controller.Option.OptionControl"
     xmlns:viewmodel="clr-namespace:UMP.Controller.Option.OptionControl.ViewModel"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+    Background="{DynamicResource MaterialDesignPaper}"
+    TextElement.FontWeight="Medium"
+    TextElement.FontSize="14"
+    FontFamily="{DynamicResource MainFontFamily}"
     mc:Ignorable="d">
 
     <UserControl.DataContext>
         <viewmodel:BasicOptionViewModel />
     </UserControl.DataContext>
-    
-    <WrapPanel
-        Orientation="Vertical"
-        Margin="5">
 
-        <StackPanel
-            Orientation="Horizontal"
-            ToolTip="{Binding FileSavePathToolTip}"
-            Margin="5,5,0,0">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition
+                Height="*" />
+            <RowDefinition
+                Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <WrapPanel
+            Orientation="Vertical"
+            Margin="5"
+            Grid.Row="0">
+
+            <Grid
+                ToolTip="{Binding FileSavePathToolTip}"
+                Margin="5,5,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <Label
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Content="저장 폴더"
+                    Grid.Column="0" />
+                <Button
+                    x:Name="OpenDirectoryDialogButton"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Style="{DynamicResource MaterialDesignFlatAccentBgButton}"
+                    Content="찾아보기"
+                    Margin="5,0,0,0"
+                    Grid.Column="1" />
+            </Grid>
+            <Grid
+                ToolTip="{Binding PrivateLoggingToolTip}"
+                Margin="5,5,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <Label
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Content="자세한 로깅"
+                    Grid.Column="0" />
+                <ToggleButton
+                    x:Name="PrivateLogging"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    IsChecked="{Binding PrivateLoggingIsChecked}"
+                    Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                    Margin="5,0,0,0"
+                    Grid.Column="1" />
+            </Grid>
+        </WrapPanel>
+
+        <Grid
+            ToolTip="설정 초기화"
+            Margin="5"
+            Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
             <Label
-                Content="저장 폴더" />
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Content="설정 초기화"
+                Grid.Column="1" />
             <Button
-                x:Name="OpenDirectoryDialogButton"
-                Style="{DynamicResource MaterialDesignFlatAccentBgButton}"
-                Content="찾아보기" />
-        </StackPanel>
-        <StackPanel
-            Orientation="Horizontal"
-            ToolTip="{Binding PrivateLoggingToolTip}"
-            Margin="5,5,0,0">
-            <Label
-                Content="자세한 로깅" />
-            <ToggleButton
-                x:Name="PrivateLogging"
-                IsChecked="{Binding PrivateLoggingIsChecked}"
-                Style="{StaticResource MaterialDesignSwitchToggleButton}" />
-        </StackPanel>
-    </WrapPanel>
+                x:Name="SetDefault"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Style="{StaticResource MaterialDesignIconButton}"
+                Content="{materialDesign:PackIcon Kind=DeleteForever, Size=25}"
+                Grid.Column="2" />
+        </Grid>
+    </Grid>
 </UserControl>

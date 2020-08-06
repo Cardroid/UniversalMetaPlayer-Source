@@ -60,13 +60,6 @@
             Grid.Column="0"
             Grid.Row="0" />
 
-        <Controller:PlayListControl
-            x:Name="MainPlayListControl"
-            Visibility="Collapsed"
-            Grid.Column="0"
-            Grid.Row="3"
-            Grid.RowSpan="1"/>
-
         <Grid
             Grid.Column="0"
             Grid.Row="0"
@@ -93,7 +86,14 @@
                 Grid.Column="0"
                 Grid.Row="1" />
         </Grid>
-        
+
+        <Controller:PlayListControl
+            x:Name="MainPlayListControl"
+            Visibility="Collapsed"
+            Grid.Column="0"
+            Grid.Row="3"
+            Grid.RowSpan="1" />
+
         <option:MainOptionControl
             x:Name="MainOptionControl"
             Visibility="Collapsed"

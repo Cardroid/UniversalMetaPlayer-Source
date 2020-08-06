@@ -12,6 +12,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using UMP.Controller.Option.OptionControl;
+using UMP.Core;
 
 namespace UMP.Controller.Option
 {
@@ -23,6 +24,12 @@ namespace UMP.Controller.Option
     {
       InitializeComponent();
       ViewModel = (MainOptionControlViewModel)this.DataContext;
+
+      GlobalProperty.PropertyChanged += (e) =>
+      {
+        if (e == "SetDefault")
+          ViewModel.OptionPanel = new BasicOption();
+      };
     }
 
     private void MainOptionControl_MouseDown(object sender, MouseButtonEventArgs e)

@@ -106,15 +106,14 @@ namespace UMP.Controller
         parentWindow.MainOptionControl.Visibility = Visibility.Visible;
         parentWindow.Width += parentWindow.MainOptionControl.Width;
         parentWindow.MinWidth += parentWindow.MainOptionControl.Width;
-        this.SettingCheckBox.IsChecked = true;
       }
       else
       {
         parentWindow.MainOptionControl.Visibility = Visibility.Collapsed;
         parentWindow.MinWidth -= parentWindow.MainOptionControl.Width;
         parentWindow.Width -= parentWindow.MainOptionControl.Width;
-        this.SettingCheckBox.IsChecked = false;
       }
+        this.SettingCheckBox.IsChecked = isOpen;
     }
 
     private void PlayListControlOpen(bool isOpen)
@@ -125,15 +124,14 @@ namespace UMP.Controller
         parentWindow.MainPlayListControl.Visibility = Visibility.Visible;
         parentWindow.Height += parentWindow.MainPlayListControl.Height;
         parentWindow.MinHeight += parentWindow.MainPlayListControl.Height;
-        this.PlayListCheckBox.IsChecked = true;
       }
       else
       {
         parentWindow.MainPlayListControl.Visibility = Visibility.Collapsed;
         parentWindow.MinHeight -= parentWindow.MainPlayListControl.Height;
         parentWindow.Height -= parentWindow.MainPlayListControl.Height;
-        this.PlayListCheckBox.IsChecked = false;
       }
+        this.PlayListCheckBox.IsChecked = isOpen;
     }
 
     /// <summary>

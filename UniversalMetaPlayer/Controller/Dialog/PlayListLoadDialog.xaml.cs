@@ -27,6 +27,12 @@ namespace UMP.Controller.Dialog
     {
       InitializeComponent();
 
+      this.KeyDown += (_, e) =>
+      {
+        if (e.Key == Key.Escape)
+          Close?.Invoke();
+      };
+
       this.AcceptButton.IsEnabled = false;
       this.AcceptButton.Click += AcceptButton_Click;
       this.CancelButton.Click += CancelButton_Click;

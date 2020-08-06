@@ -7,6 +7,11 @@
     xmlns:local="clr-namespace:UMP.Controller.Option.OptionControl"
     xmlns:viewmodel="clr-namespace:UMP.Controller.Option.OptionControl.ViewModel"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+    Background="{DynamicResource MaterialDesignPaper}"
+    TextElement.FontWeight="Medium"
+    TextElement.FontSize="14"
+    FontFamily="{DynamicResource MainFontFamily}"
     mc:Ignorable="d">
 
     <UserControl.DataContext>
@@ -20,32 +25,54 @@
         <WrapPanel
             Orientation="Horizontal"
             Margin="5">
-            <StackPanel
-                Orientation="Horizontal"
+            <Grid
                 ToolTip="{Binding IsAverageColorThemeToolTip}"
                 Margin="5,5,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
                 <Label
-                    Content="적응형 색 테마 사용" />
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Content="적응형 색 테마 사용"
+                    Grid.Column="0" />
                 <ToggleButton
                     x:Name="IsAverageColorTheme"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
                     IsChecked="{Binding IsAverageColorThemeIsChecked}"
-                    Style="{StaticResource MaterialDesignSwitchToggleButton}" />
-            </StackPanel>
+                    Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                    Margin="5,0,0,0"
+                    Grid.Column="1" />
+            </Grid>
 
-            <StackPanel
-                Orientation="Horizontal"
+            <Grid
                 ToolTip="{Binding AverageColorProcessingOffsetToolTip}"
                 Margin="5,5,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
                 <Label
-                    Content="평균색 추출 오프셋" />
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Content="평균색 추출 오프셋"
+                    Grid.Column="0" />
                 <TextBox
                     x:Name="AverageColorProcessingOffsetTextBox"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
                     Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
                     Text="{Binding AverageColorProcessingOffsetText, Mode=OneWay}"
                     VerticalScrollBarVisibility="Auto"
                     materialDesign:HintAssist.Hint="Offset"
-                    Width="80"/>
-            </StackPanel>
+                    Width="80"
+                    Margin="5,0,0,0"
+                    Grid.Column="1" />
+            </Grid>
         </WrapPanel>
 
     </WrapPanel>

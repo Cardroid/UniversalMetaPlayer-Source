@@ -6,6 +6,11 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:UMP.Controller.Option.OptionControl"
     xmlns:viewmodel="clr-namespace:UMP.Controller.Option.OptionControl.ViewModel"
+    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+    Background="{DynamicResource MaterialDesignPaper}"
+    TextElement.FontWeight="Medium"
+    TextElement.FontSize="14"
+    FontFamily="{DynamicResource MainFontFamily}"
     mc:Ignorable="d">
 
     <UserControl.DataContext>
@@ -16,16 +21,27 @@
         Orientation="Horizontal"
         Margin="5">
 
-        <StackPanel
-            Orientation="Horizontal"
+        <Grid
             ToolTip="{Binding GlobalKeyboardHookToolTip}"
             Margin="5,5,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
             <Label
-                Content="전역 키보드 컨트롤" />
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Content="전역 키보드 컨트롤" 
+                Grid.Column="0"/>
             <ToggleButton
                 x:Name="GlobalKeyboardHook"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
                 IsChecked="{Binding GlobalKeyboardHookIsChecked}"
-                Style="{StaticResource MaterialDesignSwitchToggleButton}" />
-        </StackPanel>
+                Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                Margin="5,0,0,0"
+                Grid.Column="1" />
+        </Grid>
     </WrapPanel>
 </UserControl>

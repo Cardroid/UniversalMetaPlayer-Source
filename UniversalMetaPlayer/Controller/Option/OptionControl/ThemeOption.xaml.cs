@@ -46,7 +46,7 @@ namespace UMP.Controller.Option.OptionControl
           result = 30;
         GlobalProperty.Options.AverageColorProcessingOffset = result;
         this.AverageColorProcessingOffsetTextBox.Text = result.ToString();
-        await Task.Delay(500);
+        await Task.Delay(300);
         this.AverageColorProcessingOffsetTextBox.IsReadOnlyCaretVisible = true;
         this.AverageColorProcessingOffsetTextBox.IsReadOnly = false;
         this.AverageColorProcessingOffsetTextBox.Focusable = true;

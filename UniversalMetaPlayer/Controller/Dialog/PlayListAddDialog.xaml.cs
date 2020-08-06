@@ -29,6 +29,12 @@ namespace UMP.Controller.Dialog
     {
       InitializeComponent();
 
+      this.KeyDown += (_, e) => 
+      {
+        if (e.Key == Key.Escape)
+          Close?.Invoke();
+      };
+
       this.AcceptButton.IsEnabled = false;
       this.UserTextBox.TextChanged += UserTextBox_TextChanged;
       this.AcceptButton.Click += AcceptButton_Click;
@@ -59,6 +65,7 @@ namespace UMP.Controller.Dialog
       string text = this.UserTextBox.Text;
       for (int i = 0; i < Invalid.Length; i++)
         text = text.Replace(Invalid[i].ToString(), "");
+      this.UserTextBox.Text = text;
 
       if (!text.ToLower().StartsWith("http"))
       {
@@ -66,7 +73,6 @@ namespace UMP.Controller.Dialog
         {
           SelectFilePaths = new string[] { text };
           this.MessageLabel.Content = "파일이 확인되었습니다";
-          this.UserTextBox.Text = text;
           this.AcceptButton.IsEnabled = true;
         }
         else
@@ -77,7 +83,6 @@ namespace UMP.Controller.Dialog
       }
       else
       {
-        this.UserTextBox.Text = text;
         SelectFilePaths = new string[] { text };
         this.MessageLabel.Content = "온라인 경로가 확인되었습니다";
         this.AcceptButton.IsEnabled = true;

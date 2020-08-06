@@ -47,8 +47,8 @@ namespace UMP.Utility
     {
       var theme = new CustomColorTheme();
 
-      Color primaryColor = Colors.LightGreen;
-      Color secondaryColor = Colors.DarkSeaGreen;
+      Color primaryColor = Colors.Green.Lighten(3);
+      Color secondaryColor = Colors.Green.Darken(3);
 
       theme.PrimaryColor = primaryColor;
       theme.SecondaryColor = secondaryColor;
