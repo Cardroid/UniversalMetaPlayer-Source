@@ -23,7 +23,7 @@ namespace UMP.Core
         Directory.CreateDirectory(logSavePath);
 
       //Layout = new PatternLayout("%date [%thread] %-5level %logger - %message%newline");
-      Layout = new PatternLayout("%date %-5level %logger - %message%newline");
+      Layout = new PatternLayout("%date %-5level%logger - %message%newline");
       Layout.ActivateOptions();
 
       // 파일 로그 패턴 설정

@@ -19,8 +19,7 @@
     </UserControl.DataContext>
 
     <WrapPanel
-        Orientation="Vertical"
-        Margin="5">
+        Orientation="Vertical">
 
         <WrapPanel
             Orientation="Horizontal"
