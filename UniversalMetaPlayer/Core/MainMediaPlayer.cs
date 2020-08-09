@@ -33,11 +33,29 @@ namespace UMP.Core
       PlayListPlayMediaIndex = -1;
       GlobalProperty.PropertyChanged += (e) => { if (e == "Loaded") Volume = Option.Volume; };
       // 오토 플레이 옵션
-      PropertyChangedEvent += (e) =>
+      PropertyChangedEvent += async (e) =>
       {
-        if (e == "MainPlayerInitialized")
-          if (MediaLoadedCheck && Option.AutoPlayOption)
-            Play();
+        if (e == "PlaybackStopped")
+        {
+          if (WavePlayer.PlaybackState == PlaybackState.Stopped)
+          {
+            AudioFile.CurrentTime = TimeSpan.Zero;
+            if (StopButtonActive)
+              StopButtonActive = false;
+            else
+            {
+              if (Option.RepeatPlayOption == 1)
+                RevertStatus(StateSave);
+              else if (Option.RepeatPlayOption == 2)
+              {
+                if (PlayListPlayMediaIndex == -1)
+                  RevertStatus(StateSave);
+                else
+                  await Next();
+              }
+            }
+          }
+        }          
       };
 
       Log.Debug("초기화 완료");
@@ -59,7 +77,6 @@ namespace UMP.Core
     {
       Option.Volume = 0.3f;
       Option.Shuffle = false;
-      Option.AutoPlayOption = true;
       Option.RepeatPlayOption = 0;
       Option.DurationViewStatus = true;
     }
@@ -84,7 +101,7 @@ namespace UMP.Core
     /// </summary>
     public static int PlayListPlayMediaIndex { get; set; }
 
-    private static DispatcherTimer Tick { get; } = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(1) };
+    private static DispatcherTimer Tick { get; } = new DispatcherTimer { Interval = TimeSpan.FromTicks(1000) /* 1 ms = 10000 ticks */ };
     public static event EventHandler TickEvent
     {
       add => Tick.Tick += value;
@@ -92,6 +109,7 @@ namespace UMP.Core
     }
 
     private static bool StopButtonActive { get; set; } = false;
+    private static bool IsWork { get; set; } = false;
 
     public delegate void PlayStateChangedEventHandler(PlaybackState state);
     public static event PlayStateChangedEventHandler PlayStateChangedEvent;
@@ -162,24 +180,7 @@ namespace UMP.Core
     {
       if (e.Exception != null)
         Log.Fatal("메인 플레이어 [PlaybackStopped] 이벤트 처리오류", e.Exception);
-      if (WavePlayer.PlaybackState == PlaybackState.Stopped)
-      {
-        AudioFile.CurrentTime = TimeSpan.Zero;
-        if (StopButtonActive)
-          StopButtonActive = false;
-        else
-        {
-          if (Option.RepeatPlayOption == 1)
-            Play();
-          else if (Option.RepeatPlayOption == 2)
-          {
-            if (PlayListPlayMediaIndex == -1)
-              Play();
-            else
-              Next();
-          }
-        }
-      }
+      PropertyChangedEvent?.Invoke("PlaybackStopped");
       PlayStateChangedEvent?.Invoke(WavePlayer.PlaybackState);
     }
 
@@ -202,6 +203,7 @@ namespace UMP.Core
     /// 현재 재생 상태
     /// </summary>
     public static PlaybackState PlaybackState => WavePlayer != null ? WavePlayer.PlaybackState : PlaybackState.Stopped;
+   private static PlaybackState StateSave { get; set; }
 
     /// <summary>
     /// 미디어로 초기화하고 재생을 준비합니다
@@ -223,13 +225,22 @@ namespace UMP.Core
 
       string path = streamResult.Result;
 
-      Stop();
+      // 재생중인 미디어 정지
+      if (MediaLoadedCheck && PlaybackState != PlaybackState.Stopped)
+      {
+        StopButtonActive = true;
+        WavePlayer.Stop();
+        Tick.Stop();
+      }
+
+      // 이전 오디오 스트림 해제
       if (AudioFile != null)
       {
         await AudioFile.DisposeAsync();
         AudioFile = null;
       }
 
+      // 오디오 스트림 로드 시도
       try
       {
         AudioFile = new MediaFoundationReader(path);
@@ -243,6 +254,7 @@ namespace UMP.Core
 
       StopButtonActive = false;
 
+      // 플래이어 초기화
       WavePlayer?.Dispose();
       WavePlayer = new WaveOut();
       WavePlayer.PlaybackStopped += MediaPlayer_PlaybackStopped;
@@ -262,6 +274,7 @@ namespace UMP.Core
       {
         Tick.Start();
         WavePlayer.Play();
+        StateSave = PlaybackState.Playing;
         PlayStateChangedEvent?.Invoke(WavePlayer.PlaybackState);
       }
     }
@@ -276,6 +289,7 @@ namespace UMP.Core
         StopButtonActive = true;
         WavePlayer.Stop();
         Tick.Stop();
+        StateSave = PlaybackState.Stopped;
         PlayStateChangedEvent?.Invoke(WavePlayer.PlaybackState);
       }
     }
@@ -289,6 +303,7 @@ namespace UMP.Core
       {
         WavePlayer.Pause();
         Tick.Stop();
+        StateSave = PlaybackState.Paused;
         PlayStateChangedEvent?.Invoke(WavePlayer.PlaybackState);
       }
     }
@@ -296,11 +311,14 @@ namespace UMP.Core
     /// <summary>
     /// 다음 미디어
     /// </summary>
-    public static async void Next()
+    public static async Task Next()
     {
+      if (IsWork)
+        return;
       if (PlayList.Count <= 0)
         return;
 
+      IsWork = true;
       if (PlayListPlayMediaIndex >= 0)
       {
         if (PlayListEigenValue != PlayList.EigenValue)
@@ -331,17 +349,22 @@ namespace UMP.Core
           index++;
         }
         while (!InitComplete);
+        RevertStatus(StateSave);
       }
+      IsWork = false;
     }
 
     /// <summary>
     /// 이전 미디어
     /// </summary>
-    public static async void Previous()
+    public static async Task Previous()
     {
+      if (IsWork)
+        return;
       if (PlayList.Count <= 0)
         return;
 
+      IsWork = true;
       if (AudioFile.CurrentTime > TimeSpan.FromSeconds(5))
       {
         AudioFile.CurrentTime = TimeSpan.Zero;
@@ -377,6 +400,32 @@ namespace UMP.Core
           index--;
         }
         while (!InitComplete);
+        RevertStatus(StateSave);
+      }
+      IsWork = false;
+    }
+
+    /// <summary>
+    /// 재생상태로 되돌립니다
+    /// </summary>
+    /// <param name="state">재생상태</param>
+    private static void RevertStatus(PlaybackState state)
+    {
+      if (MediaLoadedCheck)
+      {
+        switch (state)
+        {
+          default:
+          case PlaybackState.Stopped:
+            Stop();
+            break;
+          case PlaybackState.Playing:
+            Play();
+            break;
+          case PlaybackState.Paused:
+            Pause();
+            break;
+        }
       }
     }
 
@@ -401,7 +450,6 @@ namespace UMP.Core
 
     private bool _Shuffle;
     private int _RepeatPlayOption;
-    private bool _AutoPlayOption;
     private bool _DurationViewStatus;
     private bool _LastSongSaveOption;
 
@@ -438,19 +486,6 @@ namespace UMP.Core
         else
           _RepeatPlayOption = value;
         OnPropertyChanged("RepeatPlayOption");
-      }
-    }
-
-    /// <summary>
-    /// 자동 재생 옵션
-    /// </summary>
-    public bool AutoPlayOption
-    {
-      get => _AutoPlayOption;
-      set
-      {
-        _AutoPlayOption = value;
-        OnPropertyChanged("AutoPlayOption");
       }
     }
 

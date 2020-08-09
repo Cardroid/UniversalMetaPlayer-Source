@@ -55,10 +55,11 @@ namespace UMP.Core
     {
       try
       {
-        JObject jObj = new JObject();
-
-        jObj.Add("GlobalProperty", JObject.FromObject(Options.SettingsConvertToJson()));
-        jObj.Add("MainMediaPlayerOption", JObject.FromObject(MainMediaPlayer.Option));
+        JObject jObj = new JObject
+        {
+          { "GlobalProperty", JObject.FromObject(Options.SettingsConvertToJson()) },
+          { "MainMediaPlayerOption", JObject.FromObject(MainMediaPlayer.Option) }
+        };
 
         string jText = $"# 이 설정 파일을 임의로 조작하지 마세요!\n# 임의로 설정파일을 조작하면, 프로그램에 오류가 발생할 수 있습니다!\n\n{jObj}";
         File.WriteAllText("UMP_Options.json", jText, Encoding.UTF8);
@@ -150,8 +151,8 @@ namespace UMP.Core
         try
         {
           ThemeHelper.IsDarkMode = bool.Parse(Options.TryGetSetting("IsDarkMode", out string value) ? value : bool.TrueString);
-          ThemeHelper.ChangePrimaryColor((Color)ColorConverter.ConvertFromString(Options.TryGetSetting("PrimaryColor", out string primaryColor) ? value : Colors.Green.Lighten(2).ToString()));
-          ThemeHelper.ChangeSecondaryColor((Color)ColorConverter.ConvertFromString(Options.TryGetSetting("SecondaryColor", out string secondaryColor) ? value : Colors.Green.Darken(2).ToString()));
+          ThemeHelper.ChangePrimaryColor((Color)ColorConverter.ConvertFromString(Options.TryGetSetting("PrimaryColor", out string primaryColor) ? value : Colors.Green.Lighten(3).ToString()));
+          ThemeHelper.ChangeSecondaryColor((Color)ColorConverter.ConvertFromString(Options.TryGetSetting("SecondaryColor", out string secondaryColor) ? value : Colors.Green.Darken(3).ToString()));
           Log.Info("메인 테마 불러오기 완료");
         }
         catch (Exception e)

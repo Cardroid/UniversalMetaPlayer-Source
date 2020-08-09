@@ -237,30 +237,6 @@ namespace UMP.Controller
       }
     }
 
-    private void MediaPositionChanger(TimeSpan appendtime)
-    {
-      if (!MainMediaPlayer.MediaLoadedCheck || appendtime == TimeSpan.Zero)
-        return;
-
-      if (appendtime > TimeSpan.Zero)
-      {
-        // 양수
-        if (MainMediaPlayer.AudioTotalTime > (MainMediaPlayer.AudioCurrentTime + appendtime))
-          MainMediaPlayer.AudioCurrentTime += appendtime;
-        else
-          MainMediaPlayer.AudioCurrentTime = MainMediaPlayer.AudioTotalTime;
-      }
-      else
-      {
-        // 음수
-        if (MainMediaPlayer.AudioCurrentTime + appendtime > TimeSpan.Zero)
-          MainMediaPlayer.AudioCurrentTime += appendtime;
-        else
-          MainMediaPlayer.AudioCurrentTime = TimeSpan.Zero;
-      }
-      ViewModel.ApplyUI(false);
-    }
-
     /// <summary>
     /// 컨트롤 버튼 클릭 이벤트 처리
     /// </summary>
@@ -293,6 +269,30 @@ namespace UMP.Controller
             break;
         }
       }
+    }
+
+    private void MediaPositionChanger(TimeSpan appendtime)
+    {
+      if (!MainMediaPlayer.MediaLoadedCheck || appendtime == TimeSpan.Zero)
+        return;
+
+      if (appendtime > TimeSpan.Zero)
+      {
+        // 양수
+        if (MainMediaPlayer.AudioTotalTime > (MainMediaPlayer.AudioCurrentTime + appendtime))
+          MainMediaPlayer.AudioCurrentTime += appendtime;
+        else
+          MainMediaPlayer.AudioCurrentTime = MainMediaPlayer.AudioTotalTime;
+      }
+      else
+      {
+        // 음수
+        if (MainMediaPlayer.AudioCurrentTime + appendtime > TimeSpan.Zero)
+          MainMediaPlayer.AudioCurrentTime += appendtime;
+        else
+          MainMediaPlayer.AudioCurrentTime = TimeSpan.Zero;
+      }
+      ViewModel.ApplyUI(false);
     }
 
     /// <summary>
