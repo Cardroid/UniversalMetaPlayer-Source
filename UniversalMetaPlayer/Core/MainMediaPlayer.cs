@@ -101,7 +101,7 @@ namespace UMP.Core
     /// </summary>
     public static int PlayListPlayMediaIndex { get; set; }
 
-    private static DispatcherTimer Tick { get; } = new DispatcherTimer { Interval = TimeSpan.FromTicks(1000) /* 1 ms = 10000 ticks */ };
+    private static DispatcherTimer Tick { get; } = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(3) /* 1 ms = 10000 ticks */ };
     public static event EventHandler TickEvent
     {
       add => Tick.Tick += value;

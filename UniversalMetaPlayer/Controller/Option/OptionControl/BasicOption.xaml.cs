@@ -62,7 +62,7 @@ namespace UMP.Controller.Option.OptionControl
 
     private async void IsResetLock()
     {
-      await Task.Delay(5000);
+      await Task.Delay(3000);
       IsReset = false;
     }
 
@@ -75,6 +75,7 @@ namespace UMP.Controller.Option.OptionControl
       else
       {
         GlobalProperty.SetDefault();
+        GlobalEvent.GlobalMessageEventInvoke("설정이 초기화 되었습니다.", true);
         IsReset = false;
       }
     }
