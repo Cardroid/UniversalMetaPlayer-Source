@@ -30,6 +30,8 @@ namespace UMP.Controller.Option.OptionControl.ViewModel
       }
     }
 
-    public string PrivateLoggingToolTip => "로그에 더 자세한 사항을 기록합니다.\n개인 정보가 포함 될 수 있으나, 모든 정보는 익명으로 저장됩니다.";
+    public string PrivateLoggingToolTip => "로그에 더 자세한 사항을 기록합니다.\n" +
+      "개인 정보가 포함 될 수 있으나, 모든 정보는 익명으로 저장됩니다.\n" +
+      "(사용자를 특정할 수 없음)";
   }
 }
