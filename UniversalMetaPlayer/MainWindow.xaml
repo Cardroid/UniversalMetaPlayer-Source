@@ -14,7 +14,6 @@
     TextElement.FontSize="14"
     FontFamily="{DynamicResource MainFontFamily}"
     mc:Ignorable="d"
-    Title="UniversalMetaPlayer - V2"
     WindowStartupLocation="CenterScreen"
     WindowStyle="None"
     ResizeMode="CanResizeWithGrip"

@@ -36,9 +36,17 @@ namespace UMP
       };
 
       this.GlobalMessageBar.IsActive = true;
+#if DEBUG
+      this.Title = "UniversalMetaPlayer - V2 [Test Version]";
       this.GlobalMessage.Content =
-        $"현재 버전은 [v{GlobalProperty.StaticValues.FileVersion}] 입니다\n" +
+        $"현재 버전은 [테스트 버전] [v{GlobalProperty.StaticValues.FileVersion}] [{GlobalProperty.StaticValues.BitVersion}] 입니다\n" +
         $"오류가 발생하면 로그파일과 함께 신고해주세요!\n";
+#else
+      this.Title = "UniversalMetaPlayer - V2";
+      this.GlobalMessage.Content =
+        $"현재 버전은 [v{GlobalProperty.StaticValues.FileVersion}] [{GlobalProperty.StaticValues.BitVersion}] 입니다\n" +
+        $"오류가 발생하면 로그파일과 함께 신고해주세요!\n";
+#endif
     }
 
     /// <summary>

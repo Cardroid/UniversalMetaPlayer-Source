@@ -17,7 +17,7 @@
     <PackageId>Universal Meta Player</PackageId>
     <Product>Universal Meta Player</Product>
     <RepositoryUrl>https://github.com/Cardroid/UniversalMetaPlayer</RepositoryUrl>
-    <Platforms>x64;AnyCPU</Platforms>
+    <Platforms>x64;AnyCPU;x86</Platforms>
     <AssemblyVersion>2.5.1.0</AssemblyVersion>
     <FileVersion>2.5.3.39</FileVersion>
     <PackageProjectUrl>https://github.com/Cardroid/UniversalMetaPlayer</PackageProjectUrl>
@@ -28,6 +28,10 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile />
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <DocumentationFile />
   </PropertyGroup>
 

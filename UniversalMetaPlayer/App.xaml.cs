@@ -14,7 +14,9 @@ namespace UMP
   {
     public App()
     {
-      MainLog.Info("############### Start application ###############", $"Start Path : [{AppDomain.CurrentDomain.BaseDirectory}]\nTask Path : [{Environment.CurrentDirectory}]");
+      MainLog.Info("############### Start application ###############\n" +
+        $"Current Version : [{GlobalProperty.StaticValues.FileVersion}]\nBit : [{GlobalProperty.StaticValues.BitVersion}]",
+        $"Start Path : [{AppDomain.CurrentDomain.BaseDirectory}]\nTask Path : [{Environment.CurrentDirectory}]");
     }
     public static Log MainLog { get; } = new Log("System");
   }

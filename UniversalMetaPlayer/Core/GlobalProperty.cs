@@ -32,12 +32,7 @@ namespace UMP.Core
     private static readonly Log Log;
     public static event UMP_PropertyChangedEventHandler PropertyChanged;
     private static void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(propertyName);
-    static GlobalProperty()
-    {
-      Log = new Log(typeof(GlobalProperty));
-      Log.Debug("메인 설정 초기화 시작");
-      Log.Info("메인 설정 초기화 완료");
-    }
+    static GlobalProperty() { Log = new Log(typeof(GlobalProperty)); }
 
     /// <summary>
     /// 기본 설정으로 되돌립니다.
@@ -449,6 +444,10 @@ namespace UMP.Core
       /// 파일 버전
       /// </summary>
       public static string FileVersion => FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion.ToString();
+      /// <summary>
+      /// 현재 프로세스의 비트버전
+      /// </summary>
+      public static string BitVersion => Environment.Is64BitProcess ? "x64" : "x86";
       #endregion
     }
   }
