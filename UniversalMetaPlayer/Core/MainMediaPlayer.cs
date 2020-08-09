@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using System.Windows.Media.Imaging;
 using UMP.Core.Function;
 using System.IO;
+using System.Diagnostics;
 
 namespace UMP.Core
 {
@@ -32,12 +33,26 @@ namespace UMP.Core
 
       PlayListPlayMediaIndex = -1;
       GlobalProperty.PropertyChanged += (e) => { if (e == "Loaded") Volume = Option.Volume; };
-      // 오토 플레이 옵션
+
+      // 미디어 재생시간 오류 처리
+      TickEvent += (_, e) => 
+      {
+        if(MediaLoadedCheck && MediaInformation.Duration < AudioFile.CurrentTime)
+        {
+          WavePlayer.Stop();
+          Tick.Stop();
+          Log.Warn("미디어 재생시간 오류가 감지되어 자동으로 이벤트 처리됨", $"MediaLocation : [{MediaInformation.MediaLocation}]");
+          PropertyChangedEvent?.Invoke("PlaybackStopped");
+          PlayStateChangedEvent?.Invoke(PlaybackState);
+        }
+      };
+
+      // 재생 종료후 이벤트
       PropertyChangedEvent += async (e) =>
       {
         if (e == "PlaybackStopped")
         {
-          if (WavePlayer.PlaybackState == PlaybackState.Stopped)
+          if (PlaybackState == PlaybackState.Stopped)
           {
             AudioFile.CurrentTime = TimeSpan.Zero;
             if (StopButtonActive)
@@ -181,7 +196,7 @@ namespace UMP.Core
       if (e.Exception != null)
         Log.Fatal("메인 플레이어 [PlaybackStopped] 이벤트 처리오류", e.Exception);
       PropertyChangedEvent?.Invoke("PlaybackStopped");
-      PlayStateChangedEvent?.Invoke(WavePlayer.PlaybackState);
+      PlayStateChangedEvent?.Invoke(PlaybackState);
     }
 
     /// <summary>
@@ -275,7 +290,7 @@ namespace UMP.Core
         Tick.Start();
         WavePlayer.Play();
         StateSave = PlaybackState.Playing;
-        PlayStateChangedEvent?.Invoke(WavePlayer.PlaybackState);
+        PlayStateChangedEvent?.Invoke(PlaybackState);
       }
     }
 
@@ -290,7 +305,7 @@ namespace UMP.Core
         WavePlayer.Stop();
         Tick.Stop();
         StateSave = PlaybackState.Stopped;
-        PlayStateChangedEvent?.Invoke(WavePlayer.PlaybackState);
+        PlayStateChangedEvent?.Invoke(PlaybackState);
       }
     }
 
@@ -304,7 +319,7 @@ namespace UMP.Core
         WavePlayer.Pause();
         Tick.Stop();
         StateSave = PlaybackState.Paused;
-        PlayStateChangedEvent?.Invoke(WavePlayer.PlaybackState);
+        PlayStateChangedEvent?.Invoke(PlaybackState);
       }
     }
 
