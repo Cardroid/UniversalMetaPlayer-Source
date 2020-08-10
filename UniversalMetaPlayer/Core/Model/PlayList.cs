@@ -52,11 +52,11 @@ namespace UMP.Core.Model
         OnPropertyChanged("TotalDuration");
       }
     }
-    public TimeSpan _TotalDuration = TimeSpan.Zero;
+    private TimeSpan _TotalDuration = TimeSpan.Zero;
 
     public PlayList(string name = "Nameless")
     {
-      EigenValue = RandomFunc.RandomString();
+      EigenValue = new RandomFunc().RandomString();
       PlayListName = name;
       Log = new Log($"{typeof(PlayList)} - ({EigenValue})");
     }
@@ -160,7 +160,7 @@ namespace UMP.Core.Model
         }
 
         if (newPlaylist)
-          EigenValue = RandomFunc.RandomString();
+          EigenValue = new RandomFunc().RandomString();
 
         Log.Info($"플레이 리스트 로드 완료 MediaCount : [{paths.Count}] Loaded Warning [{loadErrorItemExists}]", $"Path : [{path}]");
         if (loadErrorItemExists)
@@ -251,7 +251,7 @@ namespace UMP.Core.Model
       if (base.Count > index && index >= 0)
       {
         var item = base[index];
-        if(MainMediaPlayer.MediaLoadedCheck && MainMediaPlayer.PlayListPlayMediaIndex == index)
+        if(MainMediaPlayer.MediaLoadedCheck && MainMediaPlayer.PlayList.Contains(MainMediaPlayer.NotChangedMediaInformation))
         {
           Log.Error($"플레이 리스트 항목 리로드 실패 \n재생 중인 항목은 리로드 할 수 없습니다.\nIndex : [{index}]\nIsLoaded : [{item.LoadState}]", $"Title : [{item.Title}]\nLocation : [{item.MediaLocation}]");
           return;

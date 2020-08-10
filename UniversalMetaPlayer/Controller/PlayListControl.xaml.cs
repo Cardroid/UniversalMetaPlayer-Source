@@ -147,18 +147,9 @@ namespace UMP.Controller
 
     private void EnableControl(bool isEnable)
     {
-      if (isEnable)
-      {
-        GlobalEvent.KeyDownEventHandled = false;
-        this.PlayListGroupBox.IsEnabled = true;
-        GlobalProperty.IsControllable = true;
-      }
-      else
-      {
-        GlobalEvent.KeyDownEventHandled = true;
-        this.PlayListGroupBox.IsEnabled = false;
-        GlobalProperty.IsControllable = false;
-      }
+      GlobalEvent.KeyDownEventHandled = !isEnable;
+      this.PlayListGroupBox.IsEnabled = isEnable;
+      GlobalProperty.IsControllable = isEnable;
     }
 
     /// <summary>
@@ -171,10 +162,7 @@ namespace UMP.Controller
         HitTestResult r = VisualTreeHelper.HitTest(this, e.GetPosition(this));
         if (r != null)
           if (r.VisualHit.GetType() == null || r.VisualHit.GetType() != typeof(ListBoxItem))
-          {
-            PlayList.UnselectAll();
-            MainMediaPlayer.PlayListPlayMediaIndex = -1;
-          }
+            PlayList.UnselectAll();;
       }
     }
     private bool UnselectActive = true;
@@ -188,8 +176,7 @@ namespace UMP.Controller
       {
         if (MainMediaPlayer.PlayList[this.PlayList.SelectedIndex].LoadState)
         {
-          MainMediaPlayer.PlayListPlayMediaIndex = this.PlayList.SelectedIndex;
-          if (await MainMediaPlayer.Init(new MediaLoader(MainMediaPlayer.PlayList[this.PlayList.SelectedIndex])))
+          if (await MainMediaPlayer.Init(MainMediaPlayer.PlayList[this.PlayList.SelectedIndex]))
           {
             MainMediaPlayer.PlayListEigenValue = MainMediaPlayer.PlayList.EigenValue;
             MainMediaPlayer.Play();
@@ -199,7 +186,7 @@ namespace UMP.Controller
         }
         else
         {
-          var info = MainMediaPlayer.PlayList[MainMediaPlayer.PlayListPlayMediaIndex];
+          var info = MainMediaPlayer.PlayList[this.PlayList.SelectedIndex];
           Log.Fatal("미디어 정보가 로드되지 않았거나 로드에 실패 했습니다", $"MediaLocation : [{info.MediaLocation}]\nTitle : [{info.Title}]");
           GlobalEvent.GlobalMessageEventInvoke("재생 실패! 미디어가 로드 되지 않음! [로그를 확인해주세요]");
         }

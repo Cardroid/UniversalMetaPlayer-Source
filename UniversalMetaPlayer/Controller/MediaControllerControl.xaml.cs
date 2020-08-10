@@ -225,12 +225,12 @@ namespace UMP.Controller
             break;
           // Next
           case Keys.MediaNextTrack:
-            MainMediaPlayer.Next();
+            _ = MainMediaPlayer.Next();
             GlobalEvent.GlobalMessageEventInvoke($"외부키 활성 : Next", true);
             break;
           // Previous
           case Keys.MediaPreviousTrack:
-            MainMediaPlayer.Previous();
+            _ = MainMediaPlayer.Previous();
             GlobalEvent.GlobalMessageEventInvoke($"외부키 활성 : Previous", true);
             break;
         }
@@ -256,10 +256,10 @@ namespace UMP.Controller
             MainMediaPlayer.Stop();
             break;
           case "NextButton":
-            MainMediaPlayer.Next();
+            _ = MainMediaPlayer.Next();
             break;
           case "PreviousButton":
-            MainMediaPlayer.Previous();
+            _ = MainMediaPlayer.Previous();
             break;
           case "RepeatButton":
             MainMediaPlayer.Option.RepeatPlayOption++;

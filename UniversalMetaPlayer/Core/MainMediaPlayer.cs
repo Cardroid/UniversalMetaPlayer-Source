@@ -1,19 +1,14 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
-using System.Windows.Media;
 using System.Windows.Threading;
-
-using UMP.Core.Model;
-using UMP.Utility;
+using System.IO;
 
 using NAudio.Wave;
 
-using Newtonsoft.Json;
-using System.Windows.Media.Imaging;
 using UMP.Core.Function;
-using System.IO;
-using System.Diagnostics;
+using UMP.Core.Model;
+using UMP.Utility;
 
 namespace UMP.Core
 {
@@ -21,6 +16,7 @@ namespace UMP.Core
   {
     static MainMediaPlayer()
     {
+      Log = new Log(typeof(MainMediaPlayer));
       Option = new PlayerOption();
       OptionDefault();
       PlayList = new PlayList();
@@ -31,13 +27,12 @@ namespace UMP.Core
         AlbumImage = null
       };
 
-      PlayListPlayMediaIndex = -1;
       GlobalProperty.PropertyChanged += (e) => { if (e == "Loaded") Volume = Option.Volume; };
 
       // 미디어 재생시간 오류 처리
-      TickEvent += (_, e) => 
+      TickEvent += (_, e) =>
       {
-        if(MediaLoadedCheck && MediaInformation.Duration < AudioFile.CurrentTime)
+        if (MediaLoadedCheck && MediaInformation.Duration < AudioFile.CurrentTime)
         {
           WavePlayer.Stop();
           Tick.Stop();
@@ -62,21 +57,16 @@ namespace UMP.Core
               if (Option.RepeatPlayOption == 1)
                 RevertStatus(StateSave);
               else if (Option.RepeatPlayOption == 2)
-              {
-                if (PlayListPlayMediaIndex == -1)
-                  RevertStatus(StateSave);
-                else
-                  await Next();
-              }
+                await Next();
             }
           }
-        }          
+        }
       };
 
       Log.Debug("초기화 완료");
     }
 
-    private static Log Log { get; } = new Log(typeof(MainMediaPlayer));
+    private static Log Log { get; }
 
     /// <summary>
     /// 메인 플레이어
@@ -111,11 +101,6 @@ namespace UMP.Core
     private static PlayList _PlayList;
     public static string PlayListEigenValue { get; set; }
 
-    /// <summary>
-    /// 현재 플레이리스트에서 재생중인 미디어의 Index
-    /// </summary>
-    public static int PlayListPlayMediaIndex { get; set; }
-
     private static DispatcherTimer Tick { get; } = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(3) /* 1 ms = 10000 ticks */ };
     public static event EventHandler TickEvent
     {
@@ -146,6 +131,7 @@ namespace UMP.Core
       }
     }
     private static MediaInformation _MediaInformation;
+    public static MediaInformation NotChangedMediaInformation { get; private set; }
 
     /// <summary>
     /// 오디오 파일 (약한참조)
@@ -184,7 +170,7 @@ namespace UMP.Core
     }
 
     /// <summary>
-    /// 오디오 현재 재생위치
+    /// 오디오 전체 길이
     /// </summary>
     public static TimeSpan AudioTotalTime => AudioFile.TotalTime;
 
@@ -218,14 +204,15 @@ namespace UMP.Core
     /// 현재 재생 상태
     /// </summary>
     public static PlaybackState PlaybackState => WavePlayer != null ? WavePlayer.PlaybackState : PlaybackState.Stopped;
-   private static PlaybackState StateSave { get; set; }
+    private static PlaybackState StateSave { get; set; }
 
     /// <summary>
     /// 미디어로 초기화하고 재생을 준비합니다
     /// </summary>
     /// <param name="media">재생할 미디어</param>
-    public static async Task<bool> Init(IMediaLoader mediaLoader)
+    public static async Task<bool> Init(MediaInformation mediainfo)
     {
+      MediaLoader mediaLoader = new MediaLoader(mediainfo);
       // 모든 정보로드
       var info = await mediaLoader.GetInformationAsync(true);
       if (!info.LoadState)
@@ -266,6 +253,7 @@ namespace UMP.Core
         return false;
       }
       MediaInformation = info;
+      NotChangedMediaInformation = mediainfo;
 
       StopButtonActive = false;
 
@@ -331,18 +319,36 @@ namespace UMP.Core
       if (IsWork)
         return;
       if (PlayList.Count <= 0)
+      {
+        IsWork = false;
         return;
+      }
 
       IsWork = true;
-      if (PlayListPlayMediaIndex >= 0)
+      int playListMediaIndex = PlayList.IndexOf(NotChangedMediaInformation);
+
+      if (playListMediaIndex >= 0)
       {
         if (PlayListEigenValue != PlayList.EigenValue)
-          PlayListPlayMediaIndex = 0;
+        {
+          if (PlayList.Count > 0)
+            playListMediaIndex = 0;
+          else
+          {
+            RevertStatus(StateSave);
+            IsWork = false;
+            return;
+          }
+        }
+        else
+        {
+          if (Option.Shuffle)
+            playListMediaIndex = new RandomFunc().RandomInt(playListMediaIndex, playListMediaIndex, 0, PlayList.Count);
+          else
+            playListMediaIndex++;
+        }
 
-        if (Option.Shuffle)
-          PlayListPlayMediaIndex = RandomFunc.RandomInt(PlayListPlayMediaIndex, PlayListPlayMediaIndex, 0, PlayList.Count);
-
-        int index = PlayListPlayMediaIndex + 1;
+        int index = playListMediaIndex;
         bool InitComplete = false;
         do
         {
@@ -351,21 +357,21 @@ namespace UMP.Core
 
           if (PlayList[index].LoadState)
           {
-            if (await Init(new MediaLoader(PlayList[index])))
+            if (await Init(PlayList[index]))
             {
               PlayListEigenValue = PlayList.EigenValue;
-              PlayListPlayMediaIndex = index;
+              playListMediaIndex = index;
               InitComplete = true;
             }
           }
-          else if (PlayListPlayMediaIndex == index)
+          else if (playListMediaIndex == index)
             break;
 
           index++;
         }
         while (!InitComplete);
-        RevertStatus(StateSave);
       }
+      RevertStatus(StateSave);
       IsWork = false;
     }
 
@@ -377,23 +383,45 @@ namespace UMP.Core
       if (IsWork)
         return;
       if (PlayList.Count <= 0)
+      {
+        IsWork = false;
         return;
+      }
 
       IsWork = true;
+
       if (AudioFile.CurrentTime > TimeSpan.FromSeconds(5))
       {
         AudioFile.CurrentTime = TimeSpan.Zero;
         PlayStateChangedEvent?.Invoke(PlaybackState);
+        IsWork = false;
+        return;
       }
-      else if (PlayListPlayMediaIndex >= 0)
+
+      int playListMediaIndex = PlayList.IndexOf(NotChangedMediaInformation);
+
+      if (playListMediaIndex >= 0)
       {
         if (PlayListEigenValue != PlayList.EigenValue)
-          PlayListPlayMediaIndex = 0;
+        {
+          if (PlayList.Count > 0)
+            playListMediaIndex = 0;
+          else
+          {
+            RevertStatus(StateSave);
+            IsWork = false;
+            return;
+          }
+        }
+        else
+        {
+          if (Option.Shuffle)
+            playListMediaIndex = new RandomFunc().RandomInt(playListMediaIndex, playListMediaIndex, 0, PlayList.Count);
+          else
+            playListMediaIndex--;
+        }
 
-        if (Option.Shuffle)
-          PlayListPlayMediaIndex = RandomFunc.RandomInt(PlayListPlayMediaIndex, PlayListPlayMediaIndex, 0, PlayList.Count);
-
-        int index = PlayListPlayMediaIndex - 1;
+        int index = playListMediaIndex;
         bool InitComplete = false;
         do
         {
@@ -402,21 +430,21 @@ namespace UMP.Core
 
           if (PlayList[index].LoadState)
           {
-            if (await Init(new MediaLoader(PlayList[index])))
+            if (await Init(PlayList[index]))
             {
               PlayListEigenValue = PlayList.EigenValue;
-              PlayListPlayMediaIndex = index;
+              playListMediaIndex = index;
               InitComplete = true;
             }
           }
-          else if (PlayListPlayMediaIndex == index)
+          else if (playListMediaIndex == index)
             break;
 
           index--;
         }
         while (!InitComplete);
-        RevertStatus(StateSave);
       }
+      RevertStatus(StateSave);
       IsWork = false;
     }
 
