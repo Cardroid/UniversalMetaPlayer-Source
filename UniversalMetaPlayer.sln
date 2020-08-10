@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniversalMetaPlayer", "Univ
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTestProject", "UnitTestProject\UnitTestProject.csproj", "{F6C72E5D-D143-463E-AA58-D33880D0C8F1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversalMetaPlayer_UpdateClient", "UniversalMetaPlayer_UpdateClient\UniversalMetaPlayer_UpdateClient.csproj", "{EF88F32E-70CB-4C30-A8FD-9AAAD169437D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,12 +38,24 @@ Global
 		{F6C72E5D-D143-463E-AA58-D33880D0C8F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F6C72E5D-D143-463E-AA58-D33880D0C8F1}.Release|x64.ActiveCfg = Release|x64
 		{F6C72E5D-D143-463E-AA58-D33880D0C8F1}.Release|x86.ActiveCfg = Release|x86
+		{EF88F32E-70CB-4C30-A8FD-9AAAD169437D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF88F32E-70CB-4C30-A8FD-9AAAD169437D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF88F32E-70CB-4C30-A8FD-9AAAD169437D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{EF88F32E-70CB-4C30-A8FD-9AAAD169437D}.Debug|x64.Build.0 = Debug|Any CPU
+		{EF88F32E-70CB-4C30-A8FD-9AAAD169437D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EF88F32E-70CB-4C30-A8FD-9AAAD169437D}.Debug|x86.Build.0 = Debug|Any CPU
+		{EF88F32E-70CB-4C30-A8FD-9AAAD169437D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF88F32E-70CB-4C30-A8FD-9AAAD169437D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF88F32E-70CB-4C30-A8FD-9AAAD169437D}.Release|x64.ActiveCfg = Release|Any CPU
+		{EF88F32E-70CB-4C30-A8FD-9AAAD169437D}.Release|x64.Build.0 = Release|Any CPU
+		{EF88F32E-70CB-4C30-A8FD-9AAAD169437D}.Release|x86.ActiveCfg = Release|Any CPU
+		{EF88F32E-70CB-4C30-A8FD-9AAAD169437D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {6492D063-8C71-47DC-AA7F-DFC925E359AD}
 		BuildVersion_StartDate = 2000/1/1
+		SolutionGuid = {6492D063-8C71-47DC-AA7F-DFC925E359AD}
 	EndGlobalSection
 EndGlobal
