@@ -64,6 +64,7 @@
                     x:Name="AverageColorProcessingOffsetTextBox"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
+                    IsEnabled="{Binding IsAverageColorThemeIsChecked}"
                     Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
                     Text="{Binding AverageColorProcessingOffsetText, Mode=OneWay}"
                     VerticalScrollBarVisibility="Auto"

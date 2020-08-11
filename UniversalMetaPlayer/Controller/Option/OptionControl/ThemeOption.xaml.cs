@@ -21,13 +21,9 @@ namespace UMP.Controller.Option.OptionControl
 {
   public partial class ThemeOption : UserControl
   {
-    private ThemeOptionViewModel ViewModel { get; }
-
     public ThemeOption()
     {
       InitializeComponent();
-
-      ViewModel = (ThemeOptionViewModel)this.DataContext;
 
       this.AverageColorProcessingOffsetTextBox.PreviewKeyDown += AverageColorProcessingOffsetTextBox_PreviewKeyDown;
       this.AverageColorProcessingOffsetTextBox.Text = GlobalProperty.Options.AverageColorProcessingOffset.ToString();
@@ -43,7 +39,7 @@ namespace UMP.Controller.Option.OptionControl
         if (int.TryParse(this.AverageColorProcessingOffsetTextBox.Text, out int result))
           result = Math.Clamp(result, 1, 501);
         else
-          result = 30;
+          result = GlobalProperty.Options.DefaultValue.DefaultAverageColorProcessingOffset;
         GlobalProperty.Options.AverageColorProcessingOffset = result;
         this.AverageColorProcessingOffsetTextBox.Text = result.ToString();
         await Task.Delay(300);

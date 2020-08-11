@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:UMP.Controller.Option.OptionControl"
     xmlns:viewmodel="clr-namespace:UMP.Controller.Option.OptionControl.ViewModel"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     TextElement.Foreground="{DynamicResource MaterialDesignBody}"
     Background="{DynamicResource MaterialDesignPaper}"
     TextElement.FontWeight="Medium"
@@ -40,6 +41,32 @@
                 VerticalAlignment="Center"
                 IsChecked="{Binding GlobalKeyboardHookIsChecked}"
                 Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                Margin="5,0,0,0"
+                Grid.Column="1" />
+        </Grid>
+
+        <Grid
+            ToolTip="{Binding KeyEventDelayOffsetToolTip}"
+            Margin="5,5,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <Label
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Content="키보드 입력 딜레이 오프셋"
+                Grid.Column="0" />
+            <TextBox
+                x:Name="KeyEventDelayOffsetTextBox"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
+                Text="{Binding AverageColorProcessingOffsetText, Mode=OneWay}"
+                VerticalScrollBarVisibility="Auto"
+                materialDesign:HintAssist.Hint="Offset"
+                Width="80"
                 Margin="5,0,0,0"
                 Grid.Column="1" />
         </Grid>
