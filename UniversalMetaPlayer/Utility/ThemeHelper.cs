@@ -100,7 +100,6 @@ namespace UMP.Utility
       ThemeChangedEvent?.Invoke(new ThemeProperty(PrimaryColor, SecondaryColor, IsDarkMode));
     }
 
-
     /// <summary>
     /// 대표색 추출
     /// </summary>
@@ -118,7 +117,7 @@ namespace UMP.Utility
             ChangePrimaryColor(color.Lighten(3));
             ChangeSecondaryColor(color.Darken(3));
           }
-          catch(Exception e)
+          catch (Exception e)
           {
             log.Error("이미지 평균색 추출에 실패 했습니다.", e);
           }
@@ -128,7 +127,7 @@ namespace UMP.Utility
         SetDefaultTheme();
     }
 
-  public struct ThemeProperty
+    public struct ThemeProperty
     {
       public ThemeProperty(Color primaryColor, Color secondaryColor, bool isDarkMode)
       {

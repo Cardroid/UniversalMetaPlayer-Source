@@ -28,7 +28,7 @@ namespace UMP.Utility
     /// <summary>
     /// 디랙터리를 채크합니다. 존재하지 않으면 생성합니다.
     /// </summary>
-    /// <param name="path"></param>
+    /// <param name="path">검사할 경로</param>
     public static void DirectoryCheck(string path)
     {
       if (!Directory.Exists(path))

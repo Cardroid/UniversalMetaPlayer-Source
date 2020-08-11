@@ -17,6 +17,13 @@ namespace UMP.Core.Model
 {
   public class PlayList : ObservableCollection<MediaInformation>
   {
+    public PlayList(string name = "Nameless")
+    {
+      EigenValue = new RandomFunc().RandomString();
+      PlayListName = name;
+      Log = new Log($"{typeof(PlayList)} - ({EigenValue})");
+    }
+
     private Log Log { get; }
     public event UMP_PropertyChangedEventHandler PropertyChangedEvent;
     private void OnPropertyChanged(string name) => PropertyChangedEvent?.Invoke(name);
@@ -53,13 +60,6 @@ namespace UMP.Core.Model
       }
     }
     private TimeSpan _TotalDuration = TimeSpan.Zero;
-
-    public PlayList(string name = "Nameless")
-    {
-      EigenValue = new RandomFunc().RandomString();
-      PlayListName = name;
-      Log = new Log($"{typeof(PlayList)} - ({EigenValue})");
-    }
 
     #region Save & Load
     /// <summary>
