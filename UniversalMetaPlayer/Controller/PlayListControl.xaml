@@ -21,8 +21,6 @@
     </UserControl.DataContext>
 
     <UserControl.Resources>
-        <Utility:StarWidthConverter
-            x:Key="StarWidthConverter" />
         <Utility:TimeSpanStringConverter
             x:Key="TimeSpanStringConverter" />
     </UserControl.Resources>

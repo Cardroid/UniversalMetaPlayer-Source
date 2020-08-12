@@ -104,7 +104,7 @@ namespace UMP.Utility
     /// <summary>
     /// 대표색 추출
     /// </summary>
-    public static async Task SetAverageColorThemeAsync()
+    public static async void SetAverageColorThemeAsync()
     {
       if (MainMediaPlayer.MediaLoadedCheck)
       {

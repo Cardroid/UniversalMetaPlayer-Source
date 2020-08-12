@@ -83,9 +83,17 @@ namespace UMP.Controller.Dialog
       }
       else
       {
-        SelectFilePaths = new string[] { text };
-        this.MessageLabel.Content = "온라인 경로가 확인되었습니다";
-        this.AcceptButton.IsEnabled = true;
+        if (Checker.CheckForInternetConnection())
+        {
+
+        }
+        else
+        {
+
+          SelectFilePaths = new string[] { text };
+          this.MessageLabel.Content = "온라인 경로가 확인되었습니다";
+          this.AcceptButton.IsEnabled = true;
+        }
       }
 
       this.ProgressRing.Visibility = Visibility.Collapsed;

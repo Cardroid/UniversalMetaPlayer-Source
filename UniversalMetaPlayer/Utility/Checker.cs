@@ -44,17 +44,7 @@ namespace UMP.Utility
     /// </summary>
     /// <param name="path">체크할 경로</param>
     /// <returns>로컬 경로일 경우 true</returns>
-    public static bool IsLocalPath(string path) 
-    {
-      try
-      {
-        return new Uri(path).IsFile;
-      }
-      catch
-      {
-        return false;
-      }
-    }
+    public static bool IsLocalPath(string path) { try { return new Uri(path).IsFile; } catch { return false; } }
 
     public static bool CheckYTDL() => File.Exists(Path.Combine(GlobalProperty.StaticValues.YTDL_PATH, "youtube-dl.exe"));
     public static bool CheckFFmpeg()
