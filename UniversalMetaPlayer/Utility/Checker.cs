@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 
+using UMP.Core;
 using UMP.Core.Model;
 
 namespace UMP.Utility
@@ -38,15 +39,30 @@ namespace UMP.Utility
       }
     }
 
-    public static bool IsLocalPath(string path) => new Uri(path).IsFile;
+    /// <summary>
+    /// 로컬 경로인지 체크합니다.
+    /// </summary>
+    /// <param name="path">체크할 경로</param>
+    /// <returns>로컬 경로일 경우 true</returns>
+    public static bool IsLocalPath(string path) 
+    {
+      try
+      {
+        return new Uri(path).IsFile;
+      }
+      catch
+      {
+        return false;
+      }
+    }
 
-    public static bool CheckYTDL() => File.Exists(Path.Combine("Core", "Library", "YTDL", "youtube-dl.exe"));
+    public static bool CheckYTDL() => File.Exists(Path.Combine(GlobalProperty.StaticValues.YTDL_PATH, "youtube-dl.exe"));
     public static bool CheckFFmpeg()
     {
-      bool result = false;
-      result &= File.Exists(Path.Combine("Core", "Library", "FFmpeg", "ffmpeg.exe"));
-      result &= File.Exists(Path.Combine("Core", "Library", "FFmpeg", "ffplay.exe"));
-      result &= File.Exists(Path.Combine("Core", "Library", "FFmpeg", "ffprobe.exe"));
+      bool result = true;
+      result &= File.Exists(Path.Combine(GlobalProperty.StaticValues.FFMPEG_PATH, "ffmpeg.exe"));
+      result &= File.Exists(Path.Combine(GlobalProperty.StaticValues.FFMPEG_PATH, "ffplay.exe"));
+      result &= File.Exists(Path.Combine(GlobalProperty.StaticValues.FFMPEG_PATH, "ffprobe.exe"));
       return result;
     }
   }

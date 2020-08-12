@@ -428,7 +428,7 @@ namespace UMP.Core
       /// <summary>
       /// YouTube-dl 라이브러리 저장 폴더
       /// </summary>
-      public static string YTDL_PATH => Path.Combine(LIBRARY_PATH, "YTDL", "youtube-dl.exe");
+      public static string YTDL_PATH => Path.Combine(LIBRARY_PATH, "YTDL");
       /// <summary>
       /// FFmpeg 라이브러리 저장 폴더
       /// </summary>
