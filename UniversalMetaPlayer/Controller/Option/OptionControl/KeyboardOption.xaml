@@ -17,58 +17,62 @@
     <UserControl.DataContext>
         <viewmodel:KeyboardOptionViewModel />
     </UserControl.DataContext>
-    
-    <WrapPanel
-        Orientation="Horizontal"
-        Margin="5">
 
-        <Grid
+    <Grid
+        Margin="5"
+        Grid.Row="0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition
+                Width="*" />
+            <ColumnDefinition
+                Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition
+                Height="Auto" />
+            <RowDefinition
+                Height="Auto" />
+            <RowDefinition
+                Height="*" />
+        </Grid.RowDefinitions>
+
+        <Label
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
             ToolTip="{Binding GlobalKeyboardHookToolTip}"
-            Margin="5,5,0,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
+            Content="전역 키보드 컨트롤"
+            Grid.Column="0"
+            Grid.Row="0" />
+        <ToggleButton
+            x:Name="GlobalKeyboardHook"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            ToolTip="{Binding GlobalKeyboardHookToolTip}"
+            IsChecked="{Binding GlobalKeyboardHookIsChecked}"
+            Style="{StaticResource MaterialDesignSwitchToggleButton}"
+            Margin="5,0,0,0"
+            Grid.Column="1"
+            Grid.Row="0" />
 
-            <Label
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Content="전역 키보드 컨트롤" 
-                Grid.Column="0"/>
-            <ToggleButton
-                x:Name="GlobalKeyboardHook"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                IsChecked="{Binding GlobalKeyboardHookIsChecked}"
-                Style="{StaticResource MaterialDesignSwitchToggleButton}"
-                Margin="5,0,0,0"
-                Grid.Column="1" />
-        </Grid>
-
-        <Grid
+        <Label
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
             ToolTip="{Binding KeyEventDelayOffsetToolTip}"
-            Margin="5,5,0,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-
-            <Label
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Content="키보드 입력 딜레이 오프셋"
-                Grid.Column="0" />
-            <TextBox
-                x:Name="KeyEventDelayOffsetTextBox"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
-                Text="{Binding AverageColorProcessingOffsetText, Mode=OneWay}"
-                VerticalScrollBarVisibility="Auto"
-                materialDesign:HintAssist.Hint="Offset"
-                Width="80"
-                Margin="5,0,0,0"
-                Grid.Column="1" />
-        </Grid>
-    </WrapPanel>
+            Content="키보드 입력 딜레이 오프셋"
+            Grid.Column="0"
+            Grid.Row="1" />
+        <TextBox
+            x:Name="KeyEventDelayOffsetTextBox"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            ToolTip="{Binding KeyEventDelayOffsetToolTip}"
+            Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+            Text="{Binding AverageColorProcessingOffsetText, Mode=OneWay}"
+            VerticalScrollBarVisibility="Auto"
+            materialDesign:HintAssist.Hint="Offset"
+            Width="80"
+            Margin="5,0,0,0"
+            Grid.Column="1"
+            Grid.Row="1" />
+    </Grid>
 </UserControl>

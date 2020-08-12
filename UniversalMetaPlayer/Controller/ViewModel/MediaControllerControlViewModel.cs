@@ -12,6 +12,7 @@ using UMP.Utility;
 using MaterialDesignThemes.Wpf;
 
 using NAudio.Wave;
+using MaterialDesignColors.ColorManipulation;
 
 namespace UMP.Controller.ViewModel
 {
@@ -24,6 +25,7 @@ namespace UMP.Controller.ViewModel
       MainMediaPlayer.TickEvent += MainMediaPlayer_TickEvent;
       MainMediaPlayer.Option.PropertyChangedEvent += Option_PropertyChangedEvent;
       MainMediaPlayer.PlayList.PropertyChangedEvent += PlayList_PropertyChangedEvent;
+      ThemeHelper.ThemeChangedEvent += ThemeHelper_ThemeChangedEvent;
     }
 
     #region 볼륨
@@ -136,6 +138,10 @@ namespace UMP.Controller.ViewModel
     public string CurrentPostionstring => Converter.TimeSpanStringConverter(CurrentPostion);
     #endregion
 
+    #region ToggleButton
+    public Brush ToggleButtonBackground => new SolidColorBrush(ThemeHelper.PrimaryColor.Darken(3));
+    #endregion
+
     #region 동기화 메소드
     private void Option_PropertyChangedEvent(object sender, PropertyChangedEventArgs e)
     {
@@ -155,6 +161,10 @@ namespace UMP.Controller.ViewModel
     {
       if (propertyname == "TotalDuration")
         OnPropertyChanged("TotalDuration");      // 플레이리스트 재생길이 총합 적용
+    }
+    private void ThemeHelper_ThemeChangedEvent(ThemeHelper.ThemeProperty e)
+    {
+      OnPropertyChanged("ToggleButtonBackground"); // 테마 색 변경 적용
     }
 
     /// <summary>

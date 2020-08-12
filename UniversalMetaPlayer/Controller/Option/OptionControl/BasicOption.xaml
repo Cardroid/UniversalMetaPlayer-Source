@@ -26,65 +26,90 @@
                 Height="Auto" />
         </Grid.RowDefinitions>
 
-        <WrapPanel
-            Orientation="Vertical"
+        <Grid
             Margin="5"
             Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition
+                    Width="*" />
+                <ColumnDefinition
+                    Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition
+                    Height="Auto" />
+                <RowDefinition
+                    Height="Auto" />
+                <RowDefinition
+                    Height="Auto" />
+                <RowDefinition
+                    Height="*" />
+            </Grid.RowDefinitions>
 
-            <Grid
+            <Label
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
                 ToolTip="{Binding FileSavePathToolTip}"
-                Margin="5,5,0,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
+                Content="저장 폴더"
+                Grid.Column="0" 
+                Grid.Row="0"/>
+            <Button
+                x:Name="OpenDirectoryDialogButton"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                ToolTip="{Binding FileSavePathToolTip}"
+                Style="{DynamicResource MaterialDesignFlatAccentBgButton}"
+                Content="찾아보기"
+                Grid.Column="1"
+                Grid.Row="0" />
 
-                <Label
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Content="저장 폴더"
-                    Grid.Column="0" />
-                <Button
-                    x:Name="OpenDirectoryDialogButton"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Style="{DynamicResource MaterialDesignFlatAccentBgButton}"
-                    Content="찾아보기"
-                    Margin="5,0,0,0"
-                    Grid.Column="1" />
-            </Grid>
-            <Grid
+            <Label
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
                 ToolTip="{Binding PrivateLoggingToolTip}"
-                Margin="5,5,0,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
+                Content="자세한 로깅"
+                Grid.Column="0"
+                Grid.Row="1" />
+            <ToggleButton
+                x:Name="PrivateLogging"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                ToolTip="{Binding PrivateLoggingToolTip}"
+                IsChecked="{Binding PrivateLoggingIsChecked}"
+                Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                Grid.Column="1"
+                Grid.Row="1" />
 
-                <Label
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Content="자세한 로깅"
-                    Grid.Column="0" />
-                <ToggleButton
-                    x:Name="PrivateLogging"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    IsChecked="{Binding PrivateLoggingIsChecked}"
-                    Style="{StaticResource MaterialDesignSwitchToggleButton}"
-                    Margin="5,0,0,0"
-                    Grid.Column="1" />
-            </Grid>
-        </WrapPanel>
+            <Label
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                ToolTip="{Binding MediaLoadEngineToolTip}"
+                Content="미디어 로드 엔진"
+                Grid.Column="0"
+                Grid.Row="2" />
+            <ComboBox
+                Name="MediaLoadEngineComboBox"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                ToolTip="{Binding MediaLoadEngineToolTip}"
+                ItemsSource="{Binding MediaLoadEngineTypes}"
+                SelectedItem="{Binding SelectedItem}"
+                Width="100"
+                Grid.Column="1"
+                Grid.Row="2" />
+        </Grid>
 
         <Grid
             ToolTip="설정 초기화"
             Margin="5"
             Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition
+                    Width="*" />
+                <ColumnDefinition
+                    Width="Auto" />
+                <ColumnDefinition
+                    Width="Auto" />
             </Grid.ColumnDefinitions>
 
             <Label

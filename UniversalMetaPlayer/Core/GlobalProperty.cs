@@ -286,7 +286,7 @@ namespace UMP.Core
 
       #region 키보드
       /// <summary>
-      /// 전역 키보드 후킹 여부
+      /// 키보드 단축키 사용 여부
       /// </summary>
       public static bool HotKey
       {

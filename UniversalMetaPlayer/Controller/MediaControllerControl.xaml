@@ -224,13 +224,13 @@
                 Focusable="False"
                 Cursor="Hand"
                 Grid.Column="6" />
-            <CheckBox
-                x:Name="PlayListCheckBox"
+            <ToggleButton
+                x:Name="PlayListToggleButton"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                Style="{StaticResource MaterialDesignActionCheckBox}"
-                Background="Transparent"
+                Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}"
                 Foreground="{Binding Foreground, ElementName=PlayPauseButton}"
+                Background="{Binding ToggleButtonBackground}"
                 Content="{materialDesign:PackIcon Kind=PlaylistMusic, Size=30}"
                 IsChecked="{Binding IsPlayListWindowOpen}"
                 ToolTip="플레이리스트 / PlayList"
@@ -238,13 +238,13 @@
                 Focusable="False"
                 Cursor="Hand"
                 Grid.Column="7" />
-            <CheckBox
-                x:Name="SettingCheckBox"
+            <ToggleButton
+                x:Name="SettingToggleButton"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                Style="{StaticResource MaterialDesignActionCheckBox}"
-                Background="Transparent"
+                Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}"
                 Foreground="{Binding Foreground, ElementName=PlayPauseButton}"
+                Background="{Binding ToggleButtonBackground}"
                 Content="{materialDesign:PackIcon Kind=DotsHorizontal, Size=30}"
                 IsChecked="{Binding IsOptionWindowOpen}"
                 ToolTip="설정 / Setting"

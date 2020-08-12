@@ -28,6 +28,7 @@ namespace UMP.Controller
 
     public MediaControllerControl()
     {
+      Log log = new Log(typeof(MediaControllerControl));
       InitializeComponent();
       ViewModel = (MediaControllerControlViewModel)this.DataContext;
       Hook.KeyboardEvent += Hook_KeyboardEvent;
@@ -73,13 +74,13 @@ namespace UMP.Controller
           ViewModel.ApplyUI();
         };
 
-        this.SettingCheckBox.Click += (_, e) =>
+        this.SettingToggleButton.Click += (_, e) =>
         {
-          SettingControlOpen(this.SettingCheckBox.IsChecked.GetValueOrDefault());
+          SettingControlOpen(this.SettingToggleButton.IsChecked.GetValueOrDefault());
         };
-        this.PlayListCheckBox.Click += (_, e) =>
+        this.PlayListToggleButton.Click += (_, e) =>
         {
-          PlayListControlOpen(this.PlayListCheckBox.IsChecked.GetValueOrDefault());
+          PlayListControlOpen(this.PlayListToggleButton.IsChecked.GetValueOrDefault());
         };
 
         GlobalProperty.PropertyChanged += (e) =>
@@ -89,11 +90,7 @@ namespace UMP.Controller
             ControlPanel.IsEnabled = GlobalProperty.IsControllable;
           }
         };
-      };
 
-      this.Loaded += (s, e) =>
-      {
-        Log log = new Log(typeof(MediaControllerControl));
         log.Debug("초기화 완료");
       };
     }
@@ -113,7 +110,7 @@ namespace UMP.Controller
         parentWindow.MinWidth -= parentWindow.MainOptionControl.Width;
         parentWindow.Width -= parentWindow.MainOptionControl.Width;
       }
-        this.SettingCheckBox.IsChecked = isOpen;
+      this.SettingToggleButton.IsChecked = isOpen;
     }
 
     private void PlayListControlOpen(bool isOpen)
@@ -131,7 +128,7 @@ namespace UMP.Controller
         parentWindow.MinHeight -= parentWindow.MainPlayListControl.Height;
         parentWindow.Height -= parentWindow.MainPlayListControl.Height;
       }
-        this.PlayListCheckBox.IsChecked = isOpen;
+      this.PlayListToggleButton.IsChecked = isOpen;
     }
 
     /// <summary>

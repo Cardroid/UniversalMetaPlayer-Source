@@ -18,62 +18,62 @@
         <viewmodel:ThemeOptionViewModel />
     </UserControl.DataContext>
 
-    <WrapPanel
-        Orientation="Vertical">
+    <Grid
+        Margin="5"
+        Grid.Row="0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition
+                Width="*" />
+            <ColumnDefinition
+                Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition
+                Height="Auto" />
+            <RowDefinition
+                Height="Auto" />
+            <RowDefinition
+                Height="*" />
+        </Grid.RowDefinitions>
 
-        <WrapPanel
-            Orientation="Horizontal"
-            Margin="5">
-            <Grid
-                ToolTip="{Binding IsAverageColorThemeToolTip}"
-                Margin="5,5,0,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
+        <Label
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            ToolTip="{Binding IsAverageColorThemeToolTip}"
+            Content="적응형 색 테마 사용"
+            Grid.Column="0"
+            Grid.Row="0" />
+        <ToggleButton
+            x:Name="IsAverageColorTheme"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            ToolTip="{Binding IsAverageColorThemeToolTip}"
+            IsChecked="{Binding IsAverageColorThemeIsChecked}"
+            Style="{StaticResource MaterialDesignSwitchToggleButton}"
+            Margin="5,0,0,0"
+            Grid.Column="1"
+            Grid.Row="0" />
 
-                <Label
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Content="적응형 색 테마 사용"
-                    Grid.Column="0" />
-                <ToggleButton
-                    x:Name="IsAverageColorTheme"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    IsChecked="{Binding IsAverageColorThemeIsChecked}"
-                    Style="{StaticResource MaterialDesignSwitchToggleButton}"
-                    Margin="5,0,0,0"
-                    Grid.Column="1" />
-            </Grid>
-
-            <Grid
-                ToolTip="{Binding AverageColorProcessingOffsetToolTip}"
-                Margin="5,5,0,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-
-                <Label
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Content="평균색 추출 오프셋"
-                    Grid.Column="0" />
-                <TextBox
-                    x:Name="AverageColorProcessingOffsetTextBox"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    IsEnabled="{Binding IsAverageColorThemeIsChecked}"
-                    Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
-                    Text="{Binding AverageColorProcessingOffsetText, Mode=OneWay}"
-                    VerticalScrollBarVisibility="Auto"
-                    materialDesign:HintAssist.Hint="Offset"
-                    Width="80"
-                    Margin="5,0,0,0"
-                    Grid.Column="1" />
-            </Grid>
-        </WrapPanel>
-
-    </WrapPanel>
+        <Label
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            ToolTip="{Binding AverageColorProcessingOffsetToolTip}"
+            Content="평균색 추출 오프셋"
+            Grid.Column="0"
+            Grid.Row="1" />
+        <TextBox
+            x:Name="AverageColorProcessingOffsetTextBox"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            ToolTip="{Binding AverageColorProcessingOffsetToolTip}"
+            IsEnabled="{Binding IsAverageColorThemeIsChecked}"
+            Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+            Text="{Binding AverageColorProcessingOffsetText, Mode=OneWay}"
+            VerticalScrollBarVisibility="Auto"
+            materialDesign:HintAssist.Hint="Offset"
+            Width="80"
+            Margin="5,0,0,0"
+            Grid.Column="1"
+            Grid.Row="1" />
+    </Grid>
 </UserControl>
