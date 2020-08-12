@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 using Octokit;
 
-namespace UniversalMetaPlayer_UpdateClient
+namespace UMP.UpdateClient
 {
   class Program
   {

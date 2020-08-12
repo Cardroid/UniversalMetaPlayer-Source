@@ -3,6 +3,9 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AssemblyName>UpdateClient</AssemblyName>
+    <RootNamespace>UMP.UpdateClient</RootNamespace>
+    <StartupObject>UniversalMetaPlayer_UpdateClient.Program</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>
