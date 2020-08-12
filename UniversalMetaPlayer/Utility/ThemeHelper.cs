@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -22,7 +23,7 @@ namespace UMP.Utility
       MainMediaPlayer.PropertyChangedEvent += (e) =>
       {
         if (e == "MediaInformation")
-          SetAverageColorTheme();
+          SetAverageColorThemeAsync();
       };
     }
 
@@ -103,7 +104,7 @@ namespace UMP.Utility
     /// <summary>
     /// 대표색 추출
     /// </summary>
-    public static void SetAverageColorTheme()
+    public static async Task SetAverageColorThemeAsync()
     {
       if (MainMediaPlayer.MediaLoadedCheck)
       {
@@ -112,10 +113,14 @@ namespace UMP.Utility
           Log log = new Log(typeof(ThemeHelper));
           try
           {
-            var color = ImageProcessing.GetAverageColor(MainMediaPlayer.MediaInformation.AlbumImage as BitmapSource, GlobalProperty.Options.AverageColorProcessingOffset);
+            Color color;
+            await Task.Run(() => 
+            {
+              color = ImageProcessing.GetAverageColor(MainMediaPlayer.MediaInformation.AlbumImage as BitmapSource, GlobalProperty.Options.AverageColorProcessingOffset);
+            });
             Application.Current.MainWindow.BorderBrush = new SolidColorBrush(color);
-            ChangePrimaryColor(color.Lighten(3));
-            ChangeSecondaryColor(color.Darken(3));
+            ChangePrimaryColor(color.Lighten(2));
+            ChangeSecondaryColor(color.Darken(2));
           }
           catch (Exception e)
           {

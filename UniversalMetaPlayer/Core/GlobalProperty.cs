@@ -261,7 +261,7 @@ namespace UMP.Core
         {
           SetSetting("IsAverageColorTheme", value.ToString());
           if (value)
-            ThemeHelper.SetAverageColorTheme();
+            ThemeHelper.SetAverageColorThemeAsync();
           OnPropertyChanged("IsAverageColorTheme");
         }
       }

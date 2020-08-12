@@ -213,13 +213,32 @@ namespace UMP.Core
     public static async Task<bool> Init(MediaInformation mediainfo)
     {
       MediaLoader mediaLoader = new MediaLoader(mediainfo);
-      // 모든 정보로드
-      var info = await mediaLoader.GetInformationAsync(true);
+      MediaInformation info = new MediaInformation();
+      try
+      {
+        // 모든 정보로드
+        info = await mediaLoader.GetInformationAsync(true);
+      }
+      catch (Exception e)
+      {
+        Log.Fatal("미디어 정보 로드 실패", e, $"Title : [{info.Title}]\nLocation : [{info.MediaLocation}]");
+        return false;
+      }
       if (!info.LoadState)
         Log.Warn("미디어 정보에 오류가 있습니다", new NullReferenceException("Null Processed Media"), $"Title : [{info.Title}]\nLocation : [{info.MediaLocation}]");
 
-      GenericResult<string> streamResult = await mediaLoader.GetStreamPathAsync(true);
-      if (!streamResult)
+      GenericResult<string> streamResult = null;
+      try
+      {
+        // 미디어 스트림 로드
+        streamResult = await mediaLoader.GetStreamPathAsync(true);
+      }
+      catch (Exception e)
+      {
+        Log.Fatal("미디어 스트림 로드에 오류가 발생했습니다", e, $"Title : [{info.Title}]\nLocation : [{info.MediaLocation}]");
+        return false;
+      }
+      if (streamResult != null && !streamResult)
       {
         Log.Fatal("미디어 스트림 로드에 실패했습니다", new FileLoadException("Media Stream Path is Null"), $"Title : [{info.Title}]\nLocation : [{info.MediaLocation}]");
         return false;
@@ -228,10 +247,11 @@ namespace UMP.Core
       string path = streamResult.Result;
 
       // 재생중인 미디어 정지
-      if (MediaLoadedCheck && PlaybackState != PlaybackState.Stopped)
+      if (MediaLoadedCheck)
       {
         StopButtonActive = true;
-        WavePlayer.Stop();
+        if (WavePlayer != null)
+          WavePlayer.Stop();
         Tick.Stop();
       }
 
@@ -258,11 +278,20 @@ namespace UMP.Core
       StopButtonActive = false;
 
       // 플래이어 초기화
-      WavePlayer?.Dispose();
-      WavePlayer = new WaveOut();
-      WavePlayer.PlaybackStopped += MediaPlayer_PlaybackStopped;
-      WavePlayer.Volume = Volume;
-      WavePlayer.Init(AudioFile);
+      try
+      {
+        WavePlayer?.Dispose();
+        WavePlayer = new WaveOut();
+        WavePlayer.PlaybackStopped += MediaPlayer_PlaybackStopped;
+        WavePlayer.Volume = Volume;
+        WavePlayer.Init(AudioFile);
+      }
+      catch (Exception e)
+      {
+        WavePlayer?.Dispose();
+        Log.Fatal("플레이어 초기화 실패", e, $"Title : [{info.Title}]\nLocation : [{info.MediaLocation}]");
+        return false;
+      }
 
       PropertyChangedEvent?.Invoke("MainPlayerInitialized");
       return true;
@@ -343,7 +372,12 @@ namespace UMP.Core
         else
         {
           if (Option.Shuffle)
+          {
             playListMediaIndex = new RandomFunc().RandomInt(playListMediaIndex, playListMediaIndex, 0, PlayList.Count);
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine($"셔플 인텍스 : {playListMediaIndex}");
+#endif
+          }
           else
             playListMediaIndex++;
         }

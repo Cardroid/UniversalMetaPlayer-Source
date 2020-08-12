@@ -29,6 +29,8 @@ namespace UMP.Controller.Option.OptionControl
     {
       InitializeComponent();
 
+      this.PreviewMouseDown += (_, e) => { Keyboard.ClearFocus(); };
+
       this.Mainlogo.Width = 120;
       this.Mainlogo.Height = 120;
       this.Mainlogo.Source = GlobalProperty.StaticValues.LogoImage;

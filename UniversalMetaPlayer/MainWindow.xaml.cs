@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 using UMP.Core;
 using UMP.Utility;
@@ -92,18 +93,23 @@ namespace UMP
         $"현재 버전은 [v{GlobalProperty.StaticValues.FileVersion}] [{GlobalProperty.StaticValues.BitVersion}] 입니다\n" +
         $"오류가 발생하면 로그파일과 함께 신고해주세요!\n";
 #endif
+      this.GlobalMessageBar.IsActiveChanged += (_, e) => { if (!e.NewValue) this.GlobalMessage.Content = null; };
     }
 
     private void MainWindow_WindowDrag(object sender, MouseButtonEventArgs e) { this.DragMove(); e.Handled = true; }
 
     private async void GlobalEvent_GlobalMessageEvent(string message, bool autoClose)
     {
+      Dispatcher.Invoke(new Action(() => { 
       this.GlobalMessageBar.IsActive = true;
       this.GlobalMessage.Content = message;
+      }));
       if (autoClose)
       {
         await Task.Delay(3000);
+        Dispatcher.Invoke(new Action(() => {
         this.GlobalMessageBar.IsActive = false;
+        }));
       }
     }
 

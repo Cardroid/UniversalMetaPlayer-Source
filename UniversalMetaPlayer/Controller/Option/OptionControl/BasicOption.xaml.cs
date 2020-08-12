@@ -27,6 +27,8 @@ namespace UMP.Controller.Option.OptionControl
     {
       InitializeComponent();
 
+      this.PreviewMouseDown+= (_, e) => { Keyboard.ClearFocus(); };
+
       this.OpenDirectoryDialogButton.Click += OpenDirectoryDialogButton_Click;
       this.SetDefault.Click += SetDefault_Click;
       SetDefaultForeground = this.SetDefault.Foreground;

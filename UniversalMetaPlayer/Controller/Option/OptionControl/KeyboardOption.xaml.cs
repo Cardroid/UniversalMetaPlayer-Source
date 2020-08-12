@@ -23,28 +23,21 @@ namespace UMP.Controller.Option.OptionControl
     {
       InitializeComponent();
 
-      this.KeyEventDelayOffsetTextBox.PreviewKeyDown += KeyEventDelayOffsetTextBox_PreviewKeyDown;
+      this.PreviewMouseDown += (_, e) => { KeyEventDelayOffsetTextBox_Apply(); };
+
+      this.KeyEventDelayOffsetTextBox.PreviewKeyDown += (_, e) => { if (e.Key == Key.Enter) KeyEventDelayOffsetTextBox_Apply(); };
       this.KeyEventDelayOffsetTextBox.Text = GlobalProperty.Options.KeyEventDelay.ToString();
     }
 
-    private async void KeyEventDelayOffsetTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+    private void KeyEventDelayOffsetTextBox_Apply()
     {
-      if (e.Key == Key.Enter)
-      {
-        this.KeyEventDelayOffsetTextBox.Focusable = false;
-        this.KeyEventDelayOffsetTextBox.IsReadOnlyCaretVisible = false;
-        this.KeyEventDelayOffsetTextBox.IsReadOnly = true;
-        if (int.TryParse(this.KeyEventDelayOffsetTextBox.Text, out int result))
-          result = Math.Clamp(result, 10, 201);
-        else
-          result = GlobalProperty.Options.DefaultValue.DefaultKeyEventDelay;
-        GlobalProperty.Options.KeyEventDelay = result;
-        this.KeyEventDelayOffsetTextBox.Text = result.ToString();
-        await Task.Delay(300);
-        this.KeyEventDelayOffsetTextBox.IsReadOnlyCaretVisible = true;
-        this.KeyEventDelayOffsetTextBox.IsReadOnly = false;
-        this.KeyEventDelayOffsetTextBox.Focusable = true;
-      }
+      if (int.TryParse(this.KeyEventDelayOffsetTextBox.Text, out int result))
+        result = Math.Clamp(result, 10, 201);
+      else
+        result = GlobalProperty.Options.DefaultValue.DefaultKeyEventDelay;
+      GlobalProperty.Options.KeyEventDelay = result;
+      this.KeyEventDelayOffsetTextBox.Text = result.ToString();
+      Keyboard.ClearFocus();
     }
   }
 }

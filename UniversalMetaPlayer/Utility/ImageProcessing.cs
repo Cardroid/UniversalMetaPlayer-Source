@@ -5,12 +5,16 @@ using System.Text;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
+using UMP.Core;
+
 namespace UMP.Utility
 {
   public static class ImageProcessing
   {
     public static Color GetAverageColor(BitmapSource image, int offset = 1)
     {
+      bool error = false;
+
       //Used for tally
       int r = 0;
       int g = 0;
@@ -22,7 +26,21 @@ namespace UMP.Utility
       {
         for (int y = 0; y < image.Height; y += offset)
         {
-          Color c = GetPixelColor(image, x, y);
+          Color c;
+          try
+          {
+            c = GetPixelColor(image, x, y);
+          }
+          catch (Exception e)
+          {
+            if (!error)
+            {
+              error = true;
+              new Log(typeof(ImageProcessing)).Error("이미지 픽셀 추출 실패", e);
+              GlobalEvent.GlobalMessageEventInvoke("이미지 픽셀 추출에 오류가 발생했습니다.\n이미지에 이상이 없는지 확인해주세요", true);
+            }
+            continue;
+          }
 
           r += c.R;
           g += c.G;
