@@ -20,6 +20,7 @@ namespace UMP
 
       AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
       DispatcherUnhandledException += App_DispatcherUnhandledException;
+      AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
     }
 
     public static Log MainLog { get; } = new Log("System");
@@ -32,6 +33,11 @@ namespace UMP
     private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
     {
       MainLog.Error($"[Dispatcher Exception] Handled : [{e.Handled}] Dispatcher Thread : [{e.Dispatcher.Thread}]", e.Exception);
+    }
+
+    private void CurrentDomain_FirstChanceException(object sender, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
+    {
+      MainLog.Error($"[CurrentDomain FirstChanceException]", e.Exception);
     }
   }
 }
