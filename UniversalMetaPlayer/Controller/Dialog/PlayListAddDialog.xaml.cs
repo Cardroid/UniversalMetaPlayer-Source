@@ -37,21 +37,29 @@ namespace UMP.Controller.Dialog
     {
       InitializeComponent();
 
-      this.KeyDown += (_, e) => 
+      this.Loaded += (_, e) => 
       {
-        if (e.Key == Key.Escape)
-          Close?.Invoke();
+        this.KeyDown += (_, e) =>
+        {
+          if (e.Key == Key.Escape)
+            Close?.Invoke();
+        };
+
+        this.AcceptButton.IsEnabled = false;
+        this.UserTextBox.TextChanged += UserTextBox_TextChanged;
+        this.AcceptButton.Click += AcceptButton_Click;
+        this.CancelButton.Click += CancelButton_Click;
+        this.OpenFileDialogButton.Click += OpenFileDialogButton_Click;
+        this.Loaded += (s, e) => { this.UserTextBox.Focus(); };
+        this.UserTextBox.Focus();
+
+        if (Checker.CheckForInternetConnection())
+          this.MessageLabel.Content = "미디어의 위치를 입력하세요";
+        else
+          this.MessageLabel.Content = "[오프라인]\n(비디오 주소만 추가할 수 있습니다)\n미디어의 위치를 입력하세요";
+
+        Timer.Elapsed += Timer_Elapsed;
       };
-
-      this.AcceptButton.IsEnabled = false;
-      this.UserTextBox.TextChanged += UserTextBox_TextChanged;
-      this.AcceptButton.Click += AcceptButton_Click;
-      this.CancelButton.Click += CancelButton_Click;
-      this.OpenFileDialogButton.Click += OpenFileDialogButton_Click;
-      this.Loaded += (s, e) => { this.UserTextBox.Focus(); };
-      this.UserTextBox.Focus();
-
-      Timer.Elapsed += Timer_Elapsed;
     }
 
     delegate void TimerEventFiredDelegate();
@@ -84,8 +92,11 @@ namespace UMP.Controller.Dialog
         return;
       if (string.IsNullOrWhiteSpace(this.UserTextBox.Text))
       {
-        this.MessageLabel.Content = "미디어의 위치를 입력하세요";
-          this.AcceptButton.IsEnabled = false;
+        if (Checker.CheckForInternetConnection())
+          this.MessageLabel.Content = "미디어의 위치를 입력하세요";
+        else
+          this.MessageLabel.Content = "[오프라인]\n(비디오 주소만 추가할 수 있습니다)\n미디어의 위치를 입력하세요";
+        this.AcceptButton.IsEnabled = false;
         return;
       }
 
@@ -162,7 +173,7 @@ namespace UMP.Controller.Dialog
           if (info is Video)
           {
             SelectFilePaths = new string[] { text };
-            this.MessageLabel.Content = "[비디오] 온라인 경로입니다";
+            this.MessageLabel.Content = "[Video]\n온라인 경로입니다";
             this.AcceptButton.IsEnabled = true;
           }
           else if (info is Playlist playlist)
@@ -175,7 +186,8 @@ namespace UMP.Controller.Dialog
             }
             vid = vid[0..^1];
             SelectFilePaths = vid.Split(',');
-            this.MessageLabel.Content = $"[플레이 리스트] ({SelectFilePaths.Length} 개) 온라인 경로입니다";
+            this.MessageLabel.Content = $"[PlayList]\n[{playlist.Title}]\n({SelectFilePaths.Length} 개)\n온라인 경로입니다";
+            this.AcceptButton.IsEnabled = true;
           }
           else if (info is Channel channel)
           {
@@ -187,7 +199,8 @@ namespace UMP.Controller.Dialog
             }
             vid = vid[0..^1];
             SelectFilePaths = vid.Split(',');
-            this.MessageLabel.Content = $"[채널] ({SelectFilePaths.Length} 개) 온라인 경로입니다";
+            this.MessageLabel.Content = $"[Channel]\n[{channel.Title}]\n({SelectFilePaths.Length} 개)\n온라인 경로입니다";
+            this.AcceptButton.IsEnabled = true;
           }
           else
           {
@@ -197,9 +210,27 @@ namespace UMP.Controller.Dialog
         }
         else
         {
-          SelectFilePaths = new string[] { text };
-          this.MessageLabel.Content = "[확인되지 않음] 온라인 경로입니다";
-          this.AcceptButton.IsEnabled = true;
+          if(GlobalProperty.Options.MediaLoadEngine == GlobalProperty.Options.Enums.MediaLoadEngineType.Native)
+          {
+            try
+            {
+              VideoId videoId = new VideoId(text);
+              SelectFilePaths = new string[] { text };
+              this.MessageLabel.Content = $"[확인되지 않음]\n[ID : {videoId.Value}]\n온라인 경로입니다";
+              this.AcceptButton.IsEnabled = true;
+            }
+            catch
+            {
+              this.AcceptButton.IsEnabled = false;
+              this.MessageLabel.Content = "미디어를 확인 할 수 없습니다";
+            }
+          }
+          else
+          {
+            SelectFilePaths = new string[] { text };
+            this.MessageLabel.Content = "[확인되지 않음]\n온라인 경로입니다";
+            this.AcceptButton.IsEnabled = true;
+          }
         }
       }
 

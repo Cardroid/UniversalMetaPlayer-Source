@@ -33,8 +33,7 @@
                 Orientation="Horizontal">
                 <Label
                     x:Name="MessageLabel"
-                    Style="{StaticResource MaterialDesignLabel}"
-                    Content="미디어의 위치" />
+                    Style="{StaticResource MaterialDesignLabel}" />
                 <materialDesign:Card
                     x:Name="ProgressRing"
                     Visibility="Collapsed"

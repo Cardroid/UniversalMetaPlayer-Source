@@ -247,7 +247,7 @@
                 Background="{Binding ToggleButtonBackground}"
                 Content="{materialDesign:PackIcon Kind=DotsHorizontal, Size=30}"
                 IsChecked="{Binding IsOptionWindowOpen}"
-                ToolTip="설정 / Setting"
+                ToolTip="더 많은 기능 / More Features"
                 Focusable="False"
                 Margin="10,0,0,0"
                 Cursor="Hand"

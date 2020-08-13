@@ -17,7 +17,21 @@ namespace UMP
       MainLog.Info("############### Start application ###############\n" +
         $"Current Version : [{GlobalProperty.StaticValues.FileVersion}]\nBit : [{GlobalProperty.StaticValues.BitVersion}]",
         $"Start Path : [{AppDomain.CurrentDomain.BaseDirectory}]\nTask Path : [{Environment.CurrentDirectory}]");
+
+      AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+      DispatcherUnhandledException += App_DispatcherUnhandledException;
     }
+
     public static Log MainLog { get; } = new Log("System");
+
+    private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+    {
+      MainLog.Error($"[CurrentDomain Exception] Terminating : [{e.IsTerminating}]", e.ExceptionObject as Exception);
+    }
+
+    private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+    {
+      MainLog.Error($"[Dispatcher Exception] Handled : [{e.Handled}] Dispatcher Thread : [{e.Dispatcher.Thread}]", e.Exception);
+    }
   }
 }
