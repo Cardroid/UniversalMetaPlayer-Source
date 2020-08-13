@@ -146,8 +146,8 @@ namespace UMP.Core
         try
         {
           ThemeHelper.IsDarkMode = bool.Parse(Options.TryGetSetting("IsDarkMode", out string value) ? value : bool.TrueString);
-          ThemeHelper.ChangePrimaryColor((Color)ColorConverter.ConvertFromString(Options.TryGetSetting("PrimaryColor", out string primaryColor) ? value : Colors.Green.Lighten(3).ToString()));
-          ThemeHelper.ChangeSecondaryColor((Color)ColorConverter.ConvertFromString(Options.TryGetSetting("SecondaryColor", out string secondaryColor) ? value : Colors.Green.Darken(3).ToString()));
+          ThemeHelper.ChangePrimaryColor((Color)ColorConverter.ConvertFromString(Options.TryGetSetting("PrimaryColor", out string primaryColor) ? primaryColor : Colors.Green.Lighten(2).ToString()));
+          ThemeHelper.ChangeSecondaryColor((Color)ColorConverter.ConvertFromString(Options.TryGetSetting("SecondaryColor", out string secondaryColor) ? secondaryColor : Colors.Green.Darken(2).ToString()));
           Log.Info("메인 테마 불러오기 완료");
         }
         catch (Exception e)
