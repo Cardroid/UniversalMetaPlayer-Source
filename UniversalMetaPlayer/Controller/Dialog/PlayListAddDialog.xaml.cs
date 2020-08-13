@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -15,7 +18,12 @@ using UMP.Core;
 using UMP.Core.Model;
 using UMP.Utility;
 
-using MaterialDesignThemes.Wpf;
+using YoutubeExplode;
+using YoutubeExplode.Channels;
+using YoutubeExplode.Playlists;
+using YoutubeExplode.Videos;
+
+using Timer = System.Timers.Timer;
 
 namespace UMP.Controller.Dialog
 {
@@ -42,22 +50,45 @@ namespace UMP.Controller.Dialog
       this.OpenFileDialogButton.Click += OpenFileDialogButton_Click;
       this.Loaded += (s, e) => { this.UserTextBox.Focus(); };
       this.UserTextBox.Focus();
+
+      Timer.Elapsed += Timer_Elapsed;
     }
 
+    delegate void TimerEventFiredDelegate();
+    private void Timer_Elapsed(object sender, ElapsedEventArgs e)
+    {
+      Timer.Stop();
+      Dispatcher.Invoke(new Action(async () => {
+        await UserTextBox_Changed();
+      }));
+    }
+
+    private void UserTextBox_TextChanged(object sender, TextChangedEventArgs e)
+    {
+      if (!TextBoxBlock)
+      {
+        Timer.Stop();
+        Timer.Start();
+      }
+    }
+
+    private readonly Timer Timer = new Timer(1000) { AutoReset = true };
+    private bool TextBoxBlock = false;
     private bool IsWorkDelay = false;
     private readonly string Invalid = $"{new string(Path.GetInvalidPathChars())}\"";
     private string[] SelectFilePaths { get; set; }
 
-    private void UserTextBox_TextChanged(object sender, TextChangedEventArgs e)
+    private async Task UserTextBox_Changed()
     {
+      if (IsWorkDelay)
+        return;
       if (string.IsNullOrWhiteSpace(this.UserTextBox.Text))
       {
         this.MessageLabel.Content = "미디어의 위치를 입력하세요";
+          this.AcceptButton.IsEnabled = false;
         return;
       }
 
-      if (IsWorkDelay)
-        return;
       IsWorkDelay = true;
       this.ProgressRing.Visibility = Visibility.Visible;
 
@@ -83,15 +114,91 @@ namespace UMP.Controller.Dialog
       }
       else
       {
-        if (Checker.CheckForInternetConnection())
+        if (Checker.CheckForInternetConnection() && GlobalProperty.Options.MediaLoadEngine == GlobalProperty.Options.Enums.MediaLoadEngineType.Native)
         {
+          YoutubeClient client = new YoutubeClient();
+          object info = null;
 
+          if (info == null)
+            try
+            {
+              info = await client.Videos.GetAsync(text);
+            }
+            catch
+            {
+              // 비디오 정보 받아오기 실패
+              info = null;
+            }
+
+          if (info == null)
+            try
+            {
+              info = await client.Playlists.GetAsync(text);
+            }
+            catch
+            {
+              // 플레이리스트 정보 받아오기 실패
+              info = null;
+            }
+
+          if (info == null)
+            try
+            {
+              info = await client.Channels.GetAsync(text);
+            }
+            catch
+            {
+              try
+              {
+                info = await client.Channels.GetByUserAsync(text);
+              }
+              catch
+              {
+                // 채널 정보 받아오기 실패
+                info = null;
+              }
+            }
+
+          if (info is Video)
+          {
+            SelectFilePaths = new string[] { text };
+            this.MessageLabel.Content = "[비디오] 온라인 경로입니다";
+            this.AcceptButton.IsEnabled = true;
+          }
+          else if (info is Playlist playlist)
+          {
+            var videos = await client.Playlists.GetVideosAsync(playlist.Url);
+            string vid = string.Empty;
+            for (int i = 0; i < videos.Count; i++)
+            {
+              vid += $"{videos[i].Url},";
+            }
+            vid = vid[0..^1];
+            SelectFilePaths = vid.Split(',');
+            this.MessageLabel.Content = $"[플레이 리스트] ({SelectFilePaths.Length} 개) 온라인 경로입니다";
+          }
+          else if (info is Channel channel)
+          {
+            var videos = await client.Channels.GetUploadsAsync(channel.Url);
+            string vid = string.Empty;
+            for (int i = 0; i < videos.Count; i++)
+            {
+              vid += $"{videos[i].Url},";
+            }
+            vid = vid[0..^1];
+            SelectFilePaths = vid.Split(',');
+            this.MessageLabel.Content = $"[채널] ({SelectFilePaths.Length} 개) 온라인 경로입니다";
+          }
+          else
+          {
+            this.AcceptButton.IsEnabled = false;
+            this.MessageLabel.Content = "미디어를 확인 할 수 없습니다";
+          }
         }
         else
         {
-
           SelectFilePaths = new string[] { text };
-          this.MessageLabel.Content = "온라인 경로가 확인되었습니다";
+          this.MessageLabel.Content = "[확인되지 않음] 온라인 경로입니다";
           this.AcceptButton.IsEnabled = true;
         }
       }
@@ -112,7 +219,7 @@ namespace UMP.Controller.Dialog
         this.ProgressRing.Visibility = Visibility.Visible;
 
         // 텍스트 입력을 비활성화
-        this.UserTextBox.TextChanged -= UserTextBox_TextChanged;
+        TextBoxBlock = true;
         this.UserTextBox.Focusable = false;
         this.UserTextBox.IsHitTestVisible = false;
         this.UserTextBox.IsReadOnly = true;
@@ -128,6 +235,7 @@ namespace UMP.Controller.Dialog
     private async void AcceptButton_Click(object sender, RoutedEventArgs e)
     {
       this.ProgressRing.Visibility = Visibility.Visible;
+      TextBoxBlock = true;
       this.UserTextBox.IsEnabled = false;
       this.AcceptButton.IsEnabled = false;
       this.OpenFileDialogButton.IsEnabled = false;

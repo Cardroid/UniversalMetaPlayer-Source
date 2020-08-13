@@ -24,7 +24,7 @@ namespace UMP.Controller.Option.OptionControl.ViewModel
       };
     }
 
-    public string FileSavePathToolTip => $"현재 설정 : \"{Path.GetFullPath(GlobalProperty.Options.FileSavePath)}\"\n\n프로그램에서 파일을 보관하는 폴더입니다.\n빈 폴더를 권장합니다.";
+    public string FileSavePathToolTip => $"현재 설정 : \"{Path.GetFullPath(GlobalProperty.Options.FileSavePath)}\"\n\n프로그램에서 파일을 보관하는 폴더입니다. 빈 폴더를 권장합니다.";
 
     public bool PrivateLoggingIsChecked
     {

@@ -190,16 +190,16 @@ namespace UMP.Core.Model
     /// <summary>
     /// 리스트 추가
     /// </summary>
-    /// <param name="mediaPath">추가할 미디어의 위치</param>
-    public async Task Add(string mediaPath)
+    /// <param name="mediaLocation">추가할 미디어의 위치</param>
+    public async Task Add(string mediaLocation)
     {
-      var loader = new MediaLoader(mediaPath);
-      Log.Debug("플레이 리스트 항목 추가 시도", $"Path : [{mediaPath}]");
+      var loader = new MediaLoader(mediaLocation);
+      Log.Debug("플레이 리스트 항목 추가 시도", $"Path : [{mediaLocation}]");
 
       var info = await loader.GetInformationAsync(false);
       TotalDuration += info.Duration;
       base.Add(info);
-      Log.Info($"플레이 리스트 항목 추가 완료 IsLoaded : [{info.LoadState}]", $"Title : [{info.Title}]\nFileName : {Path.GetFileName(mediaPath)}");
+      Log.Info($"플레이 리스트 항목 추가 완료 IsLoaded : [{info.LoadState}]", $"Title : [{info.Title}]\nFileName : {Path.GetFileName(mediaLocation)}");
     }
 
     /// <summary>
