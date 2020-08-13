@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniversalMetaPlayer", "Univ
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTestProject", "UnitTestProject\UnitTestProject.csproj", "{F6C72E5D-D143-463E-AA58-D33880D0C8F1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversalMetaPlayer_UpdateClient", "UniversalMetaPlayer_UpdateClient\UniversalMetaPlayer_UpdateClient.csproj", "{EF88F32E-70CB-4C30-A8FD-9AAAD169437D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniversalMetaPlayer_UpdateClient", "UniversalMetaPlayer_UpdateClient\UniversalMetaPlayer_UpdateClient.csproj", "{EF88F32E-70CB-4C30-A8FD-9AAAD169437D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,7 +33,6 @@ Global
 		{AF788E7E-FCE4-4FA5-A70C-32CF11FCC6CA}.Release|x86.Build.0 = Release|x86
 		{F6C72E5D-D143-463E-AA58-D33880D0C8F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F6C72E5D-D143-463E-AA58-D33880D0C8F1}.Debug|x64.ActiveCfg = Debug|x64
-		{F6C72E5D-D143-463E-AA58-D33880D0C8F1}.Debug|x64.Build.0 = Debug|x64
 		{F6C72E5D-D143-463E-AA58-D33880D0C8F1}.Debug|x86.ActiveCfg = Debug|x86
 		{F6C72E5D-D143-463E-AA58-D33880D0C8F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F6C72E5D-D143-463E-AA58-D33880D0C8F1}.Release|x64.ActiveCfg = Release|x64
@@ -55,7 +54,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		BuildVersion_StartDate = 2000/1/1
 		SolutionGuid = {6492D063-8C71-47DC-AA7F-DFC925E359AD}
+		BuildVersion_StartDate = 2000/1/1
 	EndGlobalSection
 EndGlobal
