@@ -139,7 +139,7 @@ namespace UMP.UpdateClient
           }
           else
           {
-            WriteError("업데이트가 필요하지 않습니다");
+            Console.WriteLine("업데이트가 필요하지 않습니다");
             Thread.Sleep(2000);
           }
         }
@@ -160,7 +160,7 @@ namespace UMP.UpdateClient
     private static TextWriter ErrorWriter { get; } = TextWriter.Null;
     private static bool IsErrorExist = false;
     private Dictionary<string, string> Assets { get; set; }
-    private string OS_Bit => Environment.Is64BitOperatingSystem ? "x64" : "x86";
+    private static string OS_Bit => Environment.Is64BitOperatingSystem ? "x64" : "x86";
     private Version TargetVerstion { get; set; } = null;
     private Version ProgramVerstion { get; set; } = null;
     private int DownloadCursorPostion { get; set; }
@@ -187,7 +187,7 @@ namespace UMP.UpdateClient
 
       if (string.IsNullOrWhiteSpace(file))
       {
-        WriteError("업데이트 대상 파일(Universal Meta Player)을 찾지 못했습니다");
+        Console.WriteLine("업데이트 대상 파일(Universal Meta Player)을 찾지 못했습니다");
         Console.WriteLine("최신버전을 설치합니다");
         return false;
       }
@@ -246,7 +246,7 @@ namespace UMP.UpdateClient
       webClient.DownloadProgressChanged += WebClient_DownloadProgressChanged;
       DownloadComplate = false;
 
-      Console.WriteLine($"현재 OS는 [{OS_Bit}]Bit 입니다");
+      Console.WriteLine($"[{OS_Bit}]Bit OS 감지됨");
       Console.WriteLine("다운로드 시작...\n");
       DownloadCursorPostion = Console.CursorTop;
 
@@ -294,6 +294,22 @@ namespace UMP.UpdateClient
           WriteError("압축 해제 중 오류 발생", e);
           return false;
         }
+        if (!Directory.Exists(OS_Bit))
+          return false;
+        Console.WriteLine("완료");
+
+        Console.WriteLine("파일 이동 중...");
+        try
+        {
+          var files = Directory.GetFiles(OS_Bit, "*.*");
+          for (int i = 0; i < files.Length; i++)
+            File.Move(files[i], Path.Combine(Environment.CurrentDirectory, Path.GetFileName(files[i])), true);
+        }
+        catch (Exception e)
+        {
+          WriteError("파일 이동 중 오류 발생", e);
+          return false;
+        }
         Console.WriteLine("완료");
         return true;
       }
@@ -321,6 +337,9 @@ namespace UMP.UpdateClient
         Directory.Delete(DownloadPath, true);
       }
 
+      if (Directory.Exists(OS_Bit))
+          Directory.Delete(OS_Bit, true);
+
       Console.WriteLine("완료");
     }
 
@@ -332,7 +351,11 @@ namespace UMP.UpdateClient
       Console.ForegroundColor = ConsoleColor.Red;
       Console.WriteLine(message);
       if (exception != null)
-        File.AppendAllText("UpdateCrash_Report.log", $"{DateTime.Now} [{message}]\n{exception}\n\n");
+      {
+        if (!Directory.Exists("Log"))
+          Directory.CreateDirectory("Log");
+        File.AppendAllText(@"Log\UpdateCrash_Report.log", $"{DateTime.Now} [{message}]\n{exception}\n\n");
+      }
       Console.ForegroundColor = beforeFgColor;
     }
   }
