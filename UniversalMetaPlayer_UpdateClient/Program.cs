@@ -36,15 +36,12 @@ namespace UMP.UpdateClient
     private static bool Handler(CtrlType sig)
     {
       Console.WriteLine("[취소 요청 입력됨]");
-      Thread.Sleep(1000);
-
-      Clean();
 
       //allow main to run off
       exitSystem = true;
 
       //shutdown right away so there are no lingering threads
-      Environment.Exit(-1);
+      //Environment.Exit(-1);
 
       return true;
     }
@@ -71,14 +68,15 @@ namespace UMP.UpdateClient
         Thread.Sleep(500);
       }
 
+      Console.WriteLine("프로그램 종료 중...");
+      Clean();
+
       if (IsErrorExist)
       {
         Console.WriteLine("오류가 존재합니다\n30초 후 자동으로 종료됩니다");
         Thread.Sleep(30000);
       }
 
-      Console.WriteLine("프로그램 종료 중...");
-      Clean();
 #if DEBUG
       Console.WriteLine();
       Thread.Sleep(1000);
@@ -165,6 +163,7 @@ namespace UMP.UpdateClient
     private string OS_Bit => Environment.Is64BitOperatingSystem ? "x64" : "x86";
     private Version TargetVerstion { get; set; } = null;
     private Version ProgramVerstion { get; set; } = null;
+    private int DownloadCursorPostion { get; set; }
     private bool DownloadComplate { get; set; } = false;
     private string DownloadFilePath { get; set; }
     private const string DownloadPath = @"Core\Cache\UpdateCache";
@@ -249,8 +248,9 @@ namespace UMP.UpdateClient
 
       Console.WriteLine($"현재 OS는 [{OS_Bit}]Bit 입니다");
       Console.WriteLine("다운로드 시작...\n");
+      DownloadCursorPostion = Console.CursorTop;
 
-      try { await webClient.DownloadFileTaskAsync(new Uri(Assets[OS_Bit]), DownloadFilePath); }
+      try { await webClient.DownloadFileTaskAsync(new Uri(Assets[OS_Bit+ ".zip"]), DownloadFilePath); }
       catch (Exception e)
       {
         WriteError("파일 다운로드 중 오류 발생", e);
@@ -262,14 +262,21 @@ namespace UMP.UpdateClient
       return true;
     }
 
+    private bool IsDisplayWork = false;
+
     private void WebClient_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
     {
+      if (IsDisplayWork)
+        return;
+      IsDisplayWork = true;
       string result = $"[{e.ProgressPercentage}]  {e.BytesReceived}/{e.TotalBytesToReceive} Byte";
 
-      for (int i = result.Length; i < Console.WindowWidth; i++)
+      for (int i = result.Length; i < Console.BufferWidth; i++)
         result += ' ';
 
-      Console.Write($"{result}\r");
+      Console.Write(result);
+      Console.SetCursorPosition(0, DownloadCursorPostion);
+      IsDisplayWork = false;
     }
     #endregion
 
@@ -300,11 +307,20 @@ namespace UMP.UpdateClient
     private static void Clean()
     {
       Console.WriteLine("정리 중...");
-      if (Directory.Exists(DownloadPath))
-        Directory.Delete(DownloadPath, true);
 
-      ErrorWriter.Close();
-      ErrorWriter.Dispose();
+      if (Directory.Exists(DownloadPath))
+      {
+        var cacheFiles = Directory.GetFiles(DownloadPath, "*.*");
+
+        if (cacheFiles != null && cacheFiles.Length > 0)
+        {
+          for (int i = 0; i < cacheFiles.Length; i++)
+            File.Delete(cacheFiles[i]);
+        }
+
+        Directory.Delete(DownloadPath, true);
+      }
+
       Console.WriteLine("완료");
     }
 
@@ -316,7 +332,7 @@ namespace UMP.UpdateClient
       Console.ForegroundColor = ConsoleColor.Red;
       Console.WriteLine(message);
       if (exception != null)
-        ErrorWriter.WriteLine(exception);
+        File.AppendAllText("UpdateCrash_Report.log", $"{DateTime.Now} [{message}]\n{exception}\n\n");
       Console.ForegroundColor = beforeFgColor;
     }
   }
