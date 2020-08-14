@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
@@ -15,7 +16,7 @@ namespace UMP.UpdateClient
     /// </summary>
     /// <param name="zipFilePath">ZIP 파일 경로</param>
     /// <param name="targetFilePath">백업 폴더</param>
-    public static async Task<bool> ExtractZIPFileAsync(string zipFilePath, string targetFilePath)
+    public static async Task<bool> ExtractZIPFileAsync(string zipFilePath, string targetFilePath, bool overWrite)
     {
       bool result = false;
       await Task.Run(() =>
@@ -26,10 +27,6 @@ namespace UMP.UpdateClient
           {
             using (ZipArchive zipArchive = ZipFile.OpenRead(zipFilePath))
             {
-              // 압축 풀 폴더에 이미 존재하면 삭제
-              if (Directory.Exists(Path.Combine(targetFilePath, zipArchive.Entries[0].FullName)))
-                Directory.Delete(Path.Combine(targetFilePath, zipArchive.Entries[0].FullName), true);
-
               foreach (ZipArchiveEntry zipArchiveEntry in zipArchive.Entries)
               {
                 string folderPath = Path.GetDirectoryName(Path.Combine(targetFilePath, zipArchiveEntry.FullName));
@@ -39,7 +36,7 @@ namespace UMP.UpdateClient
 
                 // 경로명은 제외
                 if (!string.IsNullOrWhiteSpace(zipArchiveEntry.FullName) && !zipArchiveEntry.FullName.EndsWith("\\") && !zipArchiveEntry.FullName.EndsWith("/"))
-                  zipArchiveEntry.ExtractToFile(Path.Combine(targetFilePath, zipArchiveEntry.FullName));
+                  zipArchiveEntry.ExtractToFile(Path.Combine(targetFilePath, zipArchiveEntry.FullName), overWrite);
               }
             }
             result = true;
@@ -68,6 +65,16 @@ namespace UMP.UpdateClient
         { return true; }
       }
       catch { return false; }
+    }
+
+    /// <summary>
+    /// 프로세스가 실행 중인지 체크합니다
+    /// </summary>
+    /// <param name="processName">체크할 프로세스 이름</param>
+    /// <returns>실행 중이면 true</returns>
+    public static bool IsProcessRun(string processName)
+    {
+      return Process.GetProcessesByName(processName).Length > 0;
     }
   }
 }
