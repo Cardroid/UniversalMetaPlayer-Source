@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+
 using UMP.Core;
 using UMP.Utility;
 
@@ -42,6 +43,12 @@ namespace UMP.Controller.WindowButton
         else
           parentWindow.WindowState = WindowState.Normal;
       };
+      this.ResizeButton.Click += (_, e) =>
+      {
+        Window parentWindow = Window.GetWindow(Parent);
+        parentWindow.Width = 800;
+        parentWindow.Height = 450;
+      };
       this.MaximizeButton.Click += (s, e) =>
       {
         Window parentWindow = Window.GetWindow(Parent);
@@ -54,7 +61,7 @@ namespace UMP.Controller.WindowButton
         {
           parentWindow.WindowState = WindowState.Normal;
           MaximizeButton.ToolTip = "최대화";
-        } 
+        }
       };
       this.CloseButton.Click += (s, e) =>
       {

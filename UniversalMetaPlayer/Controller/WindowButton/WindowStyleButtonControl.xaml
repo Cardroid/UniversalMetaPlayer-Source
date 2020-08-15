@@ -43,6 +43,17 @@
                     Cursor="Hand"
                     Grid.Column="0" />
                 <Button
+                    x:Name="ResizeButton"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Style="{StaticResource MaterialDesignIconButton}"
+                    Content="{materialDesign:PackIcon Kind=Resize, Size=20}"
+                    Foreground="Yellow"
+                    ToolTip="사이즈 재설정"
+                    Focusable="False"
+                    Cursor="Hand"
+                    Grid.Column="1" />
+                <Button
                     x:Name="MaximizeButton"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
