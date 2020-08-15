@@ -109,6 +109,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Controller\Feature\AnalysisControl\" />
     <Folder Include="Properties\" />
   </ItemGroup>
 
@@ -116,10 +117,10 @@
     <Compile Update="Controller\Dialog\PlayListLoadDialog.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Controller\Option\OptionControl\ThemeOption.xaml.cs">
+    <Compile Update="Controller\Feature\FeatureControl\ThemeFeature.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Controller\Option\OptionControl\KeyboardOption.xaml.cs">
+    <Compile Update="Controller\Feature\FeatureControl\KeyboardFeature.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
@@ -128,10 +129,10 @@
     <Page Update="Controller\Dialog\PlayListLoadDialog.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Controller\Option\OptionControl\ThemeOption.xaml">
+    <Page Update="Controller\Feature\FeatureControl\ThemeFeature.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Controller\Option\OptionControl\KeyboardOption.xaml">
+    <Page Update="Controller\Feature\FeatureControl\KeyboardFeature.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
