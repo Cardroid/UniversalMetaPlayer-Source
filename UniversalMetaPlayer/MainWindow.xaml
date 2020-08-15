@@ -33,7 +33,7 @@
             <ColumnDefinition
                 Width="*" />
             <ColumnDefinition
-                Width="Auto" />
+                Width="{Binding FeatureControlRowDefinition}" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition
@@ -43,7 +43,7 @@
             <RowDefinition
                 Height="*" />
             <RowDefinition
-                Height="Auto" />
+                Height="{Binding PlayListControlColumnDefinition}" />
         </Grid.RowDefinitions>
 
         <materialDesign:Snackbar

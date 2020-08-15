@@ -10,7 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
+using UMP.Controller.Feature.AnalysisControl;
 using UMP.Controller.Feature.OptionControl;
 using UMP.Core;
 
@@ -41,6 +41,7 @@ namespace UMP.Controller.Feature
           "Keyboard" => new KeyboardOption(),
           "Theme" => new ThemeOption(),
           "Information" => new InformationOption(),
+          "Graph" => new WaveAnalysisControl(),
           _ => new ErrorPageControl(),
         };
     }

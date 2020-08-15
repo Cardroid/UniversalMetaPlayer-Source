@@ -109,7 +109,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controller\Feature\AnalysisControl\" />
     <Folder Include="Properties\" />
   </ItemGroup>
 
@@ -127,6 +126,9 @@
 
   <ItemGroup>
     <Page Update="Controller\Dialog\PlayListLoadDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Controller\Feature\AnalysisControl\WaveAnalysis\AudioPlaybackDemo\Func\PolylineWaveFormControl.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Controller\Feature\FeatureControl\ThemeFeature.xaml">

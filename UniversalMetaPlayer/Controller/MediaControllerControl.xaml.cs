@@ -95,13 +95,13 @@ namespace UMP.Controller
       if (isOpen)
       {
         dataContext.FeatureControl = new MainFeatureControl();
-        parentWindow.Width += dataContext.FeatureControl.Width;
-        parentWindow.MinWidth += dataContext.FeatureControl.Width;
+        parentWindow.Width *= 2;
+        parentWindow.MinWidth *= 2;
       }
       else
       {
-        parentWindow.MinWidth -= dataContext.FeatureControl.Width;
-        parentWindow.Width -= dataContext.FeatureControl.Width;
+        parentWindow.MinWidth /= 2;
+        parentWindow.Width /= 2;
         dataContext.FeatureControl = null;
       }
       this.FeatureToggleButton.IsChecked = isOpen;
@@ -114,13 +114,13 @@ namespace UMP.Controller
       if (isOpen)
       {
         dataContext.PlayListControl = new PlayListControl();
-        parentWindow.Height += dataContext.PlayListControl.Height;
-        parentWindow.MinHeight += dataContext.PlayListControl.Height;
+        parentWindow.Height *= 2;
+        parentWindow.MinHeight *= 2;
       }
       else
       {
-        parentWindow.MinHeight -= dataContext.PlayListControl.Height;
-        parentWindow.Height -= dataContext.PlayListControl.Height;
+        parentWindow.MinHeight /= 2;
+        parentWindow.Height /= 2;
         dataContext.PlayListControl = null;
       }
       this.PlayListToggleButton.IsChecked = isOpen;

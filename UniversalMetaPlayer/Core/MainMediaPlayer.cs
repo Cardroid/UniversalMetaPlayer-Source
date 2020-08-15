@@ -9,6 +9,7 @@ using NAudio.Wave;
 using UMP.Core.Function;
 using UMP.Core.Model;
 using UMP.Utility;
+using UMP.Controller.Feature.AnalysisControl.WaveAnalysis;
 
 namespace UMP.Core
 {
@@ -115,6 +116,13 @@ namespace UMP.Core
     public static event PlayStateChangedEventHandler PlayStateChangedEvent;
     public static event UMP_PropertyChangedEventHandler PropertyChangedEvent;
     private static void OnPropertyChanged(string name) => PropertyChangedEvent?.Invoke(name);
+
+    // 오디오 분석용 코드
+
+    public static event EventHandler<FftEventArgs> FftCalculated;
+
+    public static event EventHandler<MaxSampleEventArgs> MaximumCalculated;
+
 
     public static bool MediaLoadedCheck => AudioFile != null;
 
@@ -263,9 +271,11 @@ namespace UMP.Core
       }
 
       // 오디오 스트림 로드 시도
+      AudioFileReader audioFile;
       try
       {
-        AudioFile = new MediaFoundationReader(path);
+        audioFile = new AudioFileReader(path);
+        AudioFile = audioFile;
       }
       catch (Exception e)
       {
@@ -277,6 +287,15 @@ namespace UMP.Core
 
       StopButtonActive = false;
 
+
+      // 오디오 분석용 코드
+      var aggregator = new SampleAggregator(audioFile);
+      aggregator.NotificationCount = AudioFile.WaveFormat.SampleRate / 100;
+      aggregator.PerformFFT = true;
+      aggregator.FftCalculated += (s, a) => FftCalculated?.Invoke(null, a);
+      aggregator.MaximumCalculated += (s, a) => MaximumCalculated?.Invoke(null, a);
+
+
       // 플래이어 초기화
       try
       {
@@ -284,7 +303,7 @@ namespace UMP.Core
         WavePlayer = new WaveOut();
         WavePlayer.PlaybackStopped += MediaPlayer_PlaybackStopped;
         WavePlayer.Volume = Volume;
-        WavePlayer.Init(AudioFile);
+        WavePlayer.Init(aggregator);
       }
       catch (Exception e)
       {
@@ -292,6 +311,7 @@ namespace UMP.Core
         Log.Fatal("플레이어 초기화 실패", e, $"Title : [{info.Title}]\nLocation : [{info.MediaLocation}]");
         return false;
       }
+
 
       PropertyChangedEvent?.Invoke("MainPlayerInitialized");
       return true;

@@ -13,8 +13,7 @@
     TextElement.FontWeight="Medium"
     TextElement.FontSize="14"
     FontFamily="{DynamicResource MainFontFamily}"
-    mc:Ignorable="d"
-    Height="350">
+    mc:Ignorable="d">
 
     <UserControl.DataContext>
         <model:PlayListControlViewModel />

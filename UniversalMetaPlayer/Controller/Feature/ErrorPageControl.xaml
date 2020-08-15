@@ -37,7 +37,7 @@
             Grid.Column="1"
             Grid.Row="1">
             <Label
-                Content="개발중인 기능입니다"
+                Content="준비중인 기능입니다"
                 FontSize="20" />
             <ProgressBar
                 Style="{StaticResource MaterialDesignCircularProgressBar}"
