@@ -18,7 +18,7 @@ using UMP.Core;
 using UMP.Core.PackageInformation;
 using UMP.Utility;
 
-namespace UMP.Controller.Option.OptionControl
+namespace UMP.Controller.Feature.OptionControl
 {
   /// <summary>
   /// Information.xaml에 대한 상호 작용 논리

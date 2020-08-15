@@ -239,7 +239,7 @@
                 Cursor="Hand"
                 Grid.Column="7" />
             <ToggleButton
-                x:Name="SettingToggleButton"
+                x:Name="FeatureToggleButton"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}"
@@ -247,7 +247,7 @@
                 Background="{Binding ToggleButtonBackground}"
                 Content="{materialDesign:PackIcon Kind=DotsHorizontal, Size=30}"
                 IsChecked="{Binding IsOptionWindowOpen}"
-                ToolTip="더 많은 기능 / More Features"
+                ToolTip="더 많은 기능 / More Options"
                 Focusable="False"
                 Margin="10,0,0,0"
                 Cursor="Hand"

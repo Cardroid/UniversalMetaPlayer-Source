@@ -19,6 +19,7 @@ using UMP.Utility;
 
 using NeatInput.Windows.Events;
 using NeatInput.Windows.Processing.Keyboard.Enums;
+using UMP.Controller.Feature;
 
 namespace UMP.Controller
 {
@@ -74,59 +75,53 @@ namespace UMP.Controller
           ViewModel.ApplyUI();
         };
 
-        this.SettingToggleButton.Click += (_, e) =>
-        {
-          SettingControlOpen(this.SettingToggleButton.IsChecked.GetValueOrDefault());
-        };
-        this.PlayListToggleButton.Click += (_, e) =>
-        {
-          PlayListControlOpen(this.PlayListToggleButton.IsChecked.GetValueOrDefault());
-        };
+        this.FeatureToggleButton.Click += (_, e) => { FeatureControlOpen(this.FeatureToggleButton.IsChecked.GetValueOrDefault()); };
+        this.PlayListToggleButton.Click += (_, e) => { PlayListControlOpen(this.PlayListToggleButton.IsChecked.GetValueOrDefault()); };
 
         GlobalProperty.PropertyChanged += (e) =>
         {
           if (e == "IsControllable")
-          {
             ControlPanel.IsEnabled = GlobalProperty.IsControllable;
-          }
         };
 
         log.Debug("초기화 완료");
       };
     }
 
-    private void SettingControlOpen(bool isOpen)
+    private void FeatureControlOpen(bool isOpen)
     {
       var parentWindow = (MainWindow)Window.GetWindow(Parent);
+      var dataContext = (MainWindowViewModel)parentWindow.DataContext;
       if (isOpen)
       {
-        parentWindow.MainOptionControl.Visibility = Visibility.Visible;
-        parentWindow.Width += parentWindow.MainOptionControl.Width;
-        parentWindow.MinWidth += parentWindow.MainOptionControl.Width;
+        dataContext.FeatureControl = new MainFeatureControl();
+        parentWindow.Width += dataContext.FeatureControl.Width;
+        parentWindow.MinWidth += dataContext.FeatureControl.Width;
       }
       else
       {
-        parentWindow.MainOptionControl.Visibility = Visibility.Collapsed;
-        parentWindow.MinWidth -= parentWindow.MainOptionControl.Width;
-        parentWindow.Width -= parentWindow.MainOptionControl.Width;
+        parentWindow.MinWidth -= dataContext.FeatureControl.Width;
+        parentWindow.Width -= dataContext.FeatureControl.Width;
+        dataContext.FeatureControl = null;
       }
-      this.SettingToggleButton.IsChecked = isOpen;
+      this.FeatureToggleButton.IsChecked = isOpen;
     }
 
     private void PlayListControlOpen(bool isOpen)
     {
       var parentWindow = (MainWindow)Window.GetWindow(Parent);
+      var dataContext = (MainWindowViewModel)parentWindow.DataContext;
       if (isOpen)
       {
-        parentWindow.MainPlayListControl.Visibility = Visibility.Visible;
-        parentWindow.Height += parentWindow.MainPlayListControl.Height;
-        parentWindow.MinHeight += parentWindow.MainPlayListControl.Height;
+        dataContext.PlayListControl = new PlayListControl();
+        parentWindow.Height += dataContext.PlayListControl.Height;
+        parentWindow.MinHeight += dataContext.PlayListControl.Height;
       }
       else
       {
-        parentWindow.MainPlayListControl.Visibility = Visibility.Collapsed;
-        parentWindow.MinHeight -= parentWindow.MainPlayListControl.Height;
-        parentWindow.Height -= parentWindow.MainPlayListControl.Height;
+        parentWindow.MinHeight -= dataContext.PlayListControl.Height;
+        parentWindow.Height -= dataContext.PlayListControl.Height;
+        dataContext.PlayListControl = null;
       }
       this.PlayListToggleButton.IsChecked = isOpen;
     }
@@ -162,11 +157,13 @@ namespace UMP.Controller
             break;
           // PlayList
           case Key.L:
-            PlayListControlOpen(((MainWindow)Window.GetWindow(Parent)).MainPlayListControl.Visibility != Visibility.Visible);
+            var isCheckedPlayListToggleButton = this.PlayListToggleButton.IsChecked.GetValueOrDefault();
+            PlayListControlOpen(!isCheckedPlayListToggleButton);
             break;
           // Setting
           case Key.S:
-            SettingControlOpen(((MainWindow)Window.GetWindow(Parent)).MainOptionControl.Visibility != Visibility.Visible);
+            var isCheckedFeatureToggleButton = this.FeatureToggleButton.IsChecked.GetValueOrDefault();
+            FeatureControlOpen(!isCheckedFeatureToggleButton);
             break;
           // Mute
           case Key.M:

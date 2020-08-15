@@ -15,7 +15,7 @@ using System.Windows.Shapes;
 
 using UMP.Core;
 
-namespace UMP.Controller.Option.OptionControl
+namespace UMP.Controller.Feature.OptionControl
 {
   public partial class KeyboardOption : UserControl
   {

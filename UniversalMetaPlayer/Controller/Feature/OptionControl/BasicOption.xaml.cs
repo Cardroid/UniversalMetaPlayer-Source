@@ -15,11 +15,11 @@ using System.Windows.Navigation;
 
 using MaterialDesignThemes.Wpf;
 
-using UMP.Controller.Option.OptionControl.ViewModel;
+using UMP.Controller.Feature.OptionControl.ViewModel;
 using UMP.Core;
 using UMP.Utility;
 
-namespace UMP.Controller.Option.OptionControl
+namespace UMP.Controller.Feature.OptionControl
 {
   public partial class BasicOption : UserControl
   {

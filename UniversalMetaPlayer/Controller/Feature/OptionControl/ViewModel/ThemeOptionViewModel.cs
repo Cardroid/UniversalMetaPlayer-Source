@@ -5,7 +5,7 @@ using System.Text;
 using UMP.Core;
 using UMP.Core.Model;
 
-namespace UMP.Controller.Option.OptionControl.ViewModel
+namespace UMP.Controller.Feature.OptionControl.ViewModel
 {
   public class ThemeOptionViewModel : ViewModelBase
   {
