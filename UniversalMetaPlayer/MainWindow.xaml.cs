@@ -22,10 +22,14 @@ namespace UMP
 {
   public partial class MainWindow : Window
   {
+    private MainWindowViewModel ViewModel { get; }
     public MainWindow()
     {
       GlobalProperty.Load();
+
       InitializeComponent();
+      ViewModel = (MainWindowViewModel)this.DataContext;
+
       this.KeyDown += (_, e) => GlobalEvent.KeyDownEventInvoke(e);
       this.Loaded += MainWindow_Loaded;
       this.Closing += MainWindow_Closing;
@@ -77,6 +81,25 @@ namespace UMP
             this.MainControllerControl.IsEnabled = true;
           else
             this.MainControllerControl.IsEnabled = false;
+        }
+      };
+
+      ViewModel.PropertyChanged += (_, e) =>
+      {
+        if (e.PropertyName == "PlayListControl")
+        {
+          if (MainPlayListControl != null)
+            this.MainPlayListControl.Visibility = Visibility.Visible;
+          else
+            this.MainPlayListControl.Visibility = Visibility.Collapsed;
+        }
+
+        if (e.PropertyName == "FeatureControl")
+        {
+          if (MainFeatureControl != null)
+            this.MainFeatureControl.Visibility = Visibility.Visible;
+          else
+            this.MainFeatureControl.Visibility = Visibility.Collapsed;
         }
       };
 
