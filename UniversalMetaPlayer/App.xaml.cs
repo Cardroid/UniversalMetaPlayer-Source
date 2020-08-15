@@ -18,26 +18,26 @@ namespace UMP
         $"Current Version : [{GlobalProperty.StaticValues.FileVersion}]\nBit : [{GlobalProperty.StaticValues.BitVersion}]",
         $"Start Path : [{AppDomain.CurrentDomain.BaseDirectory}]\nTask Path : [{Environment.CurrentDirectory}]");
 
-      AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
-      DispatcherUnhandledException += App_DispatcherUnhandledException;
-      AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
+      // Application의 모든 에러 이벤트를 로그로 남깁니다
+      //#if DEBUG
+      //      AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+      //      DispatcherUnhandledException += App_DispatcherUnhandledException;
+      //      AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
+      //#endif
     }
 
     public static Log MainLog { get; } = new Log("System");
 
-    private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-    {
-      MainLog.Error($"[CurrentDomain Exception] Terminating : [{e.IsTerminating}]", e.ExceptionObject as Exception);
-    }
+    // Application의 모든 에러 이벤트를 로그로 남깁니다
+    //#if DEBUG
+    //    private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e) =>
+    //      MainLog.Error($"\n\n[CurrentDomain Exception] Terminating : [{e.IsTerminating}]", e.ExceptionObject as Exception);
 
-    private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
-    {
-      MainLog.Error($"[Dispatcher Exception] Handled : [{e.Handled}] Dispatcher Thread : [{e.Dispatcher.Thread}]", e.Exception);
-    }
+    //    private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e) =>
+    //      MainLog.Error($"\n\n[Dispatcher Exception] Handled : [{e.Handled}] Dispatcher Thread : [{e.Dispatcher.Thread}]", e.Exception);
 
-    private void CurrentDomain_FirstChanceException(object sender, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
-    {
-      MainLog.Error($"[CurrentDomain FirstChanceException]", e.Exception);
-    }
+    //    private void CurrentDomain_FirstChanceException(object sender, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e) =>
+    //      MainLog.Error($"\n\n[CurrentDomain FirstChanceException]", e.Exception);
+    //#endif
   }
 }
