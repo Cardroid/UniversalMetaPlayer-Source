@@ -251,9 +251,10 @@ namespace UMP.Core.Model
       if (base.Count > index && index >= 0)
       {
         var item = base[index];
-        if(MainMediaPlayer.MediaLoadedCheck && MainMediaPlayer.PlayList.Contains(MainMediaPlayer.NotChangedMediaInformation))
+        if (MainMediaPlayer.MediaLoadedCheck && this.IndexOf(MainMediaPlayer.NotChangedMediaInformation) == index)
         {
-          Log.Error($"플레이 리스트 항목 리로드 실패 \n재생 중인 항목은 리로드 할 수 없습니다.\nIndex : [{index}]\nIsLoaded : [{item.LoadState}]", $"Title : [{item.Title}]\nLocation : [{item.MediaLocation}]");
+          Log.Error($"플레이 리스트 항목 리로드 실패 \n재생 중인 항목은 리로드 할 수 없습니다\nIndex : [{index}]\nIsLoaded : [{item.LoadState}]", $"Title : [{item.Title}]\nLocation : [{item.MediaLocation}]");
+          GlobalEvent.GlobalMessageEventInvoke($"재생 중인 항목은 리로드 할 수 없습니다.\nTitle : [{item.Title}]", true);
           return;
         }
         TotalDuration -= item.Duration;
@@ -262,6 +263,7 @@ namespace UMP.Core.Model
         TotalDuration += item.Duration;
         base[index] = item;
         Log.Info($"플레이 리스트 항목 리로드 완료 Index : [{index}] IsLoaded : [{item.LoadState}]", $"Title : [{item.Title}]\nLocation : [{item.MediaLocation}]");
+        GlobalEvent.GlobalMessageEventInvoke($"플레이 리스트 항목 리로드 완료\nTitle : [{item.Title}]", true);
       }
     }
 
