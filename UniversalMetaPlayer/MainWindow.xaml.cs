@@ -17,6 +17,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 
 using UMP.Core;
+using UMP.Core.Player;
 using UMP.Utility;
 using UMP.Utility.Effect;
 

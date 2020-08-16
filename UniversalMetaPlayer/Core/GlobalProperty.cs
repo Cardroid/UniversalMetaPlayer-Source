@@ -21,6 +21,7 @@ using NYoutubeDL.Options;
 using UMP.Utility;
 
 using static UMP.Core.GlobalProperty.Options.Enums;
+using UMP.Core.Player;
 
 namespace UMP.Core
 {
@@ -229,6 +230,23 @@ namespace UMP.Core
           OnPropertyChanged("PrivateLogging");
         }
       }
+
+      /// <summary>
+      /// 사용하는 미디어 로드 엔진
+      /// </summary>
+      public static MediaLoadEngineType MediaLoadEngine
+      {
+        get => TryGetSetting("MediaLoadEngine", out string value)
+          ? (Enum.TryParse(value, out MediaLoadEngineType result)
+          ? result
+          : DefaultValue.DefaultMediaLoadEngineType)
+          : DefaultValue.DefaultMediaLoadEngineType;
+        set
+        {
+          SetSetting("MediaLoadEngine", value.ToString());
+          OnPropertyChanged("MediaLoadEngine");
+        }
+      }
       #endregion
 
       #region 테마
@@ -345,21 +363,38 @@ namespace UMP.Core
       }
       #endregion
 
-      #region 엔진
+      #region 효과
       /// <summary>
-      /// 사용할 미디어 로드 엔진
+      /// 흐려짐 효과 (부드러운 시작, 종료) 사용 여부
       /// </summary>
-      public static MediaLoadEngineType MediaLoadEngine
+      public static bool FadeEffect
       {
-        get => TryGetSetting("MediaLoadEngine", out string value)
-          ? (Enum.TryParse(value, out MediaLoadEngineType result)
+        get => TryGetSetting("FadeEffect", out string value)
+          ? (bool.TryParse(value, out bool result)
           ? result
-          : DefaultValue.DefaultMediaLoadEngineType)
-          : DefaultValue.DefaultMediaLoadEngineType;
+          : DefaultValue.DefaultFadeEffect)
+          : DefaultValue.DefaultFadeEffect;
         set
         {
-          SetSetting("MediaLoadEngine", value.ToString());
-          OnPropertyChanged("MediaLoadEngine");
+          SetSetting("FadeEffect", value.ToString());
+          OnPropertyChanged("FadeEffect");
+        }
+      }
+
+      /// <summary>
+      /// 흐려짐 효과 (부드러운 시작, 종료) 딜레이
+      /// </summary>
+      public static int FadeEffectDelay
+      {
+        get => TryGetSetting("FadeEffectDelay", out string value)
+          ? (int.TryParse(value, out int result)
+          ? result
+          : DefaultValue.DefaultFadeEffectDelay)
+          : DefaultValue.DefaultFadeEffectDelay;
+        set
+        {
+          SetSetting("FadeEffectDelay", value.ToString());
+          OnPropertyChanged("FadeEffectDelay");
         }
       }
       #endregion
@@ -368,6 +403,8 @@ namespace UMP.Core
       {
         public const string DefaultFileSavePath = "Save";
         public const bool DefaultPrivateLogging = true;
+        public const bool DefaultFadeEffect = true;
+        public const int DefaultFadeEffectDelay = 1000;
 
         public const bool DefaultIsAverageColorTheme = true;
         public const int DefaultAverageColorProcessingOffset = 30;

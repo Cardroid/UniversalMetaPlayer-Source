@@ -20,9 +20,7 @@
     AllowsTransparency="True"
     BorderThickness="1"
     Width="800"
-    Height="450"
-    MinWidth="550"
-    MinHeight="250">
+    Height="450">
 
     <Window.DataContext>
         <ump:MainWindowViewModel />
@@ -67,27 +65,13 @@
             Grid.Column="0"
             Grid.Row="0"
             Grid.RowSpan="3">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition
-                    Width="*" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition
-                    Height="*" />
-                <RowDefinition
-                    Height="Auto" />
-            </Grid.RowDefinitions>
 
             <Controller:MediaInfoControl
-                x:Name="MainInfoControl"
-                Grid.Column="0"
-                Grid.Row="0"
-                Grid.RowSpan="2" />
+                x:Name="MainInfoControl"/>
             <Controller:MediaControllerControl
                 x:Name="MainControllerControl"
-                Visibility="Collapsed"
-                Grid.Column="0"
-                Grid.Row="1" />
+                VerticalAlignment="Bottom"
+                Visibility="Collapsed" />
         </Grid>
 
         <UserControl

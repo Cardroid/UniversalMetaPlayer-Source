@@ -17,6 +17,7 @@ using UMP.Core.Model;
 
 using MaterialDesignThemes.Wpf;
 using UMP.Core.Function;
+using UMP.Core.Player;
 
 namespace UMP.Controller
 {
@@ -179,7 +180,7 @@ namespace UMP.Controller
           if (await MainMediaPlayer.Init(MainMediaPlayer.PlayList[this.PlayList.SelectedIndex]))
           {
             MainMediaPlayer.PlayListEigenValue = MainMediaPlayer.PlayList.EigenValue;
-            MainMediaPlayer.Play();
+            MainMediaPlayer.ReserveCommand(NAudio.Wave.PlaybackState.Playing);
           }
           else
             GlobalEvent.GlobalMessageEventInvoke("재생 실패! [로그를 확인해주세요]");

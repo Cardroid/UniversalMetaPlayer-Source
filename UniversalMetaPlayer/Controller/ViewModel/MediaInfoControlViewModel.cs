@@ -8,6 +8,7 @@ using System.Windows.Media.Imaging;
 
 using UMP.Core;
 using UMP.Core.Model;
+using UMP.Core.Player;
 
 namespace UMP.Controller.ViewModel
 {

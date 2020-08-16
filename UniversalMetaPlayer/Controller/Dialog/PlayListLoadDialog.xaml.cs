@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using Microsoft.Win32;
 using UMP.Utility;
 using UMP.Core;
+using UMP.Core.Player;
 
 namespace UMP.Controller.Dialog
 {

@@ -16,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using UMP.Core;
 using UMP.Core.Model;
+using UMP.Core.Player;
 using UMP.Utility;
 
 using YoutubeExplode;

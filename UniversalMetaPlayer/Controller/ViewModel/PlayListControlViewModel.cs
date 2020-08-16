@@ -7,6 +7,7 @@ using System.Windows.Media;
 
 using UMP.Core;
 using UMP.Core.Model;
+using UMP.Core.Player;
 using UMP.Utility;
 
 namespace UMP.Controller.ViewModel

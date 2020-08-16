@@ -6,8 +6,8 @@ using System.Windows.Input;
 
 using UMP.Controller.Feature.AnalysisControl.WaveAnalysis;
 using UMP.Controller.Feature.AnalysisControl.WaveAnalysis.Helper;
-using UMP.Core;
 using UMP.Core.Model;
+using UMP.Core.Player;
 
 namespace UMP.Controller.Feature.AnalysisControl
 {

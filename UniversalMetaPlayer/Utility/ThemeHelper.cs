@@ -10,6 +10,7 @@ using MaterialDesignColors.ColorManipulation;
 using MaterialDesignThemes.Wpf;
 
 using UMP.Core;
+using UMP.Core.Player;
 
 namespace UMP.Utility
 {

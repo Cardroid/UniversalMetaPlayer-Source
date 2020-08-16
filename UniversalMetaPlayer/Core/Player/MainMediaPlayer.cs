@@ -9,9 +9,9 @@ using NAudio.Wave;
 using UMP.Core.Function;
 using UMP.Core.Model;
 using UMP.Utility;
-using UMP.Controller.Feature.AnalysisControl.WaveAnalysis;
+using System.Collections.Generic;
 
-namespace UMP.Core
+namespace UMP.Core.Player
 {
   public static class MainMediaPlayer
   {
@@ -48,7 +48,7 @@ namespace UMP.Core
       {
         if (e == "PlaybackStopped")
         {
-          if (PlaybackState == PlaybackState.Stopped)
+          if (WavePlayer.PlaybackState == PlaybackState.Stopped)
           {
             AudioFile.CurrentTime = TimeSpan.Zero;
             if (StopButtonActive)
@@ -56,7 +56,7 @@ namespace UMP.Core
             else
             {
               if (Option.RepeatPlayOption == 1)
-                RevertStatus(StateSave);
+                ReserveCommand(PlaybackState.Playing);
               else if (Option.RepeatPlayOption == 2)
                 await Next();
             }
@@ -73,6 +73,8 @@ namespace UMP.Core
     /// 메인 플레이어
     /// </summary>
     private static IWavePlayer WavePlayer { get; set; }
+
+    private static SampleAggregator Aggregator { get; set; }
 
     /// <summary>
     /// 플레이어 옵션
@@ -110,7 +112,6 @@ namespace UMP.Core
     }
 
     private static bool StopButtonActive { get; set; } = false;
-    private static bool IsWork { get; set; } = false;
 
     public delegate void PlayStateChangedEventHandler(PlaybackState state);
     public static event PlayStateChangedEventHandler PlayStateChangedEvent;
@@ -211,7 +212,23 @@ namespace UMP.Core
     /// <summary>
     /// 현재 재생 상태
     /// </summary>
-    public static PlaybackState PlaybackState => WavePlayer != null ? WavePlayer.PlaybackState : PlaybackState.Stopped;
+    public static PlaybackState PlaybackState
+    {
+      get
+      {
+        if (WavePlayer != null)
+        {
+          //if (WavePlayer.PlaybackState == PlaybackState.Stopped)
+          //  return PlaybackState.Stopped;
+          //if (!GlobalProperty.Options.FadeEffect)
+          return WavePlayer.PlaybackState;
+          //else
+          //  return StateSave;
+        }
+        else
+          return PlaybackState.Stopped;
+      }
+    }
     private static PlaybackState StateSave { get; set; }
 
     /// <summary>
@@ -257,10 +274,11 @@ namespace UMP.Core
       // 재생중인 미디어 정지
       if (MediaLoadedCheck)
       {
-        StopButtonActive = true;
-        if (WavePlayer != null)
-          WavePlayer.Stop();
-        Tick.Stop();
+        await Stop(false);
+        //StopButtonActive = true;
+        //if (WavePlayer != null)
+        //  WavePlayer.Stop();
+        //Tick.Stop();
       }
 
       // 이전 오디오 스트림 해제
@@ -289,11 +307,11 @@ namespace UMP.Core
 
 
       // 오디오 분석용 코드
-      var aggregator = new SampleAggregator(audioFile);
-      aggregator.NotificationCount = AudioFile.WaveFormat.SampleRate / 100;
-      aggregator.PerformFFT = true;
-      aggregator.FftCalculated += (s, a) => FftCalculated?.Invoke(null, a);
-      aggregator.MaximumCalculated += (s, a) => MaximumCalculated?.Invoke(null, a);
+      Aggregator = new SampleAggregator(audioFile);
+      Aggregator.NotificationCount = AudioFile.WaveFormat.SampleRate / 100;
+      Aggregator.PerformFFT = true;
+      Aggregator.FftCalculated += (s, a) => FftCalculated?.Invoke(s, a);
+      Aggregator.MaximumCalculated += (s, a) => MaximumCalculated?.Invoke(s, a);
 
 
       // 플래이어 초기화
@@ -303,7 +321,7 @@ namespace UMP.Core
         WavePlayer = new WaveOut();
         WavePlayer.PlaybackStopped += MediaPlayer_PlaybackStopped;
         WavePlayer.Volume = Volume;
-        WavePlayer.Init(aggregator);
+        WavePlayer.Init(Aggregator);
       }
       catch (Exception e)
       {
@@ -312,36 +330,86 @@ namespace UMP.Core
         return false;
       }
 
-
       PropertyChangedEvent?.Invoke("MainPlayerInitialized");
       return true;
+    }
+
+    private static bool IsPlayStateChangeWork
+    {
+      get
+      {
+        return !IsWork && _IsPlayStateChangeWork;
+      }
+      set => _IsPlayStateChangeWork = value;
+    }
+    private static bool _IsPlayStateChangeWork = false;
+
+    private static Queue<PlaybackState> PlayBackCommand { get; } = new Queue<PlaybackState>();
+    private static bool IsExecuteWork = false;
+
+    public static void ReserveCommand(PlaybackState state)
+    {
+      PlayBackCommand.Enqueue(state);
+      if (!IsExecuteWork)
+      {
+        IsExecuteWork = true;
+        ExecuteCommand();
+        IsExecuteWork = false;
+      }
+    }
+
+    private static async void ExecuteCommand()
+    {
+      if (PlayBackCommand.Count > 0)
+      {
+        await RevertStatusAsync(PlayBackCommand.Dequeue(), true);
+        ExecuteCommand();
+      }
     }
 
     /// <summary>
     /// 재생
     /// </summary>
-    public static void Play()
+    private static void Play(bool stateSave = true)
     {
-      if (MediaLoadedCheck && PlaybackState != PlaybackState.Playing)
+      if (!IsPlayStateChangeWork && MediaLoadedCheck && WavePlayer.PlaybackState != PlaybackState.Playing)
       {
+        IsPlayStateChangeWork = true;
+        if (stateSave)
+          StateSave = PlaybackState.Playing;
         Tick.Start();
         WavePlayer.Play();
-        StateSave = PlaybackState.Playing;
+
+        if (GlobalProperty.Options.FadeEffect)
+          Aggregator.BeginFadeIn(GlobalProperty.Options.FadeEffectDelay);
+
         PlayStateChangedEvent?.Invoke(PlaybackState);
+        IsPlayStateChangeWork = false;
       }
     }
 
     /// <summary>
     /// 정지
     /// </summary>
-    public static void Stop()
+    private static async Task Stop(bool stateSave = true)
     {
-      if (MediaLoadedCheck && PlaybackState != PlaybackState.Stopped)
+      if (!IsPlayStateChangeWork && MediaLoadedCheck && WavePlayer.PlaybackState != PlaybackState.Stopped)
       {
+        IsPlayStateChangeWork = true;
+        if (stateSave)
+          StateSave = PlaybackState.Stopped;
         StopButtonActive = true;
+        PlayStateChangedEvent?.Invoke(PlaybackState);
+
+        if (GlobalProperty.Options.FadeEffect)
+        {
+          Aggregator.BeginFadeOut(GlobalProperty.Options.FadeEffectDelay);
+          await Task.Delay(GlobalProperty.Options.FadeEffectDelay + 200);
+        }
+
         WavePlayer.Stop();
         Tick.Stop();
-        StateSave = PlaybackState.Stopped;
+        IsPlayStateChangeWork = false;
         PlayStateChangedEvent?.Invoke(PlaybackState);
       }
     }
@@ -349,16 +417,29 @@ namespace UMP.Core
     /// <summary>
     /// 일시정지
     /// </summary>
-    public static void Pause()
+    private static async Task Pause(bool stateSave = true)
     {
-      if (MediaLoadedCheck && PlaybackState != PlaybackState.Paused)
+      if (!IsPlayStateChangeWork && MediaLoadedCheck && WavePlayer.PlaybackState != PlaybackState.Paused)
       {
+        IsPlayStateChangeWork = true;
+        if (stateSave)
+          StateSave = PlaybackState.Paused;
+        PlayStateChangedEvent?.Invoke(PlaybackState);
+
+        if (GlobalProperty.Options.FadeEffect)
+        {
+          Aggregator.BeginFadeOut(GlobalProperty.Options.FadeEffectDelay);
+          await Task.Delay(GlobalProperty.Options.FadeEffectDelay + 200);
+        }
+
         WavePlayer.Pause();
         Tick.Stop();
-        StateSave = PlaybackState.Paused;
+        IsPlayStateChangeWork = false;
         PlayStateChangedEvent?.Invoke(PlaybackState);
       }
     }
+
+    private static bool IsWork { get; set; } = false;
 
     /// <summary>
     /// 다음 미디어
@@ -384,7 +465,7 @@ namespace UMP.Core
             playListMediaIndex = 0;
           else
           {
-            RevertStatus(StateSave);
+            ReserveCommand(StateSave);
             IsWork = false;
             return;
           }
@@ -425,7 +506,7 @@ namespace UMP.Core
         }
         while (!InitComplete);
       }
-      RevertStatus(StateSave);
+      ReserveCommand(StateSave);
       IsWork = false;
     }
 
@@ -462,7 +543,7 @@ namespace UMP.Core
             playListMediaIndex = 0;
           else
           {
-            RevertStatus(StateSave);
+            ReserveCommand(StateSave);
             IsWork = false;
             return;
           }
@@ -498,7 +579,7 @@ namespace UMP.Core
         }
         while (!InitComplete);
       }
-      RevertStatus(StateSave);
+      ReserveCommand(StateSave);
       IsWork = false;
     }
 
@@ -506,7 +587,7 @@ namespace UMP.Core
     /// 재생상태로 되돌립니다
     /// </summary>
     /// <param name="state">재생상태</param>
-    private static void RevertStatus(PlaybackState state)
+    private static async Task RevertStatusAsync(PlaybackState state, bool stateSave = false)
     {
       if (MediaLoadedCheck)
       {
@@ -514,13 +595,13 @@ namespace UMP.Core
         {
           default:
           case PlaybackState.Stopped:
-            Stop();
+            await Stop(stateSave);
             break;
           case PlaybackState.Playing:
-            Play();
+            Play(stateSave);
             break;
           case PlaybackState.Paused:
-            Pause();
+            await Pause(stateSave);
             break;
         }
       }

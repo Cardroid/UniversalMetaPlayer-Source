@@ -12,6 +12,7 @@ using UMP.Utility;
 using PlaylistsNET.Content;
 using PlaylistsNET.Models;
 using UMP.Core.Function;
+using UMP.Core.Player;
 
 namespace UMP.Core.Model
 {

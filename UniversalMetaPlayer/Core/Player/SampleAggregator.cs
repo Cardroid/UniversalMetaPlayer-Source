@@ -4,9 +4,9 @@ using System.Diagnostics;
 using NAudio.Dsp;
 using NAudio.Wave;
 
-namespace UMP.Controller.Feature.AnalysisControl.WaveAnalysis
+namespace UMP.Core.Player
 {
-  public class SampleAggregator : ISampleProvider
+  public partial class SampleAggregator : ISampleProvider
   {
     // volume
     public event EventHandler<MaxSampleEventArgs> MaximumCalculated;
@@ -27,7 +27,7 @@ namespace UMP.Controller.Feature.AnalysisControl.WaveAnalysis
 
     private readonly int channels;
 
-    public SampleAggregator(ISampleProvider source, int fftLength = 1024)
+    public SampleAggregator(ISampleProvider source, int fftLength = 1024, bool initiallySilent = false)
     {
       channels = source.WaveFormat.Channels;
       if (!IsPowerOfTwo(fftLength))
@@ -39,6 +39,8 @@ namespace UMP.Controller.Feature.AnalysisControl.WaveAnalysis
       fftBuffer = new Complex[fftLength];
       fftArgs = new FftEventArgs(fftBuffer);
       this.source = source;
+
+      fadeState = initiallySilent ? FadeState.Silence : FadeState.FullVolume;
     }
 
     static bool IsPowerOfTwo(int x)
@@ -83,6 +85,25 @@ namespace UMP.Controller.Feature.AnalysisControl.WaveAnalysis
     public int Read(float[] buffer, int offset, int count)
     {
       var samplesRead = source.Read(buffer, offset, count);
+
+      if (GlobalProperty.Options.FadeEffect)
+      {
+        lock (lockObject)
+        {
+          if (fadeState == FadeState.FadingIn)
+          {
+            FadeIn(buffer, offset, samplesRead);
+          }
+          else if (fadeState == FadeState.FadingOut)
+          {
+            FadeOut(buffer, offset, samplesRead);
+          }
+          else if (fadeState == FadeState.Silence)
+          {
+            ClearBuffer(buffer, offset, count);
+          }
+        }
+      }
 
       for (int n = 0; n < samplesRead; n += channels)
       {

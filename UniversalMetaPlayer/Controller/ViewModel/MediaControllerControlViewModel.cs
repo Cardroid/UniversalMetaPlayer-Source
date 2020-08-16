@@ -13,6 +13,7 @@ using MaterialDesignThemes.Wpf;
 
 using NAudio.Wave;
 using MaterialDesignColors.ColorManipulation;
+using UMP.Core.Player;
 
 namespace UMP.Controller.ViewModel
 {

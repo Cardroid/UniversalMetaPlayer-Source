@@ -20,6 +20,8 @@ using UMP.Utility;
 using NeatInput.Windows.Events;
 using NeatInput.Windows.Processing.Keyboard.Enums;
 using UMP.Controller.Feature;
+using UMP.Core.Player;
+using NAudio.Wave;
 
 namespace UMP.Controller
 {
@@ -92,16 +94,15 @@ namespace UMP.Controller
     {
       var parentWindow = (MainWindow)Window.GetWindow(Parent);
       var dataContext = (MainWindowViewModel)parentWindow.DataContext;
+      var widthValue = parentWindow.Width;
       if (isOpen)
       {
         dataContext.FeatureControl = new MainFeatureControl();
-        parentWindow.Width *= 2;
-        parentWindow.MinWidth *= 2;
+        parentWindow.Width += widthValue;
       }
       else
       {
-        parentWindow.MinWidth /= 2;
-        parentWindow.Width /= 2;
+        parentWindow.Width -= widthValue / 2;
         dataContext.FeatureControl = null;
       }
       this.FeatureToggleButton.IsChecked = isOpen;
@@ -111,16 +112,15 @@ namespace UMP.Controller
     {
       var parentWindow = (MainWindow)Window.GetWindow(Parent);
       var dataContext = (MainWindowViewModel)parentWindow.DataContext;
+      var heightValue = parentWindow.Height;
       if (isOpen)
       {
         dataContext.PlayListControl = new PlayListControl();
-        parentWindow.Height *= 2;
-        parentWindow.MinHeight *= 2;
+        parentWindow.Height += heightValue;
       }
       else
       {
-        parentWindow.MinHeight /= 2;
-        parentWindow.Height /= 2;
+        parentWindow.Height -= heightValue / 2;
         dataContext.PlayListControl = null;
       }
       this.PlayListToggleButton.IsChecked = isOpen;
@@ -140,13 +140,13 @@ namespace UMP.Controller
           case Key.Pause:
           case Key.P:
             if (MainMediaPlayer.PlaybackState == NAudio.Wave.PlaybackState.Playing)
-              MainMediaPlayer.Pause();
+              MainMediaPlayer.ReserveCommand(PlaybackState.Paused);
             else
-              MainMediaPlayer.Play();
+              MainMediaPlayer.ReserveCommand(PlaybackState.Playing);
             break;
           // Stop
           case Key.O:
-            MainMediaPlayer.Stop();
+              MainMediaPlayer.ReserveCommand(PlaybackState.Stopped);
             break;
           // Repeat
           case Key.I:
@@ -203,18 +203,18 @@ namespace UMP.Controller
           case Keys.MediaPlayPause:
             if (MainMediaPlayer.PlaybackState == NAudio.Wave.PlaybackState.Playing)
             {
-              MainMediaPlayer.Pause();
+              MainMediaPlayer.ReserveCommand(PlaybackState.Paused);
               GlobalEvent.GlobalMessageEventInvoke($"외부키 활성 : Pause", true);
             }
             else
             {
-              MainMediaPlayer.Play();
+              MainMediaPlayer.ReserveCommand(PlaybackState.Playing);
               GlobalEvent.GlobalMessageEventInvoke($"외부키 활성 : Play", true);
             }
             break;
           // Stop
           case Keys.MediaStop:
-            MainMediaPlayer.Stop();
+              MainMediaPlayer.ReserveCommand(PlaybackState.Stopped);
             GlobalEvent.GlobalMessageEventInvoke($"외부키 활성 : Stop", true);
             break;
           // Next
@@ -241,13 +241,13 @@ namespace UMP.Controller
         switch (button.Name)
         {
           case "PlayPauseButton":
-            if (MainMediaPlayer.PlaybackState == NAudio.Wave.PlaybackState.Playing)
-              MainMediaPlayer.Pause();
+            if (MainMediaPlayer.PlaybackState == PlaybackState.Playing)
+              MainMediaPlayer.ReserveCommand(PlaybackState.Paused);
             else
-              MainMediaPlayer.Play();
+              MainMediaPlayer.ReserveCommand(PlaybackState.Playing);
             break;
           case "StopButton":
-            MainMediaPlayer.Stop();
+              MainMediaPlayer.ReserveCommand(PlaybackState.Stopped);
             break;
           case "NextButton":
             _ = MainMediaPlayer.Next();
