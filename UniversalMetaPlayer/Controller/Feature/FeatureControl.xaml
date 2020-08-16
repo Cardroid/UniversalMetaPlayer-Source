@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="UMP.Controller.Feature.MainFeatureControl"
+    x:Class="UMP.Controller.Feature.FeatureControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -15,7 +15,7 @@
     d:Background="White">
 
     <UserControl.DataContext>
-        <model:MainFeatureControlViewModel />
+        <model:FeatureControlViewModel />
     </UserControl.DataContext>
 
     <Grid>
@@ -27,7 +27,7 @@
         </Grid.ColumnDefinitions>
 
         <GroupBox
-            Header="Option"
+            Header="{Binding Header}"
             Style="{StaticResource MaterialDesignCardGroupBox}"
             Grid.Column="0">
             <TreeView
@@ -50,10 +50,6 @@
                         x:Name="Theme"
                         Header="테마"
                         PreviewMouseLeftButtonDown="MainOptionControl_PreviewMouseLeftButtonDown" />
-                    <TreeViewItem
-                        x:Name="Information"
-                        Header="정보"
-                        PreviewMouseLeftButtonDown="MainOptionControl_PreviewMouseLeftButtonDown"/>
                 </TreeViewItem>
                 
                 <TreeViewItem
@@ -64,8 +60,16 @@
                         x:Name="Graph"
                         Header="그래프"
                         PreviewMouseLeftButtonDown="MainOptionControl_PreviewMouseLeftButtonDown" />
+                    <TreeViewItem
+                        x:Name="AudioProperty"
+                        Header="속성"
+                        PreviewMouseLeftButtonDown="MainOptionControl_PreviewMouseLeftButtonDown" />
                 </TreeViewItem>
-                
+
+                <TreeViewItem
+                    x:Name="Information"
+                    Header="정보"
+                    PreviewMouseLeftButtonDown="MainOptionControl_PreviewMouseLeftButtonDown" />
             </TreeView>
         </GroupBox>
 

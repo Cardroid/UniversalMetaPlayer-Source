@@ -165,6 +165,8 @@ namespace UMP.Core.Player
     }
     private static WeakReference<WaveStream> _AudioFile = null;
 
+    public static WaveFormat WaveFormat => Aggregator.WaveFormat;
+
     /// <summary>
     /// 오디오 현재 재생위치
     /// </summary>

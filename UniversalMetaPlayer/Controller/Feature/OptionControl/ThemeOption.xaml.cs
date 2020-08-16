@@ -19,9 +19,9 @@ using UMP.Utility;
 
 namespace UMP.Controller.Feature.OptionControl
 {
-  public partial class ThemeOption : UserControl
+  public partial class ThemeOption : FeatureModelControl
   {
-    public ThemeOption()
+    public ThemeOption() : base("옵션 - 테마")
     {
       InitializeComponent();
 

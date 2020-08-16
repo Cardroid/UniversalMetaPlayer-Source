@@ -41,14 +41,6 @@ namespace UMP.Controller
         // 재생 진행바 이벤트 연결
         this.ProgressSlider.ValueChanged += ProgressSlider_ValueChanged;
 
-        // 버튼 이벤트 연결
-        this.PlayPauseButton.Click += ControllerButton_ClickHandler;
-        this.StopButton.Click += ControllerButton_ClickHandler;
-        this.NextButton.Click += ControllerButton_ClickHandler;
-        this.PreviousButton.Click += ControllerButton_ClickHandler;
-        this.RepeatButton.Click += ControllerButton_ClickHandler;
-        this.ShuffleButton.Click += ControllerButton_ClickHandler;
-
         Window parentWindow = Window.GetWindow(Parent);
 
         GlobalEvent.KeyDownEvent += GlobalEvent_KeyDownEvent;
@@ -77,9 +69,6 @@ namespace UMP.Controller
           ViewModel.ApplyUI();
         };
 
-        this.FeatureToggleButton.Click += (_, e) => { FeatureControlOpen(this.FeatureToggleButton.IsChecked.GetValueOrDefault()); };
-        this.PlayListToggleButton.Click += (_, e) => { PlayListControlOpen(this.PlayListToggleButton.IsChecked.GetValueOrDefault()); };
-
         GlobalProperty.PropertyChanged += (e) =>
         {
           if (e == "IsControllable")
@@ -90,42 +79,6 @@ namespace UMP.Controller
       };
     }
 
-    private void FeatureControlOpen(bool isOpen)
-    {
-      var parentWindow = (MainWindow)Window.GetWindow(Parent);
-      var dataContext = (MainWindowViewModel)parentWindow.DataContext;
-      var widthValue = parentWindow.Width;
-      if (isOpen)
-      {
-        dataContext.FeatureControl = new MainFeatureControl();
-        parentWindow.Width += widthValue;
-      }
-      else
-      {
-        parentWindow.Width -= widthValue / 2;
-        dataContext.FeatureControl = null;
-      }
-      this.FeatureToggleButton.IsChecked = isOpen;
-    }
-
-    private void PlayListControlOpen(bool isOpen)
-    {
-      var parentWindow = (MainWindow)Window.GetWindow(Parent);
-      var dataContext = (MainWindowViewModel)parentWindow.DataContext;
-      var heightValue = parentWindow.Height;
-      if (isOpen)
-      {
-        dataContext.PlayListControl = new PlayListControl();
-        parentWindow.Height += heightValue;
-      }
-      else
-      {
-        parentWindow.Height -= heightValue / 2;
-        dataContext.PlayListControl = null;
-      }
-      this.PlayListToggleButton.IsChecked = isOpen;
-    }
-
     /// <summary>
     /// 컨트롤 키보드 이벤트 처리 (내부 이벤트)
     /// </summary>
@@ -133,37 +86,38 @@ namespace UMP.Controller
     {
       if (GlobalProperty.Options.HotKey && GlobalProperty.IsControllable)
       {
+        var viewModel = ((MediaControllerControlViewModel)this.DataContext);
         switch (e.Key)
         {
           // Play/Pause
           case Key.Space:
           case Key.Pause:
           case Key.P:
-            if (MainMediaPlayer.PlaybackState == NAudio.Wave.PlaybackState.Playing)
-              MainMediaPlayer.ReserveCommand(PlaybackState.Paused);
-            else
-              MainMediaPlayer.ReserveCommand(PlaybackState.Playing);
+            if (viewModel.PlayPauseCommand.CanExecute(null))
+              viewModel.PlayPauseCommand.Execute(null);
             break;
           // Stop
           case Key.O:
-              MainMediaPlayer.ReserveCommand(PlaybackState.Stopped);
+            if (viewModel.StopCommand.CanExecute(null))
+              viewModel.StopCommand.Execute(null);
             break;
           // Repeat
           case Key.I:
-            ++MainMediaPlayer.Option.RepeatPlayOption;
+            if (viewModel.RepeatCommand.CanExecute(null))
+              viewModel.RepeatCommand.Execute(null);
             break;
           // Shuffle
           case Key.U:
+            if (viewModel.ShuffleCommand.CanExecute(null))
+              viewModel.ShuffleCommand.Execute(null);
             break;
           // PlayList
           case Key.L:
-            var isCheckedPlayListToggleButton = this.PlayListToggleButton.IsChecked.GetValueOrDefault();
-            PlayListControlOpen(!isCheckedPlayListToggleButton);
+            viewModel.IsCheckedPlayListToggleButton = !viewModel.IsCheckedPlayListToggleButton;
             break;
           // Setting
           case Key.S:
-            var isCheckedFeatureToggleButton = this.FeatureToggleButton.IsChecked.GetValueOrDefault();
-            FeatureControlOpen(!isCheckedFeatureToggleButton);
+            viewModel.IsCheckedFeatureToggleButton = !viewModel.IsCheckedFeatureToggleButton;
             break;
           // Mute
           case Key.M:
@@ -226,40 +180,6 @@ namespace UMP.Controller
           case Keys.MediaPreviousTrack:
             _ = MainMediaPlayer.Previous();
             GlobalEvent.GlobalMessageEventInvoke($"외부키 활성 : Previous", true);
-            break;
-        }
-      }
-    }
-
-    /// <summary>
-    /// 컨트롤 버튼 클릭 이벤트 처리
-    /// </summary>
-    private void ControllerButton_ClickHandler(object sender, RoutedEventArgs e)
-    {
-      if (sender is Button button && GlobalProperty.IsControllable)
-      {
-        switch (button.Name)
-        {
-          case "PlayPauseButton":
-            if (MainMediaPlayer.PlaybackState == PlaybackState.Playing)
-              MainMediaPlayer.ReserveCommand(PlaybackState.Paused);
-            else
-              MainMediaPlayer.ReserveCommand(PlaybackState.Playing);
-            break;
-          case "StopButton":
-              MainMediaPlayer.ReserveCommand(PlaybackState.Stopped);
-            break;
-          case "NextButton":
-            _ = MainMediaPlayer.Next();
-            break;
-          case "PreviousButton":
-            _ = MainMediaPlayer.Previous();
-            break;
-          case "RepeatButton":
-            MainMediaPlayer.Option.RepeatPlayOption++;
-            break;
-          case "ShuffleButton":
-            MainMediaPlayer.Option.Shuffle = !MainMediaPlayer.Option.Shuffle;
             break;
         }
       }

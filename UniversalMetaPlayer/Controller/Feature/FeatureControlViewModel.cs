@@ -8,20 +8,23 @@ using UMP.Core.Model;
 
 namespace UMP.Controller.Feature
 {
-  public class MainFeatureControlViewModel : ViewModelBase
+  public class FeatureControlViewModel : ViewModelBase
   {
-    public MainFeatureControlViewModel()
+    public FeatureControlViewModel()
     {
       FeaturePanel = new BasicOption();
     }
 
-    public UserControl FeaturePanel
+    public string Header => FeaturePanel != null ? FeaturePanel.FeatureName : "기능 패널";
+
+    public FeatureModelControl FeaturePanel
     {
-      get => _FeaturePanel.IsAlive ? (UserControl)_FeaturePanel.Target : null;
+      get => _FeaturePanel.IsAlive ? (FeatureModelControl)_FeaturePanel.Target : null;
       set
       {
         _FeaturePanel = new WeakReference(value);
         OnPropertyChanged("FeaturePanel");
+        OnPropertyChanged("Header");
       }
     }
     private WeakReference _FeaturePanel;

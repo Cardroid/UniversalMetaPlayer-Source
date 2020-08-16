@@ -12,18 +12,20 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using UMP.Controller.Feature.AnalysisControl;
 using UMP.Controller.Feature.OptionControl;
+using UMP.Controller.Feature.Etc;
 using UMP.Core;
+using UMP.Controller.Feature.AnalysisControl.AudioFileAnalysis;
 
 namespace UMP.Controller.Feature
 {
-  public partial class MainFeatureControl : UserControl
+  public partial class FeatureControl : UserControl
   {
-    private MainFeatureControlViewModel ViewModel { get; }
+    private FeatureControlViewModel ViewModel { get; }
 
-    public MainFeatureControl()
+    public FeatureControl()
     {
       InitializeComponent();
-      ViewModel = (MainFeatureControlViewModel)this.DataContext;
+      ViewModel = (FeatureControlViewModel)this.DataContext;
 
       GlobalProperty.PropertyChanged += (e) =>
       {
@@ -42,6 +44,7 @@ namespace UMP.Controller.Feature
           "Theme" => new ThemeOption(),
           "Information" => new InformationOption(),
           "Graph" => new WaveAnalysisControl(),
+          "AudioProperty" => new AudioWaveFormatAnalysisControl(),
           _ => new ErrorPageControl(),
         };
     }

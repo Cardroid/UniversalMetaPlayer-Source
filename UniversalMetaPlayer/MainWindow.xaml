@@ -83,7 +83,7 @@
             Grid.RowSpan="1" />
 
         <UserControl
-            x:Name="MainFeatureControl"
+            x:Name="FeatureControl"
             Content="{Binding FeatureControl}"
             Visibility="Collapsed"
             Grid.Column="2"

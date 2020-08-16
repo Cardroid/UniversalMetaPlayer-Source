@@ -14,7 +14,7 @@ namespace UMP
     public MainWindowViewModel()
     {
       PlayListControl = new PlayListControl();
-      FeatureControl = new MainFeatureControl();
+      FeatureControl = new FeatureControl();
       PlayListControlColumnDefinition = new GridLength(1, GridUnitType.Auto);
       FeatureControlRowDefinition = new GridLength(1, GridUnitType.Auto);
     }

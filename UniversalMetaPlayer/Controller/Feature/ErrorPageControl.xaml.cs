@@ -13,9 +13,9 @@ using System.Windows.Shapes;
 
 namespace UMP.Controller.Feature
 {
-  public partial class ErrorPageControl : UserControl
+  public partial class ErrorPageControl : FeatureModelControl
   {
-    public ErrorPageControl()
+    public ErrorPageControl() : base("오류페이지")
     {
       InitializeComponent();
     }

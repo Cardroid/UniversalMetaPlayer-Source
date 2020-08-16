@@ -14,6 +14,8 @@ using MaterialDesignThemes.Wpf;
 using NAudio.Wave;
 using MaterialDesignColors.ColorManipulation;
 using UMP.Core.Player;
+using UMP.Controller.Feature;
+using UMP.Controller.WindowHelper;
 
 namespace UMP.Controller.ViewModel
 {
@@ -27,6 +29,13 @@ namespace UMP.Controller.ViewModel
       MainMediaPlayer.Option.PropertyChangedEvent += Option_PropertyChangedEvent;
       MainMediaPlayer.PlayList.PropertyChangedEvent += PlayList_PropertyChangedEvent;
       ThemeHelper.ThemeChangedEvent += ThemeHelper_ThemeChangedEvent;
+
+      PlayPauseCommand = new RelayCommand(PlayPause);
+      StopCommand = new RelayCommand(Stop);
+      NextCommand = new RelayCommand(Next);
+      PreviousCommand = new RelayCommand(Previous);
+      RepeatCommand = new RelayCommand(Repeat);
+      ShuffleCommand = new RelayCommand(Shuffle);
     }
 
     #region 볼륨
@@ -65,7 +74,20 @@ namespace UMP.Controller.ViewModel
     }
     #endregion
 
-    #region 재생 / 일시정지
+    #region Play / Pause
+    public RelayCommand PlayPauseCommand { get; }
+
+    private void PlayPause(object o)
+    {
+      if (MainMediaPlayer.MediaLoadedCheck)
+      {
+        if (MainMediaPlayer.PlaybackState == PlaybackState.Playing)
+          MainMediaPlayer.ReserveCommand(PlaybackState.Paused);
+        else
+          MainMediaPlayer.ReserveCommand(PlaybackState.Playing);
+      }
+    }
+
     public PackIcon PlayPauseStateIcon
     {
       get
@@ -76,6 +98,107 @@ namespace UMP.Controller.ViewModel
           return new PackIcon { Width = 50, Height = 50, Kind = PackIconKind.Play };
       }
     }
+    #endregion
+
+    #region Stop
+    public RelayCommand StopCommand { get; }
+    private void Stop(object o) => MainMediaPlayer.ReserveCommand(PlaybackState.Stopped);
+    #endregion
+
+    #region Next
+    public RelayCommand NextCommand { get; }
+    private void Next(object o) => _ = MainMediaPlayer.Next();
+    #endregion
+
+    #region Previous
+    public RelayCommand PreviousCommand { get; }
+    private void Previous(object o) => _ = MainMediaPlayer.Previous();
+    #endregion
+
+    #region Repeat
+    public RelayCommand RepeatCommand { get; }
+    private void Repeat(object o) => MainMediaPlayer.Option.RepeatPlayOption++;
+    #endregion
+
+    #region Shuffle
+    public RelayCommand ShuffleCommand { get; }
+    private void Shuffle(object o) => MainMediaPlayer.Option.Shuffle = !MainMediaPlayer.Option.Shuffle;
+    #endregion
+
+    #region FeatureControl
+    public bool IsCheckedFeatureToggleButton 
+    {
+      get => _IsCheckedFeatureToggleButton;
+      set 
+      {
+        FeatureWindowClose();
+        _IsCheckedFeatureToggleButton = value;
+        if (_IsCheckedFeatureToggleButton)
+        {
+          FeatureWindow = new UserWindow(new FeatureControl(), "UMP - Feature");
+          FeatureWindow.Show();
+          FeatureWindow.Closing += (_, e) =>
+          {
+            _IsCheckedFeatureToggleButton = false;
+            OnPropertyChanged("IsCheckedFeatureToggleButton");
+          };
+        }
+        OnPropertyChanged("IsCheckedFeatureToggleButton");
+      }
+    }
+    private bool _IsCheckedFeatureToggleButton = false;
+
+    private void FeatureWindowClose()
+    {
+      if (FeatureWindow != null)
+        FeatureWindow.Close();
+      FeatureWindow = null;
+    }
+
+    private UserWindow FeatureWindow
+    {
+      get => _FeatureWindow.IsAlive ? (UserWindow)_FeatureWindow.Target : null;
+      set => _FeatureWindow = new WeakReference(value);
+    }
+    private WeakReference _FeatureWindow = new WeakReference(null);
+    #endregion
+
+    #region PlayListControl
+    public bool IsCheckedPlayListToggleButton
+    {
+      get => _IsCheckedPlayListToggleButton;
+      set
+      {
+        PlayListWindowClose();
+        _IsCheckedPlayListToggleButton = value;
+        if (_IsCheckedPlayListToggleButton)
+        {
+          PlayListWindow = new UserWindow(new PlayListControl(), "UMP - PlayList");
+          PlayListWindow.Show();
+          PlayListWindow.Closing += (_, e) =>
+          {
+            _IsCheckedPlayListToggleButton = false;
+            OnPropertyChanged("IsCheckedPlayListToggleButton");
+          };
+        }
+        OnPropertyChanged("IsCheckedPlayListToggleButton");
+      }
+    }
+    private bool _IsCheckedPlayListToggleButton = false;
+
+    private void PlayListWindowClose()
+    {
+      if (PlayListWindow != null)
+        PlayListWindow.Close();
+      PlayListWindow = null;
+    }
+
+    private UserWindow PlayListWindow
+    {
+      get => _PlayListWindow.IsAlive ? (UserWindow)_PlayListWindow.Target : null;
+      set => _PlayListWindow = new WeakReference(value);
+    }
+    private WeakReference _PlayListWindow = new WeakReference(null);
     #endregion
 
     #region 반복재생

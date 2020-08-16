@@ -18,14 +18,11 @@ using UMP.Core;
 using UMP.Core.PackageInformation;
 using UMP.Utility;
 
-namespace UMP.Controller.Feature.OptionControl
+namespace UMP.Controller.Feature.Etc
 {
-  /// <summary>
-  /// Information.xaml에 대한 상호 작용 논리
-  /// </summary>
-  public partial class InformationOption : UserControl
+  public partial class InformationOption : FeatureModelControl
   {
-    public InformationOption()
+    public InformationOption() : base("정보")
     {
       InitializeComponent();
 

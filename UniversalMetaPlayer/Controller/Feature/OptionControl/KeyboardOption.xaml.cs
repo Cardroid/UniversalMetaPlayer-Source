@@ -17,9 +17,9 @@ using UMP.Core;
 
 namespace UMP.Controller.Feature.OptionControl
 {
-  public partial class KeyboardOption : UserControl
+  public partial class KeyboardOption : FeatureModelControl
   {
-    public KeyboardOption()
+    public KeyboardOption() : base("옵션 - 키보드")
     {
       InitializeComponent();
 

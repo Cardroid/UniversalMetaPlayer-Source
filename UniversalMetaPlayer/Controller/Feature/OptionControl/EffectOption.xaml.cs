@@ -21,9 +21,9 @@ using UMP.Utility;
 
 namespace UMP.Controller.Feature.OptionControl
 {
-  public partial class EffectOption : FeatureModelControl
+  public partial class BasicOption : FeatureModelControl
   {
-    public EffectOption() : base("옵션 - 일반")
+    public BasicOption() : base("옵션 - 일반")
     {
       InitializeComponent();
 

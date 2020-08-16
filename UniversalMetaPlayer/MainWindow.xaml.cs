@@ -99,15 +99,16 @@ namespace UMP
 
         if (e.PropertyName == "FeatureControl")
         {
-          if (MainFeatureControl != null)
-            this.MainFeatureControl.Visibility = Visibility.Visible;
+          if (FeatureControl != null)
+            this.FeatureControl.Visibility = Visibility.Visible;
           else
-            this.MainFeatureControl.Visibility = Visibility.Collapsed;
+            this.FeatureControl.Visibility = Visibility.Collapsed;
         }
       };
 
       // 실행 시 정보 띄우기
       this.GlobalMessageBar.IsActive = true;
+      this.Loaded += async (_, e) => { await Task.Delay(100000); this.GlobalMessageBar.IsActive = false; };
 #if DEBUG
       this.Title = "UniversalMetaPlayer - V2 [Test Version]";
       this.GlobalMessage.Content =
