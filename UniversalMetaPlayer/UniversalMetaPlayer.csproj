@@ -19,7 +19,7 @@
     <RepositoryUrl>https://github.com/Cardroid/UniversalMetaPlayer</RepositoryUrl>
     <Platforms>x64;AnyCPU;x86</Platforms>
     <AssemblyVersion>2.5.1.0</AssemblyVersion>
-    <FileVersion>2.5.4.0</FileVersion>
+    <FileVersion>2.5.4.32</FileVersion>
     <PackageProjectUrl>https://github.com/Cardroid/UniversalMetaPlayer</PackageProjectUrl>
   </PropertyGroup>
 
@@ -116,10 +116,10 @@
     <Compile Update="Controller\Dialog\PlayListLoadDialog.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Controller\Feature\FeatureControl\ThemeFeature.xaml.cs">
+    <Compile Update="Controller\Function\FunctionControl\ThemeFunction.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Controller\Feature\FeatureControl\KeyboardFeature.xaml.cs">
+    <Compile Update="Controller\Function\FunctionControl\KeyboardFunction.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
@@ -128,13 +128,13 @@
     <Page Update="Controller\Dialog\PlayListLoadDialog.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Controller\Feature\AnalysisControl\WaveAnalysis\AudioPlaybackDemo\Func\PolylineWaveFormControl.xaml">
+    <Page Update="Controller\Function\AnalysisControl\WaveAnalysis\AudioPlaybackDemo\Func\PolylineWaveFormControl.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Controller\Feature\FeatureControl\ThemeFeature.xaml">
+    <Page Update="Controller\Function\FunctionControl\ThemeFunction.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Controller\Feature\FeatureControl\KeyboardFeature.xaml">
+    <Page Update="Controller\Function\FunctionControl\KeyboardFunction.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

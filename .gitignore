@@ -1,9 +1,6 @@
-/**/bin/
-/**/obj/
 /**/ffmpeg/
 /**/TestMusic/
-/**/Test/
-/**/packages/
+/**/[Tt]est/
 /**/참고자료/
 
 # Created by https://www.toptal.com/developers/gitignore/api/csharp

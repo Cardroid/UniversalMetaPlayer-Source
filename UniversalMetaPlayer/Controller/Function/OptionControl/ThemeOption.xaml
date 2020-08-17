@@ -1,0 +1,73 @@
+﻿<Function:FunctionModelControl
+    xmlns:Function="clr-namespace:UMP.Controller.Function"
+    x:Class="UMP.Controller.Function.OptionControl.ThemeOption"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:UMP.Controller.Function.OptionControl"
+    xmlns:viewmodel="clr-namespace:UMP.Controller.Function.OptionControl.ViewModel"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+    Background="{DynamicResource MaterialDesignPaper}"
+    TextElement.FontWeight="Medium"
+    TextElement.FontSize="14"
+    FontFamily="{DynamicResource MainFontFamily}"
+    mc:Ignorable="d">
+
+    <Function:FunctionModelControl.DataContext>
+        <viewmodel:ThemeOptionViewModel />
+    </Function:FunctionModelControl.DataContext>
+
+    <Grid
+        Margin="5"
+        Grid.Row="0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition
+                Height="Auto" />
+            <RowDefinition
+                Height="Auto" />
+            <RowDefinition
+                Height="*" />
+        </Grid.RowDefinitions>
+
+        <Label
+            VerticalAlignment="Center"
+            ToolTip="{Binding IsAverageColorThemeToolTip}"
+            Content="적응형 색 테마 사용"
+            Grid.Column="0"
+            Grid.Row="0" />
+        <ToggleButton
+            x:Name="IsAverageColorTheme"
+            VerticalAlignment="Center"
+            ToolTip="{Binding IsAverageColorThemeToolTip}"
+            IsChecked="{Binding IsAverageColorThemeIsChecked}"
+            Style="{StaticResource MaterialDesignSwitchToggleButton}"
+            Margin="5,0,0,0"
+            Grid.Column="1"
+            Grid.Row="0" />
+
+        <Label
+            VerticalAlignment="Center"
+            ToolTip="{Binding AverageColorProcessingOffsetToolTip}"
+            Content="평균색 추출 오프셋"
+            Grid.Column="0"
+            Grid.Row="1" />
+        <TextBox
+            x:Name="AverageColorProcessingOffsetTextBox"
+            VerticalAlignment="Center"
+            ToolTip="{Binding AverageColorProcessingOffsetToolTip}"
+            IsEnabled="{Binding IsAverageColorThemeIsChecked}"
+            Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+            Text="{Binding AverageColorProcessingOffsetText, Mode=OneWay}"
+            VerticalScrollBarVisibility="Auto"
+            materialDesign:HintAssist.Hint="Offset"
+            Margin="5,0,0,0"
+            Grid.Column="1"
+            Grid.Row="1" />
+    </Grid>
+</Function:FunctionModelControl>

@@ -19,7 +19,7 @@ using UMP.Utility;
 
 using NeatInput.Windows.Events;
 using NeatInput.Windows.Processing.Keyboard.Enums;
-using UMP.Controller.Feature;
+using UMP.Controller.Function;
 using UMP.Core.Player;
 using NAudio.Wave;
 
@@ -117,7 +117,7 @@ namespace UMP.Controller
             break;
           // Setting
           case Key.S:
-            viewModel.IsCheckedFeatureToggleButton = !viewModel.IsCheckedFeatureToggleButton;
+            viewModel.IsCheckedFunctionToggleButton = !viewModel.IsCheckedFunctionToggleButton;
             break;
           // Mute
           case Key.M:

@@ -97,12 +97,12 @@ namespace UMP
             this.MainPlayListControl.Visibility = Visibility.Collapsed;
         }
 
-        if (e.PropertyName == "FeatureControl")
+        if (e.PropertyName == "FunctionControl")
         {
-          if (FeatureControl != null)
-            this.FeatureControl.Visibility = Visibility.Visible;
+          if (FunctionControl != null)
+            this.FunctionControl.Visibility = Visibility.Visible;
           else
-            this.FeatureControl.Visibility = Visibility.Collapsed;
+            this.FunctionControl.Visibility = Visibility.Collapsed;
         }
       };
 

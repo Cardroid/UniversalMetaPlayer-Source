@@ -164,7 +164,6 @@
                 </Grid>
             </materialDesign:PopupBox>
             <Button
-                x:Name="ShuffleButton"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Style="{StaticResource MaterialDesignIconButton}"
@@ -175,7 +174,6 @@
                 Cursor="Hand"
                 Grid.Column="1" />
             <Button
-                x:Name="RepeatButton"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Style="{StaticResource MaterialDesignIconButton}"
@@ -187,7 +185,6 @@
                 Cursor="Hand"
                 Grid.Column="2" />
             <Button
-                x:Name="PreviousButton"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Style="{StaticResource MaterialDesignIconButton}"
@@ -209,7 +206,6 @@
                 Cursor="Hand"
                 Grid.Column="4" />
             <Button
-                x:Name="StopButton"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Style="{StaticResource MaterialDesignIconButton}"
@@ -220,7 +216,6 @@
                 Cursor="Hand"
                 Grid.Column="5" />
             <Button
-                x:Name="NextButton"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Style="{StaticResource MaterialDesignIconButton}"
@@ -231,7 +226,6 @@
                 Cursor="Hand"
                 Grid.Column="6" />
             <ToggleButton
-                x:Name="PlayListToggleButton"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}"
@@ -240,20 +234,19 @@
                 Content="{materialDesign:PackIcon Kind=PlaylistMusic, Size=30}"
                 IsChecked="{Binding IsCheckedPlayListToggleButton}"
                 ToolTip="플레이리스트 / PlayList"
-                Margin="20,0,0,0"
                 Focusable="False"
+                Margin="20,0,0,0"
                 Cursor="Hand"
                 Grid.Column="7" />
             <ToggleButton
-                x:Name="FeatureToggleButton"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}"
                 Foreground="{Binding Foreground, ElementName=PlayPauseButton}"
                 Background="{Binding ToggleButtonBackground}"
                 Content="{materialDesign:PackIcon Kind=DotsHorizontal, Size=30}"
-                IsChecked="{Binding IsCheckedFeatureToggleButton}"
-                ToolTip="더 많은 기능 / More Options"
+                IsChecked="{Binding IsCheckedFunctionToggleButton}"
+                ToolTip="기능 패널 / Function Panel"
                 Focusable="False"
                 Margin="10,0,0,0"
                 Cursor="Hand"
@@ -265,7 +258,7 @@
                 HorizontalContentAlignment="Right"
                 VerticalContentAlignment="Center"
                 Content="{Binding TotalDuration, Converter={StaticResource TimeSpanStringConverter}, Mode=OneWay}"
-                ToolTip="총 재생 길이 / Total Duration"
+                ToolTip="플레이 리스트 길이 / PlayList Duration"
                 Margin="20,0,0,0"
                 Grid.Row="1"
                 Grid.Column="9" />

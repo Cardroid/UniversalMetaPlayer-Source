@@ -14,7 +14,7 @@ using MaterialDesignThemes.Wpf;
 using NAudio.Wave;
 using MaterialDesignColors.ColorManipulation;
 using UMP.Core.Player;
-using UMP.Controller.Feature;
+using UMP.Controller.Function;
 using UMP.Controller.WindowHelper;
 
 namespace UMP.Controller.ViewModel
@@ -30,12 +30,12 @@ namespace UMP.Controller.ViewModel
       MainMediaPlayer.PlayList.PropertyChangedEvent += PlayList_PropertyChangedEvent;
       ThemeHelper.ThemeChangedEvent += ThemeHelper_ThemeChangedEvent;
 
-      PlayPauseCommand = new RelayCommand(PlayPause);
-      StopCommand = new RelayCommand(Stop);
-      NextCommand = new RelayCommand(Next);
-      PreviousCommand = new RelayCommand(Previous);
-      RepeatCommand = new RelayCommand(Repeat);
-      ShuffleCommand = new RelayCommand(Shuffle);
+      PlayPauseCommand = new RelayCommand((o) => PlayPause());
+      StopCommand = new RelayCommand((o) => Stop());
+      NextCommand = new RelayCommand((o) => Next());
+      PreviousCommand = new RelayCommand((o) => Previous());
+      RepeatCommand = new RelayCommand((o) => Repeat());
+      ShuffleCommand = new RelayCommand((o) => Shuffle());
     }
 
     #region 볼륨
@@ -58,7 +58,7 @@ namespace UMP.Controller.ViewModel
         OnPropertyChanged("VolumeMuteButtonIcon");
       }
     }
-    
+
     // 볼륨 버튼 관련
     public PackIconKind VolumeMuteButtonIcon => VolumeMuteButtonIconChanger();
     public PackIconKind VolumeMuteButtonIconChanger()
@@ -77,7 +77,7 @@ namespace UMP.Controller.ViewModel
     #region Play / Pause
     public RelayCommand PlayPauseCommand { get; }
 
-    private void PlayPause(object o)
+    private void PlayPause()
     {
       if (MainMediaPlayer.MediaLoadedCheck)
       {
@@ -102,65 +102,66 @@ namespace UMP.Controller.ViewModel
 
     #region Stop
     public RelayCommand StopCommand { get; }
-    private void Stop(object o) => MainMediaPlayer.ReserveCommand(PlaybackState.Stopped);
+    private void Stop() => MainMediaPlayer.ReserveCommand(PlaybackState.Stopped);
     #endregion
 
     #region Next
     public RelayCommand NextCommand { get; }
-    private void Next(object o) => _ = MainMediaPlayer.Next();
+    private void Next() => _ = MainMediaPlayer.Next();
     #endregion
 
     #region Previous
     public RelayCommand PreviousCommand { get; }
-    private void Previous(object o) => _ = MainMediaPlayer.Previous();
+    private void Previous() => _ = MainMediaPlayer.Previous();
     #endregion
 
     #region Repeat
     public RelayCommand RepeatCommand { get; }
-    private void Repeat(object o) => MainMediaPlayer.Option.RepeatPlayOption++;
+    private void Repeat() => MainMediaPlayer.Option.RepeatPlayOption++;
     #endregion
 
     #region Shuffle
     public RelayCommand ShuffleCommand { get; }
-    private void Shuffle(object o) => MainMediaPlayer.Option.Shuffle = !MainMediaPlayer.Option.Shuffle;
+    private void Shuffle() => MainMediaPlayer.Option.Shuffle = !MainMediaPlayer.Option.Shuffle;
     #endregion
 
-    #region FeatureControl
-    public bool IsCheckedFeatureToggleButton 
+    #region FunctionControl
+    public bool IsCheckedFunctionToggleButton
     {
-      get => _IsCheckedFeatureToggleButton;
-      set 
+      get => _IsCheckedFunctionToggleButton;
+      set
       {
-        FeatureWindowClose();
-        _IsCheckedFeatureToggleButton = value;
-        if (_IsCheckedFeatureToggleButton)
+        FunctionWindowClose();
+        _IsCheckedFunctionToggleButton = value;
+        if (_IsCheckedFunctionToggleButton)
         {
-          FeatureWindow = new UserWindow(new FeatureControl(), "UMP - Feature");
-          FeatureWindow.Show();
-          FeatureWindow.Closing += (_, e) =>
+          FunctionWindow = new UserWindow(new FunctionControl(), "UMP - Function");
+          FunctionWindow.Show();
+          FunctionWindow.Closed += (_, e) =>
           {
-            _IsCheckedFeatureToggleButton = false;
-            OnPropertyChanged("IsCheckedFeatureToggleButton");
+            FunctionWindowClose();
+            _IsCheckedFunctionToggleButton = false;
+            OnPropertyChanged("IsCheckedFunctionToggleButton");
           };
         }
-        OnPropertyChanged("IsCheckedFeatureToggleButton");
+        OnPropertyChanged("IsCheckedFunctionToggleButton");
       }
     }
-    private bool _IsCheckedFeatureToggleButton = false;
+    private bool _IsCheckedFunctionToggleButton = false;
 
-    private void FeatureWindowClose()
+    private void FunctionWindowClose()
     {
-      if (FeatureWindow != null)
-        FeatureWindow.Close();
-      FeatureWindow = null;
+      if (FunctionWindow != null)
+        FunctionWindow.Close();
+      FunctionWindow = null;
     }
 
-    private UserWindow FeatureWindow
+    private UserWindow FunctionWindow
     {
-      get => _FeatureWindow.IsAlive ? (UserWindow)_FeatureWindow.Target : null;
-      set => _FeatureWindow = new WeakReference(value);
+      get => _FunctionWindow.IsAlive ? (UserWindow)_FunctionWindow.Target : null;
+      set => _FunctionWindow = new WeakReference(value);
     }
-    private WeakReference _FeatureWindow = new WeakReference(null);
+    private WeakReference _FunctionWindow = new WeakReference(null);
     #endregion
 
     #region PlayListControl
@@ -175,8 +176,9 @@ namespace UMP.Controller.ViewModel
         {
           PlayListWindow = new UserWindow(new PlayListControl(), "UMP - PlayList");
           PlayListWindow.Show();
-          PlayListWindow.Closing += (_, e) =>
+          PlayListWindow.Closed += (_, e) =>
           {
+            PlayListWindowClose();
             _IsCheckedPlayListToggleButton = false;
             OnPropertyChanged("IsCheckedPlayListToggleButton");
           };
@@ -202,7 +204,7 @@ namespace UMP.Controller.ViewModel
     #endregion
 
     #region 반복재생
-    public PackIcon RepeatPlayOptionIcon 
+    public PackIcon RepeatPlayOptionIcon
     {
       get
       {
@@ -234,14 +236,14 @@ namespace UMP.Controller.ViewModel
     #region 플레이 시간 UI
 
     // 재생길이 (단일 파일)
-    public TimeSpan DurationTime => 
+    public TimeSpan DurationTime =>
       MainMediaPlayer.MediaLoadedCheck
-      ? MainMediaPlayer.MediaInformation.Duration 
+      ? MainMediaPlayer.MediaInformation.Duration
       : TimeSpan.Zero;
     // 전채 재생길이 (복수 파일)
-    public TimeSpan TotalDuration => 
-      MainMediaPlayer.PlayList != null 
-      ? MainMediaPlayer.PlayList.TotalDuration 
+    public TimeSpan TotalDuration =>
+      MainMediaPlayer.PlayList != null
+      ? MainMediaPlayer.PlayList.TotalDuration
       : TimeSpan.Zero;
     public string DurationTimestring
     {

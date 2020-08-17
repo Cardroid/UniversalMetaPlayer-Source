@@ -169,7 +169,7 @@ namespace UMP.Core
     private static bool NowLoading = false;
 
     /// <summary>
-    /// 컨트롤 가능 여부 (로딩 중 조작 금지용)
+    /// 컨트롤 가능 여부
     /// </summary>
     public static bool IsControllable
     {
@@ -404,7 +404,7 @@ namespace UMP.Core
         public const string DefaultFileSavePath = "Save";
         public const bool DefaultPrivateLogging = true;
         public const bool DefaultFadeEffect = true;
-        public const int DefaultFadeEffectDelay = 1000;
+        public const int DefaultFadeEffectDelay = 200;
 
         public const bool DefaultIsAverageColorTheme = true;
         public const int DefaultAverageColorProcessingOffset = 30;

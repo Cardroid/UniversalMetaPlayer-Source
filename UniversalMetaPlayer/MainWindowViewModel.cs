@@ -4,7 +4,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using UMP.Controller;
-using UMP.Controller.Feature;
+using UMP.Controller.Function;
 using UMP.Core.Model;
 
 namespace UMP
@@ -14,9 +14,9 @@ namespace UMP
     public MainWindowViewModel()
     {
       PlayListControl = new PlayListControl();
-      FeatureControl = new FeatureControl();
+      FunctionControl = new FunctionControl();
       PlayListControlColumnDefinition = new GridLength(1, GridUnitType.Auto);
-      FeatureControlRowDefinition = new GridLength(1, GridUnitType.Auto);
+      FunctionControlRowDefinition = new GridLength(1, GridUnitType.Auto);
     }
 
     public UserControl PlayListControl
@@ -38,23 +38,23 @@ namespace UMP
     private WeakReference _PlayListControl;
     public GridLength PlayListControlColumnDefinition { get; set; }
 
-    public UserControl FeatureControl
+    public UserControl FunctionControl
     {
-      get => _FeatureControl.IsAlive ? (UserControl)_FeatureControl.Target : null;
+      get => _FunctionControl.IsAlive ? (UserControl)_FunctionControl.Target : null;
       set
       {
-        _FeatureControl = new WeakReference(value);
+        _FunctionControl = new WeakReference(value);
 
         if (value != null)
-          FeatureControlRowDefinition = new GridLength(1, GridUnitType.Star);
+          FunctionControlRowDefinition = new GridLength(1, GridUnitType.Star);
         else
-          FeatureControlRowDefinition = new GridLength(1, GridUnitType.Auto);
+          FunctionControlRowDefinition = new GridLength(1, GridUnitType.Auto);
 
-        OnPropertyChanged("FeatureControl");
-        OnPropertyChanged("FeatureControlRowDefinition");
+        OnPropertyChanged("FunctionControl");
+        OnPropertyChanged("FunctionControlRowDefinition");
       }
     }
-    private WeakReference _FeatureControl;
-    public GridLength FeatureControlRowDefinition { get; set; }
+    private WeakReference _FunctionControl;
+    public GridLength FunctionControlRowDefinition { get; set; }
   }
 }
