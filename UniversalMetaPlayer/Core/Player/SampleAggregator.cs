@@ -25,15 +25,11 @@ namespace UMP.Core.Player
     private readonly int m;
     private readonly ISampleProvider source;
 
-    private readonly int channels;
-
     public SampleAggregator(ISampleProvider source, int fftLength = 1024, bool initiallySilent = false)
     {
-      channels = source.WaveFormat.Channels;
       if (!IsPowerOfTwo(fftLength))
-      {
         throw new ArgumentException("FFT Length must be a power of two");
-      }
+
       m = (int)Math.Log(fftLength, 2.0);
       this.fftLength = fftLength;
       fftBuffer = new Complex[fftLength];
@@ -105,7 +101,7 @@ namespace UMP.Core.Player
         }
       }
 
-      for (int n = 0; n < samplesRead; n += channels)
+      for (int n = 0; n < samplesRead; n += source.WaveFormat.Channels)
       {
         Add(buffer[n + offset]);
       }

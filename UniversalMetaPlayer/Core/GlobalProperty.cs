@@ -399,21 +399,25 @@ namespace UMP.Core
       }
       #endregion
 
+      /// <summary>
+      /// 기본값이 정의 되어 있는 클래스
+      /// </summary>
       public static class DefaultValue
       {
         public const string DefaultFileSavePath = "Save";
         public const bool DefaultPrivateLogging = true;
-        public const bool DefaultFadeEffect = true;
-        public const int DefaultFadeEffectDelay = 200;
+        public const MediaLoadEngineType DefaultMediaLoadEngineType = MediaLoadEngineType.Native;
 
         public const bool DefaultIsAverageColorTheme = true;
         public const int DefaultAverageColorProcessingOffset = 30;
 
         public const bool DefaultHotKey = false;
-        public const bool DefaultGlobalKeyboardHook = false;
+        public const bool DefaultGlobalKeyboardHook = true;
         public const int DefaultKeyEventDelay = 20;
 
-        public const MediaLoadEngineType DefaultMediaLoadEngineType = MediaLoadEngineType.Native;
+        public const bool DefaultFadeEffect = true;
+        public const int DefaultFadeEffectDelay = 200;
+
       }
 
       public class Enums

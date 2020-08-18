@@ -63,7 +63,6 @@
             ToolTip="{Binding AverageColorProcessingOffsetToolTip}"
             IsEnabled="{Binding IsAverageColorThemeIsChecked}"
             Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-            Text="{Binding AverageColorProcessingOffsetText, Mode=OneWay}"
             VerticalScrollBarVisibility="Auto"
             materialDesign:HintAssist.Hint="Offset"
             Margin="5,0,0,0"

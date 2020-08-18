@@ -9,7 +9,7 @@ namespace UMP.Controller.Function.AnalysisControl.WaveAnalysis
   {
     private readonly PolylineWaveControl polylineWaveFormControl = new PolylineWaveControl();
 
-    public string Name => "Polyline WaveVisualization";
+    public string Name => "폴리라인 파동 시각화";
 
     public UserControl Content => polylineWaveFormControl;
 

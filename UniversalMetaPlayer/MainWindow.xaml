@@ -25,7 +25,7 @@
     <Window.DataContext>
         <ump:MainWindowViewModel />
     </Window.DataContext>
-    
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition
@@ -52,7 +52,7 @@
             <materialDesign:SnackbarMessage
                 x:Name="GlobalMessage" />
         </materialDesign:Snackbar>
-        
+
         <WindowButton:WindowStyleButtonControl
             x:Name="MainWindowButton"
             HorizontalAlignment="Right"
@@ -67,7 +67,7 @@
             Grid.RowSpan="3">
 
             <Controller:MediaInfoControl
-                x:Name="MainInfoControl"/>
+                x:Name="MainInfoControl" />
             <Controller:MediaControllerControl
                 x:Name="MainControllerControl"
                 VerticalAlignment="Bottom"
@@ -88,6 +88,6 @@
             Visibility="Collapsed"
             Grid.Column="2"
             Grid.Row="0"
-            Grid.RowSpan="4"/>
+            Grid.RowSpan="4" />
     </Grid>
 </Window>

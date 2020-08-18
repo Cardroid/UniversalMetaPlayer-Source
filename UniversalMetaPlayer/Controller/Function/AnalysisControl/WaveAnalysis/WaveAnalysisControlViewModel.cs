@@ -22,11 +22,8 @@ namespace UMP.Controller.Function.AnalysisControl
       MainMediaPlayer.FftCalculated += audioGraph_FftCalculated;
     }
 
-    private IVisualizationPlugin PolylineWaveVisualizationPlugin { get; }
-    private IVisualizationPlugin SpectrumAnalyzerVisualizationPlugin { get; }
-
-    public UserControl PolylineWaveControl => PolylineWaveVisualizationPlugin.Content;
-    public UserControl SpectrumAnalyser => SpectrumAnalyzerVisualizationPlugin.Content;
+    public IVisualizationPlugin PolylineWaveVisualizationPlugin { get; }
+    public IVisualizationPlugin SpectrumAnalyzerVisualizationPlugin { get; }
 
     void audioGraph_FftCalculated(object sender, FftEventArgs e)
     {

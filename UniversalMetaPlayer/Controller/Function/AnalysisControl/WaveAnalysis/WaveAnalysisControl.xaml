@@ -28,12 +28,12 @@
         </Grid.RowDefinitions>
 
         <UserControl
-            Content="{Binding PolylineWaveControl}"
-            ToolTip="오디오 파형 그래프"
+            Content="{Binding PolylineWaveVisualizationPlugin.Content}"
+            ToolTip="{Binding PolylineWaveVisualizationPlugin.Name}"
             Grid.Row="0" />
         <UserControl
-            Content="{Binding SpectrumAnalyser}"
-            ToolTip="주파수 그래프"
+            Content="{Binding SpectrumAnalyzerVisualizationPlugin.Content}"
+            ToolTip="{Binding SpectrumAnalyzerVisualizationPlugin.Name}"
             Grid.Row="1" />
     </Grid>
 </Function:FunctionModelControl>

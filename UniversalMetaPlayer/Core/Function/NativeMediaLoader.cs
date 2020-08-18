@@ -257,7 +257,7 @@ namespace UMP.Core.Function
         bool success = false;
         await Task.Run(async () =>
         {
-          var youtube = new YoutubeClient();
+          YoutubeClient youtube = new YoutubeClient();
           Video videoinfo = null;
           try
           {
@@ -287,6 +287,28 @@ namespace UMP.Core.Function
           Fileinfo.Tag.Album = $"\"{videoinfo.Url}\" form Online";
           Fileinfo.Tag.AlbumArtists = new string[] { videoinfo.Author };
           Fileinfo.Tag.Description = $"YouTubeID : \"{videoinfo.Id}\"";
+          try
+          {
+            var trackManifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(Information.MediaLocation);
+
+            var trackInfo = trackManifest.TryGetByLanguage("ko");
+
+            if (trackInfo != null)
+            {
+              var track = await youtube.Videos.ClosedCaptions.GetAsync(trackInfo);
+
+              string caption = string.Empty;
+
+              for (int i = 0; i < track.Captions.Count; i++)
+                caption += $"{track.Captions[i].Text}\n";
+
+              Fileinfo.Tag.Lyrics = caption[0..^1];
+            }
+          }
+          catch (Exception e)
+          {
+            Log.Warn("자막 저장 오류", e);
+          }
 
           // 썸네일 처리
           byte[] imagedata = null;

@@ -24,6 +24,7 @@
                 Stretch="UniformToFill"
                 ImageSource="{Binding AlbumImage}"/>
         </Grid.Background>
+        
         <StackPanel
             x:Name="InfoPanel"
             Orientation="Vertical"

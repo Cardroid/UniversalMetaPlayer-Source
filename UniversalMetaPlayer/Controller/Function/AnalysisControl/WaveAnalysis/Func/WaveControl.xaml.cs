@@ -22,10 +22,10 @@ namespace UMP.Controller.Function.AnalysisControl.WaveAnalysis.Func
     public WaveControl()
     {
       InitializeComponent();
-      SizeChanged += WaveFormControl_SizeChanged;
+      SizeChanged += WaveControl_SizeChanged;
     }
 
-    void WaveFormControl_SizeChanged(object sender, SizeChangedEventArgs e)
+    void WaveControl_SizeChanged(object sender, SizeChangedEventArgs e)
     {
       // To just remove what is on the right of the now cursor:
       /*int remove = mainCanvas.Children.Count - x;
@@ -43,9 +43,7 @@ namespace UMP.Controller.Function.AnalysisControl.WaveAnalysis.Func
     {
       //mainCanvas.Children.Clear();
       for (int n = 0; n < lines.Count; n++)
-      {
         lines[n].Visibility = Visibility.Collapsed;
-      }
     }
 
     public void AddValue(float maxValue, float minValue)
@@ -56,14 +54,11 @@ namespace UMP.Controller.Function.AnalysisControl.WaveAnalysis.Func
         Line line = CreateLine(maxValue, minValue);
 
         if (renderPosition > ActualWidth)
-        {
           renderPosition = 0;
-        }
+
         int erasePosition = (renderPosition + blankZone) % pixelWidth;
         if (erasePosition < lines.Count)
-        {
           lines[erasePosition].Visibility = Visibility.Collapsed;
-        }
       }
     }
 
@@ -77,9 +72,8 @@ namespace UMP.Controller.Function.AnalysisControl.WaveAnalysis.Func
         mainCanvas.Children.Add(line);
       }
       else
-      {
         line = lines[renderPosition];
-      }
+
       line.Stroke = Foreground;
       line.X1 = renderPosition;
       line.X2 = renderPosition;

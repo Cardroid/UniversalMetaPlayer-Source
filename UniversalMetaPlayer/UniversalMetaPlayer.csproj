@@ -36,9 +36,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controller\Function\NewFolder\**" />
     <Compile Remove="Test\**" />
+    <EmbeddedResource Remove="Controller\Function\NewFolder\**" />
     <EmbeddedResource Remove="Test\**" />
+    <None Remove="Controller\Function\NewFolder\**" />
     <None Remove="Test\**" />
+    <Page Remove="Controller\Function\NewFolder\**" />
     <Page Remove="Test\**" />
   </ItemGroup>
 

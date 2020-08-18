@@ -134,20 +134,23 @@ namespace UMP.Controller.ViewModel
         FunctionWindowClose();
         _IsCheckedFunctionToggleButton = value;
         if (_IsCheckedFunctionToggleButton)
-        {
-          FunctionWindow = new UserWindow(new FunctionControl(), "UMP - Function");
-          FunctionWindow.Show();
-          FunctionWindow.Closed += (_, e) =>
-          {
-            FunctionWindowClose();
-            _IsCheckedFunctionToggleButton = false;
-            OnPropertyChanged("IsCheckedFunctionToggleButton");
-          };
-        }
+          FunctionWindowOpen();
         OnPropertyChanged("IsCheckedFunctionToggleButton");
       }
     }
     private bool _IsCheckedFunctionToggleButton = false;
+
+    private void FunctionWindowOpen()
+    {
+      FunctionWindow = new UserWindow(new FunctionControl(), "UMP - Function") { WindowStartupLocation = WindowStartupLocation.CenterOwner };
+      FunctionWindow.Show();
+      FunctionWindow.Closed += (_, e) =>
+      {
+        FunctionWindowClose();
+        _IsCheckedFunctionToggleButton = false;
+        OnPropertyChanged("IsCheckedFunctionToggleButton");
+      };
+    }
 
     private void FunctionWindowClose()
     {
@@ -173,21 +176,23 @@ namespace UMP.Controller.ViewModel
         PlayListWindowClose();
         _IsCheckedPlayListToggleButton = value;
         if (_IsCheckedPlayListToggleButton)
-        {
-          PlayListWindow = new UserWindow(new PlayListControl(), "UMP - PlayList");
-          PlayListWindow.Show();
-          PlayListWindow.Closed += (_, e) =>
-          {
-            PlayListWindowClose();
-            _IsCheckedPlayListToggleButton = false;
-            OnPropertyChanged("IsCheckedPlayListToggleButton");
-          };
-        }
+          PlayListWindowOpen();
         OnPropertyChanged("IsCheckedPlayListToggleButton");
       }
     }
     private bool _IsCheckedPlayListToggleButton = false;
 
+    private void PlayListWindowOpen()
+    {
+      PlayListWindow = new UserWindow(new PlayListControl(), "UMP - PlayList") { WindowStartupLocation = WindowStartupLocation.CenterOwner };
+      PlayListWindow.Show();
+      PlayListWindow.Closed += (_, e) =>
+      {
+        PlayListWindowClose();
+        _IsCheckedPlayListToggleButton = false;
+        OnPropertyChanged("IsCheckedPlayListToggleButton");
+      };
+    }
     private void PlayListWindowClose()
     {
       if (PlayListWindow != null)

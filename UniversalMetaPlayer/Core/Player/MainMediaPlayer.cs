@@ -125,7 +125,7 @@ namespace UMP.Core.Player
     public static event EventHandler<MaxSampleEventArgs> MaximumCalculated;
 
 
-    public static bool MediaLoadedCheck => AudioFile != null;
+    public static bool MediaLoadedCheck => AudioFile != null && MediaInformation.Duration > TimeSpan.Zero;
 
     /// <summary>
     /// 미디어 파일 정보

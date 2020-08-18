@@ -12,7 +12,7 @@
     FontFamily="{DynamicResource MainFontFamily}"
     BorderThickness="1"
     mc:Ignorable="d"
-    Height="450"
+    Height="500"
     Width="800">
 
     <Window.DataContext>
