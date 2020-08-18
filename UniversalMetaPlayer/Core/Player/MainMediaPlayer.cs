@@ -273,16 +273,6 @@ namespace UMP.Core.Player
 
       string path = streamResult.Result;
 
-      // 재생중인 미디어 정지
-      if (MediaLoadedCheck)
-      {
-        await Stop(false);
-        //StopButtonActive = true;
-        //if (WavePlayer != null)
-        //  WavePlayer.Stop();
-        //Tick.Stop();
-      }
-
       // 이전 오디오 스트림 해제
       if (AudioFile != null)
       {
