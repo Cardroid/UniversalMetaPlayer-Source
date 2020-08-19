@@ -24,9 +24,9 @@ namespace UMP.Controller.Function.OptionControl
     {
       InitializeComponent();
 
-      GlobalProperty.PropertyChanged += (e) =>
+      GlobalProperty.PropertyChanged += (_, e) =>
       {
-        if (e == "FadeEffectDelay")
+        if (e.PropertyName == "FadeEffectDelay")
           this.FadeEffectDelayTextBox.Text = GlobalProperty.Options.FadeEffectDelay.ToString();
       };
 
@@ -43,7 +43,7 @@ namespace UMP.Controller.Function.OptionControl
       if (int.TryParse(this.FadeEffectDelayTextBox.Text, out int result))
         result = Math.Clamp(result, 1, 3001);
       else
-        result = GlobalProperty.Options.DefaultValue.DefaultFadeEffectDelay;
+        result = GlobalProperty.Options.DefaultValue.FadeEffectDelay;
       GlobalProperty.Options.FadeEffectDelay = result;
     }
   }

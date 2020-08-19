@@ -42,9 +42,9 @@ namespace UMP.Controller.Function.AnalysisControl.WaveAnalysis.Func
       mainCanvas.Children.Add(topLine);
       mainCanvas.Children.Add(bottomLine);
 
-      MainMediaPlayer.PropertyChangedEvent += (e) =>
+      MainMediaPlayer.PropertyChanged += (_, e) =>
       {
-        if (e == "MainPlayerInitialized")
+        if (e.PropertyName == "MainPlayerInitialized")
           Reset();
       };
     }

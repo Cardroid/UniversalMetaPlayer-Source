@@ -22,6 +22,7 @@ using UMP.Utility;
 
 using static UMP.Core.GlobalProperty.Options.Enums;
 using UMP.Core.Player;
+using System.ComponentModel;
 
 namespace UMP.Core
 {
@@ -31,8 +32,9 @@ namespace UMP.Core
   public static class GlobalProperty
   {
     private static readonly Log Log;
-    public static event UMP_PropertyChangedEventHandler PropertyChanged;
-    private static void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(propertyName);
+    public static event PropertyChangedEventHandler PropertyChanged;
+    private static void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(null, new PropertyChangedEventArgs(propertyName));
+
     static GlobalProperty() { Log = new Log(typeof(GlobalProperty)); }
 
     /// <summary>
@@ -118,8 +120,8 @@ namespace UMP.Core
           Options.GlobalKeyboardHook = loadedOptions.TryGetValue("GlobalKeyboardHook", out string value)
             ? (bool.TryParse(value, out bool result)
             ? result
-            : Options.DefaultValue.DefaultGlobalKeyboardHook)
-            : Options.DefaultValue.DefaultGlobalKeyboardHook;
+            : Options.DefaultValue.GlobalKeyboardHook)
+            : Options.DefaultValue.GlobalKeyboardHook;
 
           Log.Info("메인 설정 불러오기 완료");
         }
@@ -168,19 +170,22 @@ namespace UMP.Core
 
     private static bool NowLoading = false;
 
-    /// <summary>
-    /// 컨트롤 가능 여부
-    /// </summary>
-    public static bool IsControllable
+    public static class State
     {
-      get => _IsControllable;
-      set
+      /// <summary>
+      /// 컨트롤 가능 여부
+      /// </summary>
+      public static bool IsControllable
       {
-        _IsControllable = value;
-        OnPropertyChanged("IsControllable");
+        get => _IsControllable;
+        set
+        {
+          _IsControllable = value;
+          OnPropertyChanged("IsControllable");
+        }
       }
+      private static bool _IsControllable = true;
     }
-    private static bool _IsControllable = true;
 
     public static class Options
     {
@@ -205,8 +210,8 @@ namespace UMP.Core
         get => TryGetSetting("FileSavePath", out string value)
           ? (!string.IsNullOrWhiteSpace(value)
           ? value
-          : DefaultValue.DefaultFileSavePath)
-          : DefaultValue.DefaultFileSavePath;
+          : DefaultValue.FileSavePath)
+          : DefaultValue.FileSavePath;
         set
         {
           SetSetting("FileSavePath", value);
@@ -222,8 +227,8 @@ namespace UMP.Core
         get => TryGetSetting("PrivateLogging", out string value)
           ? (bool.TryParse(value, out bool result)
           ? result
-          : DefaultValue.DefaultPrivateLogging)
-          : DefaultValue.DefaultPrivateLogging;
+          : DefaultValue.PrivateLogging)
+          : DefaultValue.PrivateLogging;
         set
         {
           SetSetting("PrivateLogging", value.ToString());
@@ -232,19 +237,40 @@ namespace UMP.Core
       }
 
       /// <summary>
-      /// 사용하는 미디어 로드 엔진
+      /// 미디어 로드에 사용할 엔진
       /// </summary>
       public static MediaLoadEngineType MediaLoadEngine
       {
         get => TryGetSetting("MediaLoadEngine", out string value)
           ? (Enum.TryParse(value, out MediaLoadEngineType result)
           ? result
-          : DefaultValue.DefaultMediaLoadEngineType)
-          : DefaultValue.DefaultMediaLoadEngineType;
+          : DefaultValue.MediaLoadEngine)
+          : DefaultValue.MediaLoadEngine;
         set
         {
           SetSetting("MediaLoadEngine", value.ToString());
           OnPropertyChanged("MediaLoadEngine");
+        }
+      }
+
+      /// <summary>
+      /// 가사창 설정<br/>
+      /// <br/>
+      /// On = 항상 사용<br/>
+      /// Auto = 가사가 존재할 경우 사용<br/>
+      /// Off = 사용안함
+      /// </summary>
+      public static LyricsSettingsType LyricsWindowActive
+      {
+        get => TryGetSetting("LyricsWindowActive", out string value)
+          ? (Enum.TryParse(value, out LyricsSettingsType result)
+          ? result
+          : DefaultValue.LyricsWindowActive)
+          : DefaultValue.LyricsWindowActive;
+        set
+        {
+          SetSetting("LyricsWindowActive", value.ToString());
+          OnPropertyChanged("LyricsWindowActive");
         }
       }
       #endregion
@@ -273,8 +299,8 @@ namespace UMP.Core
         get => TryGetSetting("IsAverageColorTheme", out string value)
           ? (bool.TryParse(value, out bool result)
           ? result
-          : DefaultValue.DefaultIsAverageColorTheme)
-          : DefaultValue.DefaultIsAverageColorTheme;
+          : DefaultValue.IsAverageColorTheme)
+          : DefaultValue.IsAverageColorTheme;
         set
         {
           SetSetting("IsAverageColorTheme", value.ToString());
@@ -292,8 +318,8 @@ namespace UMP.Core
         get => TryGetSetting("AverageColorProcessingOffset", out string value)
           ? (int.TryParse(value, out int result)
           ? result
-          : DefaultValue.DefaultAverageColorProcessingOffset)
-          : DefaultValue.DefaultAverageColorProcessingOffset;
+          : DefaultValue.AverageColorProcessingOffset)
+          : DefaultValue.AverageColorProcessingOffset;
         set
         {
           SetSetting("AverageColorProcessingOffset", value.ToString());
@@ -311,8 +337,8 @@ namespace UMP.Core
         get => TryGetSetting("HotKey", out string value)
           ? (bool.TryParse(value, out bool result)
           ? result
-          : DefaultValue.DefaultHotKey)
-          : DefaultValue.DefaultHotKey;
+          : DefaultValue.HotKey)
+          : DefaultValue.HotKey;
         set
         {
           SetSetting("HotKey", value.ToString());
@@ -332,8 +358,8 @@ namespace UMP.Core
         get => TryGetSetting("GlobalKeyboardHook", out string value)
           ? (bool.TryParse(value, out bool result)
           ? result
-          : DefaultValue.DefaultGlobalKeyboardHook)
-          : DefaultValue.DefaultGlobalKeyboardHook;
+          : DefaultValue.GlobalKeyboardHook)
+          : DefaultValue.GlobalKeyboardHook;
         set
         {
           SetSetting("GlobalKeyboardHook", value.ToString());
@@ -353,8 +379,8 @@ namespace UMP.Core
         get => TryGetSetting("KeyEventDelay", out string value)
           ? (int.TryParse(value, out int result)
           ? result
-          : DefaultValue.DefaultKeyEventDelay)
-          : DefaultValue.DefaultKeyEventDelay;
+          : DefaultValue.KeyEventDelay)
+          : DefaultValue.KeyEventDelay;
         set
         {
           SetSetting("KeyEventDelay", value.ToString());
@@ -372,8 +398,8 @@ namespace UMP.Core
         get => TryGetSetting("FadeEffect", out string value)
           ? (bool.TryParse(value, out bool result)
           ? result
-          : DefaultValue.DefaultFadeEffect)
-          : DefaultValue.DefaultFadeEffect;
+          : DefaultValue.FadeEffect)
+          : DefaultValue.FadeEffect;
         set
         {
           SetSetting("FadeEffect", value.ToString());
@@ -389,8 +415,8 @@ namespace UMP.Core
         get => TryGetSetting("FadeEffectDelay", out string value)
           ? (int.TryParse(value, out int result)
           ? result
-          : DefaultValue.DefaultFadeEffectDelay)
-          : DefaultValue.DefaultFadeEffectDelay;
+          : DefaultValue.FadeEffectDelay)
+          : DefaultValue.FadeEffectDelay;
         set
         {
           SetSetting("FadeEffectDelay", value.ToString());
@@ -404,27 +430,39 @@ namespace UMP.Core
       /// </summary>
       public static class DefaultValue
       {
-        public const string DefaultFileSavePath = "Save";
-        public const bool DefaultPrivateLogging = true;
-        public const MediaLoadEngineType DefaultMediaLoadEngineType = MediaLoadEngineType.Native;
+        public const string FileSavePath = "Save";
+        public const bool PrivateLogging = true;
+        public const MediaLoadEngineType MediaLoadEngine = MediaLoadEngineType.Native;
+        public const LyricsSettingsType  LyricsWindowActive = LyricsSettingsType.Off;
 
-        public const bool DefaultIsAverageColorTheme = true;
-        public const int DefaultAverageColorProcessingOffset = 30;
+        public const bool IsAverageColorTheme = true;
+        public const int AverageColorProcessingOffset = 30;
 
-        public const bool DefaultHotKey = false;
-        public const bool DefaultGlobalKeyboardHook = true;
-        public const int DefaultKeyEventDelay = 20;
+        public const bool HotKey = false;
+        public const bool GlobalKeyboardHook = true;
+        public const int KeyEventDelay = 20;
 
-        public const bool DefaultFadeEffect = true;
-        public const int DefaultFadeEffectDelay = 200;
-
+        public const bool FadeEffect = true;
+        public const int FadeEffectDelay = 200;
       }
 
       public class Enums
       {
+        /// <summary>
+        /// 미디어 로더 타입
+        /// </summary>
         public enum MediaLoadEngineType
         {
           Native, YoutubeDL
+        }
+
+        /// <summary>
+        /// 가사창 설정 타입<br/>
+        /// Auto => <c>Lyrics != null ? Open : Close</c>
+        /// </summary>
+        public enum LyricsSettingsType
+        {
+          Off, Auto, On
         }
       }
     }

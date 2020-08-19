@@ -104,7 +104,7 @@ namespace UMP.Controller
     /// </summary>
     private async void PlayListControlButton_Click(object sender, RoutedEventArgs e)
     {
-      if (GlobalProperty.IsControllable && sender is Button button)
+      if (GlobalProperty.State.IsControllable && sender is Button button)
       {
         switch (button.Name)
         {
@@ -150,7 +150,7 @@ namespace UMP.Controller
     {
       GlobalEvent.KeyDownEventHandled = !isEnable;
       this.PlayListGroupBox.IsEnabled = isEnable;
-      GlobalProperty.IsControllable = isEnable;
+      GlobalProperty.State.IsControllable = isEnable;
     }
 
     /// <summary>

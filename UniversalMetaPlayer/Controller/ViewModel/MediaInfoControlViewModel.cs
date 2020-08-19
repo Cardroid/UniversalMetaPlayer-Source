@@ -16,12 +16,12 @@ namespace UMP.Controller.ViewModel
   {
     public MediaInfoControlViewModel()
     {
-      MainMediaPlayer.PropertyChangedEvent += MainMediaPlayer_PropertyChangedEvent;
+      MainMediaPlayer.PropertyChanged += MainMediaPlayer_PropertyChanged; ;
     }
 
-    private void MainMediaPlayer_PropertyChangedEvent(string propertyname)
+    private void MainMediaPlayer_PropertyChanged(object sender, PropertyChangedEventArgs e)
     {
-      if (propertyname == "MediaInformation")
+      if (e.PropertyName == "MediaInformation")
       {
         OnPropertyChanged("MediaTitle");
         OnPropertyChanged("AlbumTitle");

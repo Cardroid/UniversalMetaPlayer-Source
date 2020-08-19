@@ -76,11 +76,11 @@ namespace UMP
 
       this.BorderBrush = new SolidColorBrush(ThemeHelper.PrimaryColor);
 
-      GlobalProperty.PropertyChanged += (e) => 
+      GlobalProperty.PropertyChanged += (_, e) => 
       {
-        if(e == "IsControllable")
+        if(e.PropertyName == "IsControllable")
         {
-          if (GlobalProperty.IsControllable)
+          if (GlobalProperty.State.IsControllable)
             this.MainControllerControl.IsEnabled = true;
           else
             this.MainControllerControl.IsEnabled = false;

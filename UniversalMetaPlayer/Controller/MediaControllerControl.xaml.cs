@@ -69,10 +69,10 @@ namespace UMP.Controller
           ViewModel.ApplyUI();
         };
 
-        GlobalProperty.PropertyChanged += (e) =>
+        GlobalProperty.PropertyChanged += (_, e) =>
         {
-          if (e == "IsControllable")
-            ControlPanel.IsEnabled = GlobalProperty.IsControllable;
+          if (e.PropertyName == "IsControllable")
+            ControlPanel.IsEnabled = GlobalProperty.State.IsControllable;
         };
 
         log.Debug("초기화 완료");
@@ -84,7 +84,7 @@ namespace UMP.Controller
     /// </summary>
     private void GlobalEvent_KeyDownEvent(KeyEventArgs e)
     {
-      if (GlobalProperty.Options.HotKey && GlobalProperty.IsControllable)
+      if (GlobalProperty.Options.HotKey && GlobalProperty.State.IsControllable)
       {
         var viewModel = ((MediaControllerControlViewModel)this.DataContext);
         switch (e.Key)
@@ -148,7 +148,7 @@ namespace UMP.Controller
     /// </summary>
     private void Hook_KeyboardEvent(KeyboardEvent e)
     {
-      if (e.State == NeatInput.Windows.Processing.Keyboard.Enums.KeyStates.Down && GlobalProperty.IsControllable)
+      if (e.State == NeatInput.Windows.Processing.Keyboard.Enums.KeyStates.Down && GlobalProperty.State.IsControllable)
       {
         switch (e.Key)
         {
@@ -214,7 +214,7 @@ namespace UMP.Controller
     /// </summary>
     private void ProgressSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
-      if (MainMediaPlayer.MediaLoadedCheck && GlobalProperty.IsControllable)
+      if (MainMediaPlayer.MediaLoadedCheck && GlobalProperty.State.IsControllable)
       {
         if (this.ProgressSlider.IsMouseOver && Mouse.LeftButton == MouseButtonState.Pressed)
         {

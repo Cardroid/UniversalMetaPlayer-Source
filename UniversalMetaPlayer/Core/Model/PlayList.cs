@@ -26,8 +26,8 @@ namespace UMP.Core.Model
     }
 
     private Log Log { get; }
-    public event UMP_PropertyChangedEventHandler PropertyChangedEvent;
-    private void OnPropertyChanged(string name) => PropertyChangedEvent?.Invoke(name);
+    public event PropertyChangedEventHandler Field_PropertyChanged;
+    private void OnPropertyChanged(string propertyName) => Field_PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
     /// <summary>
     /// 플레이 리스트 구별을 위한 고유 값

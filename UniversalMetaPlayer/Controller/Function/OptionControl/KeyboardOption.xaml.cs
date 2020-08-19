@@ -23,9 +23,9 @@ namespace UMP.Controller.Function.OptionControl
     {
       InitializeComponent();
 
-      GlobalProperty.PropertyChanged += (e) =>
+      GlobalProperty.PropertyChanged += (_, e) =>
       {
-        if (e == "KeyEventDelay")
+        if (e.PropertyName == "KeyEventDelay")
           this.KeyEventDelayOffsetTextBox.Text = GlobalProperty.Options.KeyEventDelay.ToString();
       };
 
@@ -42,7 +42,7 @@ namespace UMP.Controller.Function.OptionControl
       if (int.TryParse(this.KeyEventDelayOffsetTextBox.Text, out int result))
         result = Math.Clamp(result, 10, 201);
       else
-        result = GlobalProperty.Options.DefaultValue.DefaultKeyEventDelay;
+        result = GlobalProperty.Options.DefaultValue.KeyEventDelay;
       GlobalProperty.Options.KeyEventDelay = result;
     }
   }

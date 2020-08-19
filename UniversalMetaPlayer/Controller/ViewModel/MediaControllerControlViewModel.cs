@@ -23,11 +23,11 @@ namespace UMP.Controller.ViewModel
   {
     public MediaControllerControlViewModel()
     {
-      MainMediaPlayer.PlayStateChangedEvent += MainMediaPlayer_PlayStateChangedEvent;
-      MainMediaPlayer.PropertyChangedEvent += MainMediaPlayer_PropertyChangedEvent;
+      MainMediaPlayer.PlayStateChanged += MainMediaPlayer_PlayStateChanged;
+      MainMediaPlayer.PropertyChanged += MainMediaPlayer_PropertyChanged;
       MainMediaPlayer.TickEvent += MainMediaPlayer_TickEvent;
-      MainMediaPlayer.Option.PropertyChangedEvent += Option_PropertyChangedEvent;
-      MainMediaPlayer.PlayList.PropertyChangedEvent += PlayList_PropertyChangedEvent;
+      MainMediaPlayer.Option.PropertyChanged += Option_PropertyChanged;
+      MainMediaPlayer.PlayList.Field_PropertyChanged += PlayList_Field_PropertyChanged;
       ThemeHelper.ThemeChangedEvent += ThemeHelper_ThemeChangedEvent;
 
       PlayPauseCommand = new RelayCommand((o) => PlayPause());
@@ -274,23 +274,23 @@ namespace UMP.Controller.ViewModel
     #endregion
 
     #region 동기화 메소드
-    private void Option_PropertyChangedEvent(object sender, PropertyChangedEventArgs e)
+    private void Option_PropertyChanged(object sender, PropertyChangedEventArgs e)
     {
       if (e.PropertyName == "RepeatPlayOption")
         OnPropertyChanged("RepeatPlayOptionIcon");
       if (e.PropertyName == "Shuffle")
         OnPropertyChanged("ShuffleIcon");
     }
-    private void MainMediaPlayer_PlayStateChangedEvent(PlaybackState state) => ApplyUI();
+    private void MainMediaPlayer_PlayStateChanged(PlaybackState state) => ApplyUI();
     private void MainMediaPlayer_TickEvent(object sender, EventArgs e) => ApplyUI(false);
-    private void MainMediaPlayer_PropertyChangedEvent(string propertyname)
+    private void MainMediaPlayer_PropertyChanged(object sender, PropertyChangedEventArgs e)
     {
-      if (propertyname == "MainPlayerInitialized" || propertyname == "MediaInfo")
+      if (e.PropertyName == "MainPlayerInitialized" || e.PropertyName == "MediaInfo")
         ApplyUI();
     }
-    private void PlayList_PropertyChangedEvent(string propertyname)
+    private void PlayList_Field_PropertyChanged(object sender, PropertyChangedEventArgs e)
     {
-      if (propertyname == "TotalDuration")
+      if (e.PropertyName == "TotalDuration")
         OnPropertyChanged("TotalDuration");      // 플레이리스트 재생길이 총합 적용
     }
     private void ThemeHelper_ThemeChangedEvent(ThemeHelper.ThemeProperty e)

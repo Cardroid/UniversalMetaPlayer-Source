@@ -28,7 +28,7 @@ namespace UMP.Core.Player
         AlbumImage = null
       };
 
-      GlobalProperty.PropertyChanged += (e) => { if (e == "Loaded") Volume = Option.Volume; };
+      GlobalProperty.PropertyChanged += (_, e) => { if (e.PropertyName == "Loaded") Volume = Option.Volume; };
 
       // 미디어 재생시간 오류 처리
       TickEvent += (_, e) =>
@@ -38,15 +38,15 @@ namespace UMP.Core.Player
           WavePlayer.Stop();
           Tick.Stop();
           Log.Warn("미디어 재생시간 오류가 감지되어 자동으로 이벤트 처리됨", $"MediaLocation : [{MediaInformation.MediaLocation}]");
-          PropertyChangedEvent?.Invoke("PlaybackStopped");
-          PlayStateChangedEvent?.Invoke(PlaybackState);
+          OnPropertyChanged("PlaybackStopped");
+          PlayStateChanged?.Invoke(PlaybackState);
         }
       };
 
       // 재생 종료후 이벤트
-      PropertyChangedEvent += async (e) =>
+      PropertyChanged += async (_, e) =>
       {
-        if (e == "PlaybackStopped")
+        if (e.PropertyName == "PlaybackStopped")
         {
           if (WavePlayer.PlaybackState == PlaybackState.Stopped)
           {
@@ -113,10 +113,10 @@ namespace UMP.Core.Player
 
     private static bool StopButtonActive { get; set; } = false;
 
-    public delegate void PlayStateChangedEventHandler(PlaybackState state);
-    public static event PlayStateChangedEventHandler PlayStateChangedEvent;
-    public static event UMP_PropertyChangedEventHandler PropertyChangedEvent;
-    private static void OnPropertyChanged(string name) => PropertyChangedEvent?.Invoke(name);
+    public delegate void PlayStateChangedHandler(PlaybackState state);
+    public static event PlayStateChangedHandler PlayStateChanged;
+    public static event PropertyChangedEventHandler PropertyChanged;
+    private static void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(null, new PropertyChangedEventArgs(propertyName));
 
     // 오디오 분석용 코드
 
@@ -176,7 +176,7 @@ namespace UMP.Core.Player
       set
       {
         AudioFile.CurrentTime = value;
-        PlayStateChangedEvent?.Invoke(PlaybackState);
+        PlayStateChanged?.Invoke(PlaybackState);
       }
     }
 
@@ -192,8 +192,8 @@ namespace UMP.Core.Player
     {
       if (e.Exception != null)
         Log.Fatal("메인 플레이어 [PlaybackStopped] 이벤트 처리오류", e.Exception);
-      PropertyChangedEvent?.Invoke("PlaybackStopped");
-      PlayStateChangedEvent?.Invoke(PlaybackState);
+      OnPropertyChanged("PlaybackStopped");
+      PlayStateChanged?.Invoke(PlaybackState);
     }
 
     /// <summary>
@@ -322,7 +322,7 @@ namespace UMP.Core.Player
         return false;
       }
 
-      PropertyChangedEvent?.Invoke("MainPlayerInitialized");
+      OnPropertyChanged("MainPlayerInitialized");
       return true;
     }
 
@@ -375,7 +375,7 @@ namespace UMP.Core.Player
         if (GlobalProperty.Options.FadeEffect)
           Aggregator.BeginFadeIn(GlobalProperty.Options.FadeEffectDelay);
 
-        PlayStateChangedEvent?.Invoke(PlaybackState);
+        PlayStateChanged?.Invoke(PlaybackState);
         IsPlayStateChangeWork = false;
       }
     }
@@ -391,7 +391,7 @@ namespace UMP.Core.Player
         if (stateSave)
           StateSave = PlaybackState.Stopped;
         StopButtonActive = true;
-        PlayStateChangedEvent?.Invoke(PlaybackState);
+        PlayStateChanged?.Invoke(PlaybackState);
 
         if (GlobalProperty.Options.FadeEffect)
         {
@@ -402,7 +402,7 @@ namespace UMP.Core.Player
         WavePlayer.Stop();
         Tick.Stop();
         IsPlayStateChangeWork = false;
-        PlayStateChangedEvent?.Invoke(PlaybackState);
+        PlayStateChanged?.Invoke(PlaybackState);
       }
     }
 
@@ -416,7 +416,7 @@ namespace UMP.Core.Player
         IsPlayStateChangeWork = true;
         if (stateSave)
           StateSave = PlaybackState.Paused;
-        PlayStateChangedEvent?.Invoke(PlaybackState);
+        PlayStateChanged?.Invoke(PlaybackState);
 
         if (GlobalProperty.Options.FadeEffect)
         {
@@ -427,7 +427,7 @@ namespace UMP.Core.Player
         WavePlayer.Pause();
         Tick.Stop();
         IsPlayStateChangeWork = false;
-        PlayStateChangedEvent?.Invoke(PlaybackState);
+        PlayStateChanged?.Invoke(PlaybackState);
       }
     }
 
@@ -520,7 +520,7 @@ namespace UMP.Core.Player
       if (AudioFile.CurrentTime > TimeSpan.FromSeconds(5))
       {
         AudioFile.CurrentTime = TimeSpan.Zero;
-        PlayStateChangedEvent?.Invoke(PlaybackState);
+        PlayStateChanged?.Invoke(PlaybackState);
         IsWork = false;
         return;
       }
@@ -615,8 +615,8 @@ namespace UMP.Core.Player
   /// </summary>
   public struct PlayerOption
   {
-    public event PropertyChangedEventHandler PropertyChangedEvent;
-    private void OnPropertyChanged(string propertyName) => PropertyChangedEvent?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    public event PropertyChangedEventHandler PropertyChanged;
+    private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
     private bool _Shuffle;
     private int _RepeatPlayOption;

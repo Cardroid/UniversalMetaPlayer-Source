@@ -16,8 +16,8 @@ namespace UMP.Controller.ViewModel
   {
     public PlayListControlViewModel()
     {
-      MainMediaPlayer.PlayList.PropertyChangedEvent += MainMediaPlayer_PropertyChangedEvent;
-      MainMediaPlayer.PropertyChangedEvent += MainMediaPlayer_PropertyChangedEvent;
+      MainMediaPlayer.PlayList.Field_PropertyChanged += PlayList_Field_PropertyChanged; ;
+      MainMediaPlayer.PropertyChanged += MainMediaPlayer_PropertyChanged;
     }
 
     public PlayList PlayList => MainMediaPlayer.PlayList;
@@ -31,20 +31,16 @@ namespace UMP.Controller.ViewModel
       }
     }
 
-    public int PlayListSelectIndex { get; set; }
-
     #region UI갱신
-    private void MainMediaPlayer_PropertyChangedEvent(string propertyname)
+    private void PlayList_Field_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-      switch (propertyname)
-      {
-        case "PlayList":
-          OnPropertyChanged("PlayList");
-          break;
-        case "PlayListName":
-          OnPropertyChanged("PlayListName");
-          break;
-      }
+      if (e.PropertyName == "PlayListName")
+        OnPropertyChanged("PlayListName");
+    }
+    private void MainMediaPlayer_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+      if (e.PropertyName == "PlayList")
+        OnPropertyChanged("PlayList");
     }
     #endregion
   }

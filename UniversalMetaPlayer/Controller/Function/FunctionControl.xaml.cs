@@ -27,9 +27,9 @@ namespace UMP.Controller.Function
       InitializeComponent();
       ViewModel = (FunctionControlViewModel)this.DataContext;
 
-      GlobalProperty.PropertyChanged += (e) =>
+      GlobalProperty.PropertyChanged += (_, e) =>
       {
-        if (e == "SetDefault")
+        if (e.PropertyName == "SetDefault")
           ViewModel.FunctionPanel = new BasicOption();
       };
     }

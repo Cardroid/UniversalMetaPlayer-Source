@@ -68,9 +68,9 @@ namespace UMP.Controller.Function.AnalysisControl.AudioFileAnalysis
 
       this.Loaded += (_, e) =>
       {
-        MainMediaPlayer.PropertyChangedEvent += (e) =>
+        MainMediaPlayer.PropertyChanged += (_, e) =>
           {
-            if (e == "MainPlayerInitialized")
+            if (e.PropertyName == "MainPlayerInitialized")
             {
               PropertyPanel.Children.Clear();
               PropertyPanel.Children.Add(new Label()

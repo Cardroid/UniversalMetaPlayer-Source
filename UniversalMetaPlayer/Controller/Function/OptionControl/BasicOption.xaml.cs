@@ -17,6 +17,7 @@ using MaterialDesignThemes.Wpf;
 
 using UMP.Controller.Function.OptionControl.ViewModel;
 using UMP.Core;
+using UMP.Core.Model;
 using UMP.Utility;
 
 namespace UMP.Controller.Function.OptionControl

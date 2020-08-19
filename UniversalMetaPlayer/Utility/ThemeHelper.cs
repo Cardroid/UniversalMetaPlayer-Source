@@ -21,9 +21,9 @@ namespace UMP.Utility
 
     static ThemeHelper()
     {
-      MainMediaPlayer.PropertyChangedEvent += (e) =>
+      MainMediaPlayer.PropertyChanged += (_, e) =>
       {
-        if (e == "MediaInformation")
+        if (e.PropertyName == "MediaInformation")
           SetAverageColorThemeAsync();
       };
     }

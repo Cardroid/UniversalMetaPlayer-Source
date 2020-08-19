@@ -12,9 +12,9 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
   {
     public ThemeOptionViewModel()
     {
-      GlobalProperty.PropertyChanged += (e) =>
+      GlobalProperty.PropertyChanged += (_, e) =>
       {
-        if (e == "IsAverageColorTheme")
+        if (e.PropertyName == "IsAverageColorTheme")
           OnPropertyChanged("IsAverageColorThemeIsChecked");
       };
     }
@@ -27,7 +27,7 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
 
     public string IsAverageColorThemeToolTip => "엘범 커버 이미지의 픽셀 평균색을 추출하여 자동으로 테마를 변경합니다.";
     public string AverageColorProcessingOffsetToolTip =>
-      $"기본값 : {GlobalProperty.Options.DefaultValue.DefaultAverageColorProcessingOffset} (최소 : 1 최대 : 500)\n" +
+      $"기본값 : {GlobalProperty.Options.DefaultValue.AverageColorProcessingOffset} (최소 : 1 최대 : 500)\n" +
       $"*적응형 색 테마를 사용해야 합니다.\n\n" +
 
       $"픽셀 평균색을 추출할때 건너뛰는 픽셀 갯수입니다.\n" +

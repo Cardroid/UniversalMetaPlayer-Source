@@ -25,9 +25,9 @@ namespace UMP.Controller.Function.OptionControl
     {
       InitializeComponent();
 
-      GlobalProperty.PropertyChanged += (e) =>
+      GlobalProperty.PropertyChanged += (_, e) =>
       {
-        if (e == "AverageColorProcessingOffset")
+        if (e.PropertyName == "AverageColorProcessingOffset")
           this.AverageColorProcessingOffsetTextBox.Text = GlobalProperty.Options.AverageColorProcessingOffset.ToString();
       };
 
@@ -44,7 +44,7 @@ namespace UMP.Controller.Function.OptionControl
       if (int.TryParse(this.AverageColorProcessingOffsetTextBox.Text, out int result))
         result = Math.Clamp(result, 1, 501);
       else
-        result = GlobalProperty.Options.DefaultValue.DefaultAverageColorProcessingOffset;
+        result = GlobalProperty.Options.DefaultValue.AverageColorProcessingOffset;
       GlobalProperty.Options.AverageColorProcessingOffset = result;
     }
   }

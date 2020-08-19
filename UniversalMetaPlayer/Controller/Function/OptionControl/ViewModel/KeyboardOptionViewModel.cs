@@ -12,9 +12,9 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
   {
     public KeyboardOptionViewModel()
     {
-      GlobalProperty.PropertyChanged += (e) =>
+      GlobalProperty.PropertyChanged += (_, e) =>
       {
-        if (e == "GlobalKeyboardHook")
+        if (e.PropertyName == "GlobalKeyboardHook")
           OnPropertyChanged("GlobalKeyboardHookIsChecked");
       };
     }
@@ -28,7 +28,7 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
       $"MediaPlayPause, MediaStop, MediaNextTrack, MediaPreviousTrack 버튼을 지원합니다.";
     public string KeyEventDelayOffsetToolTip =>
       $"[실험적 기능]\n" +
-      $"기본값 : {GlobalProperty.Options.DefaultValue.DefaultKeyEventDelay} (최소 : 10 최대 : 200)\n\n" +
+      $"기본값 : {GlobalProperty.Options.DefaultValue.KeyEventDelay} (최소 : 10 최대 : 200)\n\n" +
 
       $"키 입력이 처리된 후, 다음키보드 입력을 받는데 걸리는 시간 입니다.";
   }

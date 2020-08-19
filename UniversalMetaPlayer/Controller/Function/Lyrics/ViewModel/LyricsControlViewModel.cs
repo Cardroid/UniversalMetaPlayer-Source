@@ -13,9 +13,9 @@ namespace UMP.Controller.Function.Lyrics.ViewModel
       if (MainMediaPlayer.MediaLoadedCheck)
         Lyrics = MainMediaPlayer.MediaInformation.Tags[MediaInfoType.Lyrics];
       
-      MainMediaPlayer.PropertyChangedEvent += (e) =>
+      MainMediaPlayer.PropertyChanged += (_, e) =>
       {
-        if (MainMediaPlayer.MediaLoadedCheck && e == "MainPlayerInitialized")
+        if (MainMediaPlayer.MediaLoadedCheck && e.PropertyName == "MainPlayerInitialized")
         {
           Lyrics = MainMediaPlayer.MediaInformation.Tags[MediaInfoType.Lyrics];
           OnPropertyChanged("Lyrics");
