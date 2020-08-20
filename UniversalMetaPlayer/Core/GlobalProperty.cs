@@ -115,13 +115,17 @@ namespace UMP.Core
           var loadedOptions = JsonConvert.DeserializeObject<Dictionary<string, string>>(jObj["GlobalProperty"].ToString());
 
           foreach (var pair in loadedOptions)
-            Options.SetSetting(pair.Key, pair.Value);
+          {
+            if (Enum.TryParse(pair.Key, out ValueName key))
+              Options.SetSetting(key, pair.Value);
+          }
 
-          Options.GlobalKeyboardHook = loadedOptions.TryGetValue("GlobalKeyboardHook", out string value)
-            ? (bool.TryParse(value, out bool result)
-            ? result
-            : Options.DefaultValue.GlobalKeyboardHook)
-            : Options.DefaultValue.GlobalKeyboardHook;
+          // 설정부 통합으로 쓰이지 않음
+          //Options.GlobalKeyboardHook = loadedOptions.TryGetValue("GlobalKeyboardHook", out string value)
+          //  ? (bool.TryParse(value, out bool result)
+          //  ? result
+          //  : Options.DefaultValue.GlobalKeyboardHook)
+          //  : Options.DefaultValue.GlobalKeyboardHook;
 
           Log.Info("메인 설정 불러오기 완료");
         }
@@ -148,9 +152,9 @@ namespace UMP.Core
         // 테마 적용하기
         try
         {
-          ThemeHelper.IsDarkMode = bool.Parse(Options.TryGetSetting("IsDarkMode", out string value) ? value : bool.TrueString);
-          ThemeHelper.ChangePrimaryColor((Color)ColorConverter.ConvertFromString(Options.TryGetSetting("PrimaryColor", out string primaryColor) ? primaryColor : Colors.Green.Lighten(2).ToString()));
-          ThemeHelper.ChangeSecondaryColor((Color)ColorConverter.ConvertFromString(Options.TryGetSetting("SecondaryColor", out string secondaryColor) ? secondaryColor : Colors.Green.Darken(2).ToString()));
+          ThemeHelper.IsDarkMode = Options.TryGetSetting(ValueName.IsDarkMode, out bool value) && value;
+          ThemeHelper.ChangePrimaryColor(Options.TryGetSetting(ValueName.PrimaryColor, out Color primaryColor) ? primaryColor : Colors.Green.Lighten(2));
+          ThemeHelper.ChangeSecondaryColor(Options.TryGetSetting(ValueName.SecondaryColor, out Color secondaryColor) ? secondaryColor : Colors.Green.Darken(2));
           Log.Info("메인 테마 불러오기 완료");
         }
         catch (Exception e)
@@ -197,10 +201,54 @@ namespace UMP.Core
       public static JObject SettingsConvertToJson() => JObject.FromObject(Settings);
 
       private static Dictionary<string, string> Settings { get; } = new Dictionary<string, string>();
-      public static void SetSetting(string key, string value) => Settings[key] = value;
-      public static bool TryGetSetting(string key, out string value) => Settings.TryGetValue(key, out value);
-      public static void Clear() => Settings.Clear();
+      public static void SetSetting(ValueName key, string value)
+      {
+        Settings[key.ToString()] = value;
+        
+        if(key == ValueName.GlobalKeyboardHook)
+        {
+          if (bool.TryParse(value, out bool result) && result)
+            Hook.Start();
+          else
+            Hook.Dispose();
+        }
 
+        OnPropertyChanged(key.ToString());
+      }
+      public static bool TryGetSetting<T>(ValueName key, out T value)
+      {
+        value = default;
+
+        if (Settings.TryGetValue(key.ToString(), out string result))
+        {
+          if (result is T _value)
+          {
+            value = _value;
+            return true;
+          }
+        }
+        
+        return false;
+      }
+      public static void Clear() { Settings.Clear(); OnPropertyChanged("Clear"); }
+
+      /// <summary>
+      /// 테마 변경되면 자동저장
+      /// </summary>
+      /// <param name="e">변경 후 테마</param>
+      private static void ThemeHelper_ThemeChangedEvent(ThemeHelper.ThemeProperty e)
+      {
+        if (!NowLoading)
+        {
+          SetSetting(ValueName.IsDarkMode, e.IsDarkMode.ToString());
+          SetSetting(ValueName.PrimaryColor, e.PrimaryColor.ToString());
+          SetSetting(ValueName.SecondaryColor, e.SecondaryColor.ToString());
+          OnPropertyChanged("Theme");
+        }
+      }
+
+      // 설정부 통합으로 쓰이지 않음
+      /*
       #region 일반
       /// <summary>
       /// 캐시를 재외한 파일 저장 폴더 경로
@@ -276,21 +324,6 @@ namespace UMP.Core
       #endregion
 
       #region 테마
-      /// <summary>
-      /// 테마 변경되면 자동저장
-      /// </summary>
-      /// <param name="e">변경 후 테마</param>
-      private static void ThemeHelper_ThemeChangedEvent(ThemeHelper.ThemeProperty e)
-      {
-        if (!NowLoading)
-        {
-          SetSetting("IsDarkMode", e.IsDarkMode.ToString());
-          SetSetting("PrimaryColor", e.PrimaryColor.ToString());
-          SetSetting("SecondaryColor", e.SecondaryColor.ToString());
-          OnPropertyChanged("Theme");
-        }
-      }
-
       /// <summary>
       /// 평균색 테마 적용 여부
       /// </summary>
@@ -424,6 +457,7 @@ namespace UMP.Core
         }
       }
       #endregion
+      */
 
       /// <summary>
       /// 기본값이 정의 되어 있는 클래스
@@ -448,6 +482,19 @@ namespace UMP.Core
 
       public class Enums
       {
+        public enum ValueName
+        {
+          // 일반
+          FileSavePath, PrivateLogging, MediaLoadEngine, LyricsWindowActive,
+          // 테마
+          IsDarkMode, PrimaryColor, SecondaryColor,
+          IsAverageColorTheme, AverageColorProcessingOffset,
+          // 키보드
+          HotKey, GlobalKeyboardHook, KeyEventDelay,
+          // 효과
+          FadeEffect, FadeEffectDelay
+        }
+
         /// <summary>
         /// 미디어 로더 타입
         /// </summary>
