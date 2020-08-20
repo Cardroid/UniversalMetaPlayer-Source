@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 
 using UMP.Core;
+using UMP.Core.Global;
 
 namespace UMP
 {
@@ -15,7 +16,7 @@ namespace UMP
     public App()
     {
       MainLog.Info("############### Start application ###############\n" +
-        $"Current Version : [{GlobalProperty.StaticValues.FileVersion}]\nBit : [{GlobalProperty.StaticValues.BitVersion}]",
+        $"Current Version : [{GlobalObj.Property.Predefine.FileVersion}]\nBit : [{GlobalObj.Property.Predefine.BitVersion}]",
         $"Start Path : [{AppDomain.CurrentDomain.BaseDirectory}]\nTask Path : [{Environment.CurrentDirectory}]");
 
       // Application의 모든 에러 이벤트를 로그로 남깁니다

@@ -10,6 +10,7 @@ using MaterialDesignColors.ColorManipulation;
 using MaterialDesignThemes.Wpf;
 
 using UMP.Core;
+using UMP.Core.Global;
 using UMP.Core.Player;
 
 namespace UMP.Utility
@@ -49,8 +50,8 @@ namespace UMP.Utility
     {
       var theme = new CustomColorTheme();
 
-      Color primaryColor = Colors.Green.Lighten(3);
-      Color secondaryColor = Colors.Green.Darken(3);
+      Color primaryColor = GlobalObj.Property.DefaultValue.GetDefaultValue<Color>(Enums.ValueName.PrimaryColor);
+      Color secondaryColor = GlobalObj.Property.DefaultValue.GetDefaultValue<Color>(Enums.ValueName.SecondaryColor);
 
       theme.PrimaryColor = primaryColor;
       theme.SecondaryColor = secondaryColor;
@@ -109,15 +110,15 @@ namespace UMP.Utility
     {
       if (MainMediaPlayer.MediaLoadedCheck)
       {
-        if (GlobalProperty.Options.IsAverageColorTheme && MainMediaPlayer.MediaInformation.AlbumImage != null)
+        if (GlobalObj.Property.Options.Getter<bool>(Enums.ValueName.IsAverageColorTheme) && MainMediaPlayer.MediaInformation.AlbumImage != null)
         {
           Log log = new Log(typeof(ThemeHelper));
           try
           {
             Color color;
-            await Task.Run(() => 
+            await Task.Run(() =>
             {
-              color = ImageProcessing.GetAverageColor(MainMediaPlayer.MediaInformation.AlbumImage as BitmapSource, GlobalProperty.Options.AverageColorProcessingOffset);
+              color = ImageProcessing.GetAverageColor(MainMediaPlayer.MediaInformation.AlbumImage as BitmapSource, GlobalObj.Property.Options.Getter<int>(Enums.ValueName.AverageColorProcessingOffset));
             });
             Application.Current.MainWindow.BorderBrush = new SolidColorBrush(color);
             ChangePrimaryColor(color.Lighten(2));

@@ -7,7 +7,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 using UMP.Core;
-using UMP.Core.Model;
+using UMP.Core.Global;
+using UMP.Core.Model.Media;
+using UMP.Core.Model.ViewModel;
 using UMP.Core.Player;
 
 namespace UMP.Controller.ViewModel
@@ -69,7 +71,7 @@ namespace UMP.Controller.ViewModel
         else
         {
           ImageMargin = new Thickness(70);
-          return GlobalProperty.StaticValues.LogoNoteImage;
+          return GlobalObj.Property.Predefine.LogoNoteImage;
         }
       }
     }

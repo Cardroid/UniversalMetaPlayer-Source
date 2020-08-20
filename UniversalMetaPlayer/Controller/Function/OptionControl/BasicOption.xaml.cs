@@ -15,14 +15,14 @@ using System.Windows.Navigation;
 
 using MaterialDesignThemes.Wpf;
 
-using UMP.Controller.Function.OptionControl.ViewModel;
 using UMP.Core;
-using UMP.Core.Model;
+using UMP.Core.Global;
+using UMP.Core.Model.Func;
 using UMP.Utility;
 
 namespace UMP.Controller.Function.OptionControl
 {
-  public partial class BasicOption : FunctionModelControl
+  public partial class BasicOption : FunctionControlForm
   {
     public BasicOption() : base("옵션 - 일반")
     {
@@ -37,9 +37,9 @@ namespace UMP.Controller.Function.OptionControl
 
     private void OpenDirectoryDialogButton_Click(object sender, RoutedEventArgs e)
     {
-      var result = DialogHelper.OpenDirectoryDialog("저장 폴더 선택", GlobalProperty.Options.FileSavePath);
+      var result = DialogHelper.OpenDirectoryDialog("저장 폴더 선택", GlobalObj.Property.Options.Getter<string>(Enums.ValueName.FileSavePath));
       if (result)
-        GlobalProperty.Options.FileSavePath = result.Result;
+        GlobalObj.Property.Options.Setter(Enums.ValueName.FileSavePath, result.Result);
     }
 
     #region SetDefaultButton
@@ -77,7 +77,7 @@ namespace UMP.Controller.Function.OptionControl
       }
       else
       {
-        GlobalProperty.SetDefault();
+        GlobalObj.Property.SetDefault();
         GlobalEvent.GlobalMessageEventInvoke("설정이 초기화 되었습니다.", true);
         IsReset = false;
       }

@@ -4,8 +4,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 
-using UMP.Core;
-using UMP.Core.Model;
+using UMP.Core.Global;
 
 namespace UMP.Utility
 {
@@ -46,13 +45,13 @@ namespace UMP.Utility
     /// <returns>로컬 경로일 경우 true</returns>
     public static bool IsLocalPath(string path) { try { return new Uri(path).IsFile; } catch { return false; } }
 
-    public static bool CheckYTDL() => File.Exists(Path.Combine(GlobalProperty.StaticValues.YTDL_PATH, "youtube-dl.exe"));
+    public static bool CheckYTDL() => File.Exists(Path.Combine(GlobalObj.Property.Predefine.YTDL_PATH, "youtube-dl.exe"));
     public static bool CheckFFmpeg()
     {
       bool result = true;
-      result &= File.Exists(Path.Combine(GlobalProperty.StaticValues.FFMPEG_PATH, "ffmpeg.exe"));
-      result &= File.Exists(Path.Combine(GlobalProperty.StaticValues.FFMPEG_PATH, "ffplay.exe"));
-      result &= File.Exists(Path.Combine(GlobalProperty.StaticValues.FFMPEG_PATH, "ffprobe.exe"));
+      result &= File.Exists(Path.Combine(GlobalObj.Property.Predefine.FFMPEG_PATH, "ffmpeg.exe"));
+      result &= File.Exists(Path.Combine(GlobalObj.Property.Predefine.FFMPEG_PATH, "ffplay.exe"));
+      result &= File.Exists(Path.Combine(GlobalObj.Property.Predefine.FFMPEG_PATH, "ffprobe.exe"));
       return result;
     }
   }

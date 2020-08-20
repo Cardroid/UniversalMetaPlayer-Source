@@ -13,6 +13,8 @@ using PlaylistsNET.Content;
 using PlaylistsNET.Models;
 using UMP.Core.Function;
 using UMP.Core.Player;
+using UMP.Core.Model.Media;
+using UMP.Core.Global;
 
 namespace UMP.Core.Model
 {
@@ -20,7 +22,7 @@ namespace UMP.Core.Model
   {
     public PlayList(string name = "Nameless")
     {
-      EigenValue = new RandomFunc().RandomString();
+      EigenValue = Converter.SHA256Hash(name);
       PlayListName = name;
       Log = new Log($"{typeof(PlayList)} - ({EigenValue})");
     }
@@ -88,7 +90,9 @@ namespace UMP.Core.Model
 
       string m3uData = PlaylistToTextHelper.ToText(playlist);
 
-      var savepath = Path.Combine(!string.IsNullOrWhiteSpace(path) ? path : Path.Combine(GlobalProperty.Options.FileSavePath, "PlayList"));
+      var savepath = Path.Combine(!string.IsNullOrWhiteSpace(path) 
+        ? path 
+        : Path.Combine(GlobalObj.Property.Options.Getter<string>(Enums.ValueName.FileSavePath), "PlayList"));
       Checker.DirectoryCheck(savepath);
       playlist.Path = savepath;
 
@@ -119,7 +123,7 @@ namespace UMP.Core.Model
         catch (Exception e)
         {
           Log.Fatal("플레이 리스트 로드 중 오류 발생. (Parsing Error)", e, $"Path : [{path}]");
-        GlobalEvent.GlobalMessageEventInvoke("플레이 리스트 로드 실패! [로그를 확인해주세요]");
+          GlobalEvent.GlobalMessageEventInvoke("플레이 리스트 로드 실패! [로그를 확인해주세요]");
           return false;
         }
         finally
@@ -161,7 +165,7 @@ namespace UMP.Core.Model
         }
 
         if (newPlaylist)
-          EigenValue = new RandomFunc().RandomString();
+          EigenValue = Converter.SHA256Hash(playListData.FileName);
 
         Log.Info($"플레이 리스트 로드 완료 MediaCount : [{paths.Count}] Loaded Warning [{loadErrorItemExists}]", $"Path : [{path}]");
         if (loadErrorItemExists)

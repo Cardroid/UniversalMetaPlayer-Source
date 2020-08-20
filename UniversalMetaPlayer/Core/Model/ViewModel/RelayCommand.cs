@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Input;
 
-namespace UMP.Core.Model
+namespace UMP.Core.Model.ViewModel
 {
   public class RelayCommand : ICommand
   {

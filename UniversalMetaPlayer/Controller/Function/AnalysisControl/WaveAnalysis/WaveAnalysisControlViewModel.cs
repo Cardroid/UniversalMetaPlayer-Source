@@ -6,7 +6,7 @@ using System.Windows.Input;
 
 using UMP.Controller.Function.AnalysisControl.WaveAnalysis;
 using UMP.Controller.Function.AnalysisControl.WaveAnalysis.Helper;
-using UMP.Core.Model;
+using UMP.Core.Model.ViewModel;
 using UMP.Core.Player;
 
 namespace UMP.Controller.Function.AnalysisControl

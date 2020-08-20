@@ -4,10 +4,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-using MaterialDesignThemes.Wpf;
 using UMP.Utility;
 
-namespace UMP.Core
+namespace UMP.Core.Global
 {
   public delegate void UMP_VoidEventHandler();
   public delegate void UMP_GlobalMessageEventHandler(string message, bool autoClose);
@@ -35,7 +34,7 @@ namespace UMP.Core
         return;
       KeyDownEventHandled = true;
       KeyDownEvent?.Invoke(e);
-      await Task.Delay(GlobalProperty.Options.KeyEventDelay);
+      await Task.Delay(GlobalObj.Property.Options.Getter<int>(Enums.ValueName.KeyEventDelay));
       KeyDownEventHandled = false;
     }
   }

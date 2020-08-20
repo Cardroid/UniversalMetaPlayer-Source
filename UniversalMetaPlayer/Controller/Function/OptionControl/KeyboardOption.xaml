@@ -1,5 +1,5 @@
-﻿<Function:FunctionModelControl
-    xmlns:Function="clr-namespace:UMP.Controller.Function"
+﻿<funcmodel:FunctionControlForm
+    xmlns:funcmodel="clr-namespace:UMP.Core.Model.Func"
     x:Class="UMP.Controller.Function.OptionControl.KeyboardOption"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -15,9 +15,9 @@
     FontFamily="{DynamicResource MainFontFamily}"
     mc:Ignorable="d">
 
-    <Function:FunctionModelControl.DataContext>
+    <funcmodel:FunctionControlForm.DataContext>
         <viewmodel:KeyboardOptionViewModel />
-    </Function:FunctionModelControl.DataContext>
+    </funcmodel:FunctionControlForm.DataContext>
 
     <Grid
         Margin="5"
@@ -66,4 +66,4 @@
             Grid.Column="1"
             Grid.Row="1" />
     </Grid>
-</Function:FunctionModelControl>
+</funcmodel:FunctionControlForm>

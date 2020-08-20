@@ -4,8 +4,9 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-
+using UMP.Core.Global;
 using UMP.Core.Model;
+using UMP.Core.Model.Media;
 using UMP.Utility;
 
 using YoutubeExplode;
@@ -149,14 +150,14 @@ namespace UMP.Core.Function
       if (Checker.CheckForInternetConnection())
       {
         // 캐시폴더가 존재하지 않을시 생성
-        Checker.DirectoryCheck(GlobalProperty.StaticValues.OnlineMediaCachePath);
+        Checker.DirectoryCheck(GlobalObj.Property.Predefine.OnlineMediaCachePath);
 
-        string mp3FilePath = Path.Combine(GlobalProperty.StaticValues.OnlineMediaCachePath, $"{(await GetID()).Result}.mp3");
+        string mp3FilePath = Path.Combine(GlobalObj.Property.Predefine.OnlineMediaCachePath, $"{(await GetID()).Result}.mp3");
         try
         {
           // 유튜브 스트림 다운로드
           string streampath;
-          var streamPathResult = await TryDownloadYouTubeStreamAsync(GlobalProperty.StaticValues.OnlineMediaCachePath);
+          var streamPathResult = await TryDownloadYouTubeStreamAsync(GlobalObj.Property.Predefine.OnlineMediaCachePath);
           if (streamPathResult)
             streampath = streamPathResult.Result;
           else
@@ -388,12 +389,12 @@ namespace UMP.Core.Function
     /// </summary>
     private void LoadFailProcess()
     {
-      if (!Information.Title.ToLower().StartsWith(GlobalProperty.StaticValues.MEDIA_INFO_NULL.ToLower()))
+      if (!Information.Title.ToLower().StartsWith(GlobalObj.Property.Predefine.MEDIA_INFO_NULL.ToLower()))
       {
         if (string.IsNullOrWhiteSpace(Information.Title))
-          Information.Title = $"{GlobalProperty.StaticValues.MEDIA_INFO_NULL} {Path.GetFileNameWithoutExtension(Information.MediaLocation)}";
+          Information.Title = $"{GlobalObj.Property.Predefine.MEDIA_INFO_NULL} {Path.GetFileNameWithoutExtension(Information.MediaLocation)}";
         else
-          Information.Title = $"{GlobalProperty.StaticValues.MEDIA_INFO_NULL} {Information.Title}";
+          Information.Title = $"{GlobalObj.Property.Predefine.MEDIA_INFO_NULL} {Information.Title}";
       }
       Information.MediaStreamPath = string.Empty;
     }

@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 
-namespace UMP.Core.Model
+namespace UMP.Core.Model.Media
 {
   public interface IMediaLoader
   {

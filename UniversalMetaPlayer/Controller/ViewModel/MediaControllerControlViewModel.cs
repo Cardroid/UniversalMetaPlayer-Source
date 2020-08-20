@@ -5,8 +5,6 @@ using System.Text;
 using System.Windows;
 using System.Windows.Media;
 
-using UMP.Core;
-using UMP.Core.Model;
 using UMP.Utility;
 
 using MaterialDesignThemes.Wpf;
@@ -16,6 +14,7 @@ using MaterialDesignColors.ColorManipulation;
 using UMP.Core.Player;
 using UMP.Controller.Function;
 using UMP.Controller.WindowHelper;
+using UMP.Core.Model.ViewModel;
 
 namespace UMP.Controller.ViewModel
 {

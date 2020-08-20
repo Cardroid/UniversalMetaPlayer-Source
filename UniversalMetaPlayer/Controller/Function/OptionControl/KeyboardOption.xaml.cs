@@ -13,11 +13,12 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-using UMP.Core;
+using UMP.Core.Global;
+using UMP.Core.Model.Func;
 
 namespace UMP.Controller.Function.OptionControl
 {
-  public partial class KeyboardOption : FunctionModelControl
+  public partial class KeyboardOption : FunctionControlForm
   {
     public KeyboardOption() : base("옵션 - 키보드")
     {
@@ -26,7 +27,7 @@ namespace UMP.Controller.Function.OptionControl
       GlobalProperty.PropertyChanged += (_, e) =>
       {
         if (e.PropertyName == "KeyEventDelay")
-          this.KeyEventDelayOffsetTextBox.Text = GlobalProperty.Options.KeyEventDelay.ToString();
+          this.KeyEventDelayOffsetTextBox.Text = GlobalObj.Property.Options.Getter<int>(Enums.ValueName.KeyEventDelay).ToString();
       };
 
       this.PreviewMouseDown += (_, e) => { KeyEventDelayOffsetTextBox_Apply(); };
@@ -34,7 +35,7 @@ namespace UMP.Controller.Function.OptionControl
       this.KeyEventDelayOffsetTextBox.GotKeyboardFocus += (_, e) => { this.KeyEventDelayOffsetTextBox.Text = ""; };
       this.KeyEventDelayOffsetTextBox.PreviewKeyDown += (_, e) => { if (e.Key == Key.Enter) Keyboard.ClearFocus(); };
       this.KeyEventDelayOffsetTextBox.LostKeyboardFocus += (_, e) => { KeyEventDelayOffsetTextBox_Apply(); };
-      this.KeyEventDelayOffsetTextBox.Text = GlobalProperty.Options.KeyEventDelay.ToString();
+      this.KeyEventDelayOffsetTextBox.Text = GlobalObj.Property.Options.Getter<int>(Enums.ValueName.KeyEventDelay).ToString();
     }
 
     private void KeyEventDelayOffsetTextBox_Apply()
@@ -42,8 +43,8 @@ namespace UMP.Controller.Function.OptionControl
       if (int.TryParse(this.KeyEventDelayOffsetTextBox.Text, out int result))
         result = Math.Clamp(result, 10, 201);
       else
-        result = GlobalProperty.Options.DefaultValue.KeyEventDelay;
-      GlobalProperty.Options.KeyEventDelay = result;
+        result = GlobalObj.Property.DefaultValue.GetDefaultValue<int>(Enums.ValueName.KeyEventDelay);
+      GlobalObj.Property.Options.Setter(Enums.ValueName.KeyEventDelay, result.ToString());
     }
   }
 }

@@ -17,6 +17,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 
 using UMP.Core;
+using UMP.Core.Global;
 using UMP.Core.Player;
 using UMP.Utility;
 using UMP.Utility.Effect;
@@ -28,7 +29,7 @@ namespace UMP
     private MainWindowViewModel ViewModel { get; }
     public MainWindow()
     {
-      GlobalProperty.Load();
+      GlobalObj.Property.Load();
 
       InitializeComponent();
       ViewModel = (MainWindowViewModel)this.DataContext;
@@ -80,7 +81,7 @@ namespace UMP
       {
         if(e.PropertyName == "IsControllable")
         {
-          if (GlobalProperty.State.IsControllable)
+          if (GlobalObj.Property.State.IsControllable)
             this.MainControllerControl.IsEnabled = true;
           else
             this.MainControllerControl.IsEnabled = false;
@@ -112,7 +113,7 @@ namespace UMP
 #if DEBUG
       this.Title = "UniversalMetaPlayer - V2 [Test Version]";
       this.GlobalMessage.Content =
-        $"현재 버전은 [테스트 버전] [v{GlobalProperty.StaticValues.FileVersion}] [{GlobalProperty.StaticValues.BitVersion}] 입니다\n" +
+        $"현재 버전은 [테스트 버전] [v{GlobalObj.Property.Predefine.FileVersion}] [{GlobalObj.Property.Predefine.BitVersion}] 입니다\n" +
         $"오류가 발생하면 로그파일과 함께 신고해주세요!\n";
 #else
       this.Title = "UniversalMetaPlayer - V2";
@@ -147,7 +148,7 @@ namespace UMP
     {
       Hook.Dispose();
       MainMediaPlayer.Dispose();
-      GlobalProperty.Save();
+      GlobalObj.Property.Save();
       App.MainLog.Info("############### Exit application ###############");
       Application.Current.Shutdown();
     }

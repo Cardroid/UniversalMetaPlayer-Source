@@ -1,5 +1,5 @@
-﻿<Function:FunctionModelControl
-    xmlns:Function="clr-namespace:UMP.Controller.Function"
+﻿<funcmodel:FunctionControlForm
+    xmlns:funcmodel="clr-namespace:UMP.Core.Model.Func"
     x:Class="UMP.Controller.Function.AnalysisControl.AudioFileAnalysis.AudioWaveFormatAnalysisControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -19,4 +19,4 @@
         x:Name="PropertyPanel"
         Orientation="Vertical" 
         Margin="5"/>
-</Function:FunctionModelControl>
+</funcmodel:FunctionControlForm>

@@ -14,8 +14,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using UMP.Core;
-using UMP.Core.Model;
+
+using UMP.Core.Global;
 using UMP.Core.Player;
 using UMP.Utility;
 
@@ -38,7 +38,7 @@ namespace UMP.Controller.Dialog
     {
       InitializeComponent();
 
-      this.Loaded += (_, e) => 
+      this.Loaded += (_, e) =>
       {
         this.KeyDown += (_, e) =>
         {
@@ -67,7 +67,8 @@ namespace UMP.Controller.Dialog
     private void Timer_Elapsed(object sender, ElapsedEventArgs e)
     {
       Timer.Stop();
-      Dispatcher.Invoke(new Action(async () => {
+      Dispatcher.Invoke(new Action(async () =>
+      {
         await UserTextBox_Changed();
       }));
     }
@@ -126,7 +127,7 @@ namespace UMP.Controller.Dialog
       }
       else
       {
-        if (Checker.CheckForInternetConnection() && GlobalProperty.Options.MediaLoadEngine == GlobalProperty.Options.Enums.MediaLoadEngineType.Native)
+        if (Checker.CheckForInternetConnection() && GlobalObj.Property.Options.Getter<Enums.MediaLoadEngineType>(Enums.ValueName.MediaLoadEngine) == Enums.MediaLoadEngineType.Native)
         {
           YoutubeClient client = new YoutubeClient();
           object info = null;
@@ -211,7 +212,7 @@ namespace UMP.Controller.Dialog
         }
         else
         {
-          if(GlobalProperty.Options.MediaLoadEngine == GlobalProperty.Options.Enums.MediaLoadEngineType.Native)
+          if (GlobalObj.Property.Options.Getter<Enums.MediaLoadEngineType>(Enums.ValueName.MediaLoadEngine) == Enums.MediaLoadEngineType.Native)
           {
             try
             {

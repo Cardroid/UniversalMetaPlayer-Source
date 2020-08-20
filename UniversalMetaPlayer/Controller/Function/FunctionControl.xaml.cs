@@ -10,11 +10,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+
 using UMP.Controller.Function.AnalysisControl;
 using UMP.Controller.Function.OptionControl;
 using UMP.Controller.Function.Etc;
-using UMP.Core;
 using UMP.Controller.Function.AnalysisControl.AudioFileAnalysis;
+using UMP.Core.Global;
 
 namespace UMP.Controller.Function
 {

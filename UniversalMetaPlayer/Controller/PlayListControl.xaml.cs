@@ -11,13 +11,13 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-using UMP.Controller.Dialog;
-using UMP.Core;
-using UMP.Core.Model;
-
 using MaterialDesignThemes.Wpf;
-using UMP.Core.Function;
+
+using UMP.Core;
 using UMP.Core.Player;
+using UMP.Core.Model.Media;
+using UMP.Controller.Dialog;
+using UMP.Core.Global;
 
 namespace UMP.Controller
 {
@@ -104,7 +104,7 @@ namespace UMP.Controller
     /// </summary>
     private async void PlayListControlButton_Click(object sender, RoutedEventArgs e)
     {
-      if (GlobalProperty.State.IsControllable && sender is Button button)
+      if (GlobalObj.Property.State.IsControllable && sender is Button button)
       {
         switch (button.Name)
         {
@@ -150,7 +150,7 @@ namespace UMP.Controller
     {
       GlobalEvent.KeyDownEventHandled = !isEnable;
       this.PlayListGroupBox.IsEnabled = isEnable;
-      GlobalProperty.State.IsControllable = isEnable;
+      GlobalObj.Property.State.IsControllable = isEnable;
     }
 
     /// <summary>

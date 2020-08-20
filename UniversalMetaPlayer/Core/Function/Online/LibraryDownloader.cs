@@ -7,6 +7,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
+using UMP.Core.Global;
 using UMP.Utility;
 
 namespace UMP.Core.Function.Online
@@ -19,7 +20,7 @@ namespace UMP.Core.Function.Online
     public async Task<bool> DownloadFFmpegAsync()
     {
       Log log = new Log($"{typeof(LibraryDownloader)} <FFmpeg>");
-      var libraryCachePath = Path.Combine(GlobalProperty.StaticValues.CACHE_PATH, "ffmpeg");
+      var libraryCachePath = Path.Combine(GlobalObj.Property.Predefine.CACHE_PATH, "ffmpeg");
       WebClient webClient = new WebClient();
 
       webClient.DownloadFileCompleted += (s, e) => { Completed?.Invoke(s, e); };
@@ -45,7 +46,7 @@ namespace UMP.Core.Function.Online
         // 암축푸는 코드
         if (await Converter.ExtractZIPFileAsync(Path.Combine(libraryCachePath, "ffmpeg.zip"), libraryCachePath))
         {
-          var libraryPath = Path.Combine(GlobalProperty.StaticValues.LIBRARY_PATH, "FFmpeg");
+          var libraryPath = Path.Combine(GlobalObj.Property.Predefine.LIBRARY_PATH, "FFmpeg");
           if (Directory.Exists(libraryPath))
             Directory.Delete(libraryPath, true);
           Directory.CreateDirectory(libraryPath);
@@ -82,7 +83,7 @@ namespace UMP.Core.Function.Online
     public async Task<bool> DownloadYtdlAsync()
     {
       Log log = new Log($"{typeof(LibraryDownloader)} <youtube-dl>");
-      var libraryCachePath = Path.Combine(GlobalProperty.StaticValues.CACHE_PATH, "ytdl");
+      var libraryCachePath = Path.Combine(GlobalObj.Property.Predefine.CACHE_PATH, "ytdl");
       var ytdlFileName = "youtube-dl.exe";
       WebClient webClient = new WebClient();
 
@@ -106,7 +107,7 @@ namespace UMP.Core.Function.Online
 
       if (File.Exists(Path.Combine(libraryCachePath, ytdlFileName)))
       {
-        var libraryPath = Path.Combine(GlobalProperty.StaticValues.LIBRARY_PATH, "YTDL");
+        var libraryPath = Path.Combine(GlobalObj.Property.Predefine.LIBRARY_PATH, "YTDL");
         Checker.DirectoryCheck(libraryPath);
         File.Move(Path.Combine(libraryCachePath, ytdlFileName), Path.Combine(libraryPath, ytdlFileName));
         Directory.Delete(libraryCachePath, true);

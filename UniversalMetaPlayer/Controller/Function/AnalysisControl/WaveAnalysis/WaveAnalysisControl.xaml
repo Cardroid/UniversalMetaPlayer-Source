@@ -1,5 +1,5 @@
-﻿<Function:FunctionModelControl
-    xmlns:Function="clr-namespace:UMP.Controller.Function"
+﻿<funcmodel:FunctionControlForm
+    xmlns:funcmodel="clr-namespace:UMP.Core.Model.Func"
     x:Class="UMP.Controller.Function.AnalysisControl.WaveAnalysisControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -15,9 +15,9 @@
     d:DesignHeight="300"
     d:DesignWidth="300">
 
-    <Function:FunctionModelControl.DataContext>
+    <funcmodel:FunctionControlForm.DataContext>
         <viewmodel:WaveAnalysisControlViewModel />
-    </Function:FunctionModelControl.DataContext>
+    </funcmodel:FunctionControlForm.DataContext>
     
     <Grid>
         <Grid.RowDefinitions>
@@ -36,4 +36,4 @@
             ToolTip="{Binding SpectrumAnalyzerVisualizationPlugin.Name}"
             Grid.Row="1" />
     </Grid>
-</Function:FunctionModelControl>
+</funcmodel:FunctionControlForm>

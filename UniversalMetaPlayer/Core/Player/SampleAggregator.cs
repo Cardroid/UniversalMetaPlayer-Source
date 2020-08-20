@@ -4,6 +4,8 @@ using System.Diagnostics;
 using NAudio.Dsp;
 using NAudio.Wave;
 
+using UMP.Core.Global;
+
 namespace UMP.Core.Player
 {
   public partial class SampleAggregator : ISampleProvider
@@ -82,7 +84,7 @@ namespace UMP.Core.Player
     {
       var samplesRead = source.Read(buffer, offset, count);
 
-      if (GlobalProperty.Options.FadeEffect)
+      if (GlobalObj.Property.Options.Getter<bool>(Enums.ValueName.IsUseFadeEffect))
       {
         lock (lockObject)
         {

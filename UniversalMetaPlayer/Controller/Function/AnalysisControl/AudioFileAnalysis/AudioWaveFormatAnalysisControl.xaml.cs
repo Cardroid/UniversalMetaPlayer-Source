@@ -11,11 +11,12 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using UMP.Core.Model.Func;
 using UMP.Core.Player;
 
 namespace UMP.Controller.Function.AnalysisControl.AudioFileAnalysis
 {
-  public partial class AudioWaveFormatAnalysisControl : FunctionModelControl
+  public partial class AudioWaveFormatAnalysisControl : FunctionControlForm
   {
     public AudioWaveFormatAnalysisControl() : base("분석 - 속성")
     {

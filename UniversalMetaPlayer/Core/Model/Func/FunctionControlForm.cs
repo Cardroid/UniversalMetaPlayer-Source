@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Controls;
 
-namespace UMP.Controller.Function
+namespace UMP.Core.Model.Func
 {
-  public class FunctionModelControl : UserControl
+  public class FunctionControlForm : UserControl
   {
-    public FunctionModelControl(string FunctionName)
+    public FunctionControlForm(string FunctionName)
     {
       this.FunctionName = FunctionName;
     }

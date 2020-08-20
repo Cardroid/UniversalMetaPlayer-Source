@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -140,6 +141,23 @@ namespace UMP.Utility
       }
       else
         return false;
+    }
+
+    /// <summary>
+    /// SHA256 알고리즘으로 HASH값을 구합니다
+    /// </summary>
+    /// <param name="data">원본 데이터</param>
+    /// <returns>HASH 값</returns>
+    public static string SHA256Hash(string data)
+    {
+      SHA256 sha = new SHA256Managed();
+      byte[] hash = sha.ComputeHash(Encoding.ASCII.GetBytes(data));
+      StringBuilder stringBuilder = new StringBuilder();
+      
+      foreach (byte b in hash)
+        stringBuilder.AppendFormat("{0:x2}", b);
+
+      return stringBuilder.ToString();
     }
   }
 }

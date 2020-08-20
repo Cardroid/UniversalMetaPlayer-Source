@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+
 using UMP.Controller;
 using UMP.Controller.Function;
-using UMP.Core.Model;
+using UMP.Core.Model.ViewModel;
 
 namespace UMP
 {

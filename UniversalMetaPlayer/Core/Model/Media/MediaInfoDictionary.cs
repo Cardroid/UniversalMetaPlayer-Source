@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace UMP.Core.Model
+namespace UMP.Core.Model.Media
 {
   public class MediaInfoDictionary
   {

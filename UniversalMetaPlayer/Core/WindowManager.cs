@@ -4,11 +4,10 @@ using System.ComponentModel;
 using System.Text;
 using System.Windows;
 
-using TagLib.Matroska;
-
 using UMP.Controller.Function.Lyrics;
 using UMP.Controller.WindowHelper;
-using UMP.Core.Model;
+using UMP.Core.Global;
+using UMP.Core.Model.Media;
 using UMP.Core.Player;
 
 namespace UMP.Core
@@ -25,7 +24,7 @@ namespace UMP.Core
 
     private static void MainMediaPlayer_PropertyChanged_LyricsWindow(object sender, PropertyChangedEventArgs e)
     {
-      if (e.PropertyName == "MainPlayerInitialized" && GlobalProperty.Options.LyricsWindowActive == GlobalProperty.Options.Enums.LyricsSettingsType.Auto)
+      if (e.PropertyName == "MainPlayerInitialized" && GlobalObj.Property.Options.Getter<Enums.LyricsSettingsType>(Enums.ValueName.LyricsWindowActive) == Enums.LyricsSettingsType.Auto)
       {
         // 가사 창 모드가 Auto일 경우 가사 존재 유무에 따라 창이 열리고 닫힘
         if (!string.IsNullOrWhiteSpace(MainMediaPlayer.MediaInformation.Tags[MediaInfoType.Lyrics]))

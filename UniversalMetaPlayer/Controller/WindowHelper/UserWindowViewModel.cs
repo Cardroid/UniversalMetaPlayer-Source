@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Controls;
 
-using UMP.Core.Model;
+using UMP.Core.Model.ViewModel;
 
 namespace UMP.Controller.WindowHelper
 {

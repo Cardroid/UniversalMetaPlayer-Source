@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using log4net;
 using log4net.Appender;
 using log4net.Core;
 using log4net.Layout;
-using log4net.Repository;
 using log4net.Repository.Hierarchy;
+
+using UMP.Core.Global;
 
 namespace UMP.Core
 {
@@ -62,15 +61,35 @@ namespace UMP.Core
     public static PatternLayout Layout { get; }
     private ILog Logger { get; }
 
-    public void Fatal(string message, string privateData = "") => Logger.Fatal(GlobalProperty.Options.PrivateLogging && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}" : message);
-    public void Error(string message, string privateData = "") => Logger.Error(GlobalProperty.Options.PrivateLogging && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}" : message);
-    public void Warn(string message, string privateData = "") => Logger.Warn(GlobalProperty.Options.PrivateLogging && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}" : message);
-    public void Info(string message, string privateData = "") => Logger.Info(GlobalProperty.Options.PrivateLogging && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}" : message);
-    public void Debug(string message, string privateData = "") => Logger.Debug(GlobalProperty.Options.PrivateLogging && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}" : message);
-    public void Fatal(string message, Exception exception, string privateData = "") => Logger.Fatal(GlobalProperty.Options.PrivateLogging && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}" : message, exception);
-    public void Error(string message, Exception exception, string privateData = "") => Logger.Error(GlobalProperty.Options.PrivateLogging && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}" : message, exception);
-    public void Warn(string message, Exception exception, string privateData = "") => Logger.Warn(GlobalProperty.Options.PrivateLogging && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}" : message, exception);
-    public void Info(string message, Exception exception, string privateData = "") => Logger.Info(GlobalProperty.Options.PrivateLogging && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}" : message, exception);
-    public void Debug(string message, Exception exception, string privateData = "") => Logger.Debug(GlobalProperty.Options.PrivateLogging && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}" : message, exception);
+    public void Fatal(string message, string privateData = "") =>
+      Logger.Info(GlobalObj.Property.Options.Getter<bool>(Enums.ValueName.PrivateLogging)
+        && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}" : message);
+    public void Error(string message, string privateData = "") =>
+      Logger.Info(GlobalObj.Property.Options.Getter<bool>(Enums.ValueName.PrivateLogging)
+        && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}" : message);
+    public void Warn(string message, string privateData = "") =>
+      Logger.Info(GlobalObj.Property.Options.Getter<bool>(Enums.ValueName.PrivateLogging)
+         && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}" : message);
+    public void Info(string message, string privateData = "") => 
+      Logger.Info(GlobalObj.Property.Options.Getter<bool>(Enums.ValueName.PrivateLogging)
+        && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}" : message);
+    public void Debug(string message, string privateData = "") =>
+      Logger.Info(GlobalObj.Property.Options.Getter<bool>(Enums.ValueName.PrivateLogging)
+        && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}" : message);
+    public void Fatal(string message, Exception exception, string privateData = "") =>
+      Logger.Info(GlobalObj.Property.Options.Getter<bool>(Enums.ValueName.PrivateLogging)
+        && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}" : message, exception);
+    public void Error(string message, Exception exception, string privateData = "") =>
+      Logger.Info(GlobalObj.Property.Options.Getter<bool>(Enums.ValueName.PrivateLogging)
+         && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}" : message, exception);
+    public void Warn(string message, Exception exception, string privateData = "") =>
+      Logger.Info(GlobalObj.Property.Options.Getter<bool>(Enums.ValueName.PrivateLogging)
+        && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}" : message, exception);
+    public void Info(string message, Exception exception, string privateData = "") =>
+      Logger.Info(GlobalObj.Property.Options.Getter<bool>(Enums.ValueName.PrivateLogging)
+        && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}" : message, exception);
+    public void Debug(string message, Exception exception, string privateData = "") =>
+      Logger.Info(GlobalObj.Property.Options.Getter<bool>(Enums.ValueName.PrivateLogging)
+        && !string.IsNullOrWhiteSpace(privateData) ? $"{message}\n===Private===\n{privateData}" : message, exception);
   }
 }

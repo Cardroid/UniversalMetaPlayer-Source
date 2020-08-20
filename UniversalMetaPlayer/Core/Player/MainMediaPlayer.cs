@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows.Threading;
@@ -9,7 +10,8 @@ using NAudio.Wave;
 using UMP.Core.Function;
 using UMP.Core.Model;
 using UMP.Utility;
-using System.Collections.Generic;
+using UMP.Core.Model.Media;
+using UMP.Core.Global;
 
 namespace UMP.Core.Player
 {
@@ -63,8 +65,6 @@ namespace UMP.Core.Player
           }
         }
       };
-
-      Log.Debug("초기화 완료");
     }
 
     private static Log Log { get; }
@@ -372,8 +372,8 @@ namespace UMP.Core.Player
         Tick.Start();
         WavePlayer.Play();
 
-        if (GlobalProperty.Options.FadeEffect)
-          Aggregator.BeginFadeIn(GlobalProperty.Options.FadeEffectDelay);
+        if (GlobalObj.Property.Options.Getter<bool>(Enums.ValueName.IsUseFadeEffect))
+          Aggregator.BeginFadeIn(GlobalObj.Property.Options.Getter<int>(Enums.ValueName.FadeEffectDelay));
 
         PlayStateChanged?.Invoke(PlaybackState);
         IsPlayStateChangeWork = false;
@@ -393,10 +393,10 @@ namespace UMP.Core.Player
         StopButtonActive = true;
         PlayStateChanged?.Invoke(PlaybackState);
 
-        if (GlobalProperty.Options.FadeEffect)
+        if (GlobalObj.Property.Options.Getter<bool>(Enums.ValueName.IsUseFadeEffect))
         {
-          Aggregator.BeginFadeOut(GlobalProperty.Options.FadeEffectDelay);
-          await Task.Delay(GlobalProperty.Options.FadeEffectDelay + 200);
+          Aggregator.BeginFadeOut(GlobalObj.Property.Options.Getter<int>(Enums.ValueName.FadeEffectDelay));
+          await Task.Delay(GlobalObj.Property.Options.Getter<int>(Enums.ValueName.FadeEffectDelay) + 200);
         }
 
         WavePlayer.Stop();
@@ -418,10 +418,10 @@ namespace UMP.Core.Player
           StateSave = PlaybackState.Paused;
         PlayStateChanged?.Invoke(PlaybackState);
 
-        if (GlobalProperty.Options.FadeEffect)
+        if (GlobalObj.Property.Options.Getter<bool>(Enums.ValueName.IsUseFadeEffect))
         {
-          Aggregator.BeginFadeOut(GlobalProperty.Options.FadeEffectDelay);
-          await Task.Delay(GlobalProperty.Options.FadeEffectDelay + 200);
+          Aggregator.BeginFadeOut(GlobalObj.Property.Options.Getter<int>(Enums.ValueName.FadeEffectDelay));
+          await Task.Delay(GlobalObj.Property.Options.Getter<int>(Enums.ValueName.FadeEffectDelay) + 200);
         }
 
         WavePlayer.Pause();

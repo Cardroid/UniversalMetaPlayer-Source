@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using UMP.Core.Model;
+
+using UMP.Core.Model.Media;
+using UMP.Core.Model.ViewModel;
 using UMP.Core.Player;
 
 namespace UMP.Controller.Function.Lyrics.ViewModel

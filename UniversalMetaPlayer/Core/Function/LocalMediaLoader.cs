@@ -4,8 +4,9 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
-
+using UMP.Core.Global;
 using UMP.Core.Model;
+using UMP.Core.Model.Media;
 
 namespace UMP.Core.Function
 {
@@ -69,10 +70,10 @@ namespace UMP.Core.Function
     /// <returns>성공시 true, 미디어 스트림 파일 경로</returns>
     public static GenericResult<string> TryGetOnlineMediaCacheAsync(string id)
     {
-      if (!Directory.Exists(GlobalProperty.StaticValues.OnlineMediaCachePath) || string.IsNullOrWhiteSpace(id))
+      if (!Directory.Exists(GlobalObj.Property.Predefine.OnlineMediaCachePath) || string.IsNullOrWhiteSpace(id))
         return new GenericResult<string>(false);
 
-      string[] searchFiles = Directory.GetFiles(GlobalProperty.StaticValues.OnlineMediaCachePath, $"{id}.mp3", SearchOption.AllDirectories);
+      string[] searchFiles = Directory.GetFiles(GlobalObj.Property.Predefine.OnlineMediaCachePath, $"{id}.mp3", SearchOption.AllDirectories);
       if (searchFiles.Length > 0 && File.Exists(searchFiles[0]))
         return new GenericResult<string>(true, searchFiles[0]);
       else

@@ -11,9 +11,11 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using UMP.Core.Model.Func;
+
 namespace UMP.Controller.Function
 {
-  public partial class ErrorPageControl : FunctionModelControl
+  public partial class ErrorPageControl : FunctionControlForm
   {
     public ErrorPageControl() : base("오류페이지")
     {

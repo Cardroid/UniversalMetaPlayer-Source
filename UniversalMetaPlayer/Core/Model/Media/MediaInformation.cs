@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using System.Net;
 
-namespace UMP.Core.Model
+namespace UMP.Core.Model.Media
 {
   /// <summary>
   /// 미디어 정보 구조체

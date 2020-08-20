@@ -15,12 +15,13 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using UMP.Core;
+using UMP.Core.Global;
+using UMP.Core.Model.Func;
 using UMP.Core.PackageInformation;
-using UMP.Utility;
 
 namespace UMP.Controller.Function.Etc
 {
-  public partial class InformationOption : FunctionModelControl
+  public partial class InformationOption : FunctionControlForm
   {
     public InformationOption() : base("정보")
     {
@@ -30,14 +31,14 @@ namespace UMP.Controller.Function.Etc
 
       this.Mainlogo.Width = 120;
       this.Mainlogo.Height = 120;
-      this.Mainlogo.Source = GlobalProperty.StaticValues.LogoImage;
+      this.Mainlogo.Source = GlobalObj.Property.Predefine.LogoImage;
 
       this.CoreVersionTitleLabel.Content = "코어 버전 : ";
       this.FileVersionTitleLabel.Content = "파일 버전 : ";
       this.BitVersionTitleLabel.Content = "Bit : ";
-      this.CoreVersionLabel.Content = GlobalProperty.StaticValues.CoreVersion;
-      this.FileVersionLabel.Content = GlobalProperty.StaticValues.FileVersion;
-      this.BitVersionLabel.Content = GlobalProperty.StaticValues.BitVersion;
+      this.CoreVersionLabel.Content = GlobalObj.Property.Predefine.CoreVersion;
+      this.FileVersionLabel.Content = GlobalObj.Property.Predefine.FileVersion;
+      this.BitVersionLabel.Content = GlobalObj.Property.Predefine.BitVersion;
 
       this.ProjectRepositoryUrl.NavigateUri = new Uri("https://github.com/Cardroid/UniversalMetaPlayer");
       this.ProjectRepositoryUrl.ToolTip = "https://github.com/Cardroid/UniversalMetaPlayer 으로 이동합니다.";

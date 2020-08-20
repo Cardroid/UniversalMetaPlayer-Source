@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-
+using UMP.Core.Global;
 using UMP.Core.Model;
+using UMP.Core.Model.Media;
 
 namespace UMP.Core.Function
 {
@@ -13,12 +14,12 @@ namespace UMP.Core.Function
 
     public MediaLoader(string mediaLocation)
     {
-      switch (GlobalProperty.Options.MediaLoadEngine)
+      switch (GlobalObj.Property.Options.Getter<Enums.MediaLoadEngineType>(Enums.ValueName.MediaLoadEngine))
       {
-        case GlobalProperty.Options.Enums.MediaLoadEngineType.YoutubeDL:
+        case Enums.MediaLoadEngineType.YoutubeDL:
           this.Loader = new YTDLMediaLoader(mediaLocation);
           break;
-        case GlobalProperty.Options.Enums.MediaLoadEngineType.Native:
+        case Enums.MediaLoadEngineType.Native:
         default:
           this.Loader = new NativeMediaLoader(mediaLocation);
           break;
@@ -27,12 +28,12 @@ namespace UMP.Core.Function
 
     public MediaLoader(MediaInformation info)
     {
-      switch (GlobalProperty.Options.MediaLoadEngine)
+      switch (GlobalObj.Property.Options.Getter<Enums.MediaLoadEngineType>(Enums.ValueName.MediaLoadEngine))
       {
-        case GlobalProperty.Options.Enums.MediaLoadEngineType.YoutubeDL:
+        case Enums.MediaLoadEngineType.YoutubeDL:
           this.Loader = new YTDLMediaLoader(info);
           break;
-        case GlobalProperty.Options.Enums.MediaLoadEngineType.Native:
+        case Enums.MediaLoadEngineType.Native:
         default:
           this.Loader = new NativeMediaLoader(info);
           break;

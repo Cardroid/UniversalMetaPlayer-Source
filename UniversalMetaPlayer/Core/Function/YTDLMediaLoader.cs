@@ -8,7 +8,9 @@ using System.Windows.Media.Imaging;
 using Newtonsoft.Json.Linq;
 
 using UMP.Core.Function.Online;
+using UMP.Core.Global;
 using UMP.Core.Model;
+using UMP.Core.Model.Media;
 using UMP.Utility;
 
 namespace UMP.Core.Function
@@ -185,7 +187,7 @@ namespace UMP.Core.Function
       if (Checker.CheckForInternetConnection())
       {
         YTDLHelper ytdlHelper = new YTDLHelper();
-        return await ytdlHelper.DownloadAudioAsync(Information.MediaLocation, GlobalProperty.StaticValues.OnlineMediaCachePath);
+        return await ytdlHelper.DownloadAudioAsync(Information.MediaLocation, GlobalObj.Property.Predefine.OnlineMediaCachePath);
       }
       else
         return new GenericResult<string>(false);
@@ -215,12 +217,12 @@ namespace UMP.Core.Function
     /// </summary>
     private void LoadFailProcess()
     {
-      if (!Information.Title.ToLower().StartsWith(GlobalProperty.StaticValues.MEDIA_INFO_NULL.ToLower()))
+      if (!Information.Title.ToLower().StartsWith(GlobalObj.Property.Predefine.MEDIA_INFO_NULL.ToLower()))
       {
         if (string.IsNullOrWhiteSpace(Information.Title))
-          Information.Title = $"{GlobalProperty.StaticValues.MEDIA_INFO_NULL} {Path.GetFileNameWithoutExtension(Information.MediaLocation)}";
+          Information.Title = $"{GlobalObj.Property.Predefine.MEDIA_INFO_NULL} {Path.GetFileNameWithoutExtension(Information.MediaLocation)}";
         else
-          Information.Title = $"{GlobalProperty.StaticValues.MEDIA_INFO_NULL} {Information.Title}";
+          Information.Title = $"{GlobalObj.Property.Predefine.MEDIA_INFO_NULL} {Information.Title}";
       }
       Information.MediaStreamPath = string.Empty;
     }
