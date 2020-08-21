@@ -153,7 +153,7 @@ namespace UMP.Utility
       SHA256 sha = new SHA256Managed();
       byte[] hash = sha.ComputeHash(Encoding.ASCII.GetBytes(data));
       StringBuilder stringBuilder = new StringBuilder();
-      
+
       foreach (byte b in hash)
         stringBuilder.AppendFormat("{0:x2}", b);
 
@@ -167,6 +167,11 @@ namespace UMP.Utility
     /// <typeparam name="AfterT">변환 후 타입</typeparam>
     /// <param name="value">변환할 값</param>
     /// <returns>변환된 값</returns>
-    public static AfterT ChangeType<BeforeT, AfterT>(BeforeT value) => (AfterT)Convert.ChangeType(value, typeof(AfterT));
+    public static AfterT ChangeType<AfterT, BeforeT>(BeforeT value)
+    {
+      if (typeof(AfterT) == typeof(Color))
+        return (AfterT)ColorConverter.ConvertFromString(value.ToString());
+      return (AfterT)Convert.ChangeType(value, typeof(AfterT));
+    }
   }
 }

@@ -186,9 +186,23 @@ namespace UMP.Core.Global
 
     public static class Options
     {
-      public static JObject SettingsConvertToJson() => JObject.FromObject(Settings);
-      private static Dictionary<string, string> Settings { get; } = new Dictionary<string, string>();
+      static Options()
+      {
+        Settings = new Dictionary<string, string>();
+      }
+      private static Dictionary<string, string> Settings { get; }
 
+      /// <summary>
+      /// 설정을 JsonObject로 변환합니다
+      /// </summary>
+      /// <returns><see cref="JObject"/>을 반환합니다</returns>
+      public static JObject SettingsConvertToJson() => JObject.FromObject(Settings);
+
+      /// <summary>
+      /// 설정 값을 저장합니다
+      /// </summary>
+      /// <param name="key">값의 키</param>
+      /// <param name="value">저장할 값</param>
       public static void Setter(Enums.ValueName key, string value)
       {
         Settings[key.ToString()] = value;
@@ -200,18 +214,26 @@ namespace UMP.Core.Global
           else
             Hook.Dispose();
         }
-
         OnPropertyChanged(key.ToString());
       }
 
+      /// <summary>
+      /// 설정 값을 가져옵니다
+      /// </summary>
+      /// <typeparam name="T">값의 타입</typeparam>
+      /// <param name="key">값의 키</param>
+      /// <returns>저장되어있는 설정을 가져옵니다</returns>
       public static T Getter<T>(Enums.ValueName key)
       {
         if (Settings.TryGetValue(key.ToString(), out string result))
-          return Converter.ChangeType<string, T>(result);
+          return Converter.ChangeType<T, string>(result);
         else
           return DefaultValue.GetDefaultValue<T>(key);
       }
 
+      /// <summary>
+      /// 설정을 모두 제거합니다
+      /// </summary>
       public static void Clear() => Settings.Clear();
     }
 
@@ -220,32 +242,30 @@ namespace UMP.Core.Global
     /// </summary>
     public static class DefaultValue
     {
-      public static T GetDefaultValue<T>(Enums.ValueName valueName)
-      {
-        return valueName switch
+      public static T GetDefaultValue<T>(Enums.ValueName valueName) =>
+        valueName switch
         {
           // 일반
-          Enums.ValueName.FileSavePath => Converter.ChangeType<string, T>("Save"),
-          Enums.ValueName.PrivateLogging => Converter.ChangeType<bool, T>(true),
-          Enums.ValueName.MediaLoadEngine => Converter.ChangeType<Enums.MediaLoadEngineType, T>(Enums.MediaLoadEngineType.Native),
-          Enums.ValueName.LyricsWindowActive => Converter.ChangeType<Enums.LyricsSettingsType, T>(Enums.LyricsSettingsType.Off),
+          Enums.ValueName.FileSavePath => Converter.ChangeType<T, string>("Save"),
+          Enums.ValueName.PrivateLogging => Converter.ChangeType<T, bool>(true),
+          Enums.ValueName.MediaLoadEngine => Converter.ChangeType<T, Enums.MediaLoadEngineType>(Enums.MediaLoadEngineType.Native),
+          Enums.ValueName.LyricsWindowActive => Converter.ChangeType<T, Enums.LyricsSettingsType>(Enums.LyricsSettingsType.Off),
           // 테마
-          Enums.ValueName.IsDarkMode => Converter.ChangeType<bool, T>(true),
-          Enums.ValueName.PrimaryColor => Converter.ChangeType<Color, T>(Colors.Green.Lighten(3)),
-          Enums.ValueName.SecondaryColor => Converter.ChangeType<Color, T>(Colors.Green.Darken(3)),
-          Enums.ValueName.IsAverageColorTheme => Converter.ChangeType<bool, T>(true),
-          Enums.ValueName.AverageColorProcessingOffset => Converter.ChangeType<int, T>(30),
+          Enums.ValueName.IsDarkMode => Converter.ChangeType<T, bool>(true),
+          Enums.ValueName.PrimaryColor => Converter.ChangeType<T, Color>(Colors.Green.Lighten(3)),
+          Enums.ValueName.SecondaryColor => Converter.ChangeType<T, Color>(Colors.Green.Darken(3)),
+          Enums.ValueName.IsAverageColorTheme => Converter.ChangeType<T, bool>(true),
+          Enums.ValueName.AverageColorProcessingOffset => Converter.ChangeType<T, int>(30),
           // 키보드
-          Enums.ValueName.HotKey => Converter.ChangeType<bool, T>(false),
-          Enums.ValueName.GlobalKeyboardHook => Converter.ChangeType<bool, T>(true),
-          Enums.ValueName.KeyEventDelay => Converter.ChangeType<int, T>(20),
+          Enums.ValueName.HotKey => Converter.ChangeType<T, bool>(false),
+          Enums.ValueName.GlobalKeyboardHook => Converter.ChangeType<T, bool>(true),
+          Enums.ValueName.KeyEventDelay => Converter.ChangeType<T, int>(20),
           // 효과
-          Enums.ValueName.IsUseFadeEffect => Converter.ChangeType<bool, T>(true),
-          Enums.ValueName.FadeEffectDelay => Converter.ChangeType<int, T>(200),
+          Enums.ValueName.IsUseFadeEffect => Converter.ChangeType<T, bool>(true),
+          Enums.ValueName.FadeEffectDelay => Converter.ChangeType<T, int>(200),
 
           _ => default,
         };
-      }
     }
 
     public static class Predefine
