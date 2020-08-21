@@ -147,24 +147,15 @@ namespace UMP.Core.Player
     /// </summary>
     private static WaveStream AudioFile
     {
-      get
-      {
-        if (_AudioFile != null && _AudioFile.TryGetTarget(out WaveStream ws))
-          return ws;
-        else
-          return null;
-      }
+      get => _AudioFile;
       set
       {
-        if (_AudioFile != null)
-          _AudioFile.SetTarget(value);
-        else
-          _AudioFile = new WeakReference<WaveStream>(value);
+        _AudioFile?.Dispose();
+        _AudioFile = value;
         OnPropertyChanged("AudioFile");
       }
     }
-    private static WeakReference<WaveStream> _AudioFile = null;
-
+    private static WaveStream _AudioFile = null;
     public static WaveFormat WaveFormat => Aggregator.WaveFormat;
 
     /// <summary>
@@ -372,8 +363,8 @@ namespace UMP.Core.Player
         Tick.Start();
         WavePlayer.Play();
 
-        if (GlobalObj.Property.Options.Getter<bool>(Enums.ValueName.IsUseFadeEffect))
-          Aggregator.BeginFadeIn(GlobalObj.Property.Options.Getter<int>(Enums.ValueName.FadeEffectDelay));
+        if (GlobalProperty.Options.Getter<bool>(Enums.ValueName.IsUseFadeEffect))
+          Aggregator.BeginFadeIn(GlobalProperty.Options.Getter<int>(Enums.ValueName.FadeEffectDelay));
 
         PlayStateChanged?.Invoke(PlaybackState);
         IsPlayStateChangeWork = false;
@@ -393,10 +384,10 @@ namespace UMP.Core.Player
         StopButtonActive = true;
         PlayStateChanged?.Invoke(PlaybackState);
 
-        if (GlobalObj.Property.Options.Getter<bool>(Enums.ValueName.IsUseFadeEffect))
+        if (GlobalProperty.Options.Getter<bool>(Enums.ValueName.IsUseFadeEffect))
         {
-          Aggregator.BeginFadeOut(GlobalObj.Property.Options.Getter<int>(Enums.ValueName.FadeEffectDelay));
-          await Task.Delay(GlobalObj.Property.Options.Getter<int>(Enums.ValueName.FadeEffectDelay) + 200);
+          Aggregator.BeginFadeOut(GlobalProperty.Options.Getter<int>(Enums.ValueName.FadeEffectDelay));
+          await Task.Delay(GlobalProperty.Options.Getter<int>(Enums.ValueName.FadeEffectDelay) + 200);
         }
 
         WavePlayer.Stop();
@@ -418,10 +409,10 @@ namespace UMP.Core.Player
           StateSave = PlaybackState.Paused;
         PlayStateChanged?.Invoke(PlaybackState);
 
-        if (GlobalObj.Property.Options.Getter<bool>(Enums.ValueName.IsUseFadeEffect))
+        if (GlobalProperty.Options.Getter<bool>(Enums.ValueName.IsUseFadeEffect))
         {
-          Aggregator.BeginFadeOut(GlobalObj.Property.Options.Getter<int>(Enums.ValueName.FadeEffectDelay));
-          await Task.Delay(GlobalObj.Property.Options.Getter<int>(Enums.ValueName.FadeEffectDelay) + 200);
+          Aggregator.BeginFadeOut(GlobalProperty.Options.Getter<int>(Enums.ValueName.FadeEffectDelay));
+          await Task.Delay(GlobalProperty.Options.Getter<int>(Enums.ValueName.FadeEffectDelay) + 200);
         }
 
         WavePlayer.Pause();

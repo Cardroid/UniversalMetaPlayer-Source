@@ -92,7 +92,7 @@ namespace UMP.Core.Model
 
       var savepath = Path.Combine(!string.IsNullOrWhiteSpace(path) 
         ? path 
-        : Path.Combine(GlobalObj.Property.Options.Getter<string>(Enums.ValueName.FileSavePath), "PlayList"));
+        : Path.Combine(GlobalProperty.Options.Getter<string>(Enums.ValueName.FileSavePath), "PlayList"));
       Checker.DirectoryCheck(savepath);
       playlist.Path = savepath;
 

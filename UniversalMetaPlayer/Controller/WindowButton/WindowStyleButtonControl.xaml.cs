@@ -48,6 +48,8 @@ namespace UMP.Controller.WindowButton
         Window parentWindow = Window.GetWindow(Parent);
         parentWindow.Width = 800;
         parentWindow.Height = 450;
+        parentWindow.Left = SystemParameters.WorkArea.Width / 2 - parentWindow.Width / 2;
+        parentWindow.Top = SystemParameters.WorkArea.Height / 2 - parentWindow.Height / 2;
       };
       this.MaximizeButton.Click += (s, e) =>
       {

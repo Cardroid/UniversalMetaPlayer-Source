@@ -120,7 +120,7 @@ namespace UMP.Controller.Dialog
 
     private void OpenFileDialogButton_Click(object sender, RoutedEventArgs e)
     {
-      string defaultPath = Path.Combine(Environment.CurrentDirectory, GlobalObj.Property.Options.Getter<string>(Enums.ValueName.FileSavePath), "PlayList");
+      string defaultPath = Path.Combine(Environment.CurrentDirectory, GlobalProperty.Options.Getter<string>(Enums.ValueName.FileSavePath), "PlayList");
       if (!Directory.Exists(defaultPath))
         defaultPath = string.Empty;
 

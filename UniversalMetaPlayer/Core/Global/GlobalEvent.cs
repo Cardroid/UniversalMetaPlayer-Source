@@ -34,7 +34,7 @@ namespace UMP.Core.Global
         return;
       KeyDownEventHandled = true;
       KeyDownEvent?.Invoke(e);
-      await Task.Delay(GlobalObj.Property.Options.Getter<int>(Enums.ValueName.KeyEventDelay));
+      await Task.Delay(GlobalProperty.Options.Getter<int>(Enums.ValueName.KeyEventDelay));
       KeyDownEventHandled = false;
     }
   }

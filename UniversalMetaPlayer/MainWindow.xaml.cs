@@ -16,11 +16,9 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
-using UMP.Core;
 using UMP.Core.Global;
 using UMP.Core.Player;
 using UMP.Utility;
-using UMP.Utility.Effect;
 
 namespace UMP
 {
@@ -29,7 +27,7 @@ namespace UMP
     private MainWindowViewModel ViewModel { get; }
     public MainWindow()
     {
-      GlobalObj.Property.Load();
+      GlobalProperty.Load();
 
       InitializeComponent();
       ViewModel = (MainWindowViewModel)this.DataContext;
@@ -37,6 +35,16 @@ namespace UMP
       this.KeyDown += (_, e) => GlobalEvent.KeyDownEventInvoke(e);
       this.Loaded += MainWindow_Loaded;
       this.Closing += MainWindow_Closing;
+
+      // 전역 메시지 닫힘 타이머 정의
+      GlobalMessageCloseTimer = new System.Timers.Timer(3000) { AutoReset = true };
+      GlobalMessageCloseTimer.Elapsed += (_, e) =>
+      {
+        Dispatcher.Invoke(new Action(() => {
+          this.GlobalMessageBar.IsActive = false;
+        }));
+      };
+
       GlobalEvent.GlobalMessageEvent += GlobalEvent_GlobalMessageEvent;
       this.GlobalMessageBar.MouseLeftButtonDown += (_, e) =>
       {
@@ -81,7 +89,7 @@ namespace UMP
       {
         if(e.PropertyName == "IsControllable")
         {
-          if (GlobalObj.Property.State.IsControllable)
+          if (GlobalProperty.State.IsControllable)
             this.MainControllerControl.IsEnabled = true;
           else
             this.MainControllerControl.IsEnabled = false;
@@ -107,38 +115,39 @@ namespace UMP
         }
       };
 
-      // 실행 시 정보 띄우기
+      this.GlobalMessageBar.IsActiveChanged += (_, e) => { if (!e.NewValue) this.GlobalMessage.Content = null; };
+
+      #region 실행 시 정보 띄우기
       this.GlobalMessageBar.IsActive = true;
       this.Loaded += async (_, e) => { await Task.Delay(100000); this.GlobalMessageBar.IsActive = false; };
 #if DEBUG
       this.Title = "UniversalMetaPlayer - V2 [Test Version]";
       this.GlobalMessage.Content =
-        $"현재 버전은 [테스트 버전] [v{GlobalObj.Property.Predefine.FileVersion}] [{GlobalObj.Property.Predefine.BitVersion}] 입니다\n" +
+        $"현재 버전은 [테스트 버전] [v{GlobalProperty.Predefine.FileVersion}] [{GlobalProperty.Predefine.BitVersion}] 입니다\n" +
         $"오류가 발생하면 로그파일과 함께 신고해주세요!\n";
 #else
       this.Title = "UniversalMetaPlayer - V2";
       this.GlobalMessage.Content =
-        $"현재 버전은 [v{GlobalProperty.StaticValues.FileVersion}] [{GlobalProperty.StaticValues.BitVersion}] 입니다\n" +
+        $"현재 버전은 [v{GlobalProperty.Predefine.FileVersion}] [{GlobalProperty.Predefine.BitVersion}] 입니다\n" +
         $"오류가 발생하면 로그파일과 함께 신고해주세요!\n";
 #endif
-      this.GlobalMessageBar.IsActiveChanged += (_, e) => { if (!e.NewValue) this.GlobalMessage.Content = null; };
+      #endregion
     }
 
-    private void MainWindow_WindowDrag(object sender, MouseButtonEventArgs e) { this.DragMove(); e.Handled = true; }
+    private System.Timers.Timer GlobalMessageCloseTimer { get; }
 
-    private async void GlobalEvent_GlobalMessageEvent(string message, bool autoClose)
+    private void MainWindow_WindowDrag(object sender, MouseButtonEventArgs e) { e.Handled = true; this.DragMove(); }
+
+    private void GlobalEvent_GlobalMessageEvent(string message, bool autoClose)
     {
-      Dispatcher.Invoke(new Action(() => { 
-      this.GlobalMessageBar.IsActive = true;
-      this.GlobalMessage.Content = message;
+      Dispatcher.Invoke(new Action(() =>
+      {
+        GlobalMessageCloseTimer.Stop();
+        this.GlobalMessageBar.IsActive = true;
+        this.GlobalMessage.Content = message;
       }));
       if (autoClose)
-      {
-        await Task.Delay(3000);
-        Dispatcher.Invoke(new Action(() => {
-        this.GlobalMessageBar.IsActive = false;
-        }));
-      }
+        GlobalMessageCloseTimer.Start();
     }
 
     /// <summary>
@@ -148,7 +157,7 @@ namespace UMP
     {
       Hook.Dispose();
       MainMediaPlayer.Dispose();
-      GlobalObj.Property.Save();
+      GlobalProperty.Save();
       App.MainLog.Info("############### Exit application ###############");
       Application.Current.Shutdown();
     }

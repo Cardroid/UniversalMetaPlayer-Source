@@ -16,7 +16,7 @@ namespace UMP
     public App()
     {
       MainLog.Info("############### Start application ###############\n" +
-        $"Current Version : [{GlobalObj.Property.Predefine.FileVersion}]\nBit : [{GlobalObj.Property.Predefine.BitVersion}]",
+        $"Current Version : [{GlobalProperty.Predefine.FileVersion}]\nBit : [{GlobalProperty.Predefine.BitVersion}]",
         $"Start Path : [{AppDomain.CurrentDomain.BaseDirectory}]\nTask Path : [{Environment.CurrentDirectory}]");
 
       // Application의 모든 에러 이벤트를 로그로 남깁니다

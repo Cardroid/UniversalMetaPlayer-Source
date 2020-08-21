@@ -31,7 +31,7 @@ namespace UMP.Core.Function.Online
 
       if (Checker.CheckForInternetConnection())
       {
-        YoutubeDL ytdl = new YoutubeDL(GlobalObj.Property.Predefine.YTDL_PATH) { VideoUrl = uri };
+        YoutubeDL ytdl = new YoutubeDL(GlobalProperty.Predefine.YTDL_PATH) { VideoUrl = uri };
         string error = string.Empty;
 
         string id;
@@ -51,7 +51,7 @@ namespace UMP.Core.Function.Online
         // 변환 실패 오류 패치
         //ytdl.Options.PostProcessingOptions.EmbedThumbnail = true;
 
-        ytdl.Options.PostProcessingOptions.FfmpegLocation = GlobalObj.Property.Predefine.FFMPEG_PATH;
+        ytdl.Options.PostProcessingOptions.FfmpegLocation = GlobalProperty.Predefine.FFMPEG_PATH;
         ytdl.Options.PostProcessingOptions.AudioQuality = quality.ToString();
         ytdl.Options.PostProcessingOptions.ExtractAudio = true;
         ytdl.Options.PostProcessingOptions.AudioFormat = NYoutubeDL.Helpers.Enums.AudioFormat.mp3;
@@ -69,8 +69,8 @@ namespace UMP.Core.Function.Online
           return new GenericResult<string>(false);
         }
 
-        Checker.DirectoryCheck(Path.GetDirectoryName(GlobalObj.Property.Predefine.DownloadCachePath));
-        string saveStreamPath = Path.Combine(GlobalObj.Property.Predefine.DownloadCachePath, $"{id}.%(ext)s");
+        Checker.DirectoryCheck(Path.GetDirectoryName(GlobalProperty.Predefine.DownloadCachePath));
+        string saveStreamPath = Path.Combine(GlobalProperty.Predefine.DownloadCachePath, $"{id}.%(ext)s");
         ytdl.Options.FilesystemOptions.Output = saveStreamPath;
 
         ytdl.StandardErrorEvent += (s, e) => { error = $"{e}\n"; ErrorEvent?.Invoke(s, e); };
@@ -80,7 +80,7 @@ namespace UMP.Core.Function.Online
         await ytdl.DownloadAsync();
 
         string result = string.Empty;
-        string[] resultPath = Directory.GetFiles(GlobalObj.Property.Predefine.DownloadCachePath, $"{id}.mp3", SearchOption.TopDirectoryOnly);
+        string[] resultPath = Directory.GetFiles(GlobalProperty.Predefine.DownloadCachePath, $"{id}.mp3", SearchOption.TopDirectoryOnly);
         if (resultPath.Length <= 0)
           error += "Download Fail (Download File is Not Exists.)\n";
         else
@@ -122,7 +122,7 @@ namespace UMP.Core.Function.Online
 
       if (Checker.CheckForInternetConnection())
       {
-        YoutubeDL ytdl = new YoutubeDL(GlobalObj.Property.Predefine.YTDL_PATH) { VideoUrl = uri };
+        YoutubeDL ytdl = new YoutubeDL(GlobalProperty.Predefine.YTDL_PATH) { VideoUrl = uri };
 
         ytdl.Options.VerbositySimulationOptions.Simulate = true;
         ytdl.Options.VerbositySimulationOptions.SkipDownload = true;
@@ -161,7 +161,7 @@ namespace UMP.Core.Function.Online
 
       if (Checker.CheckForInternetConnection())
       {
-        YoutubeDL ytdl = new YoutubeDL(GlobalObj.Property.Predefine.YTDL_PATH) { VideoUrl = uri };
+        YoutubeDL ytdl = new YoutubeDL(GlobalProperty.Predefine.YTDL_PATH) { VideoUrl = uri };
 
         ytdl.Options.VerbositySimulationOptions.Simulate = true;
         ytdl.Options.VerbositySimulationOptions.SkipDownload = true;

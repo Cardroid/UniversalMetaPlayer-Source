@@ -7,9 +7,6 @@ using System.Windows.Shapes;
 
 namespace UMP.Controller.Function.AnalysisControl.WaveAnalysis.Func
 {
-  /// <summary>
-  /// Interaction logic for WaveFormControl.xaml
-  /// </summary>
   public partial class WaveControl : UserControl, IWaveFormRenderer
   {
     int renderPosition;

@@ -159,5 +159,14 @@ namespace UMP.Utility
 
       return stringBuilder.ToString();
     }
+
+    /// <summary>
+    /// 타입변환기
+    /// </summary>
+    /// <typeparam name="BeforeT">변환 전 타입</typeparam>
+    /// <typeparam name="AfterT">변환 후 타입</typeparam>
+    /// <param name="value">변환할 값</param>
+    /// <returns>변환된 값</returns>
+    public static AfterT ChangeType<BeforeT, AfterT>(BeforeT value) => (AfterT)Convert.ChangeType(value, typeof(AfterT));
   }
 }

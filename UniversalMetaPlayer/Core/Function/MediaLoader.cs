@@ -14,7 +14,7 @@ namespace UMP.Core.Function
 
     public MediaLoader(string mediaLocation)
     {
-      switch (GlobalObj.Property.Options.Getter<Enums.MediaLoadEngineType>(Enums.ValueName.MediaLoadEngine))
+      switch (GlobalProperty.Options.Getter<Enums.MediaLoadEngineType>(Enums.ValueName.MediaLoadEngine))
       {
         case Enums.MediaLoadEngineType.YoutubeDL:
           this.Loader = new YTDLMediaLoader(mediaLocation);
@@ -28,7 +28,7 @@ namespace UMP.Core.Function
 
     public MediaLoader(MediaInformation info)
     {
-      switch (GlobalObj.Property.Options.Getter<Enums.MediaLoadEngineType>(Enums.ValueName.MediaLoadEngine))
+      switch (GlobalProperty.Options.Getter<Enums.MediaLoadEngineType>(Enums.ValueName.MediaLoadEngine))
       {
         case Enums.MediaLoadEngineType.YoutubeDL:
           this.Loader = new YTDLMediaLoader(info);

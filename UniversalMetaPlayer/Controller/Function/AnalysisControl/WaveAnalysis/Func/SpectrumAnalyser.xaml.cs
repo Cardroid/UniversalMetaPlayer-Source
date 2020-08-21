@@ -7,9 +7,6 @@ using UMP.Utility;
 
 namespace UMP.Controller.Function.AnalysisControl.WaveAnalysis.Func
 {
-  /// <summary>
-  /// Interaction logic for SpectrumAnalyser.xaml
-  /// </summary>
   public partial class SpectrumAnalyser : UserControl
   {
     private double xScale = 200;

@@ -28,7 +28,7 @@ namespace UMP.Controller.Function.OptionControl
       GlobalProperty.PropertyChanged += (_, e) =>
       {
         if (e.PropertyName == "AverageColorProcessingOffset")
-          this.AverageColorProcessingOffsetTextBox.Text = GlobalObj.Property.Options.Getter<int>(Enums.ValueName.AverageColorProcessingOffset).ToString();
+          this.AverageColorProcessingOffsetTextBox.Text = GlobalProperty.Options.Getter<int>(Enums.ValueName.AverageColorProcessingOffset).ToString();
       };
 
       this.PreviewMouseDown += (_, e) => { Keyboard.ClearFocus(); };
@@ -36,7 +36,7 @@ namespace UMP.Controller.Function.OptionControl
       this.AverageColorProcessingOffsetTextBox.GotKeyboardFocus += (_, e) => { this.AverageColorProcessingOffsetTextBox.Text = ""; };
       this.AverageColorProcessingOffsetTextBox.PreviewKeyDown += (_, e) => { if (e.Key == Key.Enter) Keyboard.ClearFocus(); };
       this.AverageColorProcessingOffsetTextBox.LostKeyboardFocus += (_, e) => { AverageColorProcessingOffsetTextBox_Apply(); };
-      this.AverageColorProcessingOffsetTextBox.Text = GlobalObj.Property.Options.Getter<int>(Enums.ValueName.AverageColorProcessingOffset).ToString();
+      this.AverageColorProcessingOffsetTextBox.Text = GlobalProperty.Options.Getter<int>(Enums.ValueName.AverageColorProcessingOffset).ToString();
     }
 
     private void AverageColorProcessingOffsetTextBox_Apply()
@@ -44,8 +44,8 @@ namespace UMP.Controller.Function.OptionControl
       if (int.TryParse(this.AverageColorProcessingOffsetTextBox.Text, out int result))
         result = Math.Clamp(result, 1, 501);
       else
-        result = GlobalObj.Property.DefaultValue.GetDefaultValue<int>(Enums.ValueName.AverageColorProcessingOffset);
-      GlobalObj.Property.Options.Setter(Enums.ValueName.AverageColorProcessingOffset, result.ToString());
+        result = GlobalProperty.DefaultValue.GetDefaultValue<int>(Enums.ValueName.AverageColorProcessingOffset);
+      GlobalProperty.Options.Setter(Enums.ValueName.AverageColorProcessingOffset, result.ToString());
     }
   }
 }

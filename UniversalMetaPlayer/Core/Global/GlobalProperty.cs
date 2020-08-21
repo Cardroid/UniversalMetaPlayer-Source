@@ -20,32 +20,22 @@ namespace UMP.Core.Global
   /// <summary>
   /// 프로그램 전체 설정
   /// </summary>
-  public class GlobalProperty
+  public static class GlobalProperty
   {
-    private readonly Log Log;
+    private static readonly Log Log;
     public static event PropertyChangedEventHandler PropertyChanged;
     private static void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(null, new PropertyChangedEventArgs(propertyName));
 
-    public GlobalProperty()
+    static GlobalProperty()
     {
-      this.State = new StateDefine();
-      this.Options = new OptionsDefine();
-      this.DefaultValue = new DefaultValueDefine();
-      this.Predefine = new PredefineValues();
-
       Log = new Log(typeof(GlobalProperty));
       ThemeHelper.ThemeChangedEvent += ThemeHelper_ThemeChangedEvent;
     }
 
-    public StateDefine State { get; }
-    public OptionsDefine Options { get; }
-    public DefaultValueDefine DefaultValue { get; }
-    public PredefineValues Predefine { get; }
-
     /// <summary>
     /// 기본 설정으로 되돌립니다.
     /// </summary>
-    public void SetDefault()
+    public static void SetDefault()
     {
       Options.Clear();
       OnPropertyChanged("SetDefault");
@@ -54,7 +44,7 @@ namespace UMP.Core.Global
     /// <summary>
     /// 설정을 저장 합니다.
     /// </summary>
-    public void Save()
+    public static void Save()
     {
       try
       {
@@ -81,7 +71,7 @@ namespace UMP.Core.Global
     /// 설정을 불러옵니다.
     /// </summary>
     /// <returns>성공시 true 반환</returns>
-    public void Load()
+    public static void Load()
     {
       SetDefault();
       ThemeHelper.SetDefaultTheme();
@@ -169,7 +159,7 @@ namespace UMP.Core.Global
     /// 테마 변경되면 자동저장
     /// </summary>
     /// <param name="e">변경 후 테마</param>
-    private void ThemeHelper_ThemeChangedEvent(ThemeHelper.ThemeProperty e)
+    private static void ThemeHelper_ThemeChangedEvent(ThemeHelper.ThemeProperty e)
     {
       Options.Setter(Enums.ValueName.IsDarkMode, e.IsDarkMode.ToString());
       Options.Setter(Enums.ValueName.PrimaryColor, e.PrimaryColor.ToString());
@@ -177,12 +167,12 @@ namespace UMP.Core.Global
       OnPropertyChanged("Theme");
     }
 
-    public class StateDefine
+    public static class State
     {
       /// <summary>
       /// 컨트롤 가능 여부
       /// </summary>
-      public bool IsControllable
+      public static bool IsControllable
       {
         get => _IsControllable;
         set
@@ -191,15 +181,15 @@ namespace UMP.Core.Global
           OnPropertyChanged("IsControllable");
         }
       }
-      private bool _IsControllable = true;
+      private static bool _IsControllable = true;
     }
 
-    public class OptionsDefine
+    public static class Options
     {
-      public JObject SettingsConvertToJson() => JObject.FromObject(Settings);
+      public static JObject SettingsConvertToJson() => JObject.FromObject(Settings);
+      private static Dictionary<string, string> Settings { get; } = new Dictionary<string, string>();
 
-      private Dictionary<string, string> Settings { get; } = new Dictionary<string, string>();
-      public void Setter(Enums.ValueName key, string value)
+      public static void Setter(Enums.ValueName key, string value)
       {
         Settings[key.ToString()] = value;
 
@@ -214,125 +204,110 @@ namespace UMP.Core.Global
         OnPropertyChanged(key.ToString());
       }
 
-      public T Getter<T>(Enums.ValueName key)
+      public static T Getter<T>(Enums.ValueName key)
       {
-        if (Settings.TryGetValue(key.ToString(), out string result) && result is T value)
-          return value;
+        if (Settings.TryGetValue(key.ToString(), out string result))
+          return Converter.ChangeType<string, T>(result);
         else
-          return new DefaultValueDefine().GetDefaultValue<T>(key);
+          return DefaultValue.GetDefaultValue<T>(key);
       }
 
-      public void Clear() => Settings.Clear();
+      public static void Clear() => Settings.Clear();
     }
 
     /// <summary>
     /// 기본값이 정의 되어 있는 클래스
     /// </summary>
-    public class DefaultValueDefine
+    public static class DefaultValue
     {
-      public T GetDefaultValue<T>(Enums.ValueName valueName)
+      public static T GetDefaultValue<T>(Enums.ValueName valueName)
       {
-        switch (valueName)
+        return valueName switch
         {
-          default:
-            return default;
           // 일반
-          case Enums.ValueName.FileSavePath:
-            return GetValue<string, T>("Save");
-          case Enums.ValueName.PrivateLogging:
-            return GetValue<bool, T>(true);
-          case Enums.ValueName.MediaLoadEngine:
-            return GetValue<Enums.MediaLoadEngineType, T>(Enums.MediaLoadEngineType.Native);
-          case Enums.ValueName.LyricsWindowActive:
-            return GetValue<Enums.LyricsSettingsType, T>(Enums.LyricsSettingsType.Off);
+          Enums.ValueName.FileSavePath => Converter.ChangeType<string, T>("Save"),
+          Enums.ValueName.PrivateLogging => Converter.ChangeType<bool, T>(true),
+          Enums.ValueName.MediaLoadEngine => Converter.ChangeType<Enums.MediaLoadEngineType, T>(Enums.MediaLoadEngineType.Native),
+          Enums.ValueName.LyricsWindowActive => Converter.ChangeType<Enums.LyricsSettingsType, T>(Enums.LyricsSettingsType.Off),
           // 테마
-          case Enums.ValueName.IsDarkMode:
-            return GetValue<bool, T>(true);
-          case Enums.ValueName.PrimaryColor:
-            return GetValue<Color, T>(Colors.Green.Lighten(3));
-          case Enums.ValueName.SecondaryColor:
-            return GetValue<Color, T>(Colors.Green.Darken(3));
-          case Enums.ValueName.IsAverageColorTheme:
-            return GetValue<bool, T>(true);
-          case Enums.ValueName.AverageColorProcessingOffset:
-            return GetValue<int, T>(30);
+          Enums.ValueName.IsDarkMode => Converter.ChangeType<bool, T>(true),
+          Enums.ValueName.PrimaryColor => Converter.ChangeType<Color, T>(Colors.Green.Lighten(3)),
+          Enums.ValueName.SecondaryColor => Converter.ChangeType<Color, T>(Colors.Green.Darken(3)),
+          Enums.ValueName.IsAverageColorTheme => Converter.ChangeType<bool, T>(true),
+          Enums.ValueName.AverageColorProcessingOffset => Converter.ChangeType<int, T>(30),
           // 키보드
-          case Enums.ValueName.HotKey:
-            return GetValue<bool, T>(false);
-          case Enums.ValueName.GlobalKeyboardHook:
-            return GetValue<bool, T>(true);
-          case Enums.ValueName.KeyEventDelay:
-            return GetValue<int, T>(20);
+          Enums.ValueName.HotKey => Converter.ChangeType<bool, T>(false),
+          Enums.ValueName.GlobalKeyboardHook => Converter.ChangeType<bool, T>(true),
+          Enums.ValueName.KeyEventDelay => Converter.ChangeType<int, T>(20),
           // 효과
-          case Enums.ValueName.IsUseFadeEffect:
-            return GetValue<bool, T>(true);
-          case Enums.ValueName.FadeEffectDelay:
-            return GetValue<int, T>(200);
-        }
+          Enums.ValueName.IsUseFadeEffect => Converter.ChangeType<bool, T>(true),
+          Enums.ValueName.FadeEffectDelay => Converter.ChangeType<int, T>(200),
+
+          _ => default,
+        };
       }
-      private static T2 GetValue<T1, T2>(T1 value) => (T2)Convert.ChangeType(value, typeof(T2));
     }
 
-    public class PredefineValues
+    public static class Predefine
     {
       #region Not Save
       /// <summary>
       /// 폰트
       /// </summary>
-      public FontFamily MainFontFamily { get; } = new FontFamily(new Uri("pack://application:,,,/"), "./Resources/Font/#NanumGothic");
+      public static FontFamily MainFontFamily { get; } = new FontFamily(new Uri("pack://application:,,,/"), "./Resources/Font/#NanumGothic");
       /// <summary>
       /// 로고 이미지
       /// </summary>
-      public ImageSource LogoImage { get; } = new BitmapImage(new Uri("pack://application:,,,/UniversalMetaPlayer;component/Resources/MainImage.png", UriKind.RelativeOrAbsolute));
+      public static ImageSource LogoImage { get; } = new BitmapImage(new Uri("pack://application:,,,/UniversalMetaPlayer;component/Resources/MainImage.png", UriKind.RelativeOrAbsolute));
       /// <summary>
       /// 로고 음표 이미지
       /// </summary>
-      public ImageSource LogoNoteImage { get; } = new BitmapImage(new Uri("pack://application:,,,/UniversalMetaPlayer;component/Resources/NoteImage.png", UriKind.RelativeOrAbsolute));
+      public static ImageSource LogoNoteImage { get; } = new BitmapImage(new Uri("pack://application:,,,/UniversalMetaPlayer;component/Resources/NoteImage.png", UriKind.RelativeOrAbsolute));
 
       /// <summary>
       /// 미디어 Null Process 때 접두어
       /// </summary>
-      public string MEDIA_INFO_NULL { get; } = "(null)";
+      public static string MEDIA_INFO_NULL { get; } = "(null)";
 
       /// <summary>
       /// 라이브러리 폴더
       /// </summary>
-      public string LIBRARY_PATH { get; } = @"Core\Library";
+      public static string LIBRARY_PATH { get; } = @"Core\Library";
       /// <summary>
       /// 캐시 폴더
       /// </summary>
-      public string CACHE_PATH { get; } = @"Core\Cache";
+      public static string CACHE_PATH { get; } = @"Core\Cache";
       /// <summary>
       /// 다운로드 캐시
       /// </summary>
-      public string DownloadCachePath => Path.Combine(CACHE_PATH, "DownloadCache");
+      public static string DownloadCachePath => Path.Combine(CACHE_PATH, "DownloadCache");
       /// <summary>
       /// 온라인에서 다운로드한 미디어 저장 캐시
       /// </summary>
-      public string OnlineMediaCachePath => Path.Combine(CACHE_PATH, "OnlineMedia");
+      public static string OnlineMediaCachePath => Path.Combine(CACHE_PATH, "OnlineMedia");
       /// <summary>
       /// YouTube-dl 라이브러리 저장 폴더
       /// </summary>
-      public string YTDL_PATH => Path.Combine(LIBRARY_PATH, "YTDL");
+      public static string YTDL_PATH => Path.Combine(LIBRARY_PATH, "YTDL");
       /// <summary>
       /// FFmpeg 라이브러리 저장 폴더
       /// </summary>
-      public string FFMPEG_PATH => Path.Combine(LIBRARY_PATH, "FFmpeg");
+      public static string FFMPEG_PATH => Path.Combine(LIBRARY_PATH, "FFmpeg");
       #endregion
 
       #region Version
       /// <summary>
       /// 코어 버전
       /// </summary>
-      public string CoreVersion => Assembly.GetExecutingAssembly().GetName().Version.ToString();
+      public static string CoreVersion => Assembly.GetExecutingAssembly().GetName().Version.ToString();
       /// <summary>
       /// 파일 버전
       /// </summary>
-      public string FileVersion => FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion.ToString();
+      public static string FileVersion => FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion.ToString();
       /// <summary>
       /// 현재 프로세스의 비트버전
       /// </summary>
-      public string BitVersion => Environment.Is64BitProcess ? "x64" : "x86";
+      public static string BitVersion => Environment.Is64BitProcess ? "x64" : "x86";
       #endregion
     }
   }

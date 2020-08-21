@@ -27,7 +27,7 @@ namespace UMP.Controller.Function.OptionControl
       GlobalProperty.PropertyChanged += (_, e) =>
       {
         if (e.PropertyName == "FadeEffectDelay")
-          this.FadeEffectDelayTextBox.Text = GlobalObj.Property.Options.Getter<int>(Enums.ValueName.FadeEffectDelay).ToString();
+          this.FadeEffectDelayTextBox.Text = GlobalProperty.Options.Getter<int>(Enums.ValueName.FadeEffectDelay).ToString();
       };
 
       this.PreviewMouseDown += (_, e) => { Keyboard.ClearFocus(); };
@@ -35,7 +35,7 @@ namespace UMP.Controller.Function.OptionControl
       this.FadeEffectDelayTextBox.GotKeyboardFocus += (_, e) => { this.FadeEffectDelayTextBox.Text = ""; };
       this.FadeEffectDelayTextBox.PreviewKeyDown += (_, e) => { if (e.Key == Key.Enter) Keyboard.ClearFocus(); };
       this.FadeEffectDelayTextBox.LostKeyboardFocus += (_, e) => { FadeEffectDelayTextBox_Apply(); };
-      this.FadeEffectDelayTextBox.Text = GlobalObj.Property.Options.Getter<int>(Enums.ValueName.FadeEffectDelay).ToString();
+      this.FadeEffectDelayTextBox.Text = GlobalProperty.Options.Getter<int>(Enums.ValueName.FadeEffectDelay).ToString();
     }
 
     private void FadeEffectDelayTextBox_Apply()
@@ -43,8 +43,8 @@ namespace UMP.Controller.Function.OptionControl
       if (int.TryParse(this.FadeEffectDelayTextBox.Text, out int result))
         result = Math.Clamp(result, 1, 3001);
       else
-        result = GlobalObj.Property.DefaultValue.GetDefaultValue<int>(Enums.ValueName.FadeEffectDelay);
-      GlobalObj.Property.Options.Setter(Enums.ValueName.FadeEffectDelay, result.ToString());
+        result = GlobalProperty.DefaultValue.GetDefaultValue<int>(Enums.ValueName.FadeEffectDelay);
+      GlobalProperty.Options.Setter(Enums.ValueName.FadeEffectDelay, result.ToString());
     }
   }
 }

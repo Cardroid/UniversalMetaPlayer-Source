@@ -127,7 +127,7 @@ namespace UMP.Controller.Dialog
       }
       else
       {
-        if (Checker.CheckForInternetConnection() && GlobalObj.Property.Options.Getter<Enums.MediaLoadEngineType>(Enums.ValueName.MediaLoadEngine) == Enums.MediaLoadEngineType.Native)
+        if (Checker.CheckForInternetConnection() && GlobalProperty.Options.Getter<Enums.MediaLoadEngineType>(Enums.ValueName.MediaLoadEngine) == Enums.MediaLoadEngineType.Native)
         {
           YoutubeClient client = new YoutubeClient();
           object info = null;
@@ -212,7 +212,7 @@ namespace UMP.Controller.Dialog
         }
         else
         {
-          if (GlobalObj.Property.Options.Getter<Enums.MediaLoadEngineType>(Enums.ValueName.MediaLoadEngine) == Enums.MediaLoadEngineType.Native)
+          if (GlobalProperty.Options.Getter<Enums.MediaLoadEngineType>(Enums.ValueName.MediaLoadEngine) == Enums.MediaLoadEngineType.Native)
           {
             try
             {

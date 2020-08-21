@@ -15,7 +15,7 @@ namespace UMP.Core.Model.ViewModel
   {
     public event PropertyChangedEventHandler PropertyChanged;
     protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    public FontFamily FontFamily => GlobalObj.Property.Predefine.MainFontFamily;
+    public FontFamily FontFamily => GlobalProperty.Predefine.MainFontFamily;
     public ITheme Theme => ThemeHelper.Theme;
   }
 }

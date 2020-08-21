@@ -84,7 +84,7 @@ namespace UMP.Core.Player
     {
       var samplesRead = source.Read(buffer, offset, count);
 
-      if (GlobalObj.Property.Options.Getter<bool>(Enums.ValueName.IsUseFadeEffect))
+      if (GlobalProperty.Options.Getter<bool>(Enums.ValueName.IsUseFadeEffect))
       {
         lock (lockObject)
         {

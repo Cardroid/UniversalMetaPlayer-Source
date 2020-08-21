@@ -50,8 +50,8 @@ namespace UMP.Utility
     {
       var theme = new CustomColorTheme();
 
-      Color primaryColor = GlobalObj.Property.DefaultValue.GetDefaultValue<Color>(Enums.ValueName.PrimaryColor);
-      Color secondaryColor = GlobalObj.Property.DefaultValue.GetDefaultValue<Color>(Enums.ValueName.SecondaryColor);
+      Color primaryColor = GlobalProperty.DefaultValue.GetDefaultValue<Color>(Enums.ValueName.PrimaryColor);
+      Color secondaryColor = GlobalProperty.DefaultValue.GetDefaultValue<Color>(Enums.ValueName.SecondaryColor);
 
       theme.PrimaryColor = primaryColor;
       theme.SecondaryColor = secondaryColor;
@@ -110,7 +110,7 @@ namespace UMP.Utility
     {
       if (MainMediaPlayer.MediaLoadedCheck)
       {
-        if (GlobalObj.Property.Options.Getter<bool>(Enums.ValueName.IsAverageColorTheme) && MainMediaPlayer.MediaInformation.AlbumImage != null)
+        if (GlobalProperty.Options.Getter<bool>(Enums.ValueName.IsAverageColorTheme) && MainMediaPlayer.MediaInformation.AlbumImage != null)
         {
           Log log = new Log(typeof(ThemeHelper));
           try
@@ -118,7 +118,7 @@ namespace UMP.Utility
             Color color;
             await Task.Run(() =>
             {
-              color = ImageProcessing.GetAverageColor(MainMediaPlayer.MediaInformation.AlbumImage as BitmapSource, GlobalObj.Property.Options.Getter<int>(Enums.ValueName.AverageColorProcessingOffset));
+              color = ImageProcessing.GetAverageColor(MainMediaPlayer.MediaInformation.AlbumImage as BitmapSource, GlobalProperty.Options.Getter<int>(Enums.ValueName.AverageColorProcessingOffset));
             });
             Application.Current.MainWindow.BorderBrush = new SolidColorBrush(color);
             ChangePrimaryColor(color.Lighten(2));

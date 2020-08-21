@@ -37,9 +37,9 @@ namespace UMP.Controller.Function.OptionControl
 
     private void OpenDirectoryDialogButton_Click(object sender, RoutedEventArgs e)
     {
-      var result = DialogHelper.OpenDirectoryDialog("저장 폴더 선택", GlobalObj.Property.Options.Getter<string>(Enums.ValueName.FileSavePath));
+      var result = DialogHelper.OpenDirectoryDialog("저장 폴더 선택", GlobalProperty.Options.Getter<string>(Enums.ValueName.FileSavePath));
       if (result)
-        GlobalObj.Property.Options.Setter(Enums.ValueName.FileSavePath, result.Result);
+        GlobalProperty.Options.Setter(Enums.ValueName.FileSavePath, result.Result);
     }
 
     #region SetDefaultButton
@@ -77,7 +77,7 @@ namespace UMP.Controller.Function.OptionControl
       }
       else
       {
-        GlobalObj.Property.SetDefault();
+        GlobalProperty.SetDefault();
         GlobalEvent.GlobalMessageEventInvoke("설정이 초기화 되었습니다.", true);
         IsReset = false;
       }

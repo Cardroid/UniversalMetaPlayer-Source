@@ -10,9 +10,6 @@ using UMP.Utility;
 
 namespace UMP.Controller.Function.AnalysisControl.WaveAnalysis.Func
 {
-  /// <summary>
-  /// Interaction logic for PolylineWaveFormControl.xaml
-  /// </summary>
   public partial class PolylineWaveControl : UserControl, IWaveFormRenderer
   {
     int renderPosition;

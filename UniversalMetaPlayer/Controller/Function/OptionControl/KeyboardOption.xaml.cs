@@ -27,7 +27,7 @@ namespace UMP.Controller.Function.OptionControl
       GlobalProperty.PropertyChanged += (_, e) =>
       {
         if (e.PropertyName == "KeyEventDelay")
-          this.KeyEventDelayOffsetTextBox.Text = GlobalObj.Property.Options.Getter<int>(Enums.ValueName.KeyEventDelay).ToString();
+          this.KeyEventDelayOffsetTextBox.Text = GlobalProperty.Options.Getter<int>(Enums.ValueName.KeyEventDelay).ToString();
       };
 
       this.PreviewMouseDown += (_, e) => { KeyEventDelayOffsetTextBox_Apply(); };
@@ -35,7 +35,7 @@ namespace UMP.Controller.Function.OptionControl
       this.KeyEventDelayOffsetTextBox.GotKeyboardFocus += (_, e) => { this.KeyEventDelayOffsetTextBox.Text = ""; };
       this.KeyEventDelayOffsetTextBox.PreviewKeyDown += (_, e) => { if (e.Key == Key.Enter) Keyboard.ClearFocus(); };
       this.KeyEventDelayOffsetTextBox.LostKeyboardFocus += (_, e) => { KeyEventDelayOffsetTextBox_Apply(); };
-      this.KeyEventDelayOffsetTextBox.Text = GlobalObj.Property.Options.Getter<int>(Enums.ValueName.KeyEventDelay).ToString();
+      this.KeyEventDelayOffsetTextBox.Text = GlobalProperty.Options.Getter<int>(Enums.ValueName.KeyEventDelay).ToString();
     }
 
     private void KeyEventDelayOffsetTextBox_Apply()
@@ -43,8 +43,8 @@ namespace UMP.Controller.Function.OptionControl
       if (int.TryParse(this.KeyEventDelayOffsetTextBox.Text, out int result))
         result = Math.Clamp(result, 10, 201);
       else
-        result = GlobalObj.Property.DefaultValue.GetDefaultValue<int>(Enums.ValueName.KeyEventDelay);
-      GlobalObj.Property.Options.Setter(Enums.ValueName.KeyEventDelay, result.ToString());
+        result = GlobalProperty.DefaultValue.GetDefaultValue<int>(Enums.ValueName.KeyEventDelay);
+      GlobalProperty.Options.Setter(Enums.ValueName.KeyEventDelay, result.ToString());
     }
   }
 }
