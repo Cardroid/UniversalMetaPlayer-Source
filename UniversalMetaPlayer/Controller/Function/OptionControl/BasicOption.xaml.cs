@@ -78,7 +78,6 @@ namespace UMP.Controller.Function.OptionControl
       else
       {
         GlobalProperty.SetDefault();
-        GlobalEvent.GlobalMessageEventInvoke("설정이 초기화 되었습니다.", true);
         IsReset = false;
       }
     }

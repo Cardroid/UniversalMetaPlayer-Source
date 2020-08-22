@@ -282,7 +282,7 @@ namespace UMP.Controller.Dialog
         }
       }
       this.ProgressRing.Visibility = Visibility.Collapsed;
-      GlobalEvent.GlobalMessageEventInvoke($"미디어 [{SelectFilePaths.Length}]개 추가 완료", true);
+      GlobalMessageEvent.Invoke($"미디어 [{SelectFilePaths.Length}]개 추가 완료", true);
       Close.Invoke();
     }
 

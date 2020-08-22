@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="clr-namespace:UMP.Controller.WindowHelper"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     TextElement.Foreground="{DynamicResource MaterialDesignBody}"
     Background="{DynamicResource MaterialDesignPaper}"
     TextElement.FontWeight="Medium"
@@ -19,6 +20,17 @@
         <local:UserWindowViewModel />
     </Window.DataContext>
 
-    <UserControl
-        Content="{Binding UserControl}" />
+    <Grid>
+        <UserControl
+            Content="{Binding UserControl}" />
+        
+        <materialDesign:Snackbar
+            x:Name="GlobalMessageBar"
+            Panel.ZIndex="999"
+            Margin="5"
+            IsActive="False">
+            <materialDesign:SnackbarMessage
+                x:Name="GlobalMessage" />
+        </materialDesign:Snackbar>
+    </Grid>
 </Window>

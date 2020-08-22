@@ -9,17 +9,37 @@ using UMP.Utility;
 namespace UMP.Core.Global
 {
   public delegate void UMP_VoidEventHandler();
-  public delegate void UMP_GlobalMessageEventHandler(string message, bool autoClose);
   public delegate void UMP_KeyDownEventHandler(KeyEventArgs e);
   public delegate void UMP_ThemeEventHandler(ThemeHelper.ThemeProperty e);
 
-  public static class GlobalEvent
+  public static class GlobalMessageEvent
   {
-    public static event UMP_GlobalMessageEventHandler GlobalMessageEvent;
+    static GlobalMessageEvent()
+    {
+      MessageCloseTimer = new System.Timers.Timer(3000);
+      MessageCloseTimer.Elapsed += (_, e) => { MessageCloseEvent?.Invoke(); };
+    }
 
-    public static void GlobalMessageEventInvoke(string message, bool autoClose = false) => GlobalMessageEvent?.Invoke(message, autoClose);
+    public delegate void UMP_GlobalMessageEventHandler(string message);
+    private static System.Timers.Timer MessageCloseTimer { get; }
 
-    public static bool KeyDownEventHandled { get; set; } = false;
+    public static event UMP_VoidEventHandler MessageCloseEvent;
+    public static event UMP_GlobalMessageEventHandler MessageEvent;
+
+    public static void Invoke(string message, bool autoClose = false)
+    {
+      MessageEvent?.Invoke(message);
+      MessageCloseTimer.Stop();
+      if (autoClose)
+        MessageCloseTimer.Start();
+    }
+  }
+
+  public static class GlobalKeyDownEvent
+  {
+    private static object LockObject = new object();
+    public static bool IsEnabled { get; set; } = true;
+
     /// <summary>
     /// 전역 키 누름 이벤트
     /// </summary>
@@ -28,14 +48,13 @@ namespace UMP.Core.Global
     /// <summary>
     /// 전역 키 누름 이벤트 호출
     /// </summary>
-    public static async void KeyDownEventInvoke(KeyEventArgs e)
+    public static void Invoke(KeyEventArgs e)
     {
-      if (KeyDownEventHandled)
-        return;
-      KeyDownEventHandled = true;
-      KeyDownEvent?.Invoke(e);
-      await Task.Delay(GlobalProperty.Options.Getter<int>(Enums.ValueName.KeyEventDelay));
-      KeyDownEventHandled = false;
+      if (IsEnabled)
+        lock (LockObject)
+        {
+          KeyDownEvent?.Invoke(e);
+        }
     }
   }
 }

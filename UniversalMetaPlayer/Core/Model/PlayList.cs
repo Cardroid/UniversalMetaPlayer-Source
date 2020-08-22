@@ -37,6 +37,11 @@ namespace UMP.Core.Model
     public string EigenValue { get; private set; }
 
     /// <summary>
+    /// 저장이 필요한지의 여부
+    /// </summary>
+    public bool NeedSave { get; private set; }
+
+    /// <summary>
     /// 플레이 리스트 이름
     /// </summary>
     public string PlayListName
@@ -90,8 +95,8 @@ namespace UMP.Core.Model
 
       string m3uData = PlaylistToTextHelper.ToText(playlist);
 
-      var savepath = Path.Combine(!string.IsNullOrWhiteSpace(path) 
-        ? path 
+      var savepath = Path.Combine(!string.IsNullOrWhiteSpace(path)
+        ? path
         : Path.Combine(GlobalProperty.Options.Getter<string>(Enums.ValueName.FileSavePath), "PlayList"));
       Checker.DirectoryCheck(savepath);
       playlist.Path = savepath;
@@ -99,7 +104,8 @@ namespace UMP.Core.Model
       await File.WriteAllTextAsync(Path.Combine(savepath, $"{PlayListName}.m3u8"), m3uData, Encoding.UTF8);
 
       Log.Info("플레이 리스트 저장 완료");
-      GlobalEvent.GlobalMessageEventInvoke("플레이 리스트 저장 완료", true);
+      GlobalMessageEvent.Invoke("플레이 리스트 저장 완료", true);
+      NeedSave = false;
     }
 
     /// <summary>
@@ -123,7 +129,7 @@ namespace UMP.Core.Model
         catch (Exception e)
         {
           Log.Fatal("플레이 리스트 로드 중 오류 발생. (Parsing Error)", e, $"Path : [{path}]");
-          GlobalEvent.GlobalMessageEventInvoke("플레이 리스트 로드 실패! [로그를 확인해주세요]");
+          GlobalMessageEvent.Invoke("플레이 리스트 로드 실패! [로그를 확인해주세요]");
           return false;
         }
         finally
@@ -135,7 +141,7 @@ namespace UMP.Core.Model
         if (playListData == null)
         {
           Log.Fatal("플레이 리스트 로드 중 오류 발생. (Data is Null)", $"Path : [{path}]");
-        GlobalEvent.GlobalMessageEventInvoke("플레이 리스트 로드 실패! [로그를 확인해주세요]");
+          GlobalMessageEvent.Invoke("플레이 리스트 로드 실패! [로그를 확인해주세요]");
           return false;
         }
 
@@ -146,7 +152,7 @@ namespace UMP.Core.Model
         if (paths.Count < 0)
         {
           Log.Fatal("플레이 리스트 로드 중 오류 발생", new Exception("(PlayList Count < 0) is Impossible"), $"PlayList Name : [{playListData.FileName}]\nPath : [{path}]");
-        GlobalEvent.GlobalMessageEventInvoke("플레이 리스트 로드 실패! [로그를 확인해주세요]");
+          GlobalMessageEvent.Invoke("플레이 리스트 로드 실패! [로그를 확인해주세요]");
           return false;
         }
 
@@ -169,15 +175,16 @@ namespace UMP.Core.Model
 
         Log.Info($"플레이 리스트 로드 완료 MediaCount : [{paths.Count}] Loaded Warning [{loadErrorItemExists}]", $"Path : [{path}]");
         if (loadErrorItemExists)
-          GlobalEvent.GlobalMessageEventInvoke("플레이 리스트 로드 완료 [오류 항목이 있습니다]", false);
+          GlobalMessageEvent.Invoke("플레이 리스트 로드 완료 [오류 항목이 있습니다]", false);
         else
-          GlobalEvent.GlobalMessageEventInvoke("플레이 리스트 로드 완료", true);
+          GlobalMessageEvent.Invoke("플레이 리스트 로드 완료", true);
+        NeedSave = false;
         return true;
       }
       else
       {
         Log.Fatal("플레이 리스트 로드 중 오류 발생", new FileNotFoundException("File Not Found"), $"Path : [{path}]");
-        GlobalEvent.GlobalMessageEventInvoke("플레이 리스트 로드 실패! [로그를 확인해주세요]");
+        GlobalMessageEvent.Invoke("플레이 리스트 로드 실패! [로그를 확인해주세요]");
         return false;
       }
     }
@@ -205,6 +212,7 @@ namespace UMP.Core.Model
       TotalDuration += info.Duration;
       base.Add(info);
       Log.Info($"플레이 리스트 항목 추가 완료 IsLoaded : [{info.LoadState}]", $"Title : [{info.Title}]\nFileName : {Path.GetFileName(mediaLocation)}");
+      NeedSave = true;
     }
 
     /// <summary>
@@ -222,6 +230,7 @@ namespace UMP.Core.Model
       }
       else
         Log.Fatal("플레이 리스트 항목 제거 실패", new NullReferenceException("Unlisted Media"), $"Title : [{mediaInfo.Title}]");
+      NeedSave = true;
     }
 
     /// <summary>
@@ -240,6 +249,7 @@ namespace UMP.Core.Model
       }
       else
         Log.Fatal($"플레이 리스트 Index 항목 제거 실패", new IndexOutOfRangeException($"Index Out Of Range.\nBase Count : [{base.Count}]\nIndex : [{index}]"));
+      NeedSave = true;
     }
 
     public new void Insert(int index, MediaInformation item)
@@ -248,6 +258,7 @@ namespace UMP.Core.Model
       {
         base.Insert(index, item);
         TotalDuration += item.Duration;
+        NeedSave = true;
       }
     }
 
@@ -259,7 +270,7 @@ namespace UMP.Core.Model
         if (MainMediaPlayer.MediaLoadedCheck && this.IndexOf(MainMediaPlayer.NotChangedMediaInformation) == index)
         {
           Log.Error($"플레이 리스트 항목 리로드 실패 \n재생 중인 항목은 리로드 할 수 없습니다\nIndex : [{index}]\nIsLoaded : [{item.LoadState}]", $"Title : [{item.Title}]\nLocation : [{item.MediaLocation}]");
-          GlobalEvent.GlobalMessageEventInvoke($"재생 중인 항목은 리로드 할 수 없습니다.\nTitle : [{item.Title}]", true);
+          GlobalMessageEvent.Invoke($"재생 중인 항목은 리로드 할 수 없습니다.\nTitle : [{item.Title}]", true);
           return;
         }
         TotalDuration -= item.Duration;
@@ -268,7 +279,8 @@ namespace UMP.Core.Model
         TotalDuration += item.Duration;
         base[index] = item;
         Log.Info($"플레이 리스트 항목 리로드 완료 Index : [{index}] IsLoaded : [{item.LoadState}]", $"Title : [{item.Title}]\nLocation : [{item.MediaLocation}]");
-        GlobalEvent.GlobalMessageEventInvoke($"플레이 리스트 항목 리로드 완료\nTitle : [{item.Title}]", true);
+        GlobalMessageEvent.Invoke($"플레이 리스트 항목 리로드 완료\nTitle : [{item.Title}]", true);
+        NeedSave = true;
       }
     }
 
@@ -284,6 +296,7 @@ namespace UMP.Core.Model
     {
       this.TotalDuration = TimeSpan.Zero;
       base.Clear();
+      NeedSave = true;
     }
   }
 }

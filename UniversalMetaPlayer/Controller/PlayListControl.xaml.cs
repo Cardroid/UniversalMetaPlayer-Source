@@ -48,7 +48,7 @@ namespace UMP.Controller
           this.PlayListName.Focusable = true;
           this.PlayListName.IsReadOnly = false;
           this.PlayListName.IsReadOnlyCaretVisible = true;
-          GlobalEvent.KeyDownEventHandled = true;
+          GlobalKeyDownEvent.IsEnabled = true;
           this.PlayListName.Focus();
           this.PlayListName.CaretIndex = this.PlayListName.Text.Length;
           this.PlayListNameEditButton.Content = new PackIcon() { Kind = PackIconKind.EditOff, Width = 20, Height = 20 };
@@ -58,7 +58,7 @@ namespace UMP.Controller
           this.PlayListName.Focusable = false;
           this.PlayListName.IsReadOnly = true;
           this.PlayListName.IsReadOnlyCaretVisible = false;
-          GlobalEvent.KeyDownEventHandled = false;
+          GlobalKeyDownEvent.IsEnabled = false;
           this.PlayListNameEditButton.Content = new PackIcon() { Kind = PackIconKind.Edit, Width = 20, Height = 20 };
         }
       };
@@ -69,7 +69,7 @@ namespace UMP.Controller
            this.PlayListName.Focusable = false;
            this.PlayListName.IsReadOnly = true;
            this.PlayListName.IsReadOnlyCaretVisible = false;
-           GlobalEvent.KeyDownEventHandled = false;
+           GlobalKeyDownEvent.IsEnabled = false;
            this.PlayListNameEditButton.Content = new PackIcon() { Kind = PackIconKind.Edit, Width = 20, Height = 20 };
          }
        };
@@ -148,7 +148,7 @@ namespace UMP.Controller
 
     private void EnableControl(bool isEnable)
     {
-      GlobalEvent.KeyDownEventHandled = !isEnable;
+      GlobalKeyDownEvent.IsEnabled = isEnable;
       this.PlayListGroupBox.IsEnabled = isEnable;
       GlobalProperty.State.IsControllable = isEnable;
     }
@@ -183,13 +183,13 @@ namespace UMP.Controller
             MainMediaPlayer.ReserveCommand(NAudio.Wave.PlaybackState.Playing);
           }
           else
-            GlobalEvent.GlobalMessageEventInvoke("재생 실패! [로그를 확인해주세요]");
+            GlobalMessageEvent.Invoke("재생 실패! [로그를 확인해주세요]");
         }
         else
         {
           var info = MainMediaPlayer.PlayList[this.PlayList.SelectedIndex];
           Log.Fatal("미디어 정보가 로드되지 않았거나 로드에 실패 했습니다", $"MediaLocation : [{info.MediaLocation}]\nTitle : [{info.Title}]");
-          GlobalEvent.GlobalMessageEventInvoke("재생 실패! 미디어가 로드 되지 않음! [로그를 확인해주세요]");
+          GlobalMessageEvent.Invoke("재생 실패! 미디어가 로드 되지 않음! [로그를 확인해주세요]");
         }
       }
     }

@@ -119,13 +119,14 @@ namespace UMP.Core.Player
     private static void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(null, new PropertyChangedEventArgs(propertyName));
 
     // 오디오 분석용 코드
-
     public static event EventHandler<FftEventArgs> FftCalculated;
 
     public static event EventHandler<MaxSampleEventArgs> MaximumCalculated;
 
-
-    public static bool MediaLoadedCheck => AudioFile != null && MediaInformation.Duration > TimeSpan.Zero;
+    /// <summary>
+    /// 미디어 로드 체크
+    /// </summary>
+    public static bool MediaLoadedCheck => AudioFile != null && !string.IsNullOrWhiteSpace(MediaInformation.MediaLocation);
 
     /// <summary>
     /// 미디어 파일 정보
@@ -330,6 +331,10 @@ namespace UMP.Core.Player
     private static Queue<PlaybackState> PlayBackCommand { get; } = new Queue<PlaybackState>();
     private static bool IsExecuteWork = false;
 
+    /// <summary>
+    /// 명령을 예약합니다
+    /// </summary>
+    /// <param name="state">예약할 상태</param>
     public static void ReserveCommand(PlaybackState state)
     {
       PlayBackCommand.Enqueue(state);

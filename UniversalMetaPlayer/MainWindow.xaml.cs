@@ -32,20 +32,30 @@ namespace UMP
       InitializeComponent();
       ViewModel = (MainWindowViewModel)this.DataContext;
 
-      this.KeyDown += (_, e) => GlobalEvent.KeyDownEventInvoke(e);
+      // TODO : 키보드 이벤트를 다른 이벤트보다 앞서 처리할지의 여부를 옵션화
+      //this.PreviewKeyDown += (_, e) => GlobalKeyDownEvent.Invoke(e);
+      this.KeyDown += (_, e) => GlobalKeyDownEvent.Invoke(e);
+
       this.Loaded += MainWindow_Loaded;
       this.Closing += MainWindow_Closing;
 
-      // 전역 메시지 닫힘 타이머 정의
-      GlobalMessageCloseTimer = new System.Timers.Timer(3000) { AutoReset = true };
-      GlobalMessageCloseTimer.Elapsed += (_, e) =>
+      GlobalMessageEvent.MessageCloseEvent += () =>
+       {
+         Dispatcher.Invoke(new Action(() =>
+         {
+           this.GlobalMessageBar.IsActive = false;
+         }));
+       };
+
+      GlobalMessageEvent.MessageEvent += (msg) =>
       {
-        Dispatcher.Invoke(new Action(() => {
-          this.GlobalMessageBar.IsActive = false;
+        Dispatcher.Invoke(new Action(() =>
+        {
+          this.GlobalMessageBar.IsActive = true;
+          this.GlobalMessage.Content = msg;
         }));
       };
 
-      GlobalEvent.GlobalMessageEvent += GlobalEvent_GlobalMessageEvent;
       this.GlobalMessageBar.MouseLeftButtonDown += (_, e) =>
       {
         if (this.GlobalMessageBar.IsActive)
@@ -134,21 +144,7 @@ namespace UMP
       #endregion
     }
 
-    private System.Timers.Timer GlobalMessageCloseTimer { get; }
-
     private void MainWindow_WindowDrag(object sender, MouseButtonEventArgs e) { e.Handled = true; this.DragMove(); }
-
-    private void GlobalEvent_GlobalMessageEvent(string message, bool autoClose)
-    {
-      Dispatcher.Invoke(new Action(() =>
-      {
-        GlobalMessageCloseTimer.Stop();
-        this.GlobalMessageBar.IsActive = true;
-        this.GlobalMessage.Content = message;
-      }));
-      if (autoClose)
-        GlobalMessageCloseTimer.Start();
-    }
 
     /// <summary>
     /// 메인 윈도우 종료 이벤트처리

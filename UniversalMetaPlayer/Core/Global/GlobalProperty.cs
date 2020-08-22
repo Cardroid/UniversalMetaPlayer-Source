@@ -14,6 +14,7 @@ using Newtonsoft.Json.Linq;
 using UMP.Utility;
 using UMP.Core.Player;
 using MaterialDesignColors.ColorManipulation;
+using System.Windows.Input;
 
 namespace UMP.Core.Global
 {
@@ -38,6 +39,7 @@ namespace UMP.Core.Global
     public static void SetDefault()
     {
       Options.Clear();
+      GlobalMessageEvent.Invoke("설정이 초기화 되었습니다.", true);
       OnPropertyChanged("SetDefault");
     }
 
@@ -58,11 +60,11 @@ namespace UMP.Core.Global
         File.WriteAllText("UMP_Options.json", jText, Encoding.UTF8);
 
         Log.Info("메인 설정 저장 완료");
-        GlobalEvent.GlobalMessageEventInvoke("메인 설정 저장 완료", true);
+        GlobalMessageEvent.Invoke("메인 설정 저장 완료", true);
       }
       catch (Exception e)
       {
-        GlobalEvent.GlobalMessageEventInvoke("메인 설정 저장 실패", true);
+        GlobalMessageEvent.Invoke("메인 설정 저장 실패", true);
         Log.Fatal("메인 설정 저장 실패", e);
       }
     }
@@ -235,6 +237,59 @@ namespace UMP.Core.Global
       /// 설정을 모두 제거합니다
       /// </summary>
       public static void Clear() => Settings.Clear();
+
+      public static class HotKey
+      {
+        static HotKey()
+        {
+          Settings = new Dictionary<Key, ControlTarget>();
+          SetDefault();
+        }
+
+        private static Dictionary<Key, ControlTarget> Settings { get; }
+
+        public static void Setter(Key key, ControlTarget controlTarget)
+        {
+          Settings[key] = controlTarget;
+          OnPropertyChanged($"HotKey_{controlTarget}");
+        }
+
+        public static ControlTarget Getter(Key key)
+        {
+          if (Settings.TryGetValue(key, out ControlTarget value))
+            return value;
+          return ControlTarget.Null;
+        }
+
+        public static void SetDefault()
+        {
+          Settings.Clear();
+          Settings[Key.Space] = ControlTarget.PlayPause;
+          Settings[Key.S] = ControlTarget.Stop;
+          Settings[Key.A] = ControlTarget.Previous;
+          Settings[Key.D] = ControlTarget.Next;
+          Settings[Key.M] = ControlTarget.Mute;
+          Settings[Key.R] = ControlTarget.Repeat;
+          Settings[Key.E] = ControlTarget.Shuffle;
+          Settings[Key.Left] = ControlTarget.MediaPositionBack;
+          Settings[Key.Right] = ControlTarget.MediaPositionForward;
+          Settings[Key.Up] = ControlTarget.VolumeUp;
+          Settings[Key.Down] = ControlTarget.VolumeDown;
+          Settings[Key.P] = ControlTarget.PlayListWindow;
+          Settings[Key.O] = ControlTarget.FunctionWindow;
+          OnPropertyChanged($"HotKey_SetDefault");
+        }
+
+        public enum ControlTarget
+        {
+          Null,
+          PlayPause, Stop, Previous, Next,
+          Mute, Repeat, Shuffle,
+          MediaPositionForward, MediaPositionBack,
+          VolumeUp, VolumeDown,
+          PlayListWindow, FunctionWindow
+        }
+      }
     }
 
     /// <summary>
@@ -257,9 +312,8 @@ namespace UMP.Core.Global
           Enums.ValueName.IsAverageColorTheme => Converter.ChangeType<T, bool>(true),
           Enums.ValueName.AverageColorProcessingOffset => Converter.ChangeType<T, int>(30),
           // 키보드
-          Enums.ValueName.HotKey => Converter.ChangeType<T, bool>(false),
+          Enums.ValueName.HotKey => Converter.ChangeType<T, bool>(true),
           Enums.ValueName.GlobalKeyboardHook => Converter.ChangeType<T, bool>(true),
-          Enums.ValueName.KeyEventDelay => Converter.ChangeType<T, int>(20),
           // 효과
           Enums.ValueName.IsUseFadeEffect => Converter.ChangeType<T, bool>(true),
           Enums.ValueName.FadeEffectDelay => Converter.ChangeType<T, int>(200),
@@ -342,7 +396,7 @@ namespace UMP.Core.Global
       IsDarkMode, PrimaryColor, SecondaryColor,
       IsAverageColorTheme, AverageColorProcessingOffset,
       // 키보드
-      HotKey, GlobalKeyboardHook, KeyEventDelay,
+      HotKey, GlobalKeyboardHook,
       // 효과
       IsUseFadeEffect, FadeEffectDelay
     }

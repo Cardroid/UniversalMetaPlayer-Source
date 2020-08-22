@@ -23,28 +23,6 @@ namespace UMP.Controller.Function.OptionControl
     public KeyboardOption() : base("옵션 - 키보드")
     {
       InitializeComponent();
-
-      GlobalProperty.PropertyChanged += (_, e) =>
-      {
-        if (e.PropertyName == "KeyEventDelay")
-          this.KeyEventDelayOffsetTextBox.Text = GlobalProperty.Options.Getter<int>(Enums.ValueName.KeyEventDelay).ToString();
-      };
-
-      this.PreviewMouseDown += (_, e) => { KeyEventDelayOffsetTextBox_Apply(); };
-
-      this.KeyEventDelayOffsetTextBox.GotKeyboardFocus += (_, e) => { this.KeyEventDelayOffsetTextBox.Text = ""; };
-      this.KeyEventDelayOffsetTextBox.PreviewKeyDown += (_, e) => { if (e.Key == Key.Enter) Keyboard.ClearFocus(); };
-      this.KeyEventDelayOffsetTextBox.LostKeyboardFocus += (_, e) => { KeyEventDelayOffsetTextBox_Apply(); };
-      this.KeyEventDelayOffsetTextBox.Text = GlobalProperty.Options.Getter<int>(Enums.ValueName.KeyEventDelay).ToString();
-    }
-
-    private void KeyEventDelayOffsetTextBox_Apply()
-    {
-      if (int.TryParse(this.KeyEventDelayOffsetTextBox.Text, out int result))
-        result = Math.Clamp(result, 10, 201);
-      else
-        result = GlobalProperty.DefaultValue.GetDefaultValue<int>(Enums.ValueName.KeyEventDelay);
-      GlobalProperty.Options.Setter(Enums.ValueName.KeyEventDelay, result.ToString());
     }
   }
 }

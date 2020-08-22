@@ -30,8 +30,6 @@
             <RowDefinition
                 Height="Auto" />
             <RowDefinition
-                Height="Auto" />
-            <RowDefinition
                 Height="*" />
         </Grid.RowDefinitions>
 
@@ -49,21 +47,5 @@
             Style="{StaticResource MaterialDesignSwitchToggleButton}"
             Grid.Column="1"
             Grid.Row="0" />
-
-        <Label
-            VerticalAlignment="Center"
-            ToolTip="{Binding KeyEventDelayOffsetToolTip}"
-            Content="키보드 입력 딜레이 오프셋"
-            Grid.Column="0"
-            Grid.Row="1" />
-        <TextBox
-            x:Name="KeyEventDelayOffsetTextBox"
-            VerticalAlignment="Center"
-            ToolTip="{Binding KeyEventDelayOffsetToolTip}"
-            Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-            VerticalScrollBarVisibility="Auto"
-            materialDesign:HintAssist.Hint="Offset"
-            Grid.Column="1"
-            Grid.Row="1" />
     </Grid>
 </funcmodel:FunctionControlForm>

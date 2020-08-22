@@ -38,7 +38,7 @@ namespace UMP.Utility
             {
               error = true;
               new Log(typeof(ImageProcessing)).Error("이미지 픽셀 추출 실패", e);
-              GlobalEvent.GlobalMessageEventInvoke("이미지 픽셀 추출에 오류가 발생했습니다.\n이미지에 이상이 없는지 확인해주세요", true);
+              GlobalMessageEvent.Invoke("이미지 픽셀 추출에 오류가 발생했습니다.\n이미지에 이상이 없는지 확인해주세요", true);
             }
             continue;
           }

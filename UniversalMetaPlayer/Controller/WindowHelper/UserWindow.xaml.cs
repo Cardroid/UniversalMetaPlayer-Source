@@ -9,7 +9,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-
+using UMP.Core.Global;
 using UMP.Utility;
 
 namespace UMP.Controller.WindowHelper
@@ -29,6 +29,33 @@ namespace UMP.Controller.WindowHelper
 
       this.BorderBrush = new SolidColorBrush(ThemeHelper.PrimaryColor);
       ThemeHelper.ThemeChangedEvent += (e) => this.BorderBrush = new SolidColorBrush(e.PrimaryColor);
+
+      // TODO : 키보드 이벤트를 다른 이벤트보다 앞서 처리할지의 여부를 옵션화
+      //this.PreviewKeyDown += (_, e) => GlobalKeyDownEvent.Invoke(e);
+      this.KeyDown += (_, e) => GlobalKeyDownEvent.Invoke(e);
+
+      GlobalMessageEvent.MessageCloseEvent += () =>
+      {
+        Dispatcher.Invoke(new Action(() =>
+        {
+          this.GlobalMessageBar.IsActive = false;
+        }));
+      };
+
+      GlobalMessageEvent.MessageEvent += (msg) =>
+      {
+        Dispatcher.Invoke(new Action(() =>
+        {
+          this.GlobalMessageBar.IsActive = true;
+          this.GlobalMessage.Content = msg;
+        }));
+      };
+
+      this.GlobalMessageBar.MouseLeftButtonDown += (_, e) =>
+      {
+        if (this.GlobalMessageBar.IsActive)
+          this.GlobalMessageBar.IsActive = false;
+      };
     }
   }
 }
