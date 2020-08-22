@@ -30,9 +30,14 @@ namespace UMP.Controller.WindowHelper
       this.BorderBrush = new SolidColorBrush(ThemeHelper.PrimaryColor);
       ThemeHelper.ThemeChangedEvent += (e) => this.BorderBrush = new SolidColorBrush(e.PrimaryColor);
 
-      // TODO : 키보드 이벤트를 다른 이벤트보다 앞서 처리할지의 여부를 옵션화
-      //this.PreviewKeyDown += (_, e) => GlobalKeyDownEvent.Invoke(e);
-      this.KeyDown += (_, e) => GlobalKeyDownEvent.Invoke(e);
+      this.PreviewKeyDown += (_, e) =>
+      {
+        if (GlobalProperty.Options.HotKey.ContainsKey(e.Key))
+        {
+          e.Handled = true;
+          GlobalKeyDownEvent.Invoke(e);
+        }
+      };
 
       GlobalMessageEvent.MessageCloseEvent += () =>
       {

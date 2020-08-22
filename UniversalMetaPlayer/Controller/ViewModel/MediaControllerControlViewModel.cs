@@ -3,18 +3,20 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
 
-using UMP.Utility;
-
 using MaterialDesignThemes.Wpf;
+using MaterialDesignColors.ColorManipulation;
 
 using NAudio.Wave;
-using MaterialDesignColors.ColorManipulation;
+
 using UMP.Core.Player;
+using UMP.Core.Model.ViewModel;
+using UMP.Core.Global;
 using UMP.Controller.Function;
 using UMP.Controller.WindowHelper;
-using UMP.Core.Model.ViewModel;
+using UMP.Utility;
 
 namespace UMP.Controller.ViewModel
 {
@@ -29,6 +31,8 @@ namespace UMP.Controller.ViewModel
       MainMediaPlayer.PlayList.Field_PropertyChanged += PlayList_Field_PropertyChanged;
       ThemeHelper.ThemeChangedEvent += ThemeHelper_ThemeChangedEvent;
 
+      GlobalKeyDownEvent.KeyDownEvent += GlobalKeyDownEvent_KeyDownEvent;
+
       PlayPauseCommand = new RelayCommand((o) => PlayPause());
       StopCommand = new RelayCommand((o) => Stop());
       NextCommand = new RelayCommand((o) => Next());
@@ -37,7 +41,7 @@ namespace UMP.Controller.ViewModel
       ShuffleCommand = new RelayCommand((o) => Shuffle());
     }
 
-    #region 볼륨
+    #region Volume
     private float _BeforeVolume = 80;
     public float BeforeVolume
     {
@@ -117,11 +121,35 @@ namespace UMP.Controller.ViewModel
     #region Repeat
     public RelayCommand RepeatCommand { get; }
     private void Repeat() => MainMediaPlayer.Option.RepeatPlayOption++;
+    public PackIcon RepeatPlayOptionIcon
+    {
+      get
+      {
+        var RepeatIcon = new PackIcon() { Width = 30, Height = 30 };
+        if (MainMediaPlayer.Option.RepeatPlayOption == 0) // 반복 안함
+        { RepeatIcon.Kind = PackIconKind.RepeatOff; }
+        else if (MainMediaPlayer.Option.RepeatPlayOption == 1) // 한 곡 반복
+        { RepeatIcon.Kind = PackIconKind.RepeatOnce; }
+        else if (MainMediaPlayer.Option.RepeatPlayOption == 2) // 전채 반복
+        { RepeatIcon.Kind = PackIconKind.Repeat; }
+        return RepeatIcon;
+      }
+    }
     #endregion
 
     #region Shuffle
     public RelayCommand ShuffleCommand { get; }
     private void Shuffle() => MainMediaPlayer.Option.Shuffle = !MainMediaPlayer.Option.Shuffle;
+    public PackIcon ShuffleIcon
+    {
+      get
+      {
+        if (MainMediaPlayer.Option.Shuffle)
+          return new PackIcon { Width = 30, Height = 30, Kind = PackIconKind.ShuffleVariant };
+        else
+          return new PackIcon { Width = 40, Height = 40, Kind = PackIconKind.ShuffleDisabled };
+      }
+    }
     #endregion
 
     #region FunctionControl
@@ -207,36 +235,6 @@ namespace UMP.Controller.ViewModel
     private WeakReference _PlayListWindow = new WeakReference(null);
     #endregion
 
-    #region 반복재생
-    public PackIcon RepeatPlayOptionIcon
-    {
-      get
-      {
-        var RepeatIcon = new PackIcon() { Width = 30, Height = 30 };
-        if (MainMediaPlayer.Option.RepeatPlayOption == 0) // 반복 안함
-        { RepeatIcon.Kind = PackIconKind.RepeatOff; }
-        else if (MainMediaPlayer.Option.RepeatPlayOption == 1) // 한 곡 반복
-        { RepeatIcon.Kind = PackIconKind.RepeatOnce; }
-        else if (MainMediaPlayer.Option.RepeatPlayOption == 2) // 전채 반복
-        { RepeatIcon.Kind = PackIconKind.Repeat; }
-        return RepeatIcon;
-      }
-    }
-    #endregion
-
-    #region Shuffle
-    public PackIcon ShuffleIcon
-    {
-      get
-      {
-        if (MainMediaPlayer.Option.Shuffle)
-          return new PackIcon { Width = 30, Height = 30, Kind = PackIconKind.ShuffleVariant };
-        else
-          return new PackIcon { Width = 40, Height = 40, Kind = PackIconKind.ShuffleDisabled };
-      }
-    }
-    #endregion
-
     #region 플레이 시간 UI
 
     // 재생길이 (단일 파일)
@@ -270,6 +268,95 @@ namespace UMP.Controller.ViewModel
 
     #region ToggleButton
     public Brush ToggleButtonBackground => new SolidColorBrush(ThemeHelper.PrimaryColor.Darken(3));
+    #endregion
+
+    #region HotKey
+    /// <summary>
+    /// 컨트롤 키보드 이벤트 처리 (내부 이벤트)
+    /// </summary>
+    private void GlobalKeyDownEvent_KeyDownEvent(KeyEventArgs e)
+    {
+      if (GlobalProperty.Options.Getter<bool>(Enums.ValueName.HotKey) && GlobalProperty.State.IsControllable)
+      {
+        switch (GlobalProperty.Options.HotKey.Getter(e.Key))
+        {
+          case GlobalProperty.Options.HotKey.ControlTarget.PlayPause:
+            if (PlayPauseCommand.CanExecute(null))
+              PlayPauseCommand.Execute(null);
+            break;
+          case GlobalProperty.Options.HotKey.ControlTarget.Stop:
+            if (StopCommand.CanExecute(null))
+              StopCommand.Execute(null);
+            break;
+          case GlobalProperty.Options.HotKey.ControlTarget.Previous:
+            if (PreviousCommand.CanExecute(null))
+              PreviousCommand.Execute(null);
+            break;
+          case GlobalProperty.Options.HotKey.ControlTarget.Next:
+            if (NextCommand.CanExecute(null))
+              NextCommand.Execute(null);
+            break;
+          case GlobalProperty.Options.HotKey.ControlTarget.Mute:
+            if (Volume > 0)
+              Volume = 0;
+            else
+              Volume = BeforeVolume;
+            break;
+          case GlobalProperty.Options.HotKey.ControlTarget.Repeat:
+            if (RepeatCommand.CanExecute(null))
+              RepeatCommand.Execute(null);
+            break;
+          case GlobalProperty.Options.HotKey.ControlTarget.Shuffle:
+            if (ShuffleCommand.CanExecute(null))
+              ShuffleCommand.Execute(null);
+            break;
+          case GlobalProperty.Options.HotKey.ControlTarget.MediaPositionForward:
+            MediaPositionChanger(TimeSpan.FromSeconds(5));
+            break;
+          case GlobalProperty.Options.HotKey.ControlTarget.MediaPositionBack:
+            MediaPositionChanger(-TimeSpan.FromSeconds(5));
+            break;
+          case GlobalProperty.Options.HotKey.ControlTarget.VolumeUp:
+            Volume += 5;
+            break;
+          case GlobalProperty.Options.HotKey.ControlTarget.VolumeDown:
+            Volume -= 5;
+            break;
+          case GlobalProperty.Options.HotKey.ControlTarget.PlayListWindow:
+            IsCheckedPlayListToggleButton = !IsCheckedPlayListToggleButton;
+            break;
+          case GlobalProperty.Options.HotKey.ControlTarget.FunctionWindow:
+            IsCheckedFunctionToggleButton = !IsCheckedFunctionToggleButton;
+            break;
+          default:
+            break;
+        }
+      }
+    }
+
+    private void MediaPositionChanger(TimeSpan appendtime)
+    {
+      if (!MainMediaPlayer.MediaLoadedCheck || appendtime == TimeSpan.Zero)
+        return;
+
+      if (appendtime > TimeSpan.Zero)
+      {
+        // 양수
+        if (MainMediaPlayer.AudioTotalTime > (MainMediaPlayer.AudioCurrentTime + appendtime))
+          MainMediaPlayer.AudioCurrentTime += appendtime;
+        else
+          MainMediaPlayer.AudioCurrentTime = MainMediaPlayer.AudioTotalTime;
+      }
+      else
+      {
+        // 음수
+        if (MainMediaPlayer.AudioCurrentTime + appendtime > TimeSpan.Zero)
+          MainMediaPlayer.AudioCurrentTime += appendtime;
+        else
+          MainMediaPlayer.AudioCurrentTime = TimeSpan.Zero;
+      }
+      ApplyUI(false);
+    }
     #endregion
 
     #region 동기화 메소드

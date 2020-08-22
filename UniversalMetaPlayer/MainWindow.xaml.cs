@@ -16,6 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
+using UMP.Core;
 using UMP.Core.Global;
 using UMP.Core.Player;
 using UMP.Utility;
@@ -32,9 +33,14 @@ namespace UMP
       InitializeComponent();
       ViewModel = (MainWindowViewModel)this.DataContext;
 
-      // TODO : 키보드 이벤트를 다른 이벤트보다 앞서 처리할지의 여부를 옵션화
-      //this.PreviewKeyDown += (_, e) => GlobalKeyDownEvent.Invoke(e);
-      this.KeyDown += (_, e) => GlobalKeyDownEvent.Invoke(e);
+      this.PreviewKeyDown += (_, e) =>
+      {
+        if (GlobalProperty.Options.HotKey.ContainsKey(e.Key))
+        {
+          e.Handled = true;
+          GlobalKeyDownEvent.Invoke(e);
+        }
+      };
 
       this.Loaded += MainWindow_Loaded;
       this.Closing += MainWindow_Closing;
@@ -95,9 +101,9 @@ namespace UMP
 
       this.BorderBrush = new SolidColorBrush(ThemeHelper.PrimaryColor);
 
-      GlobalProperty.PropertyChanged += (_, e) => 
+      GlobalProperty.PropertyChanged += (_, e) =>
       {
-        if(e.PropertyName == "IsControllable")
+        if (e.PropertyName == "IsControllable")
         {
           if (GlobalProperty.State.IsControllable)
             this.MainControllerControl.IsEnabled = true;
@@ -126,6 +132,7 @@ namespace UMP
       };
 
       this.GlobalMessageBar.IsActiveChanged += (_, e) => { if (!e.NewValue) this.GlobalMessage.Content = null; };
+      WindowManager.CloseAll();
 
       #region 실행 시 정보 띄우기
       this.GlobalMessageBar.IsActive = true;

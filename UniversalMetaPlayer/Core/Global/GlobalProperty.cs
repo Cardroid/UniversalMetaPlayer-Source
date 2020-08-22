@@ -248,8 +248,11 @@ namespace UMP.Core.Global
 
         private static Dictionary<Key, ControlTarget> Settings { get; }
 
+        public static bool ContainsKey(Key key) => Settings.ContainsKey(key);
+
         public static void Setter(Key key, ControlTarget controlTarget)
         {
+          RemoveByValue(controlTarget);
           Settings[key] = controlTarget;
           OnPropertyChanged($"HotKey_{controlTarget}");
         }
@@ -259,6 +262,19 @@ namespace UMP.Core.Global
           if (Settings.TryGetValue(key, out ControlTarget value))
             return value;
           return ControlTarget.Null;
+        }
+
+        private static bool RemoveByValue(ControlTarget controlTarget)
+        {
+          if (Settings.ContainsValue(controlTarget))
+          {
+            foreach (var pair in Settings)
+            {
+              if (pair.Value == controlTarget)
+                return Settings.Remove(pair.Key);
+            }
+          }
+          return false;
         }
 
         public static void SetDefault()
@@ -277,6 +293,8 @@ namespace UMP.Core.Global
           Settings[Key.Down] = ControlTarget.VolumeDown;
           Settings[Key.P] = ControlTarget.PlayListWindow;
           Settings[Key.O] = ControlTarget.FunctionWindow;
+
+          Settings[Key.Delete] = ControlTarget.PlayList_Delete;
           OnPropertyChanged($"HotKey_SetDefault");
         }
 
@@ -287,7 +305,9 @@ namespace UMP.Core.Global
           Mute, Repeat, Shuffle,
           MediaPositionForward, MediaPositionBack,
           VolumeUp, VolumeDown,
-          PlayListWindow, FunctionWindow
+          PlayListWindow, FunctionWindow,
+
+          PlayList_Delete,
         }
       }
     }
@@ -304,7 +324,7 @@ namespace UMP.Core.Global
           Enums.ValueName.FileSavePath => Converter.ChangeType<T, string>("Save"),
           Enums.ValueName.PrivateLogging => Converter.ChangeType<T, bool>(true),
           Enums.ValueName.MediaLoadEngine => Converter.ChangeType<T, Enums.MediaLoadEngineType>(Enums.MediaLoadEngineType.Native),
-          Enums.ValueName.LyricsWindowActive => Converter.ChangeType<T, Enums.LyricsSettingsType>(Enums.LyricsSettingsType.Off),
+          Enums.ValueName.LyricsWindowActive => Converter.ChangeType<T, Enums.LyricsSettingsType>(Enums.LyricsSettingsType.Auto),
           // 테마
           Enums.ValueName.IsDarkMode => Converter.ChangeType<T, bool>(true),
           Enums.ValueName.PrimaryColor => Converter.ChangeType<T, Color>(Colors.Green.Lighten(3)),

@@ -14,12 +14,10 @@ using System.Windows.Threading;
 
 using UMP.Controller.ViewModel;
 using UMP.Core;
-using UMP.Core.Model;
 using UMP.Utility;
 
 using NeatInput.Windows.Events;
 using NeatInput.Windows.Processing.Keyboard.Enums;
-using UMP.Controller.Function;
 using UMP.Core.Player;
 using NAudio.Wave;
 using UMP.Core.Global;
@@ -43,8 +41,6 @@ namespace UMP.Controller
         this.ProgressSlider.ValueChanged += ProgressSlider_ValueChanged;
 
         Window parentWindow = Window.GetWindow(Parent);
-
-        GlobalKeyDownEvent.KeyDownEvent += GlobalKeyDownEvent_KeyDownEvent;
 
         // 마우스 휠을 사용한 볼륨조절
         parentWindow.MouseWheel += (s, e) =>
@@ -78,70 +74,6 @@ namespace UMP.Controller
 
         log.Debug("초기화 완료");
       };
-    }
-
-    /// <summary>
-    /// 컨트롤 키보드 이벤트 처리 (내부 이벤트)
-    /// </summary>
-    private void GlobalKeyDownEvent_KeyDownEvent(KeyEventArgs e)
-    {
-      if (GlobalProperty.Options.Getter<bool>(Enums.ValueName.HotKey) && GlobalProperty.State.IsControllable)
-      {
-        var viewModel = ((MediaControllerControlViewModel)this.DataContext);
-        switch (GlobalProperty.Options.HotKey.Getter(e.Key))
-        {
-          case GlobalProperty.Options.HotKey.ControlTarget.PlayPause:
-            if (viewModel.PlayPauseCommand.CanExecute(null))
-              viewModel.PlayPauseCommand.Execute(null);
-            break;
-          case GlobalProperty.Options.HotKey.ControlTarget.Stop:
-            if (viewModel.StopCommand.CanExecute(null))
-              viewModel.StopCommand.Execute(null);
-            break;
-          case GlobalProperty.Options.HotKey.ControlTarget.Previous:
-            if (viewModel.PreviousCommand.CanExecute(null))
-              viewModel.PreviousCommand.Execute(null);
-            break;
-          case GlobalProperty.Options.HotKey.ControlTarget.Next:
-            if (viewModel.NextCommand.CanExecute(null))
-              viewModel.NextCommand.Execute(null);
-            break;
-          case GlobalProperty.Options.HotKey.ControlTarget.Mute:
-            if (ViewModel.Volume > 0)
-              ViewModel.Volume = 0;
-            else
-              ViewModel.Volume = ViewModel.BeforeVolume;
-            break;
-          case GlobalProperty.Options.HotKey.ControlTarget.Repeat:
-            if (viewModel.RepeatCommand.CanExecute(null))
-              viewModel.RepeatCommand.Execute(null);
-            break;
-          case GlobalProperty.Options.HotKey.ControlTarget.Shuffle:
-            if (viewModel.ShuffleCommand.CanExecute(null))
-              viewModel.ShuffleCommand.Execute(null);
-            break;
-          case GlobalProperty.Options.HotKey.ControlTarget.MediaPositionForward:
-            MediaPositionChanger(TimeSpan.FromSeconds(5));
-            break;
-          case GlobalProperty.Options.HotKey.ControlTarget.MediaPositionBack:
-            MediaPositionChanger(-TimeSpan.FromSeconds(5));
-            break;
-          case GlobalProperty.Options.HotKey.ControlTarget.VolumeUp:
-            ViewModel.Volume += 5;
-            break;
-          case GlobalProperty.Options.HotKey.ControlTarget.VolumeDown:
-            ViewModel.Volume -= 5;
-            break;
-          case GlobalProperty.Options.HotKey.ControlTarget.PlayListWindow:
-            viewModel.IsCheckedPlayListToggleButton = !viewModel.IsCheckedPlayListToggleButton;
-            break;
-          case GlobalProperty.Options.HotKey.ControlTarget.FunctionWindow:
-            viewModel.IsCheckedFunctionToggleButton = !viewModel.IsCheckedFunctionToggleButton;
-            break;
-          default:
-            break;
-        }
-      }
     }
 
     /// <summary>
@@ -184,30 +116,6 @@ namespace UMP.Controller
             break;
         }
       }
-    }
-
-    private void MediaPositionChanger(TimeSpan appendtime)
-    {
-      if (!MainMediaPlayer.MediaLoadedCheck || appendtime == TimeSpan.Zero)
-        return;
-
-      if (appendtime > TimeSpan.Zero)
-      {
-        // 양수
-        if (MainMediaPlayer.AudioTotalTime > (MainMediaPlayer.AudioCurrentTime + appendtime))
-          MainMediaPlayer.AudioCurrentTime += appendtime;
-        else
-          MainMediaPlayer.AudioCurrentTime = MainMediaPlayer.AudioTotalTime;
-      }
-      else
-      {
-        // 음수
-        if (MainMediaPlayer.AudioCurrentTime + appendtime > TimeSpan.Zero)
-          MainMediaPlayer.AudioCurrentTime += appendtime;
-        else
-          MainMediaPlayer.AudioCurrentTime = TimeSpan.Zero;
-      }
-      ViewModel.ApplyUI(false);
     }
 
     /// <summary>

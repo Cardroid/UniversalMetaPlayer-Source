@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Threading.Tasks;
 
 using MaterialDesignThemes.Wpf;
 
@@ -74,29 +75,16 @@ namespace UMP.Controller
          }
        };
 
-      this.PlayList.MouseDoubleClick += PlayList_MouseDoubleClick;
+      // 플레이 리스트 더블 클릭시 재생 처리
+      this.PlayList.MouseDoubleClick += async (_, e) => { await PlaySelectItem(); };
+
       this.PlayListGroupBox.PreviewMouseDown += PlayList_MouseDownUnSelect;
-      this.PlayList.KeyDown += PlayListControl_KeyDown;
+      this.PreviewKeyDown += PlayListControl_PreviewKeyDown;
       this.PlayListPopupBox.MouseEnter += (_, e) => { UnselectActive = false; };
       this.PlayListPopupBox.MouseLeave += (_, e) => { UnselectActive = true; };
 
       // 로그 설정
       Log.Debug("초기화 완료");
-    }
-
-    private void PlayListControl_KeyDown(object sender, KeyEventArgs e)
-    {
-      switch (e.Key)
-      {
-        case Key.Delete:
-          if (this.PlayList.SelectedIndex >= 0)
-          {
-            var deleteItemList = this.PlayList.SelectedItems;
-            for (int i = deleteItemList.Count - 1; i >= 0; i--)
-              MainMediaPlayer.PlayList.Remove((MediaInformation)deleteItemList[i]);
-          }
-          break;
-      }
     }
 
     /// <summary>
@@ -168,10 +156,23 @@ namespace UMP.Controller
     }
     private bool UnselectActive = true;
 
+    private void PlayListControl_PreviewKeyDown(object sender, KeyEventArgs e)
+    {
+      if (GlobalProperty.Options.Getter<bool>(Enums.ValueName.HotKey) && GlobalProperty.State.IsControllable)
+      {
+        switch (GlobalProperty.Options.HotKey.Getter(e.Key))
+        {
+          case GlobalProperty.Options.HotKey.ControlTarget.PlayList_Delete:
+            DeleteSelectItme();
+            break;
+        }
+      }
+    }
+
     /// <summary>
-    /// 플레이 리스트 더블 클릭시 재생 처리
+    /// 선택된 아이템 재생 처리
     /// </summary>
-    private async void PlayList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    private async Task PlaySelectItem()
     {
       if (0 <= this.PlayList.SelectedIndex && this.PlayList.SelectedIndex < MainMediaPlayer.PlayList.Count)
       {
@@ -191,6 +192,19 @@ namespace UMP.Controller
           Log.Fatal("미디어 정보가 로드되지 않았거나 로드에 실패 했습니다", $"MediaLocation : [{info.MediaLocation}]\nTitle : [{info.Title}]");
           GlobalMessageEvent.Invoke("재생 실패! 미디어가 로드 되지 않음! [로그를 확인해주세요]");
         }
+      }
+    }
+
+    /// <summary>
+    /// 선택된 아이템 삭제
+    /// </summary>
+    private void DeleteSelectItme()
+    {
+      if (this.PlayList.SelectedIndex >= 0)
+      {
+        var deleteItemList = this.PlayList.SelectedItems;
+        for (int i = deleteItemList.Count - 1; i >= 0; i--)
+          MainMediaPlayer.PlayList.Remove((MediaInformation)deleteItemList[i]);
       }
     }
   }

@@ -14,9 +14,6 @@ namespace UMP.Core
 {
   public static class WindowManager
   {
-    public static event PropertyChangedEventHandler PropertyChanged;
-    private static void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(null, new PropertyChangedEventArgs(propertyName));
-
     static WindowManager()
     {
       MainMediaPlayer.PropertyChanged += MainMediaPlayer_PropertyChanged_LyricsWindow;
@@ -28,42 +25,28 @@ namespace UMP.Core
       {
         // 가사 창 모드가 Auto일 경우 가사 존재 유무에 따라 창이 열리고 닫힘
         if (!string.IsNullOrWhiteSpace(MainMediaPlayer.MediaInformation.Tags[MediaInfoType.Lyrics]))
-          IsLyricsWindowActive = true;
-        else
-          IsLyricsWindowActive = false;
-      }
-    }
-
-    /// <summary>
-    /// 가사창 활성화 여부
-    /// </summary>
-    public static bool IsLyricsWindowActive
-    {
-      get => _IsLyricsWindowActive;
-      set
-      {
-        _IsLyricsWindowActive = value;
-        if (_IsLyricsWindowActive)
           LyricsWindowOpen();
         else
           LyricsWindowClose();
       }
     }
-    private static bool _IsLyricsWindowActive = false;
+
+    public static void CloseAll()
+    {
+      LyricsWindowClose();
+    }
 
     private static void LyricsWindowOpen()
     {
-      if (IsLyricsWindowActive)
+      if (LyricsWindow != null)
       {
         LyricsWindow.Visibility = Visibility.Visible;
         LyricsWindow.Activate();
       }
       else
       {
-        IsLyricsWindowActive = true;
         LyricsWindow = new UserWindow(new LyricsControl(), "UMP - Lyrics") { WindowStartupLocation = WindowStartupLocation.CenterOwner };
         LyricsWindow.Show();
-        LyricsWindow.Closed += (_, e) => { IsLyricsWindowActive = false; };
       }
     }
 
