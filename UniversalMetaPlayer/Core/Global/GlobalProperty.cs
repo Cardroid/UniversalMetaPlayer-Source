@@ -19,7 +19,7 @@ using System.Windows.Input;
 namespace UMP.Core.Global
 {
   /// <summary>
-  /// 프로그램 전체 설정
+  /// 프로그램 전체 설정 및 속성 값
   /// </summary>
   public static class GlobalProperty
   {
@@ -133,6 +133,7 @@ namespace UMP.Core.Global
         catch (Exception e)
         {
           Log.Fatal("플레이어 설정 불러오기 실패", e);
+          MainMediaPlayer.OptionSetDefault();
         }
 
         // 테마 적용하기
@@ -248,7 +249,11 @@ namespace UMP.Core.Global
 
         private static Dictionary<Key, ControlTarget> Settings { get; }
 
-        public static bool IsEnabled => Getter<bool>(Enums.ValueName.HotKey);
+        public static bool IsEnabled
+        {
+          get => Options.Getter<bool>(Enums.ValueName.HotKey);
+          set => Options.Setter(Enums.ValueName.HotKey, value.ToString());
+        }
 
         public static bool ContainsKey(Key key) => Settings.ContainsKey(key);
 

@@ -21,7 +21,7 @@ namespace UMP.Core.Player
     {
       Log = new Log(typeof(MainMediaPlayer));
       Option = new PlayerOption();
-      OptionDefault();
+      OptionSetDefault();
       PlayList = new PlayList();
       MediaInformation = new MediaInformation()
       {
@@ -81,7 +81,7 @@ namespace UMP.Core.Player
     /// </summary>
     public static PlayerOption Option;
 
-    public static void OptionDefault()
+    public static void OptionSetDefault()
     {
       Option.Volume = 0.3f;
       Option.Shuffle = false;
