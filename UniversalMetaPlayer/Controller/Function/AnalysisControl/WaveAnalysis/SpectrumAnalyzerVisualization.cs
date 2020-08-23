@@ -13,7 +13,7 @@ namespace UMP.Controller.Function.AnalysisControl.WaveAnalysis
 
     public UserControl Content => spectrumAnalyser;
 
-    public void OnMaxCalculated(float min, float max)
+    public void OnMaxCalculated(float min, float max, int channel)
     {
       // nothing to do
     }

@@ -12,7 +12,7 @@ namespace UMP.Controller.Function.AnalysisControl.WaveAnalysis.Helper
     public UserControl Content { get; }
 
     // n.b. not great design, need to refactor so visualizations can attach to the playback graph and measure just what they need
-    public void OnMaxCalculated(float min, float max);
+    public void OnMaxCalculated(float min, float max, int channel);
     public void OnFftCalculated(Complex[] result);
   }
 }

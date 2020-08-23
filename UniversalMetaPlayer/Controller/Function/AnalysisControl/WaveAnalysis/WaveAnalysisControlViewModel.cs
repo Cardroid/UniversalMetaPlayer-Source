@@ -15,26 +15,30 @@ namespace UMP.Controller.Function.AnalysisControl
   {
     public WaveAnalysisControlViewModel()
     {
-      PolylineWaveVisualizationPlugin = new PolylineWaveFormVisualization();
+      PolylineWaveFormLeftVisualizationPlugin = new PolylineWaveFormLeftVisualization();
+      PolylineWaveFormRightVisualizationPlugin = new PolylineWaveFormRightVisualization();
       SpectrumAnalyzerVisualizationPlugin = new SpectrumAnalyzerVisualization();
 
       MainMediaPlayer.MaximumCalculated += audioGraph_MaximumCalculated;
       MainMediaPlayer.FftCalculated += audioGraph_FftCalculated;
     }
 
-    public IVisualizationPlugin PolylineWaveVisualizationPlugin { get; }
+    public IVisualizationPlugin PolylineWaveFormLeftVisualizationPlugin { get; }
+    public IVisualizationPlugin PolylineWaveFormRightVisualizationPlugin { get; }
     public IVisualizationPlugin SpectrumAnalyzerVisualizationPlugin { get; }
-
-    void audioGraph_FftCalculated(object sender, FftEventArgs e)
-    {
-      this.PolylineWaveVisualizationPlugin.OnFftCalculated(e.Result);
-      this.SpectrumAnalyzerVisualizationPlugin.OnFftCalculated(e.Result);
-    }
 
     void audioGraph_MaximumCalculated(object sender, MaxSampleEventArgs e)
     {
-      this.PolylineWaveVisualizationPlugin.OnMaxCalculated(e.MinSample, e.MaxSample);
-      this.SpectrumAnalyzerVisualizationPlugin.OnMaxCalculated(e.MinSample, e.MaxSample);
+      this.PolylineWaveFormLeftVisualizationPlugin.OnMaxCalculated(e.MinSample, e.MaxSample, e.Channel);
+      this.PolylineWaveFormRightVisualizationPlugin.OnMaxCalculated(e.MinSample, e.MaxSample, e.Channel);
+      this.SpectrumAnalyzerVisualizationPlugin.OnMaxCalculated(e.MinSample, e.MaxSample, e.Channel);
+    }
+
+    void audioGraph_FftCalculated(object sender, FftEventArgs e)
+    {
+      this.PolylineWaveFormLeftVisualizationPlugin.OnFftCalculated(e.Result);
+      this.PolylineWaveFormRightVisualizationPlugin.OnFftCalculated(e.Result);
+      this.SpectrumAnalyzerVisualizationPlugin.OnFftCalculated(e.Result);
     }
   }
 }

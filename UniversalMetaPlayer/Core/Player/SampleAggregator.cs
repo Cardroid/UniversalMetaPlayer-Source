@@ -52,7 +52,7 @@ namespace UMP.Core.Player
       maxValue = minValue = 0;
     }
 
-    private void Add(float value)
+    private void Add(float value, int channel = 0)
     {
       if (PerformFFT && FftCalculated != null)
       {
@@ -73,7 +73,7 @@ namespace UMP.Core.Player
       count++;
       if (count >= NotificationCount && NotificationCount > 0)
       {
-        MaximumCalculated?.Invoke(this, new MaxSampleEventArgs(minValue, maxValue));
+        MaximumCalculated?.Invoke(this, new MaxSampleEventArgs(minValue, maxValue, channel));
         Reset();
       }
     }
@@ -103,10 +103,12 @@ namespace UMP.Core.Player
         }
       }
 
+      // n = 0 left
       for (int n = 0; n < samplesRead; n += source.WaveFormat.Channels)
-      {
         Add(buffer[n + offset]);
-      }
+      if (source.WaveFormat.Channels >= 2)
+        for (int n = 1; n < samplesRead; n += source.WaveFormat.Channels)
+          Add(buffer[n + offset], 1);
       return samplesRead;
     }
   }
@@ -114,13 +116,15 @@ namespace UMP.Core.Player
   public class MaxSampleEventArgs : EventArgs
   {
     [DebuggerStepThrough]
-    public MaxSampleEventArgs(float minValue, float maxValue)
+    public MaxSampleEventArgs(float minValue, float maxValue, int channel)
     {
       MaxSample = maxValue;
       MinSample = minValue;
+      Channel = channel;
     }
     public float MaxSample { get; private set; }
     public float MinSample { get; private set; }
+    public int Channel { get; private set; }
   }
 
   public class FftEventArgs : EventArgs

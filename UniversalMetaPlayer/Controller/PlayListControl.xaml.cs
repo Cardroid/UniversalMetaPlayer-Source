@@ -221,7 +221,7 @@ namespace UMP.Controller
       {
         CloseCount = true;
         e.Cancel = true;
-        GlobalMessageEvent.Invoke("플래이 리스트에 변경사항이 있습니다 (저장 필요)\n(무시하고 닫으려면 다시 시도하세요)");
+        GlobalMessageEvent.Invoke("플래이 리스트에 변경사항이 있습니다 (저장 필요)\n(무시하고 닫으려면 다시 시도하세요)", true);
         await Task.Delay(3000);
         CloseCount = false;
       }

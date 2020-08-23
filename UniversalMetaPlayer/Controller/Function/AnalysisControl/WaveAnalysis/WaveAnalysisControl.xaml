@@ -18,22 +18,25 @@
     <funcmodel:FunctionControlForm.DataContext>
         <viewmodel:WaveAnalysisControlViewModel />
     </funcmodel:FunctionControlForm.DataContext>
-    
+
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition
-                Height="*" />
-            <RowDefinition
-                Height="*" />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
         </Grid.RowDefinitions>
 
         <UserControl
-            Content="{Binding PolylineWaveVisualizationPlugin.Content}"
-            ToolTip="{Binding PolylineWaveVisualizationPlugin.Name}"
+            Content="{Binding PolylineWaveFormLeftVisualizationPlugin.Content}"
+            ToolTip="{Binding PolylineWaveFormLeftVisualizationPlugin.Name}"
             Grid.Row="0" />
+        <UserControl
+            Content="{Binding PolylineWaveFormRightVisualizationPlugin.Content}"
+            ToolTip="{Binding PolylineWaveFormRightVisualizationPlugin.Name}"
+            Grid.Row="1" />
         <UserControl
             Content="{Binding SpectrumAnalyzerVisualizationPlugin.Content}"
             ToolTip="{Binding SpectrumAnalyzerVisualizationPlugin.Name}"
-            Grid.Row="1" />
+            Grid.Row="2" />
     </Grid>
 </funcmodel:FunctionControlForm>
