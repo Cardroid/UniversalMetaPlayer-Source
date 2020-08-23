@@ -171,6 +171,8 @@ namespace UMP.Utility
     {
       if (typeof(AfterT) == typeof(Color))
         return (AfterT)ColorConverter.ConvertFromString(value.ToString());
+      else if (typeof(AfterT).IsEnum)
+        return (AfterT)Enum.Parse(typeof(AfterT), value.ToString());
       return (AfterT)Convert.ChangeType(value, typeof(AfterT));
     }
   }
