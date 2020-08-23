@@ -12,7 +12,9 @@
     TextElement.FontWeight="Medium"
     TextElement.FontSize="14"
     FontFamily="{DynamicResource MainFontFamily}"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    d:DesignHeight="450"
+    d:DesignWidth="800">
 
     <funcmodel:FunctionControlForm.DataContext>
         <viewmodel:BasicOptionViewModel />
@@ -50,8 +52,8 @@
                 VerticalAlignment="Center"
                 ToolTip="{Binding FileSavePathToolTip}"
                 Content="저장 폴더"
-                Grid.Column="0" 
-                Grid.Row="0"/>
+                Grid.Column="0"
+                Grid.Row="0" />
             <Button
                 x:Name="OpenDirectoryDialogButton"
                 VerticalAlignment="Center"
@@ -84,32 +86,41 @@
                 Content="가사창 활성화"
                 Grid.Column="0"
                 Grid.Row="2" />
-            <StackPanel
-                Orientation="Horizontal"
+            <Grid
+                HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 ToolTip="{Binding LyricsSettingsToolTip}"
                 Cursor="Hand"
                 Grid.Column="1"
                 Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
                 <RadioButton
                     Style="{StaticResource MaterialDesignTabRadioButton}"
                     IsChecked="{Binding IsCheckedLyricsSettings_On, Mode=OneWay}"
                     Command="{Binding LyricsSettingsCommand}"
                     CommandParameter="On"
-                    Content="On" />
+                    Content="On"
+                    Grid.Column="0"/>
                 <RadioButton
                     Style="{StaticResource MaterialDesignTabRadioButton}"
                     IsChecked="{Binding IsCheckedLyricsSettings_Auto, Mode=OneWay}"
                     Command="{Binding LyricsSettingsCommand}"
                     CommandParameter="Auto"
-                    Content="Auto" />
+                    Content="Auto"
+                    Grid.Column="1" />
                 <RadioButton
                     Style="{StaticResource MaterialDesignTabRadioButton}"
                     IsChecked="{Binding IsCheckedLyricsSettings_Off, Mode=OneWay}"
                     Command="{Binding LyricsSettingsCommand}"
                     CommandParameter="Off"
-                    Content="Off" />
-            </StackPanel>
+                    Content="Off"
+                    Grid.Column="2" />
+            </Grid>
 
             <Label
                 VerticalAlignment="Center"

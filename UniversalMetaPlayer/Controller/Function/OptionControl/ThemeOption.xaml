@@ -46,7 +46,6 @@
             ToolTip="{Binding IsAverageColorThemeToolTip}"
             IsChecked="{Binding IsAverageColorThemeIsChecked}"
             Style="{StaticResource MaterialDesignSwitchToggleButton}"
-            Margin="5,0,0,0"
             Grid.Column="1"
             Grid.Row="0" />
 
@@ -64,7 +63,6 @@
             Style="{StaticResource MaterialDesignFloatingHintTextBox}"
             VerticalScrollBarVisibility="Auto"
             materialDesign:HintAssist.Hint="Offset"
-            Margin="5,0,0,0"
             Grid.Column="1"
             Grid.Row="1" />
     </Grid>
