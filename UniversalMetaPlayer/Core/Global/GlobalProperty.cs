@@ -56,7 +56,7 @@ namespace UMP.Core.Global
           { "MainMediaPlayerOption", JObject.FromObject(MainMediaPlayer.Option) }
         };
 
-        string jText = $"# 이 설정 파일을 임의로 조작하지 마세요!\n# 임의로 설정파일을 조작하면, 프로그램에 오류가 발생할 수 있습니다!\n\n{jObj}";
+        string jText = $"# 이 설정 파일을 임의로 조작하지 마세요!\n# 임의로 설정파일을 조작하면, 오류가 발생할 수 있습니다!\n\n{jObj}";
         File.WriteAllText("UMP_Options.json", jText, Encoding.UTF8);
 
         Log.Info("메인 설정 저장 완료");
@@ -248,6 +248,8 @@ namespace UMP.Core.Global
 
         private static Dictionary<Key, ControlTarget> Settings { get; }
 
+        public static bool IsEnabled => Getter<bool>(Enums.ValueName.HotKey);
+
         public static bool ContainsKey(Key key) => Settings.ContainsKey(key);
 
         public static void Setter(Key key, ControlTarget controlTarget)
@@ -293,8 +295,6 @@ namespace UMP.Core.Global
           Settings[Key.Down] = ControlTarget.VolumeDown;
           Settings[Key.P] = ControlTarget.PlayListWindow;
           Settings[Key.O] = ControlTarget.FunctionWindow;
-
-          Settings[Key.Delete] = ControlTarget.PlayList_Delete;
           OnPropertyChanged($"HotKey_SetDefault");
         }
 
@@ -306,8 +306,6 @@ namespace UMP.Core.Global
           MediaPositionForward, MediaPositionBack,
           VolumeUp, VolumeDown,
           PlayListWindow, FunctionWindow,
-
-          PlayList_Delete,
         }
       }
     }
@@ -324,7 +322,7 @@ namespace UMP.Core.Global
           Enums.ValueName.FileSavePath => Converter.ChangeType<T, string>("Save"),
           Enums.ValueName.PrivateLogging => Converter.ChangeType<T, bool>(true),
           Enums.ValueName.MediaLoadEngine => Converter.ChangeType<T, Enums.MediaLoadEngineType>(Enums.MediaLoadEngineType.Native),
-          Enums.ValueName.LyricsWindowActive => Converter.ChangeType<T, Enums.LyricsSettingsType>(Enums.LyricsSettingsType.Auto),
+          Enums.ValueName.LyricsSettings => Converter.ChangeType<T, Enums.LyricsSettingsType>(Enums.LyricsSettingsType.Auto),
           // 테마
           Enums.ValueName.IsDarkMode => Converter.ChangeType<T, bool>(true),
           Enums.ValueName.PrimaryColor => Converter.ChangeType<T, Color>(Colors.Green.Lighten(3)),
@@ -411,7 +409,7 @@ namespace UMP.Core.Global
     public enum ValueName
     {
       // 일반
-      FileSavePath, PrivateLogging, MediaLoadEngine, LyricsWindowActive,
+      FileSavePath, PrivateLogging, MediaLoadEngine, LyricsSettings,
       // 테마
       IsDarkMode, PrimaryColor, SecondaryColor,
       IsAverageColorTheme, AverageColorProcessingOffset,
