@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <AssemblyName>UpdateClient</AssemblyName>
+    <AssemblyName>UMP_UpdateClient</AssemblyName>
     <RootNamespace>UMP.UpdateClient</RootNamespace>
     <StartupObject>UMP.UpdateClient.Program</StartupObject>
     <Copyright>Copyright © CarbonSIX 2020</Copyright>
@@ -13,11 +13,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Costura.Fody" Version="4.1.0" />
-    <PackageReference Include="Fody" Version="6.2.4">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="Octokit" Version="0.48.0" />
   </ItemGroup>
 

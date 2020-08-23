@@ -5,6 +5,7 @@ using System.IO;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
@@ -98,63 +99,93 @@ namespace UMP.UpdateClient
     {
       Console.WriteLine("업데이트를 시작합니다");
 
-      if (Utility.CheckForInternetConnection())
-      {
-        Console.WriteLine("현재 버전 정보 가져오는 중...");
-        GetCurrentVersion();
-        Console.WriteLine("새 버전 정보 가져오는 중...");
-        await GetNewVersion();
 
-        if (TargetVerstion != null)
-        {
-          if (TargetVerstion.CompareTo(ProgramVerstion) > 0)
-          {
-            Console.WriteLine("업데이트가 필요합니다");
-            Console.WriteLine("업데이트 파일 다운로드 중...");
-            // TODO 업데이트 메소드 작성
-            if (await DownloadUpdateAsync())
-            {
-              Console.WriteLine("UniversalMetaPlayer의 좀료를 기다리는 중...");
-              while (Utility.IsProcessRun("UniversalMetaPlayer"))
-              {
-                Thread.Sleep(500);
-              }
-              Console.WriteLine("종료 확인");
-
-              if (await UnZip())
-              {
-                Console.WriteLine("업데이트 완료");
-              }
-              else
-              {
-                WriteError("압축 해제 실패");
-                Thread.Sleep(3000);
-              }
-            }
-            else
-            {
-              WriteError("다운로드 실패");
-              Thread.Sleep(3000);
-            }
-          }
-          else
-          {
-            Console.WriteLine("업데이트가 필요하지 않습니다");
-            Thread.Sleep(2000);
-          }
-        }
-        else
-        {
-          WriteError("새 버전 정보를 가져오지 못했습니다");
-          Thread.Sleep(2000);
-        }
-      }
-      else
+      if (!Utility.CheckForInternetConnection())
       {
         WriteError("네트워크를 사용할 수 없습니다");
         Thread.Sleep(3000);
+        exitSystem = true;
+        return;
       }
-      exitSystem = true;
+
+
+      Console.WriteLine("현재 버전 정보 가져오는 중...");
+      var result = GetCurrentVersion();
+      if (result.HasValue == false)
+      {
+        exitSystem = true;
+        return;
+      }
+
+      Console.WriteLine("새 버전 정보 가져오는 중...");
+      await GetNewVersion();
+
+
+      if (TargetVerstion == null)
+      {
+        WriteError("새 버전 정보를 가져오지 못했습니다");
+        Thread.Sleep(2000);
+        exitSystem = true;
+        return;
+      }
+
+
+      if (TargetVerstion.CompareTo(ProgramVerstion) <= 0)
+      {
+        Console.WriteLine("업데이트가 필요하지 않습니다");
+        Thread.Sleep(2000);
+        exitSystem = true;
+        return;
+      }
+      else
+        Console.WriteLine("업데이트가 필요합니다");
+
+
+      Console.WriteLine("업데이트 파일 다운로드 중...");
+      // TODO 업데이트 메소드 작성
+      if (!await DownloadUpdateAsync())
+      {
+        WriteError("다운로드 실패");
+        Thread.Sleep(3000);
+        exitSystem = true;
+        return;
+      }
+
+
+      Console.WriteLine("UniversalMetaPlayer의 좀료를 기다리는 중...");
+      while (Utility.IsProcessRun("UniversalMetaPlayer"))
+      {
+        Thread.Sleep(500);
+      }
+      Console.WriteLine("종료 확인");
+
+
+      if (await UnZip())
+      {
+        Console.WriteLine("업데이트 완료");
+      }
+      else
+      {
+        WriteError("압축 해제 실패");
+        Thread.Sleep(3000);
+        exitSystem = true;
+        return;
+      }
+
+
+      Console.Write("UMP 실행...");
+      try
+      {
+        Process.Start("UniversalMetaPlayer.exe");
+        Console.WriteLine("완료");
+      }
+      catch (Exception e)
+      {
+        WriteError("실패", e);
+        Thread.Sleep(3000);
+        exitSystem = true;
+        return;
+      }
     }
 
     private static TextWriter ErrorWriter { get; } = TextWriter.Null;
@@ -168,13 +199,17 @@ namespace UMP.UpdateClient
     private string DownloadFilePath { get; set; }
     private const string DownloadPath = @"Core\Cache\UpdateCache";
 
-    private bool GetCurrentVersion()
+    private bool? GetCurrentVersion()
     {
       string file = string.Empty;
       string[] files;
 
       try { files = Directory.GetFiles(Environment.CurrentDirectory, "*.exe"); }
-      catch { return false; }
+      catch (Exception e)
+      {
+        WriteError("파일 목록 로드 중 오류발생", e);
+        return false;
+      }
 
       if (files == null || files.Length <= 0)
         return false;
@@ -189,6 +224,27 @@ namespace UMP.UpdateClient
       {
         Console.WriteLine("업데이트 대상 파일(Universal Meta Player)을 찾지 못했습니다");
         Console.WriteLine("최신버전을 설치합니다");
+
+        int fileCount = Directory.GetFiles(Environment.CurrentDirectory).Length + Directory.GetDirectories(Environment.CurrentDirectory).Length;
+        if (fileCount > 1)
+        {
+          Console.WriteLine();
+          var beforeColor = Console.ForegroundColor;
+          Console.ForegroundColor = ConsoleColor.Yellow;
+          Console.WriteLine($"현재 폴더에 {fileCount}개의 파일 및 폴더가 있습니다");
+          Console.WriteLine($"설치를 계속할 경우 본 프로그램의 구성요소가 다른 파일 및 폴더와 혼합될 수 있습니다");
+          Console.WriteLine($"설치를 계속하시곘습니까? [(Y/N) 입력 후 엔터]");
+          Console.ForegroundColor = beforeColor;
+
+          string input = Console.ReadLine();
+          if (Regex.IsMatch(input, "[Yy]"))
+            return true;
+          else
+          {
+            Console.WriteLine($"작업이 취소 되었습니다");
+            return null;
+          }
+        }
         return false;
       }
 
@@ -233,6 +289,8 @@ namespace UMP.UpdateClient
     }
 
     #region DownloadUpdateFiles
+    private static WebClient webClient { get; set; }
+
     private async Task<bool> DownloadUpdateAsync()
     {
       if (Assets == null)
@@ -242,7 +300,8 @@ namespace UMP.UpdateClient
         Directory.CreateDirectory(DownloadPath);
       DownloadFilePath = Path.Combine(DownloadPath, "update.zip");
 
-      using var webClient = new WebClient();
+      if (webClient == null)
+        webClient = new WebClient();
       webClient.DownloadProgressChanged += WebClient_DownloadProgressChanged;
       DownloadComplate = false;
 
@@ -250,11 +309,19 @@ namespace UMP.UpdateClient
       Console.WriteLine("다운로드 시작...\n");
       DownloadCursorPostion = Console.CursorTop;
 
-      try { await webClient.DownloadFileTaskAsync(new Uri(Assets[OS_Bit+ ".zip"]), DownloadFilePath); }
+      try
+      {
+        await webClient.DownloadFileTaskAsync(new Uri(Assets[OS_Bit + ".zip"]), DownloadFilePath);
+      }
       catch (Exception e)
       {
         WriteError("파일 다운로드 중 오류 발생", e);
         return false;
+      }
+      finally
+      {
+        webClient.Dispose();
+        webClient = null;
       }
 
       DownloadComplate = true;
@@ -269,7 +336,7 @@ namespace UMP.UpdateClient
       if (IsDisplayWork)
         return;
       IsDisplayWork = true;
-      string result = $"[{e.ProgressPercentage}]  {e.BytesReceived}/{e.TotalBytesToReceive} Byte";
+      string result = $"[{e.ProgressPercentage}%]  {e.BytesReceived}/{e.TotalBytesToReceive} Byte";
 
       for (int i = result.Length; i < Console.BufferWidth; i++)
         result += ' ';
@@ -324,6 +391,9 @@ namespace UMP.UpdateClient
     {
       Console.WriteLine("정리 중...");
 
+      if (webClient != null)
+        webClient.Dispose();
+
       if (Directory.Exists(DownloadPath))
       {
         var cacheFiles = Directory.GetFiles(DownloadPath, "*.*");
@@ -331,14 +401,24 @@ namespace UMP.UpdateClient
         if (cacheFiles != null && cacheFiles.Length > 0)
         {
           for (int i = 0; i < cacheFiles.Length; i++)
-            File.Delete(cacheFiles[i]);
+          {
+            try
+            {
+              File.Delete(cacheFiles[i]);
+            }
+            catch { }
+          }
         }
 
-        Directory.Delete(DownloadPath, true);
+        try
+        {
+          Directory.Delete(DownloadPath, true);
+        }
+        catch { }
       }
 
       if (Directory.Exists(OS_Bit))
-          Directory.Delete(OS_Bit, true);
+        Directory.Delete(OS_Bit, true);
 
       Console.WriteLine("완료");
     }
