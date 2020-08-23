@@ -80,29 +80,34 @@
 
             <Label
                 VerticalAlignment="Center"
-                ToolTip="{Binding LyricsWindowActiveToolTip}"
+                ToolTip="{Binding LyricsSettingsToolTip}"
                 Content="가사창 활성화"
                 Grid.Column="0"
                 Grid.Row="2" />
             <StackPanel
                 Orientation="Horizontal"
                 VerticalAlignment="Center"
-                ToolTip="{Binding LyricsWindowActiveToolTip}"
+                ToolTip="{Binding LyricsSettingsToolTip}"
                 Cursor="Hand"
                 Grid.Column="1"
                 Grid.Row="2">
                 <RadioButton
                     Style="{StaticResource MaterialDesignTabRadioButton}"
-                    IsChecked="{Binding IsCheckedLyricsWindowActive_On, Mode=OneWay}"
-                    Command=""
+                    IsChecked="{Binding IsCheckedLyricsSettings_On, Mode=OneWay}"
+                    Command="{Binding LyricsSettingsCommand}"
+                    CommandParameter="On"
                     Content="On" />
                 <RadioButton
                     Style="{StaticResource MaterialDesignTabRadioButton}"
-                    IsChecked="{Binding IsCheckedLyricsWindowActive_Auto, Mode=OneWay}"
+                    IsChecked="{Binding IsCheckedLyricsSettings_Auto, Mode=OneWay}"
+                    Command="{Binding LyricsSettingsCommand}"
+                    CommandParameter="Auto"
                     Content="Auto" />
                 <RadioButton
                     Style="{StaticResource MaterialDesignTabRadioButton}"
-                    IsChecked="{Binding IsCheckedLyricsWindowActive_Off, Mode=OneWay}"
+                    IsChecked="{Binding IsCheckedLyricsSettings_Off, Mode=OneWay}"
+                    Command="{Binding LyricsSettingsCommand}"
+                    CommandParameter="Off"
                     Content="Off" />
             </StackPanel>
 

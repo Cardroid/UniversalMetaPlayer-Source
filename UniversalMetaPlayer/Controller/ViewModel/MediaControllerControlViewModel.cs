@@ -276,7 +276,7 @@ namespace UMP.Controller.ViewModel
     /// </summary>
     private void GlobalKeyDownEvent_KeyDownEvent(KeyEventArgs e)
     {
-      if (GlobalProperty.Options.Getter<bool>(Enums.ValueName.HotKey) && GlobalProperty.State.IsControllable)
+      if (GlobalProperty.State.IsControllable)
       {
         switch (GlobalProperty.Options.HotKey.Getter(e.Key))
         {

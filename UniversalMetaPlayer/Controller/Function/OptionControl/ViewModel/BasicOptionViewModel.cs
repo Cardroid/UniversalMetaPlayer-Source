@@ -22,11 +22,11 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
           OnPropertyChanged("PrivateLoggingIsChecked");
         if (e.PropertyName == "MediaLoadEngine")
           OnPropertyChanged("MediaLoadEngineSelectedItem");
-        if (e.PropertyName == "LyricsWindowActive")
+        if (e.PropertyName == "LyricsSettings")
         {
-          OnPropertyChanged("IsCheckedLyricsWindowActive_Off");
-          OnPropertyChanged("IsCheckedLyricsWindowActive_Auto");
-          OnPropertyChanged("IsCheckedLyricsWindowActive_On");
+          OnPropertyChanged("IsCheckedLyricsSettings_Off");
+          OnPropertyChanged("IsCheckedLyricsSettings_Auto");
+          OnPropertyChanged("IsCheckedLyricsSettings_On");
         }
       };
 
@@ -49,7 +49,7 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
         }}
       };
 
-      LyricsWindowActiveCommand = new RelayCommand((o) => LyricsWindowActiveChange((Enums.LyricsSettingsType)o));
+      LyricsSettingsCommand = new RelayCommand((o) => LyricsSettingsChange(o.ToString()));
     }
 
     #region 저장 경로
@@ -92,14 +92,14 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
     #endregion
 
     #region 가사창
-    public RelayCommand LyricsWindowActiveCommand { get; }
-    private void LyricsWindowActiveChange(Enums.LyricsSettingsType value) => GlobalProperty.Options.Setter(Enums.ValueName.LyricsWindowActive, value.ToString());
-    public bool IsCheckedLyricsWindowActive_Off => GlobalProperty.Options.Getter<Enums.LyricsSettingsType>(Enums.ValueName.LyricsWindowActive) == Enums.LyricsSettingsType.Off;
-    public bool IsCheckedLyricsWindowActive_Auto => GlobalProperty.Options.Getter<Enums.LyricsSettingsType>(Enums.ValueName.LyricsWindowActive) == Enums.LyricsSettingsType.Auto;
-    public bool IsCheckedLyricsWindowActive_On => GlobalProperty.Options.Getter<Enums.LyricsSettingsType>(Enums.ValueName.LyricsWindowActive) == Enums.LyricsSettingsType.On;
+    public RelayCommand LyricsSettingsCommand { get; }
+    private void LyricsSettingsChange(string value) => GlobalProperty.Options.Setter(Enums.ValueName.LyricsSettings, value);
+    public bool IsCheckedLyricsSettings_Off => GlobalProperty.Options.Getter<Enums.LyricsSettingsType>(Enums.ValueName.LyricsSettings) == Enums.LyricsSettingsType.Off;
+    public bool IsCheckedLyricsSettings_Auto => GlobalProperty.Options.Getter<Enums.LyricsSettingsType>(Enums.ValueName.LyricsSettings) == Enums.LyricsSettingsType.Auto;
+    public bool IsCheckedLyricsSettings_On => GlobalProperty.Options.Getter<Enums.LyricsSettingsType>(Enums.ValueName.LyricsSettings) == Enums.LyricsSettingsType.On;
 
-    public string LyricsWindowActiveToolTip =>
-      $"기본값 : {GlobalProperty.DefaultValue.GetDefaultValue<Enums.LyricsSettingsType>(Enums.ValueName.LyricsWindowActive)}\n" +
+    public string LyricsSettingsToolTip =>
+      $"기본값 : {GlobalProperty.DefaultValue.GetDefaultValue<Enums.LyricsSettingsType>(Enums.ValueName.LyricsSettings)}\n" +
       $"On = 항상 열기, Auto = 가사가 있는 경우만 열기, Off = 항상 닫기\n\n" +
 
       $"가사를 볼 수 있는 창을 활성화 합니다.";

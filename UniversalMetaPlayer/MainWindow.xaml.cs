@@ -28,6 +28,7 @@ namespace UMP
     private MainWindowViewModel ViewModel { get; }
     public MainWindow()
     {
+      WindowManager.CloseAll();
       GlobalProperty.Load();
 
       InitializeComponent();
@@ -35,7 +36,7 @@ namespace UMP
 
       this.PreviewKeyDown += (_, e) =>
       {
-        if (GlobalProperty.Options.HotKey.ContainsKey(e.Key))
+        if (GlobalProperty.Options.HotKey.IsEnabled && GlobalProperty.Options.HotKey.ContainsKey(e.Key))
         {
           e.Handled = true;
           GlobalKeyDownEvent.Invoke(e);
@@ -132,7 +133,6 @@ namespace UMP
       };
 
       this.GlobalMessageBar.IsActiveChanged += (_, e) => { if (!e.NewValue) this.GlobalMessage.Content = null; };
-      WindowManager.CloseAll();
 
       #region 실행 시 정보 띄우기
       this.GlobalMessageBar.IsActive = true;

@@ -32,7 +32,7 @@ namespace UMP.Controller.WindowHelper
 
       this.PreviewKeyDown += (_, e) =>
       {
-        if (GlobalProperty.Options.HotKey.ContainsKey(e.Key))
+        if (GlobalProperty.Options.HotKey.IsEnabled && GlobalProperty.Options.HotKey.ContainsKey(e.Key))
         {
           e.Handled = true;
           GlobalKeyDownEvent.Invoke(e);

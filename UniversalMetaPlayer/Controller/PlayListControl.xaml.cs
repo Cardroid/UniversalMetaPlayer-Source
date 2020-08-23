@@ -19,6 +19,8 @@ using UMP.Core.Player;
 using UMP.Core.Model.Media;
 using UMP.Controller.Dialog;
 using UMP.Core.Global;
+using UMP.Controller.ViewModel;
+using System.Timers;
 
 namespace UMP.Controller
 {
@@ -82,6 +84,9 @@ namespace UMP.Controller
       this.PreviewKeyDown += PlayListControl_PreviewKeyDown;
       this.PlayListPopupBox.MouseEnter += (_, e) => { UnselectActive = false; };
       this.PlayListPopupBox.MouseLeave += (_, e) => { UnselectActive = true; };
+
+      Window parentWindow = Window.GetWindow(this.Parent);
+      parentWindow.Closing += ParentWindow_Closing;
 
       // 로그 설정
       Log.Debug("초기화 완료");
@@ -158,11 +163,11 @@ namespace UMP.Controller
 
     private void PlayListControl_PreviewKeyDown(object sender, KeyEventArgs e)
     {
-      if (GlobalProperty.Options.Getter<bool>(Enums.ValueName.HotKey) && GlobalProperty.State.IsControllable)
+      if (GlobalProperty.State.IsControllable)
       {
-        switch (GlobalProperty.Options.HotKey.Getter(e.Key))
+        switch (e.Key)
         {
-          case GlobalProperty.Options.HotKey.ControlTarget.PlayList_Delete:
+          case Key.Delete:
             DeleteSelectItme();
             break;
         }
@@ -205,6 +210,20 @@ namespace UMP.Controller
         var deleteItemList = this.PlayList.SelectedItems;
         for (int i = deleteItemList.Count - 1; i >= 0; i--)
           MainMediaPlayer.PlayList.Remove((MediaInformation)deleteItemList[i]);
+      }
+    }
+
+    private bool CloseCount = false;
+
+    private async void ParentWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+    {
+      if (!CloseCount && ((PlayListControlViewModel)this.DataContext).PlayList.NeedSave)
+      {
+        CloseCount = true;
+        e.Cancel = true;
+        GlobalMessageEvent.Invoke("플래이 리스트에 변경사항이 있습니다 (저장 필요)\n(무시하고 닫으려면 다시 시도하세요)");
+        await Task.Delay(3000);
+        CloseCount = false;
       }
     }
   }
