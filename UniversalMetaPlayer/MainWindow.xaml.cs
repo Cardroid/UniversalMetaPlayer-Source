@@ -153,11 +153,22 @@ namespace UMP
 
     private void MainWindow_WindowDrag(object sender, MouseButtonEventArgs e) { e.Handled = true; this.DragMove(); }
 
+    private bool IsPlayListSaveCancel = false;
+
     /// <summary>
     /// 메인 윈도우 종료 이벤트처리
     /// </summary>
-    private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+    private async void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
     {
+      if(!IsPlayListSaveCancel && MainMediaPlayer.PlayList.NeedSave)
+      {
+        GlobalMessageEvent.Invoke("플래이 리스트에 변경사항이 있습니다 (저장 필요)\n(무시하고 닫으려면 다시 시도하세요)", true);
+        IsPlayListSaveCancel = true;
+        e.Cancel = true;
+        await Task.Delay(3000);
+        IsPlayListSaveCancel = false;
+        return;
+      }
       Hook.Dispose();
       MainMediaPlayer.Dispose();
       GlobalProperty.Save();

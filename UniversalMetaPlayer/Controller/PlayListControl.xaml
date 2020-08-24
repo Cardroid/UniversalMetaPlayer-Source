@@ -46,7 +46,6 @@
                     <TextBox
                         x:Name="PlayListName"
                         Foreground="{DynamicResource MaterialDesignPaper}"
-                        CaretBrush="{DynamicResource MaterialDesignBody}"
                         Text="{Binding PlayListName, Mode=OneWay}"
                         FontSize="16"
                         Grid.Column="1" />

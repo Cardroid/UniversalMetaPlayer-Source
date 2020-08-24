@@ -55,9 +55,9 @@ namespace UMP.Core.Model
         {
           _PlayListName = value;
 
-          char[] invalidChars = Path.GetInvalidFileNameChars();
-          for (int i = 0; i < invalidChars.Length; i++)
-            _PlayListName = _PlayListName.Replace(invalidChars[i].ToString(), "");
+          string invalid = $"{new string(Path.GetInvalidFileNameChars())}\"";
+          for (int i = 0; i < invalid.Length; i++)
+            _PlayListName = _PlayListName.Replace(invalid[i].ToString(), "");
 
           if (_PlayListName != value)
             GlobalMessageEvent.Invoke("파일 이름에 사용할 수 없는 문자를 자동으로 제거했습니다", true);
@@ -118,9 +118,18 @@ namespace UMP.Core.Model
 
       await File.WriteAllTextAsync(Path.Combine(savepath, $"{PlayListName}.m3u8"), m3uData, Encoding.UTF8);
 
-      Log.Info("플레이 리스트 저장 완료");
-      GlobalMessageEvent.Invoke("플레이 리스트 저장 완료", true);
-      NeedSave = false;
+      if (Directory.GetFiles(savepath, $"{PlayListName}.m3u8").Length > 0)
+      {
+        Log.Info("플레이 리스트 저장 완료");
+        GlobalMessageEvent.Invoke("플레이 리스트 저장 완료", true);
+        NeedSave = false;
+      }
+      else
+      {
+        Log.Info("플레이 리스트 저장 실패");
+        GlobalMessageEvent.Invoke("[Save Error] 플레이 리스트 저장 실패", false);
+        NeedSave = true;
+      }
     }
 
     /// <summary>

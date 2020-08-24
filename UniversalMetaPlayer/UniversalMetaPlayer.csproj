@@ -19,7 +19,7 @@
     <RepositoryUrl>https://github.com/Cardroid/UniversalMetaPlayer</RepositoryUrl>
     <Platforms>x64;AnyCPU;x86</Platforms>
     <AssemblyVersion>2.5.2.0</AssemblyVersion>
-    <FileVersion>2.5.5.0</FileVersion>
+    <FileVersion>2.5.5.25</FileVersion>
     <PackageProjectUrl>https://github.com/Cardroid/UniversalMetaPlayer</PackageProjectUrl>
   </PropertyGroup>
 
@@ -97,7 +97,7 @@
     <PackageReference Include="System.Net.Primitives" Version="4.3.0" />
     <PackageReference Include="System.Runtime.Extensions" Version="4.3.0" />-->
     <PackageReference Include="gong-wpf-dragdrop" Version="2.2.0" />
-    <PackageReference Include="log4net" Version="2.0.8" />
+    <PackageReference Include="log4net" Version="2.0.9" />
     <PackageReference Include="MaterialDesignColors" Version="1.2.6" />
     <PackageReference Include="MaterialDesignExtensions" Version="3.2.0" />
     <PackageReference Include="MaterialDesignThemes" Version="3.1.3" />

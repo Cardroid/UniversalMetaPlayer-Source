@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Media;
 
 using UMP.Core;
 
@@ -158,22 +154,6 @@ namespace UMP.Utility
         stringBuilder.AppendFormat("{0:x2}", b);
 
       return stringBuilder.ToString();
-    }
-
-    /// <summary>
-    /// 타입변환기
-    /// </summary>
-    /// <typeparam name="BeforeT">변환 전 타입</typeparam>
-    /// <typeparam name="AfterT">변환 후 타입</typeparam>
-    /// <param name="value">변환할 값</param>
-    /// <returns>변환된 값</returns>
-    public static AfterT ChangeType<AfterT, BeforeT>(BeforeT value)
-    {
-      if (typeof(AfterT) == typeof(Color))
-        return (AfterT)ColorConverter.ConvertFromString(value.ToString());
-      else if (typeof(AfterT).IsEnum)
-        return (AfterT)Enum.Parse(typeof(AfterT), value.ToString());
-      return (AfterT)Convert.ChangeType(value, typeof(AfterT));
     }
   }
 }

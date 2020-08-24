@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -5,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using UMP.Utility;
 
 //using NYoutubeDL;
 
@@ -19,42 +21,40 @@ namespace UnitTestProject
   public class DownloadTest
   {
     [TestMethod]
-    public void CheckUrl()
+    public void GetUrl()
     {
-      List<string> result = new List<string>();
-      string[] urls=  new string[] 
+      string[] urls = new string[]
       {
         "",
         "ht",
         "http",
         "https",
         "https://",
+        "youtube.com",
+        "www.youtube.com",
         "https://youtube",
         "https://youtube.com",
+        "youtube.com/watch?v=hTPjKrkN7XA",
+        "www.youtube.com/watch?v=hTPjKrkN7XA",
         "https://youtube.com/watch?v=hTPjKrkN7XA",
+        "https://www.youtube.com:55/watch?v=hTPjKrkN7XA",
+        "https://www.youtube.com/watch?v=hTPjKrkN7XA:44",
         "https://www.youtube.com/watch?v=hTPjKrkN7XA",
         "https://www.google.com/watch?v=hTPjKrkN7XA",
         "https://www.naver.com/watch?v=hTPjKrkN7XA",
       };
 
-      for (int i = 0; i < urls.Length; i++)
+      for (int j = 0; j < urls.Length; j++)
       {
-        var item = Regex.Match(urls[i], @"(http(s)?://)?(w{0,3}\.)?([a-zA-Z0-9]+)\.");
-        result.Add(item.Groups[item.Groups.Count - 1].Value);
+        var urlinfo = Parser.GetUrlInfo(urls[j]);
+
+        Trace.WriteLine($"Url : {urlinfo.Url}");
+        Trace.WriteLine($"Success : {urlinfo.Success}");
+        Trace.WriteLine($"Protocol : {urlinfo.Protocol}");
+        Trace.WriteLine($"Domain : {urlinfo.Domain}");
+        Trace.WriteLine($"Port : {urlinfo.Port}");
+        Trace.WriteLine("");
       }
-
-      for (int i = 0; i < result.Count; i++)
-        Trace.WriteLine(result[i]);
-
-      Assert.IsTrue(result.Count > 0);
-    }
-
-    [TestMethod]
-    public void tests()
-    {
-      Trace.WriteLine(Path.GetInvalidFileNameChars().Length);
-      Trace.WriteLine(Path.GetInvalidPathChars().Length);
-      Assert.IsTrue(true);
     }
 
     //[TestMethod]

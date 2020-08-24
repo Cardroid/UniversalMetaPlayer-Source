@@ -22,7 +22,12 @@ namespace UMP.Controller.Dialog
 {
   public partial class PlayListLoadDialog : UserControl
   {
-    public UMP_VoidEventHandler Close;
+    public UMP_VoidEventHandler CloseEvent;
+    public void Close()
+    {
+      IsCanceled = true;
+      CloseEvent?.Invoke();
+    }
     public PlayListLoadDialog()
     {
       InitializeComponent();
@@ -30,7 +35,7 @@ namespace UMP.Controller.Dialog
       this.KeyDown += (_, e) =>
       {
         if (e.Key == Key.Escape)
-          Close?.Invoke();
+          Close();
       };
 
       this.UserTextBox.GotKeyboardFocus += (_, e) => { GlobalKeyDownEvent.IsEnabled = false; };
@@ -68,6 +73,7 @@ namespace UMP.Controller.Dialog
       }
     }
 
+    private bool IsCanceled = false;
     private string PlayListFilePath { get; set; }
     private bool IsWorkDelay = false;
     private readonly string Invalid = $"{new string(Path.GetInvalidPathChars())}\"";
@@ -144,19 +150,19 @@ namespace UMP.Controller.Dialog
       this.OpenFileDialogButton.IsEnabled = false;
       this.CancelButton.IsEnabled = false;
 
-      if (this.SaveCurrentPlayList.IsChecked.GetValueOrDefault())
+      if (this.SaveCurrentPlayList.IsChecked.GetValueOrDefault() && !IsCanceled)
         await MainMediaPlayer.PlayList.Save();
 
-      if (!this.LoadContinue.IsChecked.GetValueOrDefault())
+      if (!this.LoadContinue.IsChecked.GetValueOrDefault() && !IsCanceled)
         MainMediaPlayer.PlayList.Clear();
 
-      if (!string.IsNullOrWhiteSpace(PlayListFilePath))
+      if (!string.IsNullOrWhiteSpace(PlayListFilePath) && !IsCanceled)
         await MainMediaPlayer.PlayList.Load(PlayListFilePath, !this.LoadContinue.IsChecked.GetValueOrDefault());
 
       this.ProgressRing.Visibility = Visibility.Collapsed;
-      Close.Invoke();
+      Close();
     }
 
-    private void CancelButton_Click(object sender, RoutedEventArgs e) => Close.Invoke();
+    private void CancelButton_Click(object sender, RoutedEventArgs e) => Close();
   }
 }

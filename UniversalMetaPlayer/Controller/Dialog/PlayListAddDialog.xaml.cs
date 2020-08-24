@@ -9,12 +9,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 
 using UMP.Core.Global;
 using UMP.Core.Player;
@@ -31,23 +26,31 @@ namespace UMP.Controller.Dialog
 {
   public partial class PlayListAddDialog : UserControl
   {
-    public UMP_VoidEventHandler Close;
+    public UMP_VoidEventHandler CloseEvent;
+    public void Close()
+    {
+      IsCanceled = true;
+      CloseEvent?.Invoke();
+    }
     public PlayListAddDialog()
     {
       InitializeComponent();
+
+      this.UserTextBox.MinWidth = SystemParameters.WorkArea.Width / 5;
+      this.UserTextBox.MaxWidth = SystemParameters.WorkArea.Width / 1.2;
 
       this.Loaded += (_, e) =>
       {
         this.KeyDown += (_, e) =>
         {
           if (e.Key == Key.Escape)
-            Close?.Invoke();
+            Close();
         };
 
         this.UserTextBox.GotKeyboardFocus += (_, e) => { GlobalKeyDownEvent.IsEnabled = false; };
         this.UserTextBox.LostKeyboardFocus += (_, e) => { GlobalKeyDownEvent.IsEnabled = true; };
         this.MouseDown += (_, e) => { Keyboard.ClearFocus(); };
-        
+
         this.AcceptButton.IsEnabled = false;
         this.UserTextBox.TextChanged += UserTextBox_TextChanged;
         this.AcceptButton.Click += AcceptButton_Click;
@@ -56,10 +59,7 @@ namespace UMP.Controller.Dialog
         this.Loaded += (s, e) => { this.UserTextBox.Focus(); };
         this.UserTextBox.Focus();
 
-        if (Checker.CheckForInternetConnection())
-          this.MessageLabel.Content = "미디어의 위치를 입력하세요";
-        else
-          this.MessageLabel.Content = "[오프라인]\n(비디오 주소만 추가할 수 있습니다)\n미디어의 위치를 입력하세요";
+        UserTextBox_Empty();
 
         Timer.Elapsed += Timer_Elapsed;
       };
@@ -77,35 +77,50 @@ namespace UMP.Controller.Dialog
 
     private void UserTextBox_TextChanged(object sender, TextChangedEventArgs e)
     {
+      Timer.Stop();
       if (!TextBoxBlock)
-      {
-        Timer.Stop();
         Timer.Start();
-      }
     }
 
-    private readonly Timer Timer = new Timer(1000) { AutoReset = true };
+    private bool IsCanceled = false;
+    private readonly Timer Timer = new Timer(1500) { AutoReset = true };
     private bool TextBoxBlock = false;
     private bool IsWorkDelay = false;
     private readonly string Invalid = $"{new string(Path.GetInvalidPathChars())}\"";
     private string[] SelectFilePaths { get; set; }
 
+    private void UserTextBox_Empty()
+    {
+      if (Checker.CheckForInternetConnection())
+      {
+        this.SiteLabel.Content = "[Online]\n(채널, 플레이리스트, 비디오 주소로 추가할 수 있습니다)\n(파일을 직접 선택하려면 찾아보기를 사용하세요)";
+        this.MessageLabel.Content = "미디어의 위치를 입력하세요";
+      }
+      else
+      {
+        this.SiteLabel.Content = "[Offline]\n(오프라인 모드에서는 비디오만 추가할 수 있습니다)\n(파일을 직접 선택하려면 찾아보기를 사용하세요)";
+        this.MessageLabel.Content = "미디어의 위치를 입력하세요";
+      }
+      this.UserTextBox.Text = string.Empty;
+      this.AcceptButton.IsEnabled = false;
+    }
+    
     private async Task UserTextBox_Changed()
     {
       if (IsWorkDelay)
         return;
-      if (string.IsNullOrWhiteSpace(this.UserTextBox.Text))
-      {
-        if (Checker.CheckForInternetConnection())
-          this.MessageLabel.Content = "미디어의 위치를 입력하세요";
-        else
-          this.MessageLabel.Content = "[오프라인]\n(비디오 주소만 추가할 수 있습니다)\n미디어의 위치를 입력하세요";
-        this.AcceptButton.IsEnabled = false;
-        return;
-      }
-
       IsWorkDelay = true;
       this.ProgressRing.Visibility = Visibility.Visible;
+
+      if (string.IsNullOrWhiteSpace(this.UserTextBox.Text))
+      {
+        UserTextBox_Empty();
+        this.ProgressRing.Visibility = Visibility.Collapsed;
+        IsWorkDelay = false;
+        return;
+      }
+      else
+        this.SiteLabel.Visibility = Visibility.Visible;
 
       // 올바르지 않은 문자 제거
       string text = this.UserTextBox.Text;
@@ -113,77 +128,34 @@ namespace UMP.Controller.Dialog
         text = text.Replace(Invalid[i].ToString(), "");
       this.UserTextBox.Text = text;
 
-      var match = Regex.Match(text, @"(http(s)?://)?(w{0,3}\.)?([a-zA-Z0-9]+)\.", RegexOptions.None, TimeSpan.FromSeconds(60));
-      string site = match.Groups[match.Groups.Count - 1].Value;
-      if (string.IsNullOrWhiteSpace(site))
+      var match = Parser.GetUrlInfo(text);
+      if (match.Success)
       {
-        if (Checker.IsLocalPath(text) && File.Exists(text))
-        {
-          SelectFilePaths = new string[] { text };
-          this.SiteLabel.Content = $"[Local]";
-          this.MessageLabel.Content = "파일이 확인되었습니다";
-          this.AcceptButton.IsEnabled = true;
-        }
-        else
-        {
-          this.SiteLabel.Content = $"[Null]";
-          this.AcceptButton.IsEnabled = false;
-          this.MessageLabel.Content = "미디어를 확인 할 수 없습니다";
-        }
-      }
-      else
-      {
-        site = $"{site[0].ToString().ToUpper()}{site.Substring(1)}";
-        this.SiteLabel.Content = $"[{site}]";
         if (Checker.CheckForInternetConnection() && GlobalProperty.Options.Getter<Enums.MediaLoadEngineType>(Enums.ValueName.MediaLoadEngine) == Enums.MediaLoadEngineType.Native)
         {
           YoutubeClient client = new YoutubeClient();
           object info = null;
 
           if (info == null)
-            try
-            {
-              info = await client.Videos.GetAsync(text);
-            }
-            catch
-            {
-              // 비디오 정보 받아오기 실패
-              info = null;
-            }
+            // 비디오 정보 요청
+            try { info = await client.Videos.GetAsync(text); }
+            catch { info = null; }
 
           if (info == null)
-            try
-            {
-              info = await client.Playlists.GetAsync(text);
-            }
-            catch
-            {
-              // 플레이리스트 정보 받아오기 실패
-              info = null;
-            }
+            // 플레이리스트 정보 요청
+            try { info = await client.Playlists.GetAsync(text); }
+            catch { info = null; }
 
           if (info == null)
-            try
-            {
-              info = await client.Channels.GetAsync(text);
-            }
-            catch
-            {
-              try
-              {
-                info = await client.Channels.GetByUserAsync(text);
-              }
-              catch
-              {
-                // 채널 정보 받아오기 실패
-                info = null;
-              }
-            }
+            // 채널 정보 요청 (ID)
+            try { info = await client.Channels.GetAsync(text); }
+            catch { info = null; }
 
           if (info is Video)
           {
             SelectFilePaths = new string[] { text };
-            this.MessageLabel.Content = "[Video]\n온라인 경로입니다";
+            this.SiteLabel.Content = $"[{match.Domain}]\n[Video]";
+            this.MessageLabel.Content = "온라인 경로입니다";
             this.AcceptButton.IsEnabled = true;
           }
           else if (info is Playlist playlist)
@@ -196,7 +168,8 @@ namespace UMP.Controller.Dialog
             }
             vid = vid[0..^1];
             SelectFilePaths = vid.Split(',');
-            this.MessageLabel.Content = $"[PlayList]\n[{playlist.Title}]\n({SelectFilePaths.Length} 개)\n온라인 경로입니다";
+            this.SiteLabel.Content = $"[{match.Domain}]\n[PlayList]\n[{playlist.Title}] (감지된 파일 : {SelectFilePaths.Length} 개)";
+            this.MessageLabel.Content = $"온라인 경로입니다";
             this.AcceptButton.IsEnabled = true;
           }
           else if (info is Channel channel)
@@ -209,12 +182,14 @@ namespace UMP.Controller.Dialog
             }
             vid = vid[0..^1];
             SelectFilePaths = vid.Split(',');
-            this.MessageLabel.Content = $"[Channel]\n[{channel.Title}]\n({SelectFilePaths.Length} 개)\n온라인 경로입니다";
+            this.SiteLabel.Content = $"[{match.Domain}]\n[Channel]\n[{channel.Title}] (감지된 파일 : {SelectFilePaths.Length}개)";
+            this.MessageLabel.Content = $"온라인 경로입니다";
             this.AcceptButton.IsEnabled = true;
           }
           else
           {
             this.AcceptButton.IsEnabled = false;
+            this.SiteLabel.Content = $"[{match.Domain}]\n[Error]";
             this.MessageLabel.Content = "미디어를 확인 할 수 없습니다";
           }
         }
@@ -226,21 +201,40 @@ namespace UMP.Controller.Dialog
             {
               VideoId videoId = new VideoId(text);
               SelectFilePaths = new string[] { text };
-              this.MessageLabel.Content = $"[확인되지 않음]\n[ID : {videoId.Value}]\n온라인 경로입니다";
+              this.SiteLabel.Content = $"[Unconfirmed]\n[ID : {videoId.Value}]";
+              this.MessageLabel.Content = $"온라인 경로입니다";
               this.AcceptButton.IsEnabled = true;
             }
             catch
             {
               this.AcceptButton.IsEnabled = false;
+              this.SiteLabel.Content = $"[Error]";
               this.MessageLabel.Content = "미디어를 확인 할 수 없습니다";
             }
           }
           else
           {
             SelectFilePaths = new string[] { text };
-            this.MessageLabel.Content = "[확인되지 않음]\n온라인 경로입니다";
+            this.SiteLabel.Content = $"[Unconfirmed]";
+            this.MessageLabel.Content = "온라인 경로입니다";
             this.AcceptButton.IsEnabled = true;
           }
+        }
+      }
+      else
+      {
+        if (Checker.IsLocalPath(text) && File.Exists(text))
+        {
+          SelectFilePaths = new string[] { text };
+          this.SiteLabel.Content = $"[Local]";
+          this.MessageLabel.Content = "파일이 확인되었습니다";
+          this.AcceptButton.IsEnabled = true;
+        }
+        else
+        {
+          this.SiteLabel.Content = $"[Error]";
+          this.AcceptButton.IsEnabled = false;
+          this.MessageLabel.Content = "미디어를 확인 할 수 없습니다";
         }
       }
 
@@ -254,7 +248,7 @@ namespace UMP.Controller.Dialog
       if (!Directory.Exists(defaultPath))
         defaultPath = string.Empty;
 
-      var filePaths = DialogHelper.OpenFileDialog("로컬 미디어 파일열기", "Music File | *.mp3;*.flac", true, defaultPath);
+      var filePaths = DialogHelper.OpenFileDialog("로컬 미디어 파일열기", "Music File|*.mp3;*.flac|All File|*.*", true, defaultPath);
       if (filePaths)
       {
         this.ProgressRing.Visibility = Visibility.Visible;
@@ -280,20 +274,21 @@ namespace UMP.Controller.Dialog
       this.UserTextBox.IsEnabled = false;
       this.AcceptButton.IsEnabled = false;
       this.OpenFileDialogButton.IsEnabled = false;
-      this.CancelButton.IsEnabled = false;
       if (SelectFilePaths != null)
       {
         for (int i = 0; i < SelectFilePaths.Length; i++)
         {
-          this.MessageLabel.Content = $"{i + 1}번째 추가 중...";
+          if (IsCanceled)
+            break;
+          this.MessageLabel.Content = $"[{i + 1}/{SelectFilePaths.Length}]번째 추가 중...";
           await MainMediaPlayer.PlayList.Add(SelectFilePaths[i]);
         }
       }
       this.ProgressRing.Visibility = Visibility.Collapsed;
       GlobalMessageEvent.Invoke($"미디어 [{SelectFilePaths.Length}]개 추가 완료", true);
-      Close.Invoke();
+      Close();
     }
 
-    private void CancelButton_Click(object sender, RoutedEventArgs e) => Close.Invoke();
+    private void CancelButton_Click(object sender, RoutedEventArgs e) => Close();
   }
 }

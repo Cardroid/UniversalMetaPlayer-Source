@@ -16,7 +16,7 @@
     mc:Ignorable="d">
 
     <Grid
-        Margin="16">
+        Margin="15">
         <Grid.RowDefinitions>
             <RowDefinition
                 Height="*" />
@@ -31,24 +31,24 @@
             Grid.Row="0">
             <StackPanel
                 Orientation="Horizontal">
-                <Label
-                    x:Name="SiteLabel"
-                    Style="{StaticResource MaterialDesignLabel}" />
-                <Label
-                    x:Name="MessageLabel"
-                    Style="{StaticResource MaterialDesignLabel}"
-                    Margin="5,0,0,0" />
-                <materialDesign:Card
+                <StackPanel
+                    Orientation="Vertical">
+                    <Label
+                        x:Name="SiteLabel"
+                        Style="{StaticResource MaterialDesignLabel}" />
+                    <Label
+                        x:Name="MessageLabel"
+                        Style="{StaticResource MaterialDesignLabel}"
+                        Margin="5,0,0,0" />
+                </StackPanel>
+                <ProgressBar
                     x:Name="ProgressRing"
                     Visibility="Collapsed"
-                    UniformCornerRadius="14"
+                    Style="{StaticResource MaterialDesignCircularProgressBar}"
+                    Value="0"
+                    IsIndeterminate="True"
                     Padding="3"
-                    Margin="5,0,0,0">
-                    <ProgressBar
-                        Style="{StaticResource MaterialDesignCircularProgressBar}"
-                        Value="0"
-                        IsIndeterminate="True" />
-                </materialDesign:Card>
+                    Margin="5,0,0,0" />
             </StackPanel>
             <Grid
                 Margin="8">
@@ -58,13 +58,12 @@
                     <ColumnDefinition
                         Width="Auto" />
                 </Grid.ColumnDefinitions>
+
                 <TextBox
                     x:Name="UserTextBox"
                     Style="{DynamicResource MaterialDesignTextBox}"
-                    Margin="0,0,8,0"
-                    MinWidth="200"
                     FontSize="16"
-                    Cursor="IBeam"
+                    Margin="0,0,8,0"
                     Grid.Column="0" />
                 <Button
                     x:Name="OpenFileDialogButton"

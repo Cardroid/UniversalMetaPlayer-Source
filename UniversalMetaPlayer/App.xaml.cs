@@ -17,6 +17,7 @@ namespace UMP
     public static Log MainLog { get; } = new Log("System");
     public App()
     {
+      GlobalEventLogger.IsEnabled = true;
       MainLog.Info("############### Start application ###############\n" +
         $"Current Version : [{GlobalProperty.Predefine.FileVersion}]\nBit : [{GlobalProperty.Predefine.BitVersion}]",
         $"Start Path : [{AppDomain.CurrentDomain.BaseDirectory}]\nTask Path : [{Environment.CurrentDirectory}]");

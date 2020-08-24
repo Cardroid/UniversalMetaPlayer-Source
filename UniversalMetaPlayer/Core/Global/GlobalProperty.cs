@@ -229,7 +229,7 @@ namespace UMP.Core.Global
       public static T Getter<T>(Enums.ValueName key)
       {
         if (Settings.TryGetValue(key.ToString(), out string result))
-          return Converter.ChangeType<T, string>(result);
+          return Parser.ChangeType<T, string>(result);
         else
           return DefaultValue.GetDefaultValue<T>(key);
       }
@@ -324,22 +324,22 @@ namespace UMP.Core.Global
         valueName switch
         {
           // 일반
-          Enums.ValueName.FileSavePath => Converter.ChangeType<T, string>("Save"),
-          Enums.ValueName.PrivateLogging => Converter.ChangeType<T, bool>(true),
-          Enums.ValueName.MediaLoadEngine => Converter.ChangeType<T, Enums.MediaLoadEngineType>(Enums.MediaLoadEngineType.Native),
-          Enums.ValueName.LyricsSettings => Converter.ChangeType<T, Enums.LyricsSettingsType>(Enums.LyricsSettingsType.Auto),
+          Enums.ValueName.FileSavePath => Parser.ChangeType<T, string>("Save"),
+          Enums.ValueName.PrivateLogging => Parser.ChangeType<T, bool>(true),
+          Enums.ValueName.MediaLoadEngine => Parser.ChangeType<T, Enums.MediaLoadEngineType>(Enums.MediaLoadEngineType.Native),
+          Enums.ValueName.LyricsSettings => Parser.ChangeType<T, Enums.LyricsSettingsType>(Enums.LyricsSettingsType.Auto),
           // 테마
-          Enums.ValueName.IsDarkMode => Converter.ChangeType<T, bool>(true),
-          Enums.ValueName.PrimaryColor => Converter.ChangeType<T, Color>(Colors.Green.Lighten(3)),
-          Enums.ValueName.SecondaryColor => Converter.ChangeType<T, Color>(Colors.Green.Darken(3)),
-          Enums.ValueName.IsAverageColorTheme => Converter.ChangeType<T, bool>(true),
-          Enums.ValueName.AverageColorProcessingOffset => Converter.ChangeType<T, int>(30),
+          Enums.ValueName.IsDarkMode => Parser.ChangeType<T, bool>(true),
+          Enums.ValueName.PrimaryColor => Parser.ChangeType<T, Color>(Colors.Green.Lighten(3)),
+          Enums.ValueName.SecondaryColor => Parser.ChangeType<T, Color>(Colors.Green.Darken(3)),
+          Enums.ValueName.IsAverageColorTheme => Parser.ChangeType<T, bool>(true),
+          Enums.ValueName.AverageColorProcessingOffset => Parser.ChangeType<T, int>(30),
           // 키보드
-          Enums.ValueName.HotKey => Converter.ChangeType<T, bool>(true),
-          Enums.ValueName.GlobalKeyboardHook => Converter.ChangeType<T, bool>(true),
+          Enums.ValueName.HotKey => Parser.ChangeType<T, bool>(true),
+          Enums.ValueName.GlobalKeyboardHook => Parser.ChangeType<T, bool>(true),
           // 효과
-          Enums.ValueName.IsUseFadeEffect => Converter.ChangeType<T, bool>(true),
-          Enums.ValueName.FadeEffectDelay => Converter.ChangeType<T, int>(200),
+          Enums.ValueName.IsUseFadeEffect => Parser.ChangeType<T, bool>(true),
+          Enums.ValueName.FadeEffectDelay => Parser.ChangeType<T, int>(200),
 
           _ => default,
         };
