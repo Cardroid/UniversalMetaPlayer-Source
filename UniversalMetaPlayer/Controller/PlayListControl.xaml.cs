@@ -44,38 +44,23 @@ namespace UMP.Controller
       this.PlayListResetButton.Click += PlayListControlButton_Click;
 
       // 플레이 리스트 이름 변경
-      this.PlayListNameEditButton.Click += (_, e) =>
+      this.PlayListName.MouseDown += (_, e) =>
       {
-        if (this.PlayListName.IsReadOnly)
-        {
-          this.PlayListName.Focusable = true;
-          this.PlayListName.IsReadOnly = false;
-          this.PlayListName.IsReadOnlyCaretVisible = true;
-          GlobalKeyDownEvent.IsEnabled = true;
-          this.PlayListName.Focus();
-          this.PlayListName.CaretIndex = this.PlayListName.Text.Length;
-          this.PlayListNameEditButton.Content = new PackIcon() { Kind = PackIconKind.EditOff, Width = 20, Height = 20 };
-        }
-        else
-        {
-          this.PlayListName.Focusable = false;
-          this.PlayListName.IsReadOnly = true;
-          this.PlayListName.IsReadOnlyCaretVisible = false;
-          GlobalKeyDownEvent.IsEnabled = false;
-          this.PlayListNameEditButton.Content = new PackIcon() { Kind = PackIconKind.Edit, Width = 20, Height = 20 };
-        }
+        this.PlayListName.Focus();
+        this.PlayListName.SelectAll();
       };
+      this.MouseDown += (_, e) => Keyboard.ClearFocus();
       this.PlayListName.KeyDown += (_, e) =>
        {
-         if (!this.PlayListName.IsReadOnly && e.Key == Key.Enter)
-         {
-           this.PlayListName.Focusable = false;
-           this.PlayListName.IsReadOnly = true;
-           this.PlayListName.IsReadOnlyCaretVisible = false;
-           GlobalKeyDownEvent.IsEnabled = false;
-           this.PlayListNameEditButton.Content = new PackIcon() { Kind = PackIconKind.Edit, Width = 20, Height = 20 };
-         }
+         if (this.PlayListName.IsKeyboardFocused && e.Key == Key.Enter)
+           Keyboard.ClearFocus();
        };
+      this.PlayListName.GotKeyboardFocus += (_, e) => GlobalKeyDownEvent.IsEnabled = false;
+      this.PlayListName.LostKeyboardFocus += (_, e) =>
+      {
+        ((PlayListControlViewModel)this.DataContext).PlayListName = this.PlayListName.Text;
+        GlobalKeyDownEvent.IsEnabled = true;
+      };
 
       // 플레이 리스트 더블 클릭시 재생 처리
       this.PlayList.MouseDoubleClick += async (_, e) => { await PlaySelectItem(); };

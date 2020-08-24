@@ -24,7 +24,7 @@ namespace UMP.Controller.Function.AnalysisControl.WaveAnalysis.Func
     {
       yTranslate = 40;
       yScale = 40;
-      blankZone = 10;
+      blankZone = 5;
 
       SizeChanged += OnSizeChanged;
       InitializeComponent();

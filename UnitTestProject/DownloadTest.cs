@@ -1,15 +1,17 @@
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using NYoutubeDL;
+//using NYoutubeDL;
 
-using UMP.Core;
-using UMP.Core.Function;
-using UMP.Core.Model;
-using UMP.Utility;
+//using UMP.Core;
+//using UMP.Core.Function;
+//using UMP.Core.Model;
+//using UMP.Utility;
 
 namespace UnitTestProject
 {
@@ -17,58 +19,97 @@ namespace UnitTestProject
   public class DownloadTest
   {
     [TestMethod]
-    public void CheckForInternetConnection()
+    public void CheckUrl()
     {
-      try
+      List<string> result = new List<string>();
+      string[] urls=  new string[] 
       {
-        Checker.CheckForInternetConnection();
-        Assert.IsTrue(true);
-      }
-      catch
+        "",
+        "ht",
+        "http",
+        "https",
+        "https://",
+        "https://youtube",
+        "https://youtube.com",
+        "https://youtube.com/watch?v=hTPjKrkN7XA",
+        "https://www.youtube.com/watch?v=hTPjKrkN7XA",
+        "https://www.google.com/watch?v=hTPjKrkN7XA",
+        "https://www.naver.com/watch?v=hTPjKrkN7XA",
+      };
+
+      for (int i = 0; i < urls.Length; i++)
       {
-        Assert.Fail();
+        var item = Regex.Match(urls[i], @"(http(s)?://)?(w{0,3}\.)?([a-zA-Z0-9]+)\.");
+        result.Add(item.Groups[item.Groups.Count - 1].Value);
       }
+
+      for (int i = 0; i < result.Count; i++)
+        Trace.WriteLine(result[i]);
+
+      Assert.IsTrue(result.Count > 0);
     }
 
     [TestMethod]
-    public void GetID()
+    public void tests()
     {
-      var result = new YTDLMediaLoader("https://www.youtube.com/watch?v=kJQP7kiw5Fk").GetID().GetAwaiter().GetResult();
-      Assert.IsTrue(result.Success);
+      Trace.WriteLine(Path.GetInvalidFileNameChars().Length);
+      Trace.WriteLine(Path.GetInvalidPathChars().Length);
+      Assert.IsTrue(true);
     }
 
-    [TestMethod]
-    public void YTDL_GetInfo_Test()
-    {
-      string ytdl_path = Path.Combine(GlobalProperty.LIBRARY_PATH, "YTDL", "youtube-dl.exe");
-      YoutubeDL ytdl = new YoutubeDL(ytdl_path);
+    //[TestMethod]
+    //public void CheckForInternetConnection()
+    //{
+    //  try
+    //  {
+    //    Checker.CheckForInternetConnection();
+    //    Assert.IsTrue(true);
+    //  }
+    //  catch
+    //  {
+    //    Assert.Fail();
+    //  }
+    //}
 
-      ytdl.VideoUrl = "https://www.youtube.com/watch?v=kJQP7kiw5Fk";
+    //[TestMethod]
+    //public void GetID()
+    //{
+    //  var result = new YTDLMediaLoader("https://www.youtube.com/watch?v=kJQP7kiw5Fk").GetID().GetAwaiter().GetResult();
+    //  Assert.IsTrue(result.Success);
+    //}
 
-      ytdl.Options.VerbositySimulationOptions.Simulate = true;
-      ytdl.Options.VerbositySimulationOptions.SkipDownload = true;
-      ytdl.Options.VerbositySimulationOptions.GetId = true;
-      ytdl.Options.VerbositySimulationOptions.GetDescription = true;
-      ytdl.Options.VerbositySimulationOptions.GetDuration = true;
-      ytdl.Options.VerbositySimulationOptions.GetFilename = true;
-      ytdl.Options.VerbositySimulationOptions.GetFormat = true;
-      ytdl.Options.VerbositySimulationOptions.GetThumbnail = true;
-      ytdl.Options.VerbositySimulationOptions.GetTitle = true;
-      ytdl.Options.VerbositySimulationOptions.GetUrl = true;
-      ytdl.Options.VerbositySimulationOptions.DumpSingleJson = true;
+    //[TestMethod]
+    //public void YTDL_GetInfo_Test()
+    //{
+    //  string ytdl_path = Path.Combine(GlobalProperty.LIBRARY_PATH, "YTDL", "youtube-dl.exe");
+    //  YoutubeDL ytdl = new YoutubeDL(ytdl_path);
 
-      string result = string.Empty;
-      string error = string.Empty;
+    //  ytdl.VideoUrl = "https://www.youtube.com/watch?v=kJQP7kiw5Fk";
 
-      ytdl.StandardErrorEvent += (s, e) => { error = $"{e}\n"; };
-      ytdl.StandardOutputEvent += (s, e) => { result = e; };
+    //  ytdl.Options.VerbositySimulationOptions.Simulate = true;
+    //  ytdl.Options.VerbositySimulationOptions.SkipDownload = true;
+    //  ytdl.Options.VerbositySimulationOptions.GetId = true;
+    //  ytdl.Options.VerbositySimulationOptions.GetDescription = true;
+    //  ytdl.Options.VerbositySimulationOptions.GetDuration = true;
+    //  ytdl.Options.VerbositySimulationOptions.GetFilename = true;
+    //  ytdl.Options.VerbositySimulationOptions.GetFormat = true;
+    //  ytdl.Options.VerbositySimulationOptions.GetThumbnail = true;
+    //  ytdl.Options.VerbositySimulationOptions.GetTitle = true;
+    //  ytdl.Options.VerbositySimulationOptions.GetUrl = true;
+    //  ytdl.Options.VerbositySimulationOptions.DumpSingleJson = true;
 
-      ytdl.DownloadAsync().GetAwaiter().GetResult();
+    //  string result = string.Empty;
+    //  string error = string.Empty;
 
-      File.WriteAllText(Path.Combine("Core", "MediaInfo.txt"), result, Encoding.UTF8);
-      Trace.Write($"========OUTPUT========\n{result}\n======================\n");
-      Trace.WriteLine($"========ERROR========\n{error}\n=====================");
-      Assert.IsTrue(!string.IsNullOrWhiteSpace(result) && string.IsNullOrWhiteSpace(error));
-    }
+    //  ytdl.StandardErrorEvent += (s, e) => { error = $"{e}\n"; };
+    //  ytdl.StandardOutputEvent += (s, e) => { result = e; };
+
+    //  ytdl.DownloadAsync().GetAwaiter().GetResult();
+
+    //  File.WriteAllText(Path.Combine("Core", "MediaInfo.txt"), result, Encoding.UTF8);
+    //  Trace.Write($"========OUTPUT========\n{result}\n======================\n");
+    //  Trace.WriteLine($"========ERROR========\n{error}\n=====================");
+    //  Assert.IsTrue(!string.IsNullOrWhiteSpace(result) && string.IsNullOrWhiteSpace(error));
+    //}
   }
 }

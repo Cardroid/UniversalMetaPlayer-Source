@@ -32,13 +32,18 @@
             <StackPanel
                 Orientation="Horizontal">
                 <Label
-                    x:Name="MessageLabel"
+                    x:Name="SiteLabel"
                     Style="{StaticResource MaterialDesignLabel}" />
+                <Label
+                    x:Name="MessageLabel"
+                    Style="{StaticResource MaterialDesignLabel}"
+                    Margin="5,0,0,0" />
                 <materialDesign:Card
                     x:Name="ProgressRing"
                     Visibility="Collapsed"
                     UniformCornerRadius="14"
-                    Padding="4">
+                    Padding="3"
+                    Margin="5,0,0,0">
                     <ProgressBar
                         Style="{StaticResource MaterialDesignCircularProgressBar}"
                         Value="0"

@@ -20,11 +20,11 @@ namespace UMP.Core.Model
 {
   public class PlayList : ObservableCollection<MediaInformation>
   {
-    public PlayList(string name = "Nameless")
+    public PlayList(string name = "")
     {
-      EigenValue = Converter.SHA256Hash(name);
       PlayListName = name;
       Log = new Log($"{typeof(PlayList)} - ({EigenValue})");
+      NeedSave = false;
     }
 
     private Log Log { get; }
@@ -49,7 +49,22 @@ namespace UMP.Core.Model
       get => _PlayListName;
       set
       {
-        _PlayListName = value;
+        if (string.IsNullOrWhiteSpace(value))
+          _PlayListName = "Nameless";
+        else
+        {
+          _PlayListName = value;
+
+          char[] invalidChars = Path.GetInvalidFileNameChars();
+          for (int i = 0; i < invalidChars.Length; i++)
+            _PlayListName = _PlayListName.Replace(invalidChars[i].ToString(), "");
+
+          if (_PlayListName != value)
+            GlobalMessageEvent.Invoke("파일 이름에 사용할 수 없는 문자를 자동으로 제거했습니다", true);
+        }
+
+        EigenValue = Converter.SHA256Hash(_PlayListName);
+        NeedSave = true;
         OnPropertyChanged("PlayListName");
       }
     }

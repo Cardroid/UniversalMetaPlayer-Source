@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
@@ -28,9 +29,6 @@ using Timer = System.Timers.Timer;
 
 namespace UMP.Controller.Dialog
 {
-  /// <summary>
-  /// PlayListAddDialog.xaml에 대한 상호 작용 논리
-  /// </summary>
   public partial class PlayListAddDialog : UserControl
   {
     public UMP_VoidEventHandler Close;
@@ -46,6 +44,10 @@ namespace UMP.Controller.Dialog
             Close?.Invoke();
         };
 
+        this.UserTextBox.GotKeyboardFocus += (_, e) => { GlobalKeyDownEvent.IsEnabled = false; };
+        this.UserTextBox.LostKeyboardFocus += (_, e) => { GlobalKeyDownEvent.IsEnabled = true; };
+        this.MouseDown += (_, e) => { Keyboard.ClearFocus(); };
+        
         this.AcceptButton.IsEnabled = false;
         this.UserTextBox.TextChanged += UserTextBox_TextChanged;
         this.AcceptButton.Click += AcceptButton_Click;
@@ -111,22 +113,28 @@ namespace UMP.Controller.Dialog
         text = text.Replace(Invalid[i].ToString(), "");
       this.UserTextBox.Text = text;
 
-      if (!text.ToLower().StartsWith("http"))
+      var match = Regex.Match(text, @"(http(s)?://)?(w{0,3}\.)?([a-zA-Z0-9]+)\.", RegexOptions.None, TimeSpan.FromSeconds(60));
+      string site = match.Groups[match.Groups.Count - 1].Value;
+      if (string.IsNullOrWhiteSpace(site))
       {
-        if (File.Exists(text))
+        if (Checker.IsLocalPath(text) && File.Exists(text))
         {
           SelectFilePaths = new string[] { text };
+          this.SiteLabel.Content = $"[Local]";
           this.MessageLabel.Content = "파일이 확인되었습니다";
           this.AcceptButton.IsEnabled = true;
         }
         else
         {
+          this.SiteLabel.Content = $"[Null]";
           this.AcceptButton.IsEnabled = false;
           this.MessageLabel.Content = "미디어를 확인 할 수 없습니다";
         }
       }
       else
       {
+        site = $"{site[0].ToString().ToUpper()}{site.Substring(1)}";
+        this.SiteLabel.Content = $"[{site}]";
         if (Checker.CheckForInternetConnection() && GlobalProperty.Options.Getter<Enums.MediaLoadEngineType>(Enums.ValueName.MediaLoadEngine) == Enums.MediaLoadEngineType.Native)
         {
           YoutubeClient client = new YoutubeClient();

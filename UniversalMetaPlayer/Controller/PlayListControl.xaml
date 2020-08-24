@@ -42,28 +42,15 @@
                         <ColumnDefinition
                             Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    
-                    <Button
-                        x:Name="PlayListNameEditButton"
-                        Style="{StaticResource MaterialDesignFloatingActionButton}"
-                        Content="{materialDesign:PackIcon Kind=Edit, Size=20}"
-                        Margin="-5,0,5,0"
-                        ToolTip="이름바꾸기"
-                        Focusable="False"
-                        Cursor="Hand"
-                        Width="30"
-                        Height="30"/>
+
                     <TextBox
                         x:Name="PlayListName"
                         Foreground="{DynamicResource MaterialDesignPaper}"
                         CaretBrush="{DynamicResource MaterialDesignBody}"
-                        Text="{Binding PlayListName}"
-                        Focusable="False"
-                        IsReadOnly="True"
-                        IsReadOnlyCaretVisible="False"
+                        Text="{Binding PlayListName, Mode=OneWay}"
                         FontSize="16"
                         Grid.Column="1" />
-                    
+
                     <materialDesign:PopupBox
                         x:Name="PlayListPopupBox"
                         HorizontalAlignment="Right"
@@ -78,7 +65,7 @@
                         Width="20"
                         Height="20"
                         Grid.Column="2">
-                        
+
                         <materialDesign:PopupBox.ToggleContent>
                             <materialDesign:PackIcon
                                 Kind="PlaylistPlus"
@@ -91,7 +78,7 @@
                                 Width="20"
                                 Height="20" />
                         </materialDesign:PopupBox.ToggleCheckedContent>
-                        
+
                         <StackPanel
                             Orientation="Horizontal">
                             <Button
@@ -137,10 +124,10 @@
                                 Cursor="Hand" />
                         </StackPanel>
                     </materialDesign:PopupBox>
-                    
+
                 </Grid>
             </GroupBox.Header>
-            
+
             <ListView
                 x:Name="PlayList"
                 SelectionMode="Extended"
@@ -167,7 +154,7 @@
                             Value="Stretch" />
                     </Style>
                 </ListView.ItemContainerStyle>
-                
+
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <Grid>
@@ -187,7 +174,7 @@
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
-                
+
             </ListView>
         </GroupBox>
     </Grid>

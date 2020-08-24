@@ -12,16 +12,14 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using Microsoft.Win32;
-using UMP.Utility;
+
 using UMP.Core;
 using UMP.Core.Player;
 using UMP.Core.Global;
+using UMP.Utility;
 
 namespace UMP.Controller.Dialog
 {
-  /// <summary>
-  /// PlayListAddDialog.xaml에 대한 상호 작용 논리
-  /// </summary>
   public partial class PlayListLoadDialog : UserControl
   {
     public UMP_VoidEventHandler Close;
@@ -34,6 +32,10 @@ namespace UMP.Controller.Dialog
         if (e.Key == Key.Escape)
           Close?.Invoke();
       };
+
+      this.UserTextBox.GotKeyboardFocus += (_, e) => { GlobalKeyDownEvent.IsEnabled = false; };
+      this.UserTextBox.LostKeyboardFocus += (_, e) => { GlobalKeyDownEvent.IsEnabled = true; };
+      this.MouseDown += (_, e) => { Keyboard.ClearFocus(); };
 
       this.AcceptButton.IsEnabled = false;
       this.AcceptButton.Click += AcceptButton_Click;
