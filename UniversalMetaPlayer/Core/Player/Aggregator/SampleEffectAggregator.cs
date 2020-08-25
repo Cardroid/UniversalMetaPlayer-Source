@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
-
 using NAudio.Wave;
 
-using UMP.Core.Global;
 using UMP.Core.Model.Func;
 using UMP.Core.Player.Effect;
 

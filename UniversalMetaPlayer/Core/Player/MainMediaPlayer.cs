@@ -77,16 +77,24 @@ namespace UMP.Core.Player
     /// </summary>
     public static bool IsEffectEnabled
     {
-      get => Aggregator.EffectAggregator.IsEnabled;
-      set => Aggregator.EffectAggregator.IsEnabled = value;
+      get => Aggregator != null ? Aggregator.EffectAggregator.IsEnabled : false;
+      set
+      {
+        if (Aggregator != null)
+          Aggregator.EffectAggregator.IsEnabled = value;
+      }
     }
     /// <summary>
     /// 분석사용 여부
     /// </summary>
     public static bool IsAnalyzerEnabled
     {
-      get => Aggregator.AnalysisAggregator.IsEnabled;
-      set => Aggregator.AnalysisAggregator.IsEnabled = value;
+      get => Aggregator != null ? Aggregator.AnalysisAggregator.IsEnabled : false;
+      set
+      {
+        if (Aggregator != null)
+          Aggregator.AnalysisAggregator.IsEnabled = value;
+      }
     }
 
     /// <summary>

@@ -25,14 +25,12 @@ namespace UMP
 {
   public partial class MainWindow : Window
   {
-    private MainWindowViewModel ViewModel { get; }
     public MainWindow()
     {
       WindowManager.CloseAll();
       GlobalProperty.Load();
 
       InitializeComponent();
-      ViewModel = (MainWindowViewModel)this.DataContext;
 
       this.PreviewKeyDown += (_, e) =>
       {
@@ -110,25 +108,6 @@ namespace UMP
             this.MainControllerControl.IsEnabled = true;
           else
             this.MainControllerControl.IsEnabled = false;
-        }
-      };
-
-      ViewModel.PropertyChanged += (_, e) =>
-      {
-        if (e.PropertyName == "PlayListControl")
-        {
-          if (MainPlayListControl != null)
-            this.MainPlayListControl.Visibility = Visibility.Visible;
-          else
-            this.MainPlayListControl.Visibility = Visibility.Collapsed;
-        }
-
-        if (e.PropertyName == "FunctionControl")
-        {
-          if (FunctionControl != null)
-            this.FunctionControl.Visibility = Visibility.Visible;
-          else
-            this.FunctionControl.Visibility = Visibility.Collapsed;
         }
       };
 

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-using NAudio.Wave;
+﻿using NAudio.Wave;
 
 using UMP.Core.Global;
 using UMP.Core.Model.Func;
