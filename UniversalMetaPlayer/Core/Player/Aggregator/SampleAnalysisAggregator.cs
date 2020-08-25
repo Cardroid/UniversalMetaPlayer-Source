@@ -28,7 +28,7 @@ namespace UMP.Core.Player.Aggregator
     private readonly int m;
     private readonly ISampleProvider source;
 
-    public bool IsEnabled { get; set; } = false;
+    public bool IsEnabled { get; set; } = true;
     public bool IsActive { get; private set; } = true;
 
     public SampleAnalysisAggregator(ISampleProvider source, int fftLength = 1024)

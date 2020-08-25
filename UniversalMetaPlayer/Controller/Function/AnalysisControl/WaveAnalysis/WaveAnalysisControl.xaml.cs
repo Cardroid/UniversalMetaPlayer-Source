@@ -14,8 +14,10 @@ namespace UMP.Controller.Function.AnalysisControl
     public WaveAnalysisControl() : base("분석 - 그래프")
     {
       InitializeComponent();
+
       this.Loaded += (_, e) => MainMediaPlayer.IsAnalyzerEnabled = true;
-      this.Unloaded += (_, e) => MainMediaPlayer.IsAnalyzerEnabled = false;
+      if (GlobalProperty.Options.Getter<bool>(Enums.ValueName.IsEnableSleepMode))
+        this.Unloaded += (_, e) => MainMediaPlayer.IsAnalyzerEnabled = false;
     }
   }
 }
