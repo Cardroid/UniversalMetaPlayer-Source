@@ -339,9 +339,10 @@ namespace UMP.Core.Global
         {
           // 일반
           Enums.ValueName.FileSavePath => Parser.ChangeType<T, string>("Save"),
-          Enums.ValueName.PrivateLogging => Parser.ChangeType<T, bool>(true),
+          Enums.ValueName.IsPrivateLogging => Parser.ChangeType<T, bool>(true),
           Enums.ValueName.MediaLoadEngine => Parser.ChangeType<T, Enums.MediaLoadEngineType>(Enums.MediaLoadEngineType.Native),
           Enums.ValueName.LyricsSettings => Parser.ChangeType<T, Enums.LyricsSettingsType>(Enums.LyricsSettingsType.Auto),
+          Enums.ValueName.IsEnableSleepMode => Parser.ChangeType<T, bool>(true),
           // 테마
           Enums.ValueName.IsDarkMode => Parser.ChangeType<T, bool>(true),
           Enums.ValueName.PrimaryColor => Parser.ChangeType<T, Color>(Colors.Green.Lighten(3)),
@@ -428,7 +429,7 @@ namespace UMP.Core.Global
     public enum ValueName
     {
       // 일반
-      FileSavePath, PrivateLogging, MediaLoadEngine, LyricsSettings,
+      FileSavePath, IsPrivateLogging, MediaLoadEngine, LyricsSettings, IsEnableSleepMode,
       // 테마
       IsDarkMode, PrimaryColor, SecondaryColor,
       IsAverageColorTheme, AverageColorProcessingOffset,

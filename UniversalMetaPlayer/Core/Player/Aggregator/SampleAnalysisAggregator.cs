@@ -28,10 +28,23 @@ namespace UMP.Core.Player.Aggregator
     private readonly int m;
     private readonly ISampleProvider source;
 
+    public bool IsActive { get; private set; } = true;
+
     public SampleAnalysisAggregator(ISampleProvider source, int fftLength = 1024)
     {
       if (!IsPowerOfTwo(fftLength))
         throw new ArgumentException("FFT 길이는 2의 거듭제곱이어야 합니다");
+
+      GlobalProperty.PropertyChanged += (_, e) =>
+      {
+        if (e.PropertyName == "IsFocusActive")
+        {
+          if (GlobalProperty.Options.Getter<bool>(Enums.ValueName.IsEnableSleepMode))
+            IsActive = GlobalProperty.State.IsFocusActive;
+          else
+            IsActive = true;
+        }
+      };
 
       m = (int)Math.Log(fftLength, 2.0);
       this.fftLength = fftLength;
@@ -81,7 +94,7 @@ namespace UMP.Core.Player.Aggregator
 
     public int Read(int samplesRead, float[] buffer, int offset, int count)
     {
-      if (GlobalProperty.State.IsFocusActive)
+      if (IsActive)
       {
         // n = 0 left
         for (int n = 0; n < samplesRead; n += source.WaveFormat.Channels)

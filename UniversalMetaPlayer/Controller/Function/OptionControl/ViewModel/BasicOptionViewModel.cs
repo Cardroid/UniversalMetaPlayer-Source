@@ -16,17 +16,25 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
     {
       GlobalProperty.PropertyChanged += (_, e) =>
       {
-        if (e.PropertyName == "FileSavePath")
-          OnPropertyChanged("FileSavePathToolTip");
-        if (e.PropertyName == "PrivateLogging")
-          OnPropertyChanged("PrivateLoggingIsChecked");
-        if (e.PropertyName == "MediaLoadEngine")
-          OnPropertyChanged("MediaLoadEngineSelectedItem");
-        if (e.PropertyName == "LyricsSettings")
+        switch (e.PropertyName)
         {
-          OnPropertyChanged("IsCheckedLyricsSettings_Off");
-          OnPropertyChanged("IsCheckedLyricsSettings_Auto");
-          OnPropertyChanged("IsCheckedLyricsSettings_On");
+          case "FileSavePath":
+          OnPropertyChanged("FileSavePathToolTip");
+            break;
+          case "MediaLoadEngine":
+          OnPropertyChanged("MediaLoadEngineSelectedItem");
+            break;
+          case "PrivateLogging":
+          OnPropertyChanged("IsCheckedPrivateLogging");
+            break;
+          case "IsEnableSleepMode":
+          OnPropertyChanged("IsCheckedIsEnableSleepMode");
+            break;
+          case "LyricsSettings":
+            OnPropertyChanged("IsCheckedLyricsSettings_Off");
+            OnPropertyChanged("IsCheckedLyricsSettings_Auto");
+            OnPropertyChanged("IsCheckedLyricsSettings_On");
+            break;
         }
       };
 
@@ -62,14 +70,28 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
     #region 세부 로깅 여부
     public bool PrivateLoggingIsChecked
     {
-      get => GlobalProperty.Options.Getter<bool>(Enums.ValueName.PrivateLogging);
-      set => GlobalProperty.Options.Setter(Enums.ValueName.PrivateLogging, value.ToString());
+      get => GlobalProperty.Options.Getter<bool>(Enums.ValueName.IsPrivateLogging);
+      set => GlobalProperty.Options.Setter(Enums.ValueName.IsPrivateLogging, value.ToString());
     }
 
     public string PrivateLoggingToolTip =>
+      $"기본값 : {GlobalProperty.DefaultValue.GetDefaultValue<bool>(Enums.ValueName.IsPrivateLogging)}\n\n" +
       "로그에 더 자세한 사항을 기록합니다.\n" +
       "개인 정보가 포함 될 수 있으나, 모든 정보는 익명으로 저장됩니다.\n" +
       "(로그정보로 사용자를 특정할 수 없음)";
+    #endregion
+    
+    #region 리소스 절약 모드
+    public bool IsCheckedIsEnableSleepMode
+    {
+      get => GlobalProperty.Options.Getter<bool>(Enums.ValueName.IsEnableSleepMode);
+      set => GlobalProperty.Options.Setter(Enums.ValueName.IsEnableSleepMode, value.ToString());
+    }
+
+    public string IsEnableSleepModeToolTip =>
+      $"기본값 : {GlobalProperty.DefaultValue.GetDefaultValue<bool>(Enums.ValueName.IsEnableSleepMode)}\n\n" +
+
+      "사용 중이지 않은 기능들을 종료 및 대기 시킴으로써 리소스를 절약합니다.";
     #endregion
 
     #region 미디어 로드 엔진
@@ -78,7 +100,7 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
       get => (int)GlobalProperty.Options.Getter<Enums.MediaLoadEngineType>(Enums.ValueName.MediaLoadEngine);
       set
       {
-        GlobalProperty.Options.Setter(Enums.ValueName.PrivateLogging, MediaLoadEngineTypes[value].Content.ToString());
+        GlobalProperty.Options.Setter(Enums.ValueName.MediaLoadEngine, MediaLoadEngineTypes[value].Content.ToString());
         OnPropertyChanged("MediaLoadEngineSelectedItem");
       }
     }
