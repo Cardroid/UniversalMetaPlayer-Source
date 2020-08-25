@@ -24,12 +24,7 @@ namespace UMP.Core.Player
       Option = new PlayerOption();
       OptionSetDefault();
       PlayList = new PlayList();
-      MediaInformation = new MediaInformation()
-      {
-        Title = string.Empty,
-        Duration = TimeSpan.Zero,
-        AlbumImage = null
-      };
+      MediaInformation = new MediaInformation();
 
       GlobalProperty.PropertyChanged += (_, e) => { if (e.PropertyName == "Loaded") Volume = Option.Volume; };
 
@@ -76,6 +71,23 @@ namespace UMP.Core.Player
     private static IWavePlayer WavePlayer { get; set; }
 
     private static IPluginSampleProvider Aggregator { get; set; }
+
+    /// <summary>
+    /// 효과사용 여부
+    /// </summary>
+    public static bool IsEffectEnabled
+    {
+      get => Aggregator.EffectAggregator.IsEnabled;
+      set => Aggregator.EffectAggregator.IsEnabled = value;
+    }
+    /// <summary>
+    /// 분석사용 여부
+    /// </summary>
+    public static bool IsAnalyzerEnabled
+    {
+      get => Aggregator.AnalysisAggregator.IsEnabled;
+      set => Aggregator.AnalysisAggregator.IsEnabled = value;
+    }
 
     /// <summary>
     /// 플레이어 옵션

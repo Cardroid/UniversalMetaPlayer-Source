@@ -28,6 +28,7 @@ namespace UMP.Core.Player.Aggregator
     private readonly int m;
     private readonly ISampleProvider source;
 
+    public bool IsEnabled { get; set; } = false;
     public bool IsActive { get; private set; } = true;
 
     public SampleAnalysisAggregator(ISampleProvider source, int fftLength = 1024)
@@ -94,7 +95,7 @@ namespace UMP.Core.Player.Aggregator
 
     public int Read(int samplesRead, float[] buffer, int offset, int count)
     {
-      if (IsActive)
+      if (IsEnabled && IsActive)
       {
         // n = 0 left
         for (int n = 0; n < samplesRead; n += source.WaveFormat.Channels)

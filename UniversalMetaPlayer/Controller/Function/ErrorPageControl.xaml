@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     TextElement.Foreground="{DynamicResource MaterialDesignBody}"
     Background="{DynamicResource MaterialDesignPaper}"
     TextElement.FontWeight="Medium"
@@ -37,14 +38,16 @@
             Grid.Column="1"
             Grid.Row="1">
             <Label
-                Content="준비중인 기능입니다"
-                FontSize="20" />
+                Content="{materialDesign:PackIcon Kind=ErrorOutline, Size=30}" />
+            <Label
+                Content="준비중인 기능이거나 오류가 발생했습니다"
+                FontSize="22" />
             <ProgressBar
                 Style="{StaticResource MaterialDesignCircularProgressBar}"
                 Value="0"
                 IsIndeterminate="True"
-                Width="20"
-                Height="20" />
+                Width="30"
+                Height="30" />
         </WrapPanel>
     </Grid>
 </funcmodel:FunctionControlForm>

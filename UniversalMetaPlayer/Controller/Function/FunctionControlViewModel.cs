@@ -23,7 +23,11 @@ namespace UMP.Controller.Function
       get => _FunctionPanel.IsAlive ? (FunctionControlForm)_FunctionPanel.Target : null;
       set
       {
-        _FunctionPanel = new WeakReference(value);
+        if (value == null)
+          _FunctionPanel = new WeakReference(new ErrorPageControl());
+        else
+          _FunctionPanel = new WeakReference(value);
+
         OnPropertyChanged("FunctionPanel");
         OnPropertyChanged("Header");
       }

@@ -16,8 +16,18 @@ namespace UMP.Core.Model.Media
   /// <summary>
   /// 미디어 정보 구조체
   /// </summary>
-  public struct MediaInformation
+  public class MediaInformation
   {
+    public MediaInformation()
+    {
+      this.LoadState = false;
+      this.MediaLocation = string.Empty;
+      this.MediaStreamPath = string.Empty;
+      this.Title = string.Empty;
+      this.Duration = TimeSpan.Zero;
+      this.AlbumImage = null;
+      this.Tags = null;
+    }
     /// <summary>
     /// 정보 로드 여부
     /// </summary>

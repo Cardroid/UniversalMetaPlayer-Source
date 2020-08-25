@@ -23,13 +23,16 @@ namespace UMP.Core.Player.Aggregator
 
     private delegate int SampleEffectAggregatorReadHandler(int samplesRead, float[] buffer, int offset, int count);
     private event SampleEffectAggregatorReadHandler ReadEvent;
+    public bool IsEnabled { get; set; } = true;
 
     public int Read(int samplesRead, float[] buffer, int offset, int count)
     {
-      var result = ReadEvent?.Invoke(samplesRead, buffer, offset, count);
-      if (result != null)
-        samplesRead = result.Value;
-
+      if (IsEnabled)
+      {
+        var result = ReadEvent?.Invoke(samplesRead, buffer, offset, count);
+        if (result != null)
+          samplesRead = result.Value;
+      }
       return samplesRead;
     }
 
