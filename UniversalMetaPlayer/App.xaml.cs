@@ -27,24 +27,30 @@ namespace UMP
         $"Start Path : [{AppDomain.CurrentDomain.BaseDirectory}]\nTask Path : [{Environment.CurrentDirectory}]");
     }
 
-    //protected override void OnStartup(StartupEventArgs e)
-    //{
-    //  base.OnStartup(e);
-    //  AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
-    //  Application.Current.DispatcherUnhandledException += DispatcherOnUnhandledException;
-    //  TaskScheduler.UnobservedTaskException += TaskSchedulerOnUnobservedTaskException;
-    //}
+    protected override void OnStartup(StartupEventArgs e)
+    {
+      base.OnStartup(e);
+      AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
+      Application.Current.DispatcherUnhandledException += DispatcherOnUnhandledException;
+      TaskScheduler.UnobservedTaskException += TaskSchedulerOnUnobservedTaskException;
+    }
 
-    //private void TaskSchedulerOnUnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs unobservedTaskExceptionEventArgs)
-    //{
-    //}
+    private static void CurrentDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs)
+    {
+      if (unhandledExceptionEventArgs.IsTerminating)
+        MainLog.Fatal("\n\nCurrentDomainOnUnhandledException 예외 발생", (Exception)unhandledExceptionEventArgs.ExceptionObject);
+    }
 
-    //private void DispatcherOnUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs dispatcherUnhandledExceptionEventArgs)
-    //{
-    //}
+    private void DispatcherOnUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs dispatcherUnhandledExceptionEventArgs)
+    {
+      if(!dispatcherUnhandledExceptionEventArgs.Handled)
+        MainLog.Fatal("\n\nDispatcherOnUnhandledException 예외 발생", dispatcherUnhandledExceptionEventArgs.Exception);
+    }
 
-    //private static void CurrentDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs)
-    //{
-    //}
+    private void TaskSchedulerOnUnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs unobservedTaskExceptionEventArgs)
+    {
+      if (!unobservedTaskExceptionEventArgs.Observed)
+        MainLog.Fatal("\n\nTaskSchedulerOnUnobservedTaskException 예외 발생", unobservedTaskExceptionEventArgs.Exception);
+    }
   }
 }
