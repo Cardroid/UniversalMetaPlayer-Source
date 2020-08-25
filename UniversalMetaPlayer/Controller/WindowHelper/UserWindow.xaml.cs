@@ -61,6 +61,9 @@ namespace UMP.Controller.WindowHelper
         if (this.GlobalMessageBar.IsActive)
           this.GlobalMessageBar.IsActive = false;
       };
+
+      this.Activated += (_, e) => GlobalProperty.State.IsFocusActive = true;
+      this.Deactivated += (_, e) => GlobalProperty.State.IsFocusActive = false;
     }
   }
 }

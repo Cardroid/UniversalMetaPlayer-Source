@@ -82,7 +82,7 @@ namespace UMP.Controller.Dialog
     {
       if (string.IsNullOrWhiteSpace(this.UserTextBox.Text))
       {
-        this.MessageLabel.Content = "플레이 리스트의 위치";
+        this.MessageLabel.Content = "플레이리스트의 위치";
         return;
       }
       if (IsWorkDelay)
@@ -132,7 +132,7 @@ namespace UMP.Controller.Dialog
       if (!Directory.Exists(defaultPath))
         defaultPath = string.Empty;
 
-      var filepath = DialogHelper.OpenFileDialog("플레이 리스트 파일열기", "PlayList File | *.m3u8", false, defaultPath);
+      var filepath = DialogHelper.OpenFileDialog("플레이리스트 파일열기", "PlayList File | *.m3u8", false, defaultPath);
       if (filepath)
       {
         this.UserTextBox.Text = filepath.Result[0];

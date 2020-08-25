@@ -34,7 +34,7 @@
                 <Label
                     x:Name="MessageLabel"
                     Style="{StaticResource MaterialDesignLabel}"
-                    Content="플레이 리스트의 위치" />
+                    Content="플레이리스트의 위치" />
                 <materialDesign:Card
                     x:Name="ProgressRing"
                     Visibility="Collapsed"

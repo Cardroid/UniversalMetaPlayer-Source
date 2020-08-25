@@ -8,6 +8,7 @@ using UMP.Controller.Function.AnalysisControl.WaveAnalysis;
 using UMP.Controller.Function.AnalysisControl.WaveAnalysis.Helper;
 using UMP.Core.Model.ViewModel;
 using UMP.Core.Player;
+using UMP.Core.Player.Aggregator;
 
 namespace UMP.Controller.Function.AnalysisControl
 {

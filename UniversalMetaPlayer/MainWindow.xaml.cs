@@ -134,6 +134,9 @@ namespace UMP
 
       this.GlobalMessageBar.IsActiveChanged += (_, e) => { if (!e.NewValue) this.GlobalMessage.Content = null; };
 
+      this.Activated += (_, e) => GlobalProperty.State.IsFocusActive = true;
+      this.Deactivated += (_, e) => GlobalProperty.State.IsFocusActive = false;
+
       #region 실행 시 정보 띄우기
       this.GlobalMessageBar.IsActive = true;
       this.Loaded += async (_, e) => { await Task.Delay(100000); this.GlobalMessageBar.IsActive = false; };

@@ -185,6 +185,20 @@ namespace UMP.Core.Global
         }
       }
       private static bool _IsControllable = true;
+
+      /// <summary>
+      /// 윈도우 포커스 활성화 여부
+      /// </summary>
+      public static bool IsFocusActive
+      {
+        get => _IsFocusActive;
+        set
+        {
+          _IsFocusActive = value;
+          OnPropertyChanged("IsFocusActive");
+        }
+      }
+      private static bool _IsFocusActive = true;
     }
 
     public static class Options
@@ -316,7 +330,7 @@ namespace UMP.Core.Global
     }
 
     /// <summary>
-    /// 기본값이 정의 되어 있는 클래스
+    /// 기본값이 정의되어 있는 클래스
     /// </summary>
     public static class DefaultValue
     {
@@ -433,7 +447,7 @@ namespace UMP.Core.Global
     }
 
     /// <summary>
-    /// 가사창 설정 타입<br/>
+    /// 가서 창 설정 타입<br/>
     /// Auto => <c>Lyrics != null ? Open : Close</c>
     /// </summary>
     public enum LyricsSettingsType

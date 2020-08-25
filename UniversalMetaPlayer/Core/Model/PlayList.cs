@@ -32,7 +32,7 @@ namespace UMP.Core.Model
     private void OnPropertyChanged(string propertyName) => Field_PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
     /// <summary>
-    /// 플레이 리스트 구별을 위한 고유 값
+    /// 플레이리스트 구별을 위한 고유 값
     /// </summary>
     public string EigenValue { get; private set; }
 
@@ -42,7 +42,7 @@ namespace UMP.Core.Model
     public bool NeedSave { get; private set; }
 
     /// <summary>
-    /// 플레이 리스트 이름
+    /// 플레이리스트 이름
     /// </summary>
     public string PlayListName
     {
@@ -71,7 +71,7 @@ namespace UMP.Core.Model
     private string _PlayListName;
 
     /// <summary>
-    /// 플레이 리스트의 총 길이
+    /// 플레이리스트의 총 길이
     /// </summary>
     public TimeSpan TotalDuration
     {
@@ -120,14 +120,14 @@ namespace UMP.Core.Model
 
       if (Directory.GetFiles(savepath, $"{PlayListName}.m3u8").Length > 0)
       {
-        Log.Info("플레이 리스트 저장 완료");
-        GlobalMessageEvent.Invoke("플레이 리스트 저장 완료", true);
+        Log.Info("플레이리스트 저장 완료");
+        GlobalMessageEvent.Invoke("플레이리스트 저장 완료", true);
         NeedSave = false;
       }
       else
       {
-        Log.Info("플레이 리스트 저장 실패");
-        GlobalMessageEvent.Invoke("[Save Error] 플레이 리스트 저장 실패", false);
+        Log.Info("플레이리스트 저장 실패");
+        GlobalMessageEvent.Invoke("[Save Error] 플레이리스트 저장 실패", false);
         NeedSave = true;
       }
     }
@@ -152,8 +152,8 @@ namespace UMP.Core.Model
         }
         catch (Exception e)
         {
-          Log.Fatal("플레이 리스트 로드 중 오류 발생. (Parsing Error)", e, $"Path : [{path}]");
-          GlobalMessageEvent.Invoke("플레이 리스트 로드 실패! [로그를 확인해주세요]");
+          Log.Fatal("플레이리스트 로드 중 오류 발생. (Parsing Error)", e, $"Path : [{path}]");
+          GlobalMessageEvent.Invoke("플레이리스트 로드 실패! [로그를 확인해주세요]");
           return false;
         }
         finally
@@ -164,8 +164,8 @@ namespace UMP.Core.Model
 
         if (playListData == null)
         {
-          Log.Fatal("플레이 리스트 로드 중 오류 발생. (Data is Null)", $"Path : [{path}]");
-          GlobalMessageEvent.Invoke("플레이 리스트 로드 실패! [로그를 확인해주세요]");
+          Log.Fatal("플레이리스트 로드 중 오류 발생 (Data is Null)", $"Path : [{path}]");
+          GlobalMessageEvent.Invoke("플레이리스트 로드 실패 [로그를 확인해주세요]");
           return false;
         }
 
@@ -175,8 +175,8 @@ namespace UMP.Core.Model
         List<string> paths = playListData.GetTracksPaths();
         if (paths.Count < 0)
         {
-          Log.Fatal("플레이 리스트 로드 중 오류 발생", new Exception("(PlayList Count < 0) is Impossible"), $"PlayList Name : [{playListData.FileName}]\nPath : [{path}]");
-          GlobalMessageEvent.Invoke("플레이 리스트 로드 실패! [로그를 확인해주세요]");
+          Log.Fatal("플레이리스트 로드 중 오류 발생", new Exception("(PlayList Count < 0) is Impossible"), $"PlayList Name : [{playListData.FileName}]\nPath : [{path}]");
+          GlobalMessageEvent.Invoke("플레이리스트 로드 실패! [로그를 확인해주세요]");
           return false;
         }
 
@@ -189,7 +189,7 @@ namespace UMP.Core.Model
           TotalDuration += info.Duration;
           if (!info.LoadState)
           {
-            Log.Warn($"플레이 리스트 로드 경고 IsLoaded : [{info.LoadState}]", $"Title : [{info.Title}]\nPath : [{paths[i]}]");
+            Log.Warn($"플레이리스트 로드 경고 IsLoaded : [{info.LoadState}]", $"Title : [{info.Title}]\nPath : [{paths[i]}]");
             loadErrorItemExists = true;
           }
         }
@@ -197,18 +197,18 @@ namespace UMP.Core.Model
         if (newPlaylist)
           EigenValue = Converter.SHA256Hash(playListData.FileName);
 
-        Log.Info($"플레이 리스트 로드 완료 MediaCount : [{paths.Count}] Loaded Warning [{loadErrorItemExists}]", $"Path : [{path}]");
+        Log.Info($"플레이리스트 로드 완료 MediaCount : [{paths.Count}] Loaded Warning [{loadErrorItemExists}]", $"Path : [{path}]");
         if (loadErrorItemExists)
-          GlobalMessageEvent.Invoke("플레이 리스트 로드 완료 [오류 항목이 있습니다]", false);
+          GlobalMessageEvent.Invoke("플레이리스트 로드 완료 [오류 항목이 있습니다]", false);
         else
-          GlobalMessageEvent.Invoke("플레이 리스트 로드 완료", true);
+          GlobalMessageEvent.Invoke("플레이리스트 로드 완료", true);
         NeedSave = false;
         return true;
       }
       else
       {
-        Log.Fatal("플레이 리스트 로드 중 오류 발생", new FileNotFoundException("File Not Found"), $"Path : [{path}]");
-        GlobalMessageEvent.Invoke("플레이 리스트 로드 실패! [로그를 확인해주세요]");
+        Log.Fatal("플레이리스트 로드 중 오류 발생", new FileNotFoundException("File Not Found"), $"Path : [{path}]");
+        GlobalMessageEvent.Invoke("플레이리스트 로드 실패! [로그를 확인해주세요]");
         return false;
       }
     }
@@ -220,7 +220,7 @@ namespace UMP.Core.Model
         Information = await new MediaLoader(Information.MediaLocation).GetInformationAsync(false);
       this.TotalDuration += Information.Duration;
       base.Add(Information);
-      Log.Info($"플레이 리스트 항목 추가 완료 IsLoaded : [{Information.LoadState}]", $"Title : [{Information.Title}]\nFileName : {Path.GetFileName(Information.MediaLocation)}");
+      Log.Info($"플레이리스트 항목 추가 완료 IsLoaded : [{Information.LoadState}]", $"Title : [{Information.Title}]\nFileName : {Path.GetFileName(Information.MediaLocation)}");
     }
 
     /// <summary>
@@ -230,12 +230,12 @@ namespace UMP.Core.Model
     public async Task Add(string mediaLocation)
     {
       var loader = new MediaLoader(mediaLocation);
-      Log.Debug("플레이 리스트 항목 추가 시도", $"Path : [{mediaLocation}]");
+      Log.Debug("플레이리스트 항목 추가 시도", $"Path : [{mediaLocation}]");
 
       var info = await loader.GetInformationAsync(false);
       TotalDuration += info.Duration;
       base.Add(info);
-      Log.Info($"플레이 리스트 항목 추가 완료 IsLoaded : [{info.LoadState}]", $"Title : [{info.Title}]\nFileName : {Path.GetFileName(mediaLocation)}");
+      Log.Info($"플레이리스트 항목 추가 완료 IsLoaded : [{info.LoadState}]", $"Title : [{info.Title}]\nFileName : {Path.GetFileName(mediaLocation)}");
       NeedSave = true;
     }
 
@@ -245,15 +245,15 @@ namespace UMP.Core.Model
     /// <param name="media">제거할 미디어 정보</param>
     public new void Remove(MediaInformation mediaInfo)
     {
-      Log.Debug("플레이 리스트 항목 제거 시도", $"Title : [{mediaInfo.Title}]");
+      Log.Debug("플레이리스트 항목 제거 시도", $"Title : [{mediaInfo.Title}]");
       if (base.Contains(mediaInfo))
       {
         base.Remove(mediaInfo);
         TotalDuration -= mediaInfo.Duration;
-        Log.Info("플레이 리스트 항목 제거 완료", $"Title : [{mediaInfo.Title}]");
+        Log.Info("플레이리스트 항목 제거 완료", $"Title : [{mediaInfo.Title}]");
       }
       else
-        Log.Fatal("플레이 리스트 항목 제거 실패", new NullReferenceException("Unlisted Media"), $"Title : [{mediaInfo.Title}]");
+        Log.Fatal("플레이리스트 항목 제거 실패", new NullReferenceException("Unlisted Media"), $"Title : [{mediaInfo.Title}]");
       NeedSave = true;
     }
 
@@ -263,16 +263,16 @@ namespace UMP.Core.Model
     /// <param name="index">제거할 미디어 정보 Index</param>
     public new void RemoveAt(int index)
     {
-      Log.Debug($"플레이 리스트 Index 항목 제거 시도.\nIndex : [{index}]");
+      Log.Debug($"플레이리스트 Index 항목 제거 시도.\nIndex : [{index}]");
       if (base.Count > index && index >= 0)
       {
         index--;
         base.RemoveAt(index);
         TotalDuration -= base[index].Duration;
-        Log.Info($"플레이 리스트 Index 항목 제거 완료.\nIndex : [{index}]");
+        Log.Info($"플레이리스트 Index 항목 제거 완료.\nIndex : [{index}]");
       }
       else
-        Log.Fatal($"플레이 리스트 Index 항목 제거 실패", new IndexOutOfRangeException($"Index Out Of Range.\nBase Count : [{base.Count}]\nIndex : [{index}]"));
+        Log.Fatal($"플레이리스트 Index 항목 제거 실패", new IndexOutOfRangeException($"Index Out Of Range.\nBase Count : [{base.Count}]\nIndex : [{index}]"));
       NeedSave = true;
     }
 
@@ -293,7 +293,7 @@ namespace UMP.Core.Model
         var item = base[index];
         if (MainMediaPlayer.MediaLoadedCheck && this.IndexOf(MainMediaPlayer.NotChangedMediaInformation) == index)
         {
-          Log.Error($"플레이 리스트 항목 리로드 실패 \n재생 중인 항목은 리로드 할 수 없습니다\nIndex : [{index}]\nIsLoaded : [{item.LoadState}]", $"Title : [{item.Title}]\nLocation : [{item.MediaLocation}]");
+          Log.Error($"플레이리스트 항목 리로드 실패 \n재생 중인 항목은 리로드 할 수 없습니다\nIndex : [{index}]\nIsLoaded : [{item.LoadState}]", $"Title : [{item.Title}]\nLocation : [{item.MediaLocation}]");
           GlobalMessageEvent.Invoke($"재생 중인 항목은 리로드 할 수 없습니다.\nTitle : [{item.Title}]", true);
           return;
         }
@@ -302,8 +302,8 @@ namespace UMP.Core.Model
         item = await new MediaLoader(item.MediaLocation).GetInformationAsync(false);
         TotalDuration += item.Duration;
         base[index] = item;
-        Log.Info($"플레이 리스트 항목 리로드 완료 Index : [{index}] IsLoaded : [{item.LoadState}]", $"Title : [{item.Title}]\nLocation : [{item.MediaLocation}]");
-        GlobalMessageEvent.Invoke($"플레이 리스트 항목 리로드 완료\nTitle : [{item.Title}]", true);
+        Log.Info($"플레이리스트 항목 리로드 완료 Index : [{index}] IsLoaded : [{item.LoadState}]", $"Title : [{item.Title}]\nLocation : [{item.MediaLocation}]");
+        GlobalMessageEvent.Invoke($"플레이리스트 항목 리로드 완료\nTitle : [{item.Title}]", true);
         NeedSave = true;
       }
     }

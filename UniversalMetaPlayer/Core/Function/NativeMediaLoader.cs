@@ -144,7 +144,7 @@ namespace UMP.Core.Function
           return new GenericResult<string>(true, streamCachePathResult.Result);
         }
         else
-          Log.Warn("캐시된 미디어 로드 실패. 온라인에서 다운로드를 시도합니다");
+          Log.Warn("캐시 된 미디어 로드 실패. 온라인에서 다운로드를 시도합니다");
       }
 
       if (Checker.CheckForInternetConnection())
@@ -311,7 +311,7 @@ namespace UMP.Core.Function
             Log.Warn("자막 저장 오류", e);
           }
 
-          // 썸네일 처리
+          // Thumbnail 처리
           byte[] imagedata = null;
           using (WebClient webClient = new WebClient())
           {
@@ -321,14 +321,14 @@ namespace UMP.Core.Function
             }
             catch (Exception e)
             {
-              Log.Error("썸네일 추출 중 오류가 발생했습니다. 일반 화질로 다시시도 합니다", e);
+              Log.Error("Thumbnail 추출 중 오류가 발생했습니다. 일반 화질로 다시 시도합니다", e);
               try
               {
                 imagedata = await webClient.DownloadDataTaskAsync(videoinfo.Thumbnails.StandardResUrl);
               }
               catch (Exception ex)
               {
-                Log.Fatal("일반 화질 썸네일 추출 중 오류가 발생했습니다", ex);
+                Log.Fatal("일반 화질 Thumbnail 추출 중 오류가 발생했습니다", ex);
               }
             }
           }
@@ -348,11 +348,11 @@ namespace UMP.Core.Function
             }
             catch (Exception e)
             {
-              Log.Error("메타데이터에 썸네일 정보등록을 실패했습니다", e);
+              Log.Error("메타데이터에 Thumbnail 정보등록을 실패했습니다", e);
             }
           }
           else
-            Log.Error("썸네일 정보가 Null 입니다", new NullReferenceException("Image data is Null"));
+            Log.Error("Thumbnail 정보가 Null 입니다", new NullReferenceException("Image data is Null"));
 
           try
           {

@@ -105,7 +105,7 @@ namespace UMP.Core.Function.Online
         }
         else
         {
-          log.Fatal($"오디오 다운로드 오류 발생.\n{error[0..^1]}", $"Uri : [{uri}]\nPath : [{savePath}]");
+          log.Fatal($"오디오 다운로드 오류 발생\n{error[0..^1]}", $"Uri : [{uri}]\nPath : [{savePath}]");
           return new GenericResult<string>(false);
         }
       }

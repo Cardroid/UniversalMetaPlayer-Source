@@ -18,7 +18,7 @@ namespace UMP.Controller.Function.AnalysisControl.WaveAnalysis.Func
 
       this.BorderBrush = new SolidColorBrush(ThemeHelper.PrimaryColor);
       ThemeHelper.ThemeChangedEvent += (e) => this.BorderBrush = new SolidColorBrush(e.PrimaryColor);
-
+      
       CalculateXScale();
       SizeChanged += SpectrumAnalyser_SizeChanged;
     }

@@ -12,6 +12,7 @@ using UMP.Core.Model;
 using UMP.Utility;
 using UMP.Core.Model.Media;
 using UMP.Core.Global;
+using UMP.Core.Player.Aggregator;
 
 namespace UMP.Core.Player
 {
@@ -74,7 +75,7 @@ namespace UMP.Core.Player
     /// </summary>
     private static IWavePlayer WavePlayer { get; set; }
 
-    private static SampleAggregator Aggregator { get; set; }
+    private static IPluginSampleProvider Aggregator { get; set; }
 
     /// <summary>
     /// 플레이어 옵션
@@ -211,14 +212,7 @@ namespace UMP.Core.Player
       get
       {
         if (WavePlayer != null)
-        {
-          //if (WavePlayer.PlaybackState == PlaybackState.Stopped)
-          //  return PlaybackState.Stopped;
-          //if (!GlobalProperty.Options.FadeEffect)
           return WavePlayer.PlaybackState;
-          //else
-          //  return StateSave;
-        }
         else
           return PlaybackState.Stopped;
       }
@@ -290,8 +284,9 @@ namespace UMP.Core.Player
       StopButtonActive = false;
 
 
-      // 오디오 분석용 코드
+      // 오디오 분석 및 효과 적용 코드
       Aggregator = new SampleAggregator(audioFile);
+      Aggregator.AddPlugin(new FadeEffect(Aggregator));
       Aggregator.NotificationCount = AudioFile.WaveFormat.SampleRate / 100;
       Aggregator.PerformFFT = true;
       Aggregator.FftCalculated += (s, a) => FftCalculated?.Invoke(s, a);
@@ -369,7 +364,7 @@ namespace UMP.Core.Player
         WavePlayer.Play();
 
         if (GlobalProperty.Options.Getter<bool>(Enums.ValueName.IsUseFadeEffect))
-          Aggregator.BeginFadeIn(GlobalProperty.Options.Getter<int>(Enums.ValueName.FadeEffectDelay));
+          Aggregator.Call(Effect.EffectPluginName.Fade, false);
 
         PlayStateChanged?.Invoke(PlaybackState);
         IsPlayStateChangeWork = false;
@@ -391,7 +386,7 @@ namespace UMP.Core.Player
 
         if (GlobalProperty.Options.Getter<bool>(Enums.ValueName.IsUseFadeEffect))
         {
-          Aggregator.BeginFadeOut(GlobalProperty.Options.Getter<int>(Enums.ValueName.FadeEffectDelay));
+          Aggregator.Call(Effect.EffectPluginName.Fade, true);
           await Task.Delay(GlobalProperty.Options.Getter<int>(Enums.ValueName.FadeEffectDelay) + 200);
         }
 
@@ -416,7 +411,7 @@ namespace UMP.Core.Player
 
         if (GlobalProperty.Options.Getter<bool>(Enums.ValueName.IsUseFadeEffect))
         {
-          Aggregator.BeginFadeOut(GlobalProperty.Options.Getter<int>(Enums.ValueName.FadeEffectDelay));
+          Aggregator.Call(Effect.EffectPluginName.Fade, true);
           await Task.Delay(GlobalProperty.Options.Getter<int>(Enums.ValueName.FadeEffectDelay) + 200);
         }
 

@@ -43,7 +43,7 @@ namespace UMP.Controller
       this.PlayListReloadButton.Click += PlayListControlButton_Click;
       this.PlayListResetButton.Click += PlayListControlButton_Click;
 
-      // 플레이 리스트 이름 변경
+      // 플레이리스트 이름 변경
       this.PlayListName.MouseDown += (_, e) =>
       {
         this.PlayListName.Focus();
@@ -62,7 +62,7 @@ namespace UMP.Controller
         GlobalKeyDownEvent.IsEnabled = true;
       };
 
-      // 플레이 리스트 더블 클릭시 재생 처리
+      // 플레이리스트 더블 클릭시 재생 처리
       this.PlayList.MouseDoubleClick += async (_, e) => { await PlaySelectItem(); };
 
       this.PlayListGroupBox.PreviewMouseDown += PlayList_MouseDownUnSelect;
@@ -78,7 +78,7 @@ namespace UMP.Controller
     }
 
     /// <summary>
-    /// 플레이 리스트 버튼들 처리
+    /// 플레이리스트 버튼들 처리
     /// </summary>
     private async void PlayListControlButton_Click(object sender, RoutedEventArgs e)
     {
@@ -132,7 +132,7 @@ namespace UMP.Controller
     }
 
     /// <summary>
-    /// 플레이 리스트 빈 곳 클릭시 선택해제 처리
+    /// 플레이리스트 빈 곳 클릭시 선택해제 처리
     /// </summary>
     private void PlayList_MouseDownUnSelect(object sender, MouseButtonEventArgs e)
     {
@@ -179,8 +179,8 @@ namespace UMP.Controller
         else
         {
           var info = MainMediaPlayer.PlayList[this.PlayList.SelectedIndex];
-          Log.Fatal("미디어 정보가 로드되지 않았거나 로드에 실패 했습니다", $"MediaLocation : [{info.MediaLocation}]\nTitle : [{info.Title}]");
-          GlobalMessageEvent.Invoke("재생 실패! 미디어가 로드 되지 않음! [로그를 확인해주세요]");
+          Log.Fatal("미디어 정보가 로드되지 않았거나 로드에 실패했습니다", $"MediaLocation : [{info.MediaLocation}]\nTitle : [{info.Title}]");
+          GlobalMessageEvent.Invoke("재생 실패! 미디어가 로드 되지 않음! [로그를 확인해 주세요]");
         }
       }
     }

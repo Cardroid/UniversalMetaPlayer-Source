@@ -5,10 +5,11 @@ using NAudio.Dsp;
 using NAudio.Wave;
 
 using UMP.Core.Global;
+using UMP.Core.Model.Func;
 
-namespace UMP.Core.Player
+namespace UMP.Core.Player.Aggregator
 {
-  public partial class SampleAggregator : ISampleProvider
+  public class SampleAnalysisAggregator : ISamplePlugin
   {
     // volume
     public event EventHandler<MaxSampleEventArgs> MaximumCalculated;
@@ -27,18 +28,16 @@ namespace UMP.Core.Player
     private readonly int m;
     private readonly ISampleProvider source;
 
-    public SampleAggregator(ISampleProvider source, int fftLength = 1024, bool initiallySilent = false)
+    public SampleAnalysisAggregator(ISampleProvider source, int fftLength = 1024)
     {
       if (!IsPowerOfTwo(fftLength))
-        throw new ArgumentException("FFT Length must be a power of two");
+        throw new ArgumentException("FFT 길이는 2의 거듭제곱이어야 합니다");
 
       m = (int)Math.Log(fftLength, 2.0);
       this.fftLength = fftLength;
       fftBuffer = new Complex[fftLength];
       fftArgs = new FftEventArgs(fftBuffer);
       this.source = source;
-
-      fadeState = initiallySilent ? FadeState.Silence : FadeState.FullVolume;
     }
 
     static bool IsPowerOfTwo(int x)
@@ -80,35 +79,17 @@ namespace UMP.Core.Player
 
     public WaveFormat WaveFormat => source.WaveFormat;
 
-    public int Read(float[] buffer, int offset, int count)
+    public int Read(int samplesRead, float[] buffer, int offset, int count)
     {
-      var samplesRead = source.Read(buffer, offset, count);
-
-      if (GlobalProperty.Options.Getter<bool>(Enums.ValueName.IsUseFadeEffect))
+      if (GlobalProperty.State.IsFocusActive)
       {
-        lock (lockObject)
-        {
-          if (fadeState == FadeState.FadingIn)
-          {
-            FadeIn(buffer, offset, samplesRead);
-          }
-          else if (fadeState == FadeState.FadingOut)
-          {
-            FadeOut(buffer, offset, samplesRead);
-          }
-          else if (fadeState == FadeState.Silence)
-          {
-            ClearBuffer(buffer, offset, count);
-          }
-        }
+        // n = 0 left
+        for (int n = 0; n < samplesRead; n += source.WaveFormat.Channels)
+          Add(buffer[n + offset]);
+        if (source.WaveFormat.Channels >= 2)
+          for (int n = 1; n < samplesRead; n += source.WaveFormat.Channels)
+            Add(buffer[n + offset], 1);
       }
-
-      // n = 0 left
-      for (int n = 0; n < samplesRead; n += source.WaveFormat.Channels)
-        Add(buffer[n + offset]);
-      if (source.WaveFormat.Channels >= 2)
-        for (int n = 1; n < samplesRead; n += source.WaveFormat.Channels)
-          Add(buffer[n + offset], 1);
       return samplesRead;
     }
   }
