@@ -38,19 +38,19 @@ namespace UMP
     private static void CurrentDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs)
     {
       if (unhandledExceptionEventArgs.IsTerminating)
-        MainLog.Fatal("\n\nCurrentDomainOnUnhandledException 예외 발생", (Exception)unhandledExceptionEventArgs.ExceptionObject);
+        MainLog.Fatal("[Unhandled Exception] Current Domain On Unhandled Exception", (Exception)unhandledExceptionEventArgs.ExceptionObject);
     }
 
     private void DispatcherOnUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs dispatcherUnhandledExceptionEventArgs)
     {
       if(!dispatcherUnhandledExceptionEventArgs.Handled)
-        MainLog.Fatal("\n\nDispatcherOnUnhandledException 예외 발생", dispatcherUnhandledExceptionEventArgs.Exception);
+        MainLog.Fatal("[Unhandled Exception] Dispatcher On Unhandled Exception", dispatcherUnhandledExceptionEventArgs.Exception);
     }
 
     private void TaskSchedulerOnUnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs unobservedTaskExceptionEventArgs)
     {
       if (!unobservedTaskExceptionEventArgs.Observed)
-        MainLog.Fatal("\n\nTaskSchedulerOnUnobservedTaskException 예외 발생", unobservedTaskExceptionEventArgs.Exception);
+        MainLog.Fatal("[Unhandled Exception] Task Scheduler On Unobserved Task Exception", unobservedTaskExceptionEventArgs.Exception);
     }
   }
 }

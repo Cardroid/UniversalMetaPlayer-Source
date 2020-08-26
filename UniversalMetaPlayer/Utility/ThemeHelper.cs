@@ -17,6 +17,7 @@ namespace UMP.Utility
 {
   public static class ThemeHelper
   {
+    public delegate void UMP_ThemeEventHandler(ThemeProperty e);
     private static readonly PaletteHelper paletteHelper = new PaletteHelper();
     public static event UMP_ThemeEventHandler ThemeChangedEvent;
 

@@ -24,53 +24,40 @@ namespace UMP.Core.Function
     /// </summary>
     private MediaInformation Information;
     public bool Online { get; private set; }
+    public string CachePath { get; set; }
+
+    public event UMP_ProgressChangedEventHandler ProgressChanged;
+    private void OnProgressChanged(ProgressKind progressKind, int percentage, string userMessage = "") => ProgressChanged?.Invoke(this, new UMP_ProgressChangedEventArgs(progressKind, percentage, userMessage));
+
     /// <summary>
     /// 온라인에서 파싱된 Json 오브젝트
     /// </summary>
     private JObject OnlineObject { get; set; }
 
-    public YTDLMediaLoader(string medialocation)
+    private YTDLMediaLoader()
     {
-      Log = new Log($"{typeof(YTDLMediaLoader)}");
+      this.Log = new Log($"{typeof(YTDLMediaLoader)}");
+      this.CachePath = GlobalProperty.Predefine.CACHE_PATH;
+    }
 
-      Information = new MediaInformation()
+    public YTDLMediaLoader(string mediaLocation) : this()
+    {
+      if (!string.IsNullOrWhiteSpace(mediaLocation))
       {
-        Title = string.Empty,
-        Duration = TimeSpan.Zero,
-        AlbumImage = null,
-        Tags = new MediaInfoDictionary()
-      };
-
-      if (!string.IsNullOrWhiteSpace(medialocation))
-      {
-        Information.MediaLocation = medialocation;
-        if (Checker.IsLocalPath(medialocation) && File.Exists(medialocation))
+        this.Information = new MediaInformation(mediaLocation);
+        if (Checker.IsLocalPath(mediaLocation) && File.Exists(mediaLocation))
         {
-          Online = false;
-          Information.MediaStreamPath = Information.MediaLocation; 
+          this.Online = false;
+          this.Information.MediaStreamPath = Information.MediaLocation;
         }
         else
-          Online = true;
+          this.Online = true;
       }
+      else
+        this.Information = new MediaInformation();
     }
-    public YTDLMediaLoader(MediaInformation mediainfo)
-    {
-      Log = new Log($"{typeof(YTDLMediaLoader)}");
 
-      Information = mediainfo;
-
-      if (!string.IsNullOrWhiteSpace(mediainfo.MediaLocation))
-      {
-        Information.MediaLocation = mediainfo.MediaLocation;
-        if (Checker.IsLocalPath(mediainfo.MediaLocation) && File.Exists(mediainfo.MediaLocation))
-        {
-          Online = false;
-          Information.MediaStreamPath = Information.MediaLocation; 
-        }
-        else
-          Online = true;
-      }
-    }
+    public YTDLMediaLoader(MediaInformation mediainfo) : this(mediainfo.MediaLocation) { }
 
     public async Task<MediaInformation> GetInformationAsync(bool fullLoad)
     {
@@ -92,7 +79,7 @@ namespace UMP.Core.Function
 
     public async Task<GenericResult<string>> GetStreamPathAsync(bool useCache)
     {
-      if(File.Exists(Information.MediaStreamPath))
+      if (File.Exists(Information.MediaStreamPath))
         return new GenericResult<string>(true, Information.MediaStreamPath);
 
       if (Online)
@@ -187,7 +174,7 @@ namespace UMP.Core.Function
       if (Checker.CheckForInternetConnection())
       {
         YTDLHelper ytdlHelper = new YTDLHelper();
-        return await ytdlHelper.DownloadAudioAsync(Information.MediaLocation, GlobalProperty.Predefine.OnlineMediaCachePath);
+        return await ytdlHelper.DownloadAudioAsync(Information.MediaLocation, CachePath);
       }
       else
         return new GenericResult<string>(false);
@@ -205,7 +192,7 @@ namespace UMP.Core.Function
         return new GenericResult<string>(false);
       }
       else
-        return LocalMediaLoader.TryGetOnlineMediaCacheAsync((await GetID()).Result);
+        return LocalMediaLoader.TryGetOnlineMediaCacheAsync((await GetID()).Result, CachePath);
     }
     #endregion
 

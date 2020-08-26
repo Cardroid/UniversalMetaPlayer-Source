@@ -6,6 +6,12 @@ using System.Text;
 using System.Text.RegularExpressions;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using NYoutubeDL;
+
+using UMP.Core.Function;
+using UMP.Core.Global;
+using UMP.Core.Model.Media;
 using UMP.Utility;
 
 //using NYoutubeDL;
@@ -34,14 +40,14 @@ namespace UnitTestProject
         "www.youtube.com",
         "https://youtube",
         "https://youtube.com",
-        "youtube.com/watch?v=hTPjKrkN7XA",
-        "www.youtube.com/watch?v=hTPjKrkN7XA",
-        "https://youtube.com/watch?v=hTPjKrkN7XA",
-        "https://www.youtube.com:55/watch?v=hTPjKrkN7XA",
-        "https://www.youtube.com/watch?v=hTPjKrkN7XA:44",
-        "https://www.youtube.com/watch?v=hTPjKrkN7XA",
-        "https://www.google.com/watch?v=hTPjKrkN7XA",
-        "https://www.naver.com/watch?v=hTPjKrkN7XA",
+        "youtube.com/watch?v=EnDXGQmCz3U",
+        "www.youtube.com/watch?v=EnDXGQmCz3U",
+        "https://youtube.com/watch?v=EnDXGQmCz3U",
+        "https://www.youtube.com:55/watch?v=EnDXGQmCz3U",
+        "https://www.youtube.com/watch?v=EnDXGQmCz3U:44",
+        "https://www.youtube.com/watch?v=EnDXGQmCz3U",
+        "https://www.google.com/watch?v=EnDXGQmCz3U",
+        "https://www.naver.com/watch?v=EnDXGQmCz3U",
       };
 
       for (int j = 0; j < urls.Length; j++)
@@ -57,59 +63,78 @@ namespace UnitTestProject
       }
     }
 
-    //[TestMethod]
-    //public void CheckForInternetConnection()
-    //{
-    //  try
-    //  {
-    //    Checker.CheckForInternetConnection();
-    //    Assert.IsTrue(true);
-    //  }
-    //  catch
-    //  {
-    //    Assert.Fail();
-    //  }
-    //}
+    [TestMethod]
+    public void DownloadLog()
+    {
+      MediaInformation mediaInfo = new MediaInformation("https://www.youtube.com/watch?v=EnDXGQmCz3U");
+      MediaLoader mediaLoader = new MediaLoader(mediaInfo);
 
-    //[TestMethod]
-    //public void GetID()
-    //{
-    //  var result = new YTDLMediaLoader("https://www.youtube.com/watch?v=kJQP7kiw5Fk").GetID().GetAwaiter().GetResult();
-    //  Assert.IsTrue(result.Success);
-    //}
+      mediaLoader.CachePath = "TestCache";
+      mediaLoader.ProgressChanged += (_, e) =>
+      {
+        Trace.WriteLine($"{e.ProgressKind}".PadRight(15) + $"{e.Percentage}%".PadLeft(4) + $"   {e.UserMessage}");
+      };
+      var result = mediaLoader.GetStreamPathAsync(false).GetAwaiter().GetResult();
 
-    //[TestMethod]
-    //public void YTDL_GetInfo_Test()
-    //{
-    //  string ytdl_path = Path.Combine(GlobalProperty.LIBRARY_PATH, "YTDL", "youtube-dl.exe");
-    //  YoutubeDL ytdl = new YoutubeDL(ytdl_path);
+      Trace.WriteLine("### Result ###");
+      Trace.WriteLine(result.Success);
+      if (result)
+        Trace.WriteLine(result.Result);
+    }
 
-    //  ytdl.VideoUrl = "https://www.youtube.com/watch?v=kJQP7kiw5Fk";
+    [TestMethod]
+    public void CheckForInternetConnection()
+    {
+      try
+      {
+        Checker.CheckForInternetConnection();
+        Assert.IsTrue(true);
+      }
+      catch
+      {
+        Assert.Fail();
+      }
+    }
 
-    //  ytdl.Options.VerbositySimulationOptions.Simulate = true;
-    //  ytdl.Options.VerbositySimulationOptions.SkipDownload = true;
-    //  ytdl.Options.VerbositySimulationOptions.GetId = true;
-    //  ytdl.Options.VerbositySimulationOptions.GetDescription = true;
-    //  ytdl.Options.VerbositySimulationOptions.GetDuration = true;
-    //  ytdl.Options.VerbositySimulationOptions.GetFilename = true;
-    //  ytdl.Options.VerbositySimulationOptions.GetFormat = true;
-    //  ytdl.Options.VerbositySimulationOptions.GetThumbnail = true;
-    //  ytdl.Options.VerbositySimulationOptions.GetTitle = true;
-    //  ytdl.Options.VerbositySimulationOptions.GetUrl = true;
-    //  ytdl.Options.VerbositySimulationOptions.DumpSingleJson = true;
+    [TestMethod]
+    public void YTDL_GetID()
+    {
+      var result = new YTDLMediaLoader("https://www.youtube.com/watch?v=EnDXGQmCz3U").GetID().GetAwaiter().GetResult();
+      Assert.IsTrue(result.Success);
+    }
 
-    //  string result = string.Empty;
-    //  string error = string.Empty;
+    [TestMethod]
+    public void YTDL_GetInfo()
+    {
+      string ytdl_path = Path.Combine(GlobalProperty.Predefine.LIBRARY_PATH, "YTDL", "youtube-dl.exe");
+      YoutubeDL ytdl = new YoutubeDL(ytdl_path);
 
-    //  ytdl.StandardErrorEvent += (s, e) => { error = $"{e}\n"; };
-    //  ytdl.StandardOutputEvent += (s, e) => { result = e; };
+      ytdl.VideoUrl = "https://www.youtube.com/watch?v=EnDXGQmCz3U";
 
-    //  ytdl.DownloadAsync().GetAwaiter().GetResult();
+      ytdl.Options.VerbositySimulationOptions.Simulate = true;
+      ytdl.Options.VerbositySimulationOptions.SkipDownload = true;
+      ytdl.Options.VerbositySimulationOptions.GetId = true;
+      ytdl.Options.VerbositySimulationOptions.GetDescription = true;
+      ytdl.Options.VerbositySimulationOptions.GetDuration = true;
+      ytdl.Options.VerbositySimulationOptions.GetFilename = true;
+      ytdl.Options.VerbositySimulationOptions.GetFormat = true;
+      ytdl.Options.VerbositySimulationOptions.GetThumbnail = true;
+      ytdl.Options.VerbositySimulationOptions.GetTitle = true;
+      ytdl.Options.VerbositySimulationOptions.GetUrl = true;
+      ytdl.Options.VerbositySimulationOptions.DumpSingleJson = true;
 
-    //  File.WriteAllText(Path.Combine("Core", "MediaInfo.txt"), result, Encoding.UTF8);
-    //  Trace.Write($"========OUTPUT========\n{result}\n======================\n");
-    //  Trace.WriteLine($"========ERROR========\n{error}\n=====================");
-    //  Assert.IsTrue(!string.IsNullOrWhiteSpace(result) && string.IsNullOrWhiteSpace(error));
-    //}
+      string result = string.Empty;
+      string error = string.Empty;
+
+      ytdl.StandardErrorEvent += (s, e) => { error = $"{e}\n"; };
+      ytdl.StandardOutputEvent += (s, e) => { result = e; };
+
+      ytdl.DownloadAsync().GetAwaiter().GetResult();
+
+      File.WriteAllText(Path.Combine("Core", "MediaInfo.txt"), result, Encoding.UTF8);
+      Trace.Write($"========OUTPUT========\n{result}\n======================\n");
+      Trace.WriteLine($"========ERROR========\n{error}\n=====================");
+      Assert.IsTrue(!string.IsNullOrWhiteSpace(result) && string.IsNullOrWhiteSpace(error));
+    }
   }
 }

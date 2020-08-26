@@ -14,7 +14,7 @@ using System.Net;
 namespace UMP.Core.Model.Media
 {
   /// <summary>
-  /// 미디어 정보 구조체
+  /// 미디어 정보 클래스
   /// </summary>
   public class MediaInformation
   {
@@ -26,8 +26,19 @@ namespace UMP.Core.Model.Media
       this.Title = string.Empty;
       this.Duration = TimeSpan.Zero;
       this.AlbumImage = null;
-      this.Tags = null;
+      this.Tags = new MediaInfoDictionary();
     }
+
+    public MediaInformation(string mediaLocation) : this()
+    {
+      this.MediaLocation = mediaLocation;
+    }
+
+    public MediaInformation(string mediaLocation, MediaInfoDictionary tags) : this(mediaLocation)
+    {
+      this.Tags = tags;
+    }
+
     /// <summary>
     /// 정보 로드 여부
     /// </summary>

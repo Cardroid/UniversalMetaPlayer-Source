@@ -9,8 +9,6 @@ using UMP.Utility;
 namespace UMP.Core.Global
 {
   public delegate void UMP_VoidEventHandler();
-  public delegate void UMP_KeyDownEventHandler(KeyEventArgs e);
-  public delegate void UMP_ThemeEventHandler(ThemeHelper.ThemeProperty e);
 
   public static class GlobalMessageEvent
   {
@@ -37,6 +35,7 @@ namespace UMP.Core.Global
 
   public static class GlobalKeyDownEvent
   {
+    public delegate void UMP_KeyDownEventHandler(KeyEventArgs e);
     private static object LockObject = new object();
     public static bool IsEnabled { get; set; } = true;
 

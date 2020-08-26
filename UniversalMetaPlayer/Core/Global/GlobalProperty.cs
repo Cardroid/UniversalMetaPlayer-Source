@@ -379,32 +379,32 @@ namespace UMP.Core.Global
       /// <summary>
       /// 미디어 Null Process 때 접두어
       /// </summary>
-      public static string MEDIA_INFO_NULL { get; } = "(null)";
+      public const string MEDIA_INFO_NULL  = "(null)";
 
       /// <summary>
       /// 라이브러리 폴더
       /// </summary>
-      public static string LIBRARY_PATH { get; } = @"Core\Library";
+      public const string LIBRARY_PATH = @"Core\Library";
       /// <summary>
       /// 캐시 폴더
       /// </summary>
-      public static string CACHE_PATH { get; } = @"Core\Cache";
+      public const string CACHE_PATH = @"Core\Cache";
       /// <summary>
       /// 다운로드 캐시
       /// </summary>
-      public static string DownloadCachePath => Path.Combine(CACHE_PATH, "DownloadCache");
+      public const string DownloadCachePath = @"Core\Cache\DownloadCache";
       /// <summary>
       /// 온라인에서 다운로드한 미디어 저장 캐시
       /// </summary>
-      public static string OnlineMediaCachePath => Path.Combine(CACHE_PATH, "OnlineMedia");
+      public const string OnlineMediaCachePath = @"Core\Cache\OnlineMedia";
       /// <summary>
       /// YouTube-dl 라이브러리 저장 폴더
       /// </summary>
-      public static string YTDL_PATH => Path.Combine(LIBRARY_PATH, "YTDL");
+      public const string YTDL_PATH = @"Core\Library\Youtube-dl";
       /// <summary>
       /// FFmpeg 라이브러리 저장 폴더
       /// </summary>
-      public static string FFMPEG_PATH => Path.Combine(LIBRARY_PATH, "FFmpeg");
+      public const string FFMPEG_PATH = @"Core\Library\FFmpeg";
       #endregion
 
       #region Version

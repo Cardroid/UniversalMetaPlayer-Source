@@ -68,12 +68,12 @@ namespace UMP.Core.Function
     /// </summary>
     /// <param name="id">비디오 ID</param>
     /// <returns>성공시 true, 미디어 스트림 파일 경로</returns>
-    public static GenericResult<string> TryGetOnlineMediaCacheAsync(string id)
+    public static GenericResult<string> TryGetOnlineMediaCacheAsync(string id, string cachePath = GlobalProperty.Predefine.OnlineMediaCachePath)
     {
-      if (!Directory.Exists(GlobalProperty.Predefine.OnlineMediaCachePath) || string.IsNullOrWhiteSpace(id))
+      if (!Directory.Exists(cachePath) || string.IsNullOrWhiteSpace(id))
         return new GenericResult<string>(false);
 
-      string[] searchFiles = Directory.GetFiles(GlobalProperty.Predefine.OnlineMediaCachePath, $"{id}.mp3", SearchOption.AllDirectories);
+      string[] searchFiles = Directory.GetFiles(cachePath, $"{id}.mp3", SearchOption.AllDirectories);
       if (searchFiles.Length > 0 && File.Exists(searchFiles[0]))
         return new GenericResult<string>(true, searchFiles[0]);
       else

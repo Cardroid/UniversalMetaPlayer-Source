@@ -4,10 +4,14 @@ using System.IO;
 using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Data;
+using System.Windows.Threading;
 
 using UMP.Core;
+using UMP.Core.Model;
 
 namespace UMP.Utility
 {
@@ -120,6 +124,44 @@ namespace UMP.Utility
       return result;
     }
 
+    public static async Task<bool> ConvertToMP3Async(string sourceFilename, string targetFilename, IUMP_Progress<double> progress, int minProgressTime = 100)
+    {
+      if (!string.IsNullOrWhiteSpace(sourceFilename) && !string.IsNullOrWhiteSpace(targetFilename) && File.Exists(sourceFilename))
+      {
+        if (!Regex.IsMatch(targetFilename, @"(\.[Mm][Pp]3)$"))
+          targetFilename += ".mp3";
+
+        try
+        {
+          using var reader = new NAudio.Wave.AudioFileReader(sourceFilename);
+          using var writer = new NAudio.Lame.LameMP3FileWriter(targetFilename, reader.WaveFormat, NAudio.Lame.LAMEPreset.STANDARD);
+
+          writer.MinProgressTime = minProgressTime;
+          var length = reader.Length;
+          writer.OnProgress += (_, i, o, fin) =>
+          {
+            if (fin)
+              progress.Report(100, "Finished");
+            else
+              progress.Report(
+                (i * 100.0) / length,
+                string.Format("Output: {0:#,0} bytes, Ratio: 1:{1:0.0}", o, ((double)i) / Math.Max(1, o)));
+          };
+          progress.Report(0, "Initialize");
+          await reader.CopyToAsync(writer);
+          return true;
+        }
+        catch (Exception e)
+        {
+          new Log("UMP.Utility.Converter.MP3Converter").Fatal("Mp3 변환에 오류가 발생했습니다", e);
+          progress.Report(-1, $"Fatal : {e.Message}");
+          return false;
+        }
+      }
+      else
+        return false;
+    }
+
     /// <summary>
     /// 오디오 파일을 Mp3파일로 변환합니다.
     /// </summary>
@@ -130,10 +172,18 @@ namespace UMP.Utility
     {
       if (File.Exists(sourceFilename))
       {
-        using var reader = new NAudio.Wave.AudioFileReader(sourceFilename);
-        using var writer = new NAudio.Lame.LameMP3FileWriter(targetFilename, reader.WaveFormat, NAudio.Lame.LAMEPreset.STANDARD);
-        await reader.CopyToAsync(writer);
-        return true;
+        try
+        {
+          using var reader = new NAudio.Wave.AudioFileReader(sourceFilename);
+          using var writer = new NAudio.Lame.LameMP3FileWriter(targetFilename, reader.WaveFormat, NAudio.Lame.LAMEPreset.STANDARD);
+          await reader.CopyToAsync(writer);
+          return true;
+        }
+        catch (Exception e)
+        {
+          new Log("UMP.Utility.Converter.MP3Converter").Fatal("Mp3 변환에 오류가 발생했습니다", e);
+          return false;
+        }
       }
       else
         return false;

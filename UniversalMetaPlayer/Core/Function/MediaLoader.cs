@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using UMP.Core.Global;
 using UMP.Core.Model;
@@ -14,33 +12,35 @@ namespace UMP.Core.Function
 
     public MediaLoader(string mediaLocation)
     {
-      switch (GlobalProperty.Options.Getter<Enums.MediaLoadEngineType>(Enums.ValueName.MediaLoadEngine))
+      this.Loader = (GlobalProperty.Options.Getter<Enums.MediaLoadEngineType>(Enums.ValueName.MediaLoadEngine)) switch
       {
-        case Enums.MediaLoadEngineType.YoutubeDL:
-          this.Loader = new YTDLMediaLoader(mediaLocation);
-          break;
-        case Enums.MediaLoadEngineType.Native:
-        default:
-          this.Loader = new NativeMediaLoader(mediaLocation);
-          break;
-      }
+        Enums.MediaLoadEngineType.YoutubeDL => new YTDLMediaLoader(mediaLocation),
+        _ => new NativeMediaLoader(mediaLocation),
+      };
     }
 
     public MediaLoader(MediaInformation info)
     {
-      switch (GlobalProperty.Options.Getter<Enums.MediaLoadEngineType>(Enums.ValueName.MediaLoadEngine))
+      this.Loader = (GlobalProperty.Options.Getter<Enums.MediaLoadEngineType>(Enums.ValueName.MediaLoadEngine)) switch
       {
-        case Enums.MediaLoadEngineType.YoutubeDL:
-          this.Loader = new YTDLMediaLoader(info);
-          break;
-        case Enums.MediaLoadEngineType.Native:
-        default:
-          this.Loader = new NativeMediaLoader(info);
-          break;
-      }
+        Enums.MediaLoadEngineType.YoutubeDL => new YTDLMediaLoader(info),
+        _ => new NativeMediaLoader(info),
+      };
+    }
+
+    public event UMP_ProgressChangedEventHandler ProgressChanged
+    {
+      add => Loader.ProgressChanged += value;
+      remove => Loader.ProgressChanged -= value;
     }
 
     public bool Online => Loader.Online;
+
+    public string CachePath
+    {
+      get => Loader.CachePath;
+      set => Loader.CachePath = value;
+    }
 
     public async Task<GenericResult<string>> GetID() => await Loader.GetID();
 
