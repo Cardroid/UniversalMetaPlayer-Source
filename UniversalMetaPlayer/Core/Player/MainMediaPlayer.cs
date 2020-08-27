@@ -13,6 +13,7 @@ using UMP.Utility;
 using UMP.Core.Model.Media;
 using UMP.Core.Global;
 using UMP.Core.Player.Aggregator;
+using System.Diagnostics;
 
 namespace UMP.Core.Player
 {
@@ -246,21 +247,29 @@ namespace UMP.Core.Player
     public static async Task<bool> Init(MediaInformation mediainfo)
     {
       MediaLoader mediaLoader = new MediaLoader(mediainfo);
+#if DEBUG
+      Debug.WriteLine($"\n\n{mediainfo.Title}   {mediainfo.MediaLocation}");
+      mediaLoader.ProgressChanged += (_, e) => { Debug.WriteLine($"{e.ProgressKind}".PadRight(15) + $"{e.Percentage}%".PadLeft(4) + $"   {e.UserMessage}"); };
+#endif
       MediaInformation info = new MediaInformation();
+
+      GenericResult<MediaInformation> loadResult = new GenericResult<MediaInformation>(false);
       try
       {
         // 모든 정보로드
-        info = await mediaLoader.GetInformationAsync(true);
+        loadResult = await mediaLoader.GetInformationAsync(true);
       }
       catch (Exception e)
       {
         Log.Fatal("미디어 정보 로드 실패", e, $"Title : [{info.Title}]\nLocation : [{info.MediaLocation}]");
         return false;
       }
-      if (!info.LoadState)
+
+      info = loadResult.Result;
+      if (!loadResult || !info.LoadState)
         Log.Warn("미디어 정보에 오류가 있습니다", new NullReferenceException("Null Processed Media"), $"Title : [{info.Title}]\nLocation : [{info.MediaLocation}]");
 
-      GenericResult<string> streamResult = null;
+      GenericResult<string> streamResult = new GenericResult<string>(false);
       try
       {
         // 미디어 스트림 로드
@@ -271,7 +280,7 @@ namespace UMP.Core.Player
         Log.Fatal("미디어 스트림 로드에 오류가 발생했습니다", e, $"Title : [{info.Title}]\nLocation : [{info.MediaLocation}]");
         return false;
       }
-      if (streamResult != null && !streamResult)
+      if (!streamResult)
       {
         Log.Fatal("미디어 스트림 로드에 실패했습니다", new FileLoadException("Media Stream Path is Null"), $"Title : [{info.Title}]\nLocation : [{info.MediaLocation}]");
         return false;

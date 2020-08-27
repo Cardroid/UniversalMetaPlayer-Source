@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Shapes;
@@ -12,7 +12,7 @@ namespace UMP.Controller.Function.AnalysisControl.WaveAnalysis.Func
     int renderPosition;
     double yTranslate = 40;
     double yScale = 40;
-    int blankZone = 10;
+    int blankZone = 5;
 
     List<Line> lines = new List<Line>();
 

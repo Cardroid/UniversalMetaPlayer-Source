@@ -30,16 +30,8 @@ namespace UMP.Controller.Function.OptionControl
 
       this.PreviewMouseDown += (_, e) => { Keyboard.ClearFocus(); };
 
-      this.OpenDirectoryDialogButton.Click += OpenDirectoryDialogButton_Click;
       this.SetDefault.Click += SetDefault_Click;
       SetDefaultForeground = this.SetDefault.Foreground;
-    }
-
-    private void OpenDirectoryDialogButton_Click(object sender, RoutedEventArgs e)
-    {
-      var result = DialogHelper.OpenDirectoryDialog("저장 폴더 선택", GlobalProperty.Options.Getter<string>(Enums.ValueName.FileSavePath));
-      if (result)
-        GlobalProperty.Options.Setter(Enums.ValueName.FileSavePath, result.Result);
     }
 
     #region SetDefaultButton

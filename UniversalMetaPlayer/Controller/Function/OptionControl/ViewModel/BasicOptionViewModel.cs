@@ -7,6 +7,7 @@ using System.Windows.Controls;
 
 using UMP.Core.Global;
 using UMP.Core.Model.ViewModel;
+using UMP.Utility;
 
 namespace UMP.Controller.Function.OptionControl.ViewModel
 {
@@ -38,6 +39,8 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
         }
       };
 
+      OpenSaveDirectoryDialogCommand = new RelayCommand((o) => OpenSaveDirectoryDialog());
+
       MediaLoadEngineTypes = new List<ComboBoxItem>()
       {
         {new ComboBoxItem()
@@ -61,6 +64,13 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
     }
 
     #region 저장 경로
+    public RelayCommand OpenSaveDirectoryDialogCommand { get; }
+    private void OpenSaveDirectoryDialog()
+    {
+      var result = DialogHelper.OpenDirectoryDialog("저장 폴더 선택", GlobalProperty.Options.Getter<string>(Enums.ValueName.FileSavePath));
+      if (result)
+        GlobalProperty.Options.Setter(Enums.ValueName.FileSavePath, result.Result);
+    }
     public string FileSavePathToolTip =>
       $"현재 설정 : \"{Path.GetFullPath(GlobalProperty.Options.Getter<string>(Enums.ValueName.FileSavePath))}\"\n\n" +
 
@@ -68,7 +78,7 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
     #endregion
 
     #region 세부 로깅 여부
-    public bool PrivateLoggingIsChecked
+    public bool IsCheckedPrivateLogging
     {
       get => GlobalProperty.Options.Getter<bool>(Enums.ValueName.IsPrivateLogging);
       set => GlobalProperty.Options.Setter(Enums.ValueName.IsPrivateLogging, value.ToString());

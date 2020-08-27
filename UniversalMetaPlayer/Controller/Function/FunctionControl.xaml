@@ -10,8 +10,8 @@
     TextElement.FontWeight="Medium"
     TextElement.FontSize="14"
     FontFamily="{DynamicResource MainFontFamily}"
-    mc:Ignorable="d"
     MinWidth="400"
+    mc:Ignorable="d"
     d:Background="White">
 
     <UserControl.DataContext>
@@ -79,6 +79,8 @@
 
         <UserControl
             Content="{Binding FunctionPanel}"
+            BorderThickness="2"
+            BorderBrush="{Binding ControlBorderBrush}"
             Grid.Column="1" />
     </Grid>
 </UserControl>

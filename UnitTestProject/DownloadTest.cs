@@ -14,13 +14,6 @@ using UMP.Core.Global;
 using UMP.Core.Model.Media;
 using UMP.Utility;
 
-//using NYoutubeDL;
-
-//using UMP.Core;
-//using UMP.Core.Function;
-//using UMP.Core.Model;
-//using UMP.Utility;
-
 namespace UnitTestProject
 {
   [TestClass]
@@ -80,6 +73,7 @@ namespace UnitTestProject
       Trace.WriteLine(result.Success);
       if (result)
         Trace.WriteLine(result.Result);
+      Assert.IsTrue(result.Success);
     }
 
     [TestMethod]

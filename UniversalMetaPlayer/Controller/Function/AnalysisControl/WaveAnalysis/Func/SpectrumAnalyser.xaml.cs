@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
+
 using NAudio.Dsp;
-using UMP.Utility;
 
 namespace UMP.Controller.Function.AnalysisControl.WaveAnalysis.Func
 {
@@ -16,9 +15,6 @@ namespace UMP.Controller.Function.AnalysisControl.WaveAnalysis.Func
     {
       InitializeComponent();
 
-      this.BorderBrush = new SolidColorBrush(ThemeHelper.PrimaryColor);
-      ThemeHelper.ThemeChangedEvent += (e) => this.BorderBrush = new SolidColorBrush(e.PrimaryColor);
-      
       CalculateXScale();
       SizeChanged += SpectrumAnalyser_SizeChanged;
     }

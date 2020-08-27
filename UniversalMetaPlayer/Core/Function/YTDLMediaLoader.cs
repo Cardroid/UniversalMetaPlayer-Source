@@ -18,10 +18,6 @@ namespace UMP.Core.Function
   public class YTDLMediaLoader : IMediaLoader
   {
     private Log Log { get; set; }
-
-    /// <summary>
-    /// 정보 구조체
-    /// </summary>
     private MediaInformation Information;
     public bool Online { get; private set; }
     public string CachePath { get; set; }
@@ -59,7 +55,7 @@ namespace UMP.Core.Function
 
     public YTDLMediaLoader(MediaInformation mediainfo) : this(mediainfo.MediaLocation) { }
 
-    public async Task<MediaInformation> GetInformationAsync(bool fullLoad)
+    public async Task<GenericResult<MediaInformation>> GetInformationAsync(bool fullLoad)
     {
       if (Online)
       {
@@ -69,12 +65,18 @@ namespace UMP.Core.Function
         else
           Information.MediaStreamPath = string.Empty;
       }
-      Information.LoadState = await TryLoadInfoAsync(fullLoad);
+      var Loadresult = await LocalMediaLoader.TryLoadInfoAsync(Information, fullLoad, Log);
 
-      if (!Information.LoadState)
+      if (Loadresult)
+      {
+        Information = Loadresult.Result;
+        return new GenericResult<MediaInformation>(true, Information);
+      }
+      else
+      {
         LoadFailProcess();
-
-      return Information;
+        return new GenericResult<MediaInformation>(false, Information);
+      }
     }
 
     public async Task<GenericResult<string>> GetStreamPathAsync(bool useCache)
@@ -109,46 +111,7 @@ namespace UMP.Core.Function
     #region Core
 
     #region Information
-    /// <summary>
-    /// 미디어 정보 로드 시도
-    /// </summary>
-    /// <param name="fullload">모든 정보 로드 여부</param>
-    /// <returns>로드 성공 여부</returns>
-    private async Task<bool> TryLoadInfoAsync(bool fullLoad)
-    {
-      var path = Information.MediaStreamPath;
 
-      if (File.Exists(path))
-      {
-        await Task.Run(() =>
-        {
-          using var Fileinfo = TagLib.File.Create(path);
-          // 미디어 정보를 정보 클래스에 저장
-          Information.Title = !string.IsNullOrWhiteSpace(Fileinfo.Tag.Title) ? Fileinfo.Tag.Title : Information.Title;
-          Information.Duration = Fileinfo.Properties.Duration;
-
-          // 모든 정보 로드
-          if (fullLoad)
-          {
-            try { Information.AlbumImage = BitmapFrame.Create(new MemoryStream(Fileinfo.Tag.Pictures[0].Data.Data)); }
-            catch { Information.AlbumImage = null; }
-            if (Online && !string.IsNullOrWhiteSpace(Fileinfo.Tag.Album))
-              Information.Tags[MediaInfoType.AlbumTitle] = Fileinfo.Tag.Album;
-            else
-              Information.Tags[MediaInfoType.AlbumTitle] = Fileinfo.Tag.Album;
-            Information.Tags[MediaInfoType.AlbumArtist] = Fileinfo.Tag.FirstAlbumArtist;
-            Information.Tags[MediaInfoType.Lyrics] = Fileinfo.Tag.Lyrics;
-          }
-          Information.LoadState = true;
-        });
-        return true;
-      }
-      else
-      {
-        Log.Fatal("미디어 파일이 없습니다", $"MediaLocation : [{path}]");
-        return false;
-      }
-    }
     #endregion
 
     #region Stream

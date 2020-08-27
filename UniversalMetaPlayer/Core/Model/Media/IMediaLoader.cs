@@ -13,7 +13,7 @@ namespace UMP.Core.Model.Media
     /// </summary>
     /// <param name="fullLoad">모든 정보 로드 여부</param>
     /// <returns>로드된 <see cref="MediaInformation"/></returns>
-    public Task<MediaInformation> GetInformationAsync(bool fullLoad);
+    public Task<GenericResult<MediaInformation>> GetInformationAsync(bool fullLoad);
     /// <summary>
     /// 미디어 스트림 경로를 가져옵니다.
     /// </summary>
@@ -64,8 +64,8 @@ namespace UMP.Core.Model.Media
     InfoLoad,
     InfoSave,
     Stream,
+    StreamLoad,
     StreamDownload,
     StreamConvert,
-    MetaDataSave,
   }
 }

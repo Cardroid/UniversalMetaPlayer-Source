@@ -23,6 +23,8 @@
         Grid.Row="0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
+            <ColumnDefinition
+                Width="10" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -35,21 +37,23 @@
         </Grid.RowDefinitions>
 
         <Label
+            HorizontalAlignment="Right"
             VerticalAlignment="Center"
             ToolTip="{Binding IsAverageColorThemeToolTip}"
             Content="적응형 색 테마 사용"
             Grid.Column="0"
             Grid.Row="0" />
         <ToggleButton
-            x:Name="IsAverageColorTheme"
+            HorizontalAlignment="Left"
             VerticalAlignment="Center"
             ToolTip="{Binding IsAverageColorThemeToolTip}"
             IsChecked="{Binding IsAverageColorThemeIsChecked}"
             Style="{StaticResource MaterialDesignSwitchToggleButton}"
-            Grid.Column="1"
+            Grid.Column="2"
             Grid.Row="0" />
 
         <Label
+            HorizontalAlignment="Right"
             VerticalAlignment="Center"
             ToolTip="{Binding AverageColorProcessingOffsetToolTip}"
             Content="평균색 추출 오프셋"
@@ -63,7 +67,7 @@
             Style="{StaticResource MaterialDesignFloatingHintTextBox}"
             VerticalScrollBarVisibility="Auto"
             materialDesign:HintAssist.Hint="Offset"
-            Grid.Column="1"
+            Grid.Column="2"
             Grid.Row="1" />
     </Grid>
 </funcmodel:FunctionControlForm>

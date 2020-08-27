@@ -124,7 +124,7 @@ namespace UMP.Utility
       return result;
     }
 
-    public static async Task<bool> ConvertToMP3Async(string sourceFilename, string targetFilename, IUMP_Progress<double> progress, int minProgressTime = 100)
+    public static async Task<bool> ConvertToMP3Async(string sourceFilename, string targetFilename, IUMP_Progress<double> progress, int minProgressInvokeTime = 100)
     {
       if (!string.IsNullOrWhiteSpace(sourceFilename) && !string.IsNullOrWhiteSpace(targetFilename) && File.Exists(sourceFilename))
       {
@@ -136,18 +136,18 @@ namespace UMP.Utility
           using var reader = new NAudio.Wave.AudioFileReader(sourceFilename);
           using var writer = new NAudio.Lame.LameMP3FileWriter(targetFilename, reader.WaveFormat, NAudio.Lame.LAMEPreset.STANDARD);
 
-          writer.MinProgressTime = minProgressTime;
+          writer.MinProgressTime = minProgressInvokeTime;
           var length = reader.Length;
           writer.OnProgress += (_, i, o, fin) =>
           {
             if (fin)
-              progress.Report(100, "Finished");
+              progress.Report(100, "완료");
             else
               progress.Report(
-                (i * 100.0) / length,
-                string.Format("Output: {0:#,0} bytes, Ratio: 1:{1:0.0}", o, ((double)i) / Math.Max(1, o)));
+                i * 100 / length,
+                string.Format("출력: {0:#,0} bytes, 비율: 1:{1:0.0}", o, ((double)i) / Math.Max(1, o)));
           };
-          progress.Report(0, "Initialize");
+          progress.Report(0, "초기화 중...");
           await reader.CopyToAsync(writer);
           return true;
         }

@@ -15,6 +15,7 @@ using UMP.Core.Function;
 using UMP.Core.Player;
 using UMP.Core.Model.Media;
 using UMP.Core.Global;
+using System.Diagnostics;
 
 namespace UMP.Core.Model
 {
@@ -184,7 +185,8 @@ namespace UMP.Core.Model
         for (int i = 0; i < paths.Count; i++)
         {
           var media = new MediaLoader(paths[i]);
-          var info = await media.GetInformationAsync(false);
+          var infoResult = await media.GetInformationAsync(false);
+          var info = infoResult.Result;
           base.Add(info);
           TotalDuration += info.Duration;
           if (!info.LoadState)
@@ -214,13 +216,23 @@ namespace UMP.Core.Model
     }
     #endregion
 
-    public new async Task Add(MediaInformation Information)
+    public new async Task Add(MediaInformation information)
     {
-      if (!Information.LoadState)
-        Information = await new MediaLoader(Information.MediaLocation).GetInformationAsync(false);
-      this.TotalDuration += Information.Duration;
-      base.Add(Information);
-      Log.Info($"플레이리스트 항목 추가 완료 IsLoaded : [{Information.LoadState}]", $"Title : [{Information.Title}]\nFileName : {Path.GetFileName(Information.MediaLocation)}");
+      if (!information.LoadState)
+      {
+        var loadResult = await new MediaLoader(information.MediaLocation).GetInformationAsync(false);
+        information = loadResult.Result;
+
+        if (!loadResult)
+        {
+          Log.Error($"플레이리스트 항목 추가 실패 IsLoaded : [{information.LoadState}]", $"Title : [{information.Title}]\nFileName : {Path.GetFileName(information.MediaLocation)}");
+          GlobalMessageEvent.Invoke($"플레이리스트 항목 추가 실패 (로그확인 권장)\nTitle : [{information.Title}]");
+          return;
+        }
+      }
+      this.TotalDuration += information.Duration;
+      base.Add(information);
+      Log.Info($"플레이리스트 항목 추가 완료 IsLoaded : [{information.LoadState}]", $"Title : [{information.Title}]\nFileName : {Path.GetFileName(information.MediaLocation)}");
     }
 
     /// <summary>
@@ -230,9 +242,22 @@ namespace UMP.Core.Model
     public async Task Add(string mediaLocation)
     {
       var loader = new MediaLoader(mediaLocation);
+#if DEBUG
       Log.Debug("플레이리스트 항목 추가 시도", $"Path : [{mediaLocation}]");
+      Debug.WriteLine($"\n\n{mediaLocation}");
+      loader.ProgressChanged += (_, e) => { Debug.WriteLine($"{e.ProgressKind}".PadRight(15) + $"{e.Percentage}%".PadLeft(4) + $"   {e.UserMessage}"); };
+#endif
 
-      var info = await loader.GetInformationAsync(false);
+      var loadResult = await loader.GetInformationAsync(false);
+      var info = loadResult.Result;
+
+      if (!loadResult)
+      {
+        Log.Error($"플레이리스트 항목 추가 실패 IsLoaded : [{info.LoadState}]", $"Title : [{info.Title}]\nFileName : {Path.GetFileName(mediaLocation)}");
+        GlobalMessageEvent.Invoke($"플레이리스트 항목 추가 실패 (로그확인 권장)\nTitle : [{info.Title}]");
+        return;
+      }
+
       TotalDuration += info.Duration;
       base.Add(info);
       Log.Info($"플레이리스트 항목 추가 완료 IsLoaded : [{info.LoadState}]", $"Title : [{info.Title}]\nFileName : {Path.GetFileName(mediaLocation)}");
@@ -293,13 +318,27 @@ namespace UMP.Core.Model
         var item = base[index];
         if (MainMediaPlayer.MediaLoadedCheck && this.IndexOf(MainMediaPlayer.NotChangedMediaInformation) == index)
         {
-          Log.Error($"플레이리스트 항목 리로드 실패 \n재생 중인 항목은 리로드 할 수 없습니다\nIndex : [{index}]\nIsLoaded : [{item.LoadState}]", $"Title : [{item.Title}]\nLocation : [{item.MediaLocation}]");
-          GlobalMessageEvent.Invoke($"재생 중인 항목은 리로드 할 수 없습니다.\nTitle : [{item.Title}]", true);
+          Log.Error($"플레이리스트 항목 리로드 실패 \n재생 중인 항목 리로드 시도\nIndex : [{index}]\nIsLoaded : [{item.LoadState}]", $"Title : [{item.Title}]\nLocation : [{item.MediaLocation}]");
+          GlobalMessageEvent.Invoke($"재생 중인 항목은 리로드 할 수 없습니다.\nTitle : [{item.Title}]");
           return;
         }
         TotalDuration -= item.Duration;
-        await new MediaLoader(item.MediaLocation).GetStreamPathAsync(false);
-        item = await new MediaLoader(item.MediaLocation).GetInformationAsync(false);
+        var loader = new MediaLoader(item.MediaLocation);
+#if DEBUG
+        Debug.WriteLine($"\n\n{item.Title}   {item.MediaLocation}");
+        loader.ProgressChanged += (_, e) => { Debug.WriteLine($"{e.ProgressKind}".PadRight(15) + $"{e.Percentage}%".PadLeft(4) + $"   {e.UserMessage}"); };
+#endif
+        await loader.GetStreamPathAsync(false);
+        var loadResult = await loader.GetInformationAsync(false);
+        item = loadResult.Result;
+
+        if (!loadResult)
+        {
+          Log.Error($"플레이리스트 항목 리로드 실패 Index : [{index}] IsLoaded : [{item.LoadState}]", $"Title : [{item.Title}]\nLocation : [{item.MediaLocation}]");
+          GlobalMessageEvent.Invoke($"플레이리스트 항목 리로드 실패 (로그확인 권장)\nTitle : [{item.Title}]");
+          return;
+        }
+
         TotalDuration += item.Duration;
         base[index] = item;
         Log.Info($"플레이리스트 항목 리로드 완료 Index : [{index}] IsLoaded : [{item.LoadState}]", $"Title : [{item.Title}]\nLocation : [{item.MediaLocation}]");

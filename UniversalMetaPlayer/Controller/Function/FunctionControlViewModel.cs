@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Controls;
-
+using System.Windows.Media;
 using UMP.Controller.Function.OptionControl;
 using UMP.Core.Model.Func;
 using UMP.Core.Model.ViewModel;
+using UMP.Utility;
 
 namespace UMP.Controller.Function
 {
@@ -14,6 +12,8 @@ namespace UMP.Controller.Function
     public FunctionControlViewModel()
     {
       FunctionPanel = new BasicOption();
+
+      ThemeHelper.ThemeChangedEvent += (e) => this.ControlBorderBrush = new SolidColorBrush(e.PrimaryColor);
     }
 
     public string Header => FunctionPanel != null ? FunctionPanel.FunctionName : "기능 패널";
@@ -33,5 +33,16 @@ namespace UMP.Controller.Function
       }
     }
     private WeakReference _FunctionPanel;
+
+    public Brush ControlBorderBrush
+    {
+      get => _ControlBorderBrush;
+      set
+      {
+        _ControlBorderBrush = value;
+        OnPropertyChanged("ControlBorderBrush");
+      }
+    }
+    private Brush _ControlBorderBrush = new SolidColorBrush(ThemeHelper.PrimaryColor);
   }
 }

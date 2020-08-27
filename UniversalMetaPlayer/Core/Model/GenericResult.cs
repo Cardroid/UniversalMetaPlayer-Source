@@ -8,7 +8,7 @@ namespace UMP.Core.Model
   /// 비동기 함수에서 out 매개 변수 한정자를 사용하지 못하므로 생성되었습니다. 
   /// </summary>
   /// <typeparam name="T">boolean 타입과 함께 쓰일 제네릭 자료형</typeparam>
-  public class GenericResult<T>
+  public struct GenericResult<T>
   {
     public GenericResult(bool success)
     {

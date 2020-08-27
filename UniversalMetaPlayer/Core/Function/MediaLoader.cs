@@ -44,7 +44,7 @@ namespace UMP.Core.Function
 
     public async Task<GenericResult<string>> GetID() => await Loader.GetID();
 
-    public async Task<MediaInformation> GetInformationAsync(bool fullLoad) => await Loader.GetInformationAsync(fullLoad);
+    public async Task<GenericResult<MediaInformation>> GetInformationAsync(bool fullLoad) => await Loader.GetInformationAsync(fullLoad);
 
     public async Task<GenericResult<string>> GetStreamPathAsync(bool useCache) => await Loader.GetStreamPathAsync(useCache);
   }

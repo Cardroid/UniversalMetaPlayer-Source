@@ -25,6 +25,15 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
     }
     public string GlobalKeyboardHookToolTip =>
       $"창이 활성화 되지 않아도 컨트롤을 가능하게 합니다.\n" +
+      $"관리자 권한으로 실행된 프로그램의 키 입력은, 본 프로그램에 관리자 권한이 없으면 캡쳐하지 못할 수 있습니다.\n" +
       $"MediaPlayPause, MediaStop, MediaNextTrack, MediaPreviousTrack 버튼을 지원합니다.";
+
+    public bool HotKeyIsChecked
+    {
+      get => GlobalProperty.Options.Getter<bool>(Enums.ValueName.HotKey);
+      set => GlobalProperty.Options.Setter(Enums.ValueName.HotKey, value.ToString());
+    }
+    public string HotKeyToolTip =>
+      $"단축키 사용을 활성화 합니다.";
   }
 }
