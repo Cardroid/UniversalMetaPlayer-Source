@@ -18,21 +18,22 @@ namespace UMP.Utility
   public static class ThemeHelper
   {
     public delegate void UMP_ThemeEventHandler(ThemeProperty e);
-    private static readonly PaletteHelper paletteHelper = new PaletteHelper();
     public static event UMP_ThemeEventHandler ThemeChangedEvent;
 
     static ThemeHelper()
     {
       MainMediaPlayer.PropertyChanged += (_, e) =>
       {
-        if (e.PropertyName == "MediaInformation")
+        if (e.PropertyName == "MainPlayerInitialized")
           SetAverageColorThemeAsync();
       };
     }
 
-    public static ITheme Theme => paletteHelper.GetTheme();
+    public static ITheme Theme => new PaletteHelper().GetTheme();
     public static Color PrimaryColor { get; private set; }
     public static Color SecondaryColor { get; private set; }
+    private static void ThemeChangedInvoke() => ThemeChangedEvent?.Invoke(new ThemeProperty(PrimaryColor, SecondaryColor, IsDarkMode));
+
     public static bool IsDarkMode
     {
       get => _IsDarkMode;
@@ -49,59 +50,68 @@ namespace UMP.Utility
     /// </summary>
     public static void SetDefaultTheme()
     {
-      var theme = new CustomColorTheme();
+      var customTheme = new CustomColorTheme();
 
       Color primaryColor = GlobalProperty.DefaultValue.GetDefaultValue<Color>(Enums.ValueName.PrimaryColor);
       Color secondaryColor = GlobalProperty.DefaultValue.GetDefaultValue<Color>(Enums.ValueName.SecondaryColor);
 
-      theme.PrimaryColor = primaryColor;
-      theme.SecondaryColor = secondaryColor;
-      theme.BaseTheme = BaseTheme.Dark;
+      customTheme.PrimaryColor = primaryColor;
+      customTheme.SecondaryColor = secondaryColor;
+      customTheme.BaseTheme = BaseTheme.Dark;
 
-      paletteHelper.SetTheme(theme.GetTheme());
+      var theme = customTheme.GetTheme();
+
+      new PaletteHelper().SetTheme(theme);
 
       PrimaryColor = primaryColor;
       SecondaryColor = secondaryColor;
       _IsDarkMode = true;
 
-      ThemeChangedEvent?.Invoke(new ThemeProperty(PrimaryColor, SecondaryColor, IsDarkMode));
+      ThemeChangedInvoke();
     }
 
     public static void ChangePrimaryColor(Color color)
     {
+      var paletteHelper = new PaletteHelper();
       ITheme theme = paletteHelper.GetTheme();
 
       theme.PrimaryLight = new ColorPair(color.Lighten(), theme.PrimaryLight.ForegroundColor);
       theme.PrimaryMid = new ColorPair(color, theme.PrimaryMid.ForegroundColor);
       theme.PrimaryDark = new ColorPair(color.Darken(), theme.PrimaryDark.ForegroundColor);
 
-      paletteHelper.SetTheme(theme);
       PrimaryColor = color;
-      ThemeChangedEvent?.Invoke(new ThemeProperty(PrimaryColor, SecondaryColor, IsDarkMode));
+
+      paletteHelper.SetTheme(theme);
+
+      ThemeChangedInvoke();
     }
 
     public static void ChangeSecondaryColor(Color color)
     {
+      var paletteHelper = new PaletteHelper();
       ITheme theme = paletteHelper.GetTheme();
 
       theme.SecondaryLight = new ColorPair(color.Lighten(), theme.SecondaryLight.ForegroundColor);
       theme.SecondaryMid = new ColorPair(color, theme.SecondaryMid.ForegroundColor);
       theme.SecondaryDark = new ColorPair(color.Darken(), theme.SecondaryDark.ForegroundColor);
 
-      paletteHelper.SetTheme(theme);
       SecondaryColor = color;
-      ThemeChangedEvent?.Invoke(new ThemeProperty(PrimaryColor, SecondaryColor, IsDarkMode));
+      
+      paletteHelper.SetTheme(theme);
+      
+      ThemeChangedInvoke();
     }
 
     private static void ChangeDarkMode(bool isDark)
     {
+      var paletteHelper = new PaletteHelper();
       ITheme theme = paletteHelper.GetTheme();
 
-      IBaseTheme baseTheme = isDark ? new MaterialDesignDarkTheme() : (IBaseTheme)new MaterialDesignLightTheme();
+      IBaseTheme baseTheme = isDark ? (IBaseTheme)new MaterialDesignDarkTheme() : new MaterialDesignLightTheme();
       theme.SetBaseTheme(baseTheme);
 
       paletteHelper.SetTheme(theme);
-      ThemeChangedEvent?.Invoke(new ThemeProperty(PrimaryColor, SecondaryColor, IsDarkMode));
+      ThemeChangedInvoke();
     }
 
     /// <summary>
@@ -143,9 +153,9 @@ namespace UMP.Utility
         this.SecondaryColor = secondaryColor;
         this.IsDarkMode = isDarkMode;
       }
+      public bool IsDarkMode { get; }
       public Color PrimaryColor { get; }
       public Color SecondaryColor { get; }
-      public bool IsDarkMode { get; }
     }
   }
 }
