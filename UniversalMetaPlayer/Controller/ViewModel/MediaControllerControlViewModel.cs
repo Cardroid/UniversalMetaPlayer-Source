@@ -27,7 +27,7 @@ namespace UMP.Controller.ViewModel
       MainMediaPlayer.PlayStateChanged += MainMediaPlayer_PlayStateChanged;
       MainMediaPlayer.PropertyChanged += MainMediaPlayer_PropertyChanged;
       MainMediaPlayer.TickEvent += MainMediaPlayer_TickEvent;
-      MainMediaPlayer.Option.PropertyChanged += Option_PropertyChanged;
+      MainMediaPlayer.Option.PropertyChanged += PlayerOption_PropertyChanged;
       MainMediaPlayer.PlayList.Field_PropertyChanged += PlayList_Field_PropertyChanged;
       ThemeHelper.ThemeChangedEvent += ThemeHelper_ThemeChangedEvent;
 
@@ -56,15 +56,12 @@ namespace UMP.Controller.ViewModel
         MainMediaPlayer.Volume = Math.Clamp(value / 100f, 0f, 1f); // 오류 방지용
         if (MainMediaPlayer.Volume != 0)
           BeforeVolume = Volume;
-        OnPropertyChanged("Volume");
-        OnPropertyChanged("VolumeString");
-        OnPropertyChanged("VolumeMuteButtonIcon");
       }
     }
 
     // 볼륨 버튼 관련
     public PackIconKind VolumeMuteButtonIcon => VolumeMuteButtonIconChanger();
-    public PackIconKind VolumeMuteButtonIconChanger()
+    private PackIconKind VolumeMuteButtonIconChanger()
     {
       if (Volume > 70)
         return PackIconKind.VolumeHigh;
@@ -242,11 +239,13 @@ namespace UMP.Controller.ViewModel
       MainMediaPlayer.MediaLoadedCheck
       ? MainMediaPlayer.MediaInformation.Duration
       : TimeSpan.Zero;
+
     // 전채 재생길이 (복수 파일)
     public TimeSpan TotalDuration =>
       MainMediaPlayer.PlayList != null
       ? MainMediaPlayer.PlayList.TotalDuration
       : TimeSpan.Zero;
+    
     public string DurationTimestring
     {
       get
@@ -360,19 +359,36 @@ namespace UMP.Controller.ViewModel
     #endregion
 
     #region 동기화 메소드
-    private void Option_PropertyChanged(object sender, PropertyChangedEventArgs e)
+    private void PlayerOption_PropertyChanged(object sender, PropertyChangedEventArgs e)
     {
-      if (e.PropertyName == "RepeatPlayOption")
+      switch (e.PropertyName)
+      {
+        case "DurationViewStatus":
+        OnPropertyChanged("DurationTimestring");
+          break;
+        case "RepeatPlayOption":
         OnPropertyChanged("RepeatPlayOptionIcon");
-      if (e.PropertyName == "Shuffle")
+          break;
+        case "Shuffle":
         OnPropertyChanged("ShuffleIcon");
+          break;
+      }
     }
     private void MainMediaPlayer_PlayStateChanged(PlaybackState state) => ApplyUI();
     private void MainMediaPlayer_TickEvent(object sender, EventArgs e) => ApplyUI(false);
     private void MainMediaPlayer_PropertyChanged(object sender, PropertyChangedEventArgs e)
     {
-      if (e.PropertyName == "MainPlayerInitialized" || e.PropertyName == "MediaInfo")
-        ApplyUI();
+      switch (e.PropertyName)
+      {
+        case "MainPlayerInitialized":
+          ApplyUI();
+          break;
+        case "Volume":
+          OnPropertyChanged("Volume");
+          OnPropertyChanged("VolumeString");
+          OnPropertyChanged("VolumeMuteButtonIcon");
+          break;
+      }
     }
     private void PlayList_Field_PropertyChanged(object sender, PropertyChangedEventArgs e)
     {

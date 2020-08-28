@@ -13,8 +13,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 
-using UMP.Core.Model.Func;
 using UMP.Controller.Function.OptionControl.ViewModel;
+using UMP.Core.Model.Func;
 
 namespace UMP.Controller.Function.OptionControl
 {

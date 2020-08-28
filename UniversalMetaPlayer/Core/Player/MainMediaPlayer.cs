@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows.Threading;
+using System.Diagnostics;
 using System.IO;
 
 using NAudio.Wave;
@@ -13,7 +14,6 @@ using UMP.Utility;
 using UMP.Core.Model.Media;
 using UMP.Core.Global;
 using UMP.Core.Player.Aggregator;
-using System.Diagnostics;
 
 namespace UMP.Core.Player
 {
@@ -105,7 +105,7 @@ namespace UMP.Core.Player
 
     public static void OptionSetDefault()
     {
-      Option.Volume = 0.3f;
+      Volume = 0.3f;
       Option.Shuffle = false;
       Option.RepeatPlayOption = 0;
       Option.DurationViewStatus = true;
@@ -680,7 +680,7 @@ namespace UMP.Core.Player
     }
 
     /// <summary>
-    /// 남은시간 - 전체시간 전환 (ture = 전체시간, false = 남은시간)
+    /// 남은시간 - 총 재생길이 전환 (ture = 총 재생길이, false = 남은시간)
     /// </summary>
     public bool DurationViewStatus
     {
@@ -693,7 +693,7 @@ namespace UMP.Core.Player
     }
 
     /// <summary>
-    /// 마지막 곡 저장
+    /// 마지막으로 재생하던 미디어 저장
     /// </summary>
     public bool LastSongSaveOption
     {

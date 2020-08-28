@@ -124,6 +124,7 @@
 
   <ItemGroup>
     <Folder Include="Properties\" />
+    <Folder Include="Resources\Dll\" />
   </ItemGroup>
 
   <!--<ItemGroup>
@@ -139,10 +140,10 @@
   </ItemGroup>-->
 
   <ItemGroup>
-    <None Update="Resources\Dll\MediaInfo.32.dll">
+    <None Update="MediaInfo.32.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Dll\MediaInfo.64.dll">
+    <None Update="MediaInfo.64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

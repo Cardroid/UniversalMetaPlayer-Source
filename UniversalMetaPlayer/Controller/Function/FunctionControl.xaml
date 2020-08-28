@@ -38,6 +38,10 @@
                         Header="일반"
                         PreviewMouseLeftButtonDown="MainOptionControl_PreviewMouseLeftButtonDown"/>
                     <TreeViewItem
+                        x:Name="Player"
+                        Header="플레이어"
+                        PreviewMouseLeftButtonDown="MainOptionControl_PreviewMouseLeftButtonDown"/>
+                    <TreeViewItem
                         x:Name="Keyboard"
                         Header="키보드"
                         PreviewMouseLeftButtonDown="MainOptionControl_PreviewMouseLeftButtonDown"/>

@@ -142,7 +142,7 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
       $"가사를 볼 수 있는 창을 활성화 합니다.";
     #endregion
 
-    #region 설정 초기화
+    #region 옵션 설정 값 초기화
     public Dispatcher ViewDispatcher { get; set; }
     public RelayCommand SetDefaultCommand { get; }
     public Brush SetDefaultButtenForeground { get; set; } = ThemeHelper.IsDarkMode ? Brushes.White : Brushes.Black;

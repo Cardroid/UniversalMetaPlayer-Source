@@ -22,8 +22,6 @@ namespace UMP.Controller.Function
         if (e.PropertyName == "SetDefault")
           FunctionControlRefresh();
       };
-
-      FunctionControlRefresh();
     }
 
     public string Header => FunctionPanel != null ? FunctionPanel.FunctionName : "기능 패널";
@@ -45,6 +43,7 @@ namespace UMP.Controller.Function
       {
         // 일반
         "Basic" => new BasicOption(),
+        "Player" => new PlayerOption(),
         "Keyboard" => new KeyboardOption(),
         "Theme" => new ThemeOption(),
         "AudioEffect" => new EffectOption(),
