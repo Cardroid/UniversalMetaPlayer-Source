@@ -26,6 +26,7 @@ namespace UMP.Core.Player.Aggregator
     private int fftPos;
     private readonly int fftLength;
     private readonly int m;
+
     private readonly ISampleProvider source;
 
     public bool IsEnabled { get; set; } = true;

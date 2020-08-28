@@ -2,9 +2,8 @@
 
 using UMP.Core.Global;
 using UMP.Core.Model.Func;
-using UMP.Core.Player.Effect;
 
-namespace UMP.Core.Player
+namespace UMP.Core.Player.Plugin.Effect
 {
   public class FadeEffect : IEffectPlugin
   {

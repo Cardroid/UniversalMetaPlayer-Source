@@ -1,6 +1,4 @@
-﻿using NAudio.Wave;
-
-using UMP.Core.Player.Effect;
+﻿using UMP.Core.Player.Plugin.Effect;
 
 namespace UMP.Core.Model.Func
 {

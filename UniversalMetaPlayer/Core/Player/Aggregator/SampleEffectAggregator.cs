@@ -2,7 +2,7 @@
 using NAudio.Wave;
 
 using UMP.Core.Model.Func;
-using UMP.Core.Player.Effect;
+using UMP.Core.Player.Plugin.Effect;
 
 namespace UMP.Core.Player.Aggregator
 {

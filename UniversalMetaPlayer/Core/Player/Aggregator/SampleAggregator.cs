@@ -3,7 +3,7 @@
 using NAudio.Wave;
 
 using UMP.Core.Model.Func;
-using UMP.Core.Player.Effect;
+using UMP.Core.Player.Plugin.Effect;
 
 namespace UMP.Core.Player.Aggregator
 {
@@ -29,11 +29,13 @@ namespace UMP.Core.Player.Aggregator
     {
       this.Source = source;
       EffectAggregator = new SampleEffectAggregator(Source);
+      ConvertorAggregator = new SampleConvertorAggregator(Source);
       AnalysisAggregator = new SampleAnalysisAggregator(Source, fftLength);
     }
 
     private ISampleProvider Source { get; }
     public SampleEffectAggregator EffectAggregator { get; }
+    public SampleConvertorAggregator ConvertorAggregator { get; }
     public SampleAnalysisAggregator AnalysisAggregator { get; }
 
     public WaveFormat WaveFormat => Source.WaveFormat;
@@ -65,6 +67,7 @@ namespace UMP.Core.Player.Aggregator
       int samplesRead = Source.Read(buffer, offset, count);
 
       samplesRead = EffectAggregator.Read(samplesRead, buffer, offset, count);
+      samplesRead = ConvertorAggregator.Read(samplesRead, buffer, offset, count);
       samplesRead = AnalysisAggregator.Read(samplesRead, buffer, offset, count);
 
       return samplesRead;

@@ -14,6 +14,7 @@ using UMP.Utility;
 using UMP.Core.Model.Media;
 using UMP.Core.Global;
 using UMP.Core.Player.Aggregator;
+using UMP.Core.Player.Plugin.Effect;
 
 namespace UMP.Core.Player
 {
@@ -393,7 +394,7 @@ namespace UMP.Core.Player
         WavePlayer.Play();
 
         if (GlobalProperty.Options.Getter<bool>(Enums.ValueName.IsUseFadeEffect))
-          Aggregator.Call(Effect.EffectPluginName.Fade, false);
+          Aggregator.Call(EffectPluginName.Fade, false);
 
         PlayStateChanged?.Invoke(PlaybackState);
         IsPlayStateChangeWork = false;
@@ -415,7 +416,7 @@ namespace UMP.Core.Player
 
         if (GlobalProperty.Options.Getter<bool>(Enums.ValueName.IsUseFadeEffect))
         {
-          Aggregator.Call(Effect.EffectPluginName.Fade, true);
+          Aggregator.Call(EffectPluginName.Fade, true);
           await Task.Delay(GlobalProperty.Options.Getter<int>(Enums.ValueName.FadeEffectDelay) + 200);
         }
 
@@ -440,7 +441,7 @@ namespace UMP.Core.Player
 
         if (GlobalProperty.Options.Getter<bool>(Enums.ValueName.IsUseFadeEffect))
         {
-          Aggregator.Call(Effect.EffectPluginName.Fade, true);
+          Aggregator.Call(EffectPluginName.Fade, true);
           await Task.Delay(GlobalProperty.Options.Getter<int>(Enums.ValueName.FadeEffectDelay) + 200);
         }
 
