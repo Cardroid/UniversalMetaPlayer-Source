@@ -17,7 +17,7 @@
     <PackageId>Universal Meta Player</PackageId>
     <Product>Universal Meta Player</Product>
     <RepositoryUrl>https://github.com/Cardroid/UniversalMetaPlayer</RepositoryUrl>
-    <Platforms>x64;AnyCPU;x86</Platforms>
+    <Platforms>x64;x86;AnyCPU</Platforms>
     <AssemblyVersion>2.5.2.0</AssemblyVersion>
     <FileVersion>2.5.5.25</FileVersion>
     <PackageProjectUrl>https://github.com/Cardroid/UniversalMetaPlayer</PackageProjectUrl>
@@ -25,36 +25,36 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DocumentationFile />
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile />
+    <DefineConstants>TRACE;BIT64</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <DocumentationFile />
+    <DefineConstants>TRACE;BIT32</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile />
+    <DefineConstants>TRACE;BITANY</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
-    <OutputPath></OutputPath>
+    <DefineConstants>TRACE;BIT64</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
-    <OutputPath></OutputPath>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <DefineConstants>TRACE;BIT32</DefineConstants>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Controller\Function\NewFolder\**" />
-    <Compile Remove="Test\**" />
-    <EmbeddedResource Remove="Controller\Function\NewFolder\**" />
-    <EmbeddedResource Remove="Test\**" />
-    <None Remove="Controller\Function\NewFolder\**" />
-    <None Remove="Test\**" />
-    <Page Remove="Controller\Function\NewFolder\**" />
-    <Page Remove="Test\**" />
-  </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <DefineConstants>TRACE;BITANY</DefineConstants>
+  </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Resources\Font\NanumGothic.otf" />
@@ -126,7 +126,7 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 
-  <ItemGroup>
+  <!--<ItemGroup>
     <Compile Update="Controller\Dialog\PlayListLoadDialog.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -136,9 +136,18 @@
     <Compile Update="Controller\Function\FunctionControl\KeyboardFunction.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-  </ItemGroup>
+  </ItemGroup>-->
 
   <ItemGroup>
+    <None Update="Resources\Dll\MediaInfo.32.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Dll\MediaInfo.64.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <!--<ItemGroup>
     <Page Update="Controller\Dialog\PlayListLoadDialog.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -151,6 +160,9 @@
     <Page Update="Controller\Function\FunctionControl\KeyboardFunction.xaml">
       <SubType>Designer</SubType>
     </Page>
-  </ItemGroup>
+    <Page Update="Controller\Function\OptionControl\PlayerOption.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>-->
 
 </Project>
