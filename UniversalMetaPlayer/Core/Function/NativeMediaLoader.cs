@@ -29,7 +29,7 @@ namespace UMP.Core.Function
     private NativeMediaLoader()
     {
       this.Log = new Log($"{typeof(NativeMediaLoader)}");
-      this.CachePath = GlobalProperty.Predefine.CACHE_PATH;
+      this.CachePath = GlobalProperty.Predefine.OnlineMediaCachePath;
     }
 
     public NativeMediaLoader(string mediaLocation) : this()

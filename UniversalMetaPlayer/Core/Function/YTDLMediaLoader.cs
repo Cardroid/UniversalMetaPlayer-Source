@@ -33,7 +33,7 @@ namespace UMP.Core.Function
     private YTDLMediaLoader()
     {
       this.Log = new Log($"{typeof(YTDLMediaLoader)}");
-      this.CachePath = GlobalProperty.Predefine.CACHE_PATH;
+      this.CachePath = GlobalProperty.Predefine.OnlineMediaCachePath;
     }
 
     public YTDLMediaLoader(string mediaLocation) : this()
