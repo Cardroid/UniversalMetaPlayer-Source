@@ -13,17 +13,16 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 
+using UMP.Core.Global;
 using UMP.Core.Model.Func;
-using UMP.Controller.Function.OptionControl.ViewModel;
 
 namespace UMP.Controller.Function.OptionControl
 {
-  public partial class BasicOption : FunctionControlForm
+  public partial class PlayerOption : FunctionControlForm
   {
-    public BasicOption() : base("옵션 - 일반")
+    public PlayerOption() : base("옵션 - 플래이어")
     {
       InitializeComponent();
-      ((BasicOptionViewModel)this.DataContext).ViewDispatcher = this.Dispatcher;
     }
   }
 }

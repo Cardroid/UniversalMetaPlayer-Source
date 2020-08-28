@@ -7,11 +7,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:viewmodel="clr-namespace:UMP.Controller.Function.OptionControl.ViewModel"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-    Background="{DynamicResource MaterialDesignPaper}"
-    TextElement.FontWeight="Medium"
-    TextElement.FontSize="14"
-    FontFamily="{DynamicResource MainFontFamily}"
     mc:Ignorable="d"
     d:DesignHeight="450"
     d:DesignWidth="800">
@@ -185,35 +180,20 @@
                     Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <!--<Label
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                ToolTip="모든 설정 초기화"
-                Content="설정 초기화"
-                Grid.Column="1" />
-            <Button
-                x:Name="SetDefault"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                ToolTip="플레이어 설정 초기화"
-                Style="{StaticResource MaterialDesignIconButton}"
-                Content="{materialDesign:PackIcon Kind=DeleteForever, Size=25}"
-                Cursor="Hand"
-                Grid.Column="2" />-->
-
             <Label
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                ToolTip="모든 설정 초기화"
+                ToolTip="옵션 설정 초기화"
                 Content="설정 초기화"
                 Grid.Column="1" />
             <Button
-                x:Name="SetDefault"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                ToolTip="모든 설정 초기화"
+                ToolTip="옵션 설정 초기화"
+                Foreground="{Binding SetDefaultButtenForeground}"
                 Style="{StaticResource MaterialDesignIconButton}"
                 Content="{materialDesign:PackIcon Kind=DeleteForever, Size=25}"
+                Command="{Binding SetDefaultCommand}"
                 Cursor="Hand"
                 Grid.Column="2" />
         </Grid>

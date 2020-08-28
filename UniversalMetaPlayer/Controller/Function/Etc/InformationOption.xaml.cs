@@ -27,8 +27,6 @@ namespace UMP.Controller.Function.Etc
     {
       InitializeComponent();
 
-      this.PreviewMouseDown += (_, e) => { Keyboard.ClearFocus(); };
-
       this.Mainlogo.Width = 120;
       this.Mainlogo.Height = 120;
       this.Mainlogo.Source = GlobalProperty.Predefine.LogoImage;

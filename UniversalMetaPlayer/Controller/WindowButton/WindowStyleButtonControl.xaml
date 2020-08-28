@@ -30,7 +30,7 @@
             Height="40">
             <StackPanel
                 Orientation="Horizontal"
-                Background="{DynamicResource MaterialDesignPaper}">
+            >
                 <Button
                     x:Name="MinimizeButton"
                     HorizontalAlignment="Center"

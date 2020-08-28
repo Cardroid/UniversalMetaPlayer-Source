@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Threading;
 
 using UMP.Core.Global;
 using UMP.Core.Model.ViewModel;
@@ -20,16 +23,16 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
         switch (e.PropertyName)
         {
           case "FileSavePath":
-          OnPropertyChanged("FileSavePathToolTip");
+            OnPropertyChanged("FileSavePathToolTip");
             break;
           case "MediaLoadEngine":
-          OnPropertyChanged("MediaLoadEngineSelectedItem");
+            OnPropertyChanged("MediaLoadEngineSelectedItem");
             break;
           case "PrivateLogging":
-          OnPropertyChanged("IsCheckedPrivateLogging");
+            OnPropertyChanged("IsCheckedPrivateLogging");
             break;
           case "IsEnableSleepMode":
-          OnPropertyChanged("IsCheckedIsEnableSleepMode");
+            OnPropertyChanged("IsCheckedIsEnableSleepMode");
             break;
           case "LyricsSettings":
             OnPropertyChanged("IsCheckedLyricsSettings_Off");
@@ -61,6 +64,8 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
       };
 
       LyricsSettingsCommand = new RelayCommand((o) => LyricsSettingsChange(o.ToString()));
+
+      SetDefaultCommand = new RelayCommand((o) => SetDefault_Click());
     }
 
     #region 저장 경로
@@ -90,7 +95,7 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
       "개인 정보가 포함 될 수 있으나, 모든 정보는 익명으로 저장됩니다.\n" +
       "(로그정보로 사용자를 특정할 수 없음)";
     #endregion
-    
+
     #region 리소스 절약 모드
     public bool IsCheckedIsEnableSleepMode
     {
@@ -135,6 +140,54 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
       $"On = 항상 열기, Auto = 가사가 있는 경우만 열기, Off = 항상 닫기\n\n" +
 
       $"가사를 볼 수 있는 창을 활성화 합니다.";
+    #endregion
+
+    #region 설정 초기화
+    public Dispatcher ViewDispatcher { get; set; }
+    public RelayCommand SetDefaultCommand { get; }
+    public Brush SetDefaultButtenForeground { get; set; } = ThemeHelper.IsDarkMode ? Brushes.White : Brushes.Black;
+
+    private bool IsReset
+    {
+      get => _IsReset;
+      set
+      {
+        _IsReset = value;
+
+        if (_IsReset)
+          SetDefaultButtenForeground = Brushes.Red;
+        else
+          SetDefaultButtenForeground = ThemeHelper.IsDarkMode ? Brushes.White : Brushes.Black;
+
+        OnPropertyChanged("SetDefaultButtenForeground");
+      }
+    }
+    private bool _IsReset = false;
+
+    private Timer IsResetLockTimer;
+
+    private void SetDefault_Click()
+    {
+      if (IsResetLockTimer == null)
+      {
+        IsResetLockTimer = new Timer(3000);
+        IsResetLockTimer.Elapsed += (_, e) =>
+        {
+          ViewDispatcher.Invoke(() => { IsReset = false; });
+        };
+      }
+
+      if (IsReset)
+      {
+        IsReset = false;
+        GlobalProperty.SetDefault();
+      }
+      else
+      {
+        IsReset = true;
+        IsResetLockTimer.Start();
+      }
+    }
     #endregion
   }
 }

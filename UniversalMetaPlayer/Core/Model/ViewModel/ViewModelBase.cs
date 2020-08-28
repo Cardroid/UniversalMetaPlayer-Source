@@ -1,19 +1,30 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
 using System.Windows.Media;
 
-using MaterialDesignThemes.Wpf;
-
-using UMP.Core.Global;
 using UMP.Utility;
 
 namespace UMP.Core.Model.ViewModel
 {
-  internal class ViewModelBase : INotifyPropertyChanged
+  public class ViewModelBase : INotifyPropertyChanged
   {
+    public ViewModelBase()
+    {
+      ThemeHelper.ThemeChangedEvent += (e) => this.ControlBorderBrush = new SolidColorBrush(e.PrimaryColor);
+    }
+
     public event PropertyChangedEventHandler PropertyChanged;
     protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+    public Brush ControlBorderBrush
+    {
+      get => _ControlBorderBrush;
+      set
+      {
+        _ControlBorderBrush = value;
+        OnPropertyChanged("ControlBorderBrush");
+      }
+    }
+    private Brush _ControlBorderBrush = new SolidColorBrush(ThemeHelper.PrimaryColor);
   }
 }

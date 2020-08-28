@@ -8,11 +8,6 @@
     xmlns:local="clr-namespace:UMP.Controller.Function.OptionControl"
     xmlns:viewmodel="clr-namespace:UMP.Controller.Function.OptionControl.ViewModel"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-    Background="{DynamicResource MaterialDesignPaper}"
-    TextElement.FontWeight="Medium"
-    TextElement.FontSize="14"
-    FontFamily="{DynamicResource MainFontFamily}"
     mc:Ignorable="d">
 
     <funcmodel:FunctionControlForm.DataContext>

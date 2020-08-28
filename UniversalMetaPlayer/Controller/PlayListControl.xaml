@@ -8,11 +8,6 @@
     xmlns:model="clr-namespace:UMP.Controller.ViewModel"
     xmlns:Utility="clr-namespace:UMP.Utility"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-    Background="{DynamicResource MaterialDesignPaper}"
-    TextElement.FontWeight="Medium"
-    TextElement.FontSize="14"
-    FontFamily="{DynamicResource MainFontFamily}"
     mc:Ignorable="d">
 
     <UserControl.DataContext>

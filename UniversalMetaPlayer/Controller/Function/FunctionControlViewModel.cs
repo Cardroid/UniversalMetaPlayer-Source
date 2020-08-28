@@ -1,9 +1,13 @@
 ﻿using System;
-using System.Windows.Media;
+
+using UMP.Controller.Function.AnalysisControl;
+using UMP.Controller.Function.AnalysisControl.AudioFileAnalysis;
+using UMP.Controller.Function.Etc;
 using UMP.Controller.Function.OptionControl;
+
+using UMP.Core.Global;
 using UMP.Core.Model.Func;
 using UMP.Core.Model.ViewModel;
-using UMP.Utility;
 
 namespace UMP.Controller.Function
 {
@@ -13,10 +17,49 @@ namespace UMP.Controller.Function
     {
       FunctionPanel = new BasicOption();
 
-      ThemeHelper.ThemeChangedEvent += (e) => this.ControlBorderBrush = new SolidColorBrush(e.PrimaryColor);
+      GlobalProperty.PropertyChanged += (_, e) =>
+      {
+        if (e.PropertyName == "SetDefault")
+          FunctionControlRefresh();
+      };
+
+      FunctionControlRefresh();
     }
 
     public string Header => FunctionPanel != null ? FunctionPanel.FunctionName : "기능 패널";
+    
+    public string FunctionControlName
+    {
+      get => _FunctionControlName;
+      set
+      {
+        _FunctionControlName = value;
+        FunctionControlRefresh();
+      }
+    }
+    private string _FunctionControlName = "Basic";
+
+    private void FunctionControlRefresh()
+    {
+      FunctionPanel = FunctionControlName switch
+      {
+        // 일반
+        "Basic" => new BasicOption(),
+        "Keyboard" => new KeyboardOption(),
+        "Theme" => new ThemeOption(),
+        "AudioEffect" => new EffectOption(),
+
+        // 분석
+        "Graph" => new WaveAnalysisControl(),
+        "AudioProperty" => new AudioWaveFormatAnalysisControl(),
+
+        // 정보
+        "Information" => new InformationOption(),
+
+        // 기능 준비 중
+        _ => new ErrorPageControl(),
+      };
+    }
 
     public FunctionControlForm FunctionPanel
     {
@@ -32,17 +75,6 @@ namespace UMP.Controller.Function
         OnPropertyChanged("Header");
       }
     }
-    private WeakReference _FunctionPanel;
-
-    public Brush ControlBorderBrush
-    {
-      get => _ControlBorderBrush;
-      set
-      {
-        _ControlBorderBrush = value;
-        OnPropertyChanged("ControlBorderBrush");
-      }
-    }
-    private Brush _ControlBorderBrush = new SolidColorBrush(ThemeHelper.PrimaryColor);
+    private WeakReference _FunctionPanel = new WeakReference(new BasicOption());
   }
 }

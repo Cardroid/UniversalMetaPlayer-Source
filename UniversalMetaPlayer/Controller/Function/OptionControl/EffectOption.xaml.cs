@@ -30,8 +30,6 @@ namespace UMP.Controller.Function.OptionControl
           this.FadeEffectDelayTextBox.Text = GlobalProperty.Options.Getter<int>(Enums.ValueName.FadeEffectDelay).ToString();
       };
 
-      this.PreviewMouseDown += (_, e) => { Keyboard.ClearFocus(); };
-
       this.FadeEffectDelayTextBox.GotKeyboardFocus += (_, e) => { this.FadeEffectDelayTextBox.Text = ""; };
       this.FadeEffectDelayTextBox.PreviewKeyDown += (_, e) => { if (e.Key == Key.Enter) Keyboard.ClearFocus(); };
       this.FadeEffectDelayTextBox.LostKeyboardFocus += (_, e) => { FadeEffectDelayTextBox_Apply(); };

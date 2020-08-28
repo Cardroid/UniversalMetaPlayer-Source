@@ -8,11 +8,6 @@
     xmlns:system="clr-namespace:System;assembly=System.Runtime"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:local="clr-namespace:UMP.Controller.Dialog"
-    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-    Background="{DynamicResource MaterialDesignPaper}"
-    TextElement.FontWeight="Medium"
-    TextElement.FontSize="14"
-    FontFamily="{DynamicResource MainFontFamily}"
     mc:Ignorable="d">
 
     <Grid

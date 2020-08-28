@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace UMP.Core.Model.Func
 {

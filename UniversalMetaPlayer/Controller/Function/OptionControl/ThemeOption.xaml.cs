@@ -31,8 +31,6 @@ namespace UMP.Controller.Function.OptionControl
           this.AverageColorProcessingOffsetTextBox.Text = GlobalProperty.Options.Getter<int>(Enums.ValueName.AverageColorProcessingOffset).ToString();
       };
 
-      this.PreviewMouseDown += (_, e) => { Keyboard.ClearFocus(); };
-
       this.AverageColorProcessingOffsetTextBox.GotKeyboardFocus += (_, e) => { this.AverageColorProcessingOffsetTextBox.Text = ""; };
       this.AverageColorProcessingOffsetTextBox.PreviewKeyDown += (_, e) => { if (e.Key == Key.Enter) Keyboard.ClearFocus(); };
       this.AverageColorProcessingOffsetTextBox.LostKeyboardFocus += (_, e) => { AverageColorProcessingOffsetTextBox_Apply(); };

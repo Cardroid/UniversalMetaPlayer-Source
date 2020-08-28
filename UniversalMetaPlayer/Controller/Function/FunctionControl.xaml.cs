@@ -11,13 +11,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-using UMP.Controller.Function.AnalysisControl;
-using UMP.Controller.Function.OptionControl;
-using UMP.Controller.Function.Etc;
-using UMP.Controller.Function.AnalysisControl.AudioFileAnalysis;
-using UMP.Core.Global;
-using UMP.Utility;
-
 namespace UMP.Controller.Function
 {
   public partial class FunctionControl : UserControl
@@ -29,34 +22,13 @@ namespace UMP.Controller.Function
       InitializeComponent();
       ViewModel = (FunctionControlViewModel)this.DataContext;
 
-      GlobalProperty.PropertyChanged += (_, e) =>
-      {
-        if (e.PropertyName == "SetDefault")
-          ViewModel.FunctionPanel = new BasicOption();
-      };
+      this.PreviewMouseDown += (_, e) => { System.Windows.Input.Keyboard.ClearFocus(); };
     }
 
     private void MainOptionControl_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
       if (sender is TreeViewItem item)
-        ViewModel.FunctionPanel = item.Name switch
-        {
-          // 일반
-          "Basic" => new BasicOption(),
-          "Keyboard" => new KeyboardOption(),
-          "Theme" => new ThemeOption(),
-          "AudioEffect" => new EffectOption(),
-
-          // 분석
-          "Graph" => new WaveAnalysisControl(),
-          "AudioProperty" => new AudioWaveFormatAnalysisControl(),
-
-          // 정보
-          "Information" => new InformationOption(),
-
-          // 기능 준비 중
-          _ => new ErrorPageControl(),
-        };
+        ViewModel.FunctionControlName = item.Name;
     }
 
     private void TreeViewItem_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
