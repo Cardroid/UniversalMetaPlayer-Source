@@ -65,6 +65,7 @@
     <None Remove="Resources\Font\ngBold.ttf" />
     <None Remove="Resources\IconCustomMusicPlayer.ico" />
     <None Remove="Resources\IconnoteCustomMusicPlayer.png" />
+    <None Remove="Resources\Lib\x64\libmp3lame.64.dll" />
     <None Remove="Resources\MainIcon.ico" />
     <None Remove="Resources\MainImage.png" />
     <None Remove="Resources\NoteImage.old.png" />
@@ -124,52 +125,14 @@
 
   <ItemGroup>
     <Folder Include="Properties\" />
-    <Folder Include="Resources\Dll\" />
   </ItemGroup>
 
-  <!--<ItemGroup>
-    <Compile Update="Controller\Dialog\PlayListLoadDialog.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Controller\Function\FunctionControl\ThemeFunction.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Controller\Function\FunctionControl\KeyboardFunction.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-  </ItemGroup>-->
-
-  <ItemGroup>
-    <None Update="MediaInfo.32.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="MediaInfo.64.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="SoundTouch.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="SoundTouch_x64.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+  <ItemGroup Condition="'$(Platform)' == 'x86'">
+    <None Include="Resources\Lib\x86\**" Link="\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
-  <!--<ItemGroup>
-    <Page Update="Controller\Dialog\PlayListLoadDialog.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Controller\Function\AnalysisControl\WaveAnalysis\AudioPlaybackDemo\Func\PolylineWaveFormControl.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Controller\Function\FunctionControl\ThemeFunction.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Controller\Function\FunctionControl\KeyboardFunction.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Controller\Function\OptionControl\PlayerOption.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-  </ItemGroup>-->
-
+  <ItemGroup Condition="'$(Platform)' == 'x64'">
+    <None Include="Resources\Lib\x64\**" Link="\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  
 </Project>
