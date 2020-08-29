@@ -79,7 +79,7 @@ namespace UMP.Core.Player
     /// </summary>
     public static bool IsEffectEnabled
     {
-      get => Aggregator != null ? Aggregator.EffectAggregator.IsEnabled : false;
+      get => Aggregator != null && Aggregator.EffectAggregator.IsEnabled;
       set
       {
         if (Aggregator != null)
@@ -91,7 +91,7 @@ namespace UMP.Core.Player
     /// </summary>
     public static bool IsAnalyzerEnabled
     {
-      get => Aggregator != null ? Aggregator.AnalysisAggregator.IsEnabled : false;
+      get => Aggregator != null && Aggregator.AnalysisAggregator.IsEnabled;
       set
       {
         if (Aggregator != null)

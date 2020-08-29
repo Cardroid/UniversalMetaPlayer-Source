@@ -134,10 +134,10 @@ namespace UMP.Utility
         try
         {
           using var reader = new NAudio.Wave.AudioFileReader(sourceFilename);
-          using var writer = new NAudio.Lame.LameMP3FileWriter(targetFilename, reader.WaveFormat, NAudio.Lame.LAMEPreset.STANDARD);
-
-          writer.MinProgressTime = minProgressInvokeTime;
+          using var writer = new NAudio.Lame.LameMP3FileWriter(targetFilename, reader.WaveFormat, NAudio.Lame.LAMEPreset.STANDARD) { MinProgressTime = minProgressInvokeTime };
           var length = reader.Length;
+
+          progress.Report(0, "초기화 중...");
           writer.OnProgress += (_, i, o, fin) =>
           {
             if (fin)
@@ -147,7 +147,7 @@ namespace UMP.Utility
                 i * 100 / length,
                 string.Format("출력: {0:#,0} bytes, 비율: 1:{1:0.0}", o, ((double)i) / Math.Max(1, o)));
           };
-          progress.Report(0, "초기화 중...");
+          
           await reader.CopyToAsync(writer);
           return true;
         }

@@ -35,6 +35,7 @@
             <RowDefinition
                 Height="Auto" />
         </Grid.RowDefinitions>
+        
         <Grid
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
@@ -80,12 +81,13 @@
                 Padding="0,0,3,0"
                 Grid.Column="2" />
         </Grid>
+        
         <Grid
             x:Name="ControlPanel"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             Grid.Row="1">
-
+            
             <Grid.ColumnDefinitions>
                 <ColumnDefinition
                     Width="Auto" />
@@ -118,47 +120,47 @@
                 Background="Transparent"
                 BorderBrush="Transparent"
                 ToolTip="볼륨 / Volume"
-                PlacementMode="TopAndAlignCentres"
+                ToolTipService.Placement="Right"
+                PlacementMode="LeftAndAlignMiddles"
                 Focusable="False"
                 Cursor="Hand"
                 Width="{Binding Width, ElementName=ShuffleButton}"
                 Height="{Binding Height, ElementName=ShuffleButton}"
                 Grid.Column="0">
+                
                 <materialDesign:PopupBox.ToggleContent>
                     <materialDesign:PackIcon
                         Kind="{Binding VolumeMuteButtonIcon}"
                         Width="35"
                         Height="35" />
                 </materialDesign:PopupBox.ToggleContent>
+                
                 <materialDesign:PopupBox.ToggleCheckedContent>
                     <materialDesign:PackIcon
                         Kind="Close"
                         Width="35"
                         Height="35" />
                 </materialDesign:PopupBox.ToggleCheckedContent>
-                <Grid>
-                    <Slider
-                        x:Name="VolumeSlider"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        TickFrequency="10"
-                        TickPlacement="BottomRight"
-                        Orientation="Vertical"
-                        IsMoveToPointEnabled="True"
-                        AutoToolTipPlacement="TopLeft"
-                        AutoToolTipPrecision="0"
-                        Value="{Binding Volume}"
-                        ToolTip="볼륨 / Volume"
-                        Focusable="False"
-                        Cursor="Hand"
-                        Maximum="100"
-                        Height="100" />
-                    <Border
-                        Background="Black"
-                        Panel.ZIndex="-999"
-                        Opacity="0.3" />
-                </Grid>
+            
+                <Slider
+                    x:Name="VolumeSlider"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    TickFrequency="10"
+                    TickPlacement="BottomRight"
+                    Orientation="Horizontal"
+                    IsMoveToPointEnabled="True"
+                    AutoToolTipPlacement="TopLeft"
+                    AutoToolTipPrecision="0"
+                    Value="{Binding Volume}"
+                    ToolTip="볼륨 / Volume"
+                    Focusable="False"
+                    Cursor="Hand"
+                    Maximum="100"
+                    Width="100" />
+                
             </materialDesign:PopupBox>
+            
             <Button
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
