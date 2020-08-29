@@ -16,7 +16,7 @@ namespace UMP.Utility
   /// <summary>
   /// 전역 마우스 키보드 후킹을 통한 원격 조종 설정
   /// </summary>
-  public static class Hook
+  public class Hook : IDisposable
   {
     static Hook()
     {
@@ -29,7 +29,7 @@ namespace UMP.Utility
     private static KeyboardEventReceiver keyboardReceiver { get; }
     private static bool Started;
 
-    public static void Start()
+    public void Start()
     {
       if (Started)
         return;
@@ -42,7 +42,7 @@ namespace UMP.Utility
       log.Info("전역 키보드 후킹 시작");
     }
 
-    public static void Dispose()
+    public void Dispose()
     {
       if (!Started)
         return;

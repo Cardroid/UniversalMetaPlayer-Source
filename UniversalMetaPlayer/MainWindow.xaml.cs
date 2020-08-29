@@ -151,7 +151,7 @@ namespace UMP
         IsPlayListSaveCancel = false;
         return;
       }
-      Hook.Dispose();
+      new Hook().Dispose();
       MainMediaPlayer.Dispose();
       GlobalProperty.Save();
       App.MainLog.Info("############### Exit application ###############");

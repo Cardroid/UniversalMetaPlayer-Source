@@ -227,9 +227,9 @@ namespace UMP.Core.Global
         if (key == Enums.ValueName.GlobalKeyboardHook)
         {
           if (bool.TryParse(value, out bool result) && result)
-            Hook.Start();
+            new Hook().Start();
           else
-            Hook.Dispose();
+            new Hook().Dispose();
         }
         OnPropertyChanged(key.ToString());
       }
