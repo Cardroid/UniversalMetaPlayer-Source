@@ -3,6 +3,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Media;
 
+using UMP.Core.Model;
+
 namespace UMP.Utility
 {
   public static class Parser
@@ -44,57 +46,29 @@ namespace UMP.Utility
         return (AfterT)Enum.Parse(typeof(AfterT), value.ToString());
       return (AfterT)Convert.ChangeType(value, typeof(AfterT));
     }
-  }
 
-  /// <summary>
-  /// Url의 정보 구조체
-  /// </summary>
-  public struct UrlInfo
-  {
-    public UrlInfo(string url, bool success, string protocol, string domain, int? port)
+    /// <summary>
+    /// SI 단위 접두사 파싱
+    /// </summary>
+    /// <param name="d">값</param>
+    /// <param name="format">문자열 포멧</param>
+    /// <returns>단위 접두사가 붙은 문자열 값</returns>
+    public static string ToSI(double d, string format = null, bool wordSpacing = true)
     {
-      if (string.IsNullOrWhiteSpace(url))
-        this.Success = false;
-      else
-        this.Success = success;
+      char[] incPrefixes = new[] { 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y' };
+      char[] decPrefixes = new[] { 'm', '\u03bc', 'n', 'p', 'f', 'a', 'z', 'y' };
 
-      this.Url = url;
-      this.Protocol = protocol;
-      this.Domain = domain;
-      this.Port = port;
+      int degree = (int)Math.Floor(Math.Log10(Math.Abs(d)) / 3);
+      double scaled = d * Math.Pow(1000, -degree);
+
+      char? prefix = null;
+      switch (Math.Sign(degree))
+      {
+        case 1: prefix = incPrefixes[degree - 1]; break;
+        case -1: prefix = decPrefixes[-degree - 1]; break;
+      }
+
+      return $"{scaled.ToString(format)}{(wordSpacing ? " " : "")}{prefix}";
     }
-
-    public UrlInfo(string url, bool success = false)
-    {
-      if (string.IsNullOrWhiteSpace(url))
-        this.Success = false;
-      else
-        this.Success = success;
-      this.Url = url;
-      this.Protocol = string.Empty;
-      this.Domain = string.Empty;
-      this.Port = null;
-    }
-
-    /// <summary>
-    /// 성공여부 (Url 형식이 아니면 false)
-    /// </summary>
-    public bool Success { get; private set; }
-    /// <summary>
-    /// 검사한 Url
-    /// </summary>
-    public string Url { get; private set; }
-    /// <summary>
-    /// Url의 프로토콜
-    /// </summary>
-    public string Protocol { get; private set; }
-    /// <summary>
-    /// Url의 도메인
-    /// </summary>
-    public string Domain { get; private set; }
-    /// <summary>
-    /// Url의 포트번호
-    /// </summary>
-    public int? Port { get; private set; }
   }
 }
