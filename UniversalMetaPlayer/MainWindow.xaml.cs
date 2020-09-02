@@ -18,6 +18,7 @@ using System.Windows.Threading;
 
 using UMP.Core;
 using UMP.Core.Global;
+using UMP.Core.LogHelper;
 using UMP.Core.Player;
 using UMP.Utility;
 
@@ -27,6 +28,10 @@ namespace UMP
   {
     public MainWindow()
     {
+#if DEBUG
+      Log.LogViewerAppender.IsEnable = true;
+#endif
+
       WindowManager.CloseAll();
       GlobalProperty.Load();
 
@@ -155,6 +160,8 @@ namespace UMP
       MainMediaPlayer.Dispose();
       GlobalProperty.Save();
       App.MainLog.Info("############### Exit application ###############");
+      Log.LogViewerAppender.IsEnable = false;
+      Log.Shutdown();
       Application.Current.Shutdown();
     }
   }

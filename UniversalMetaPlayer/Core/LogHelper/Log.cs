@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+
 using log4net;
 using log4net.Appender;
 using log4net.Core;
@@ -7,6 +8,7 @@ using log4net.Layout;
 using log4net.Repository.Hierarchy;
 
 using UMP.Core.Global;
+using UMP.Core.LogHelper;
 
 namespace UMP.Core
 {
@@ -26,7 +28,7 @@ namespace UMP.Core
       Layout.ActivateOptions();
 
       // 파일 로그 패턴 설정
-      RollingAppender = new RollingFileAppender
+      FileAppender = new RollingFileAppender
       {
         Name = "LogFileAppender",
         // 시스템이 기동되면 파일을 추가해서 할 것인가? 새로 작성할 것인가?
@@ -41,9 +43,12 @@ namespace UMP.Core
         // 로그 패턴
         Layout = Layout
       };
-      RollingAppender.ActivateOptions();
+      FileAppender.ActivateOptions();
 
-      Hierarchy.Root.AddAppender(RollingAppender);
+      LogViewerAppender = new LogViewerAppender(Layout, new LogTextBox());
+
+      Hierarchy.Root.AddAppender(FileAppender);
+      Hierarchy.Root.AddAppender(LogViewerAppender);
       // 로그 출력 설정 All 이면 모든 설정이 되고 Info 이면 최하 레벨 Info 위가 설정됩니다.
 #if DEBUG
       Hierarchy.Root.Level = Level.All;
@@ -56,10 +61,12 @@ namespace UMP.Core
     public Log(Type type) => Logger = LogManager.GetLogger("MainLoggerRepository", type);
     public Log(string loggername) => Logger = LogManager.GetLogger("MainLoggerRepository", loggername);
 
-    public static Hierarchy Hierarchy { get; }
-    public static RollingFileAppender RollingAppender { get; }
-    public static PatternLayout Layout { get; }
     private ILog Logger { get; }
+    private static Hierarchy Hierarchy { get; }
+    public static RollingFileAppender FileAppender { get; }
+    public static LogViewerAppender LogViewerAppender { get; }
+    private static PatternLayout Layout { get; }
+    public static void Shutdown() => LogManager.ShutdownRepository("MainLoggerRepository");
 
     public void Fatal(string message, string privateData = "") =>
       Logger.Fatal(GlobalProperty.Options.Getter<bool>(Enums.ValueName.IsPrivateLogging)

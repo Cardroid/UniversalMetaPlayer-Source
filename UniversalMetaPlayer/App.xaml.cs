@@ -9,6 +9,7 @@ using System.Windows.Threading;
 
 using UMP.Core;
 using UMP.Core.Global;
+using UMP.Utility;
 
 namespace UMP
 {
@@ -17,11 +18,11 @@ namespace UMP
     public static Log MainLog { get; } = new Log("System");
     public App()
     {
-#if DEBUG
-      GlobalEventLogger.IsEnabled = true;
-#else
+      //#if DEBUG
+      //      GlobalEventLogger.IsEnabled = true;
+      //#else
       GlobalEventLogger.IsEnabled = false;
-#endif
+      //#endif
       MainLog.Info("############### Start application ###############\n" +
         $"Current Version : [{GlobalProperty.Predefine.FileVersion}]\nBit : [{GlobalProperty.Predefine.BitVersion}]",
         $"Start Path : [{AppDomain.CurrentDomain.BaseDirectory}]\nTask Path : [{Environment.CurrentDirectory}]");

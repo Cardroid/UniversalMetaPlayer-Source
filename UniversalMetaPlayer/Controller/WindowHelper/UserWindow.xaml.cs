@@ -26,7 +26,7 @@ namespace UMP.Controller.WindowHelper
       ViewModel = (UserWindowViewModel)this.DataContext;
       this.Title = title;
       ViewModel.UserControl = userControl;
-
+      
       this.BorderBrush = new SolidColorBrush(ThemeHelper.PrimaryColor);
       ThemeHelper.ThemeChangedEvent += (e) => this.BorderBrush = new SolidColorBrush(e.PrimaryColor);
 
