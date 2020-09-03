@@ -28,10 +28,6 @@ namespace UMP
   {
     public MainWindow()
     {
-#if DEBUG
-      Log.LogViewerAppender.IsEnable = true;
-#endif
-
       WindowManager.CloseAll();
       GlobalProperty.Load();
 

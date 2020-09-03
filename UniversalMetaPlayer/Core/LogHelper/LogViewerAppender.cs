@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -13,7 +14,7 @@ using UMP.Controller.WindowHelper;
 
 namespace UMP.Core.LogHelper
 {
-  public class LogViewerAppender : IAppender
+  public class LogViewerAppender : IAppender, INotifyPropertyChanged
   {
     public LogViewerAppender(PatternLayout patternLayout, LogTextBox logTextBox)
     {
@@ -28,27 +29,27 @@ namespace UMP.Core.LogHelper
       get => _IsEnable;
       set
       {
-        _IsEnable = value;
-        if (_IsEnable)
+        if(_IsEnable != value)
         {
-          if (LogViewerWindow == null)
+          _IsEnable = value;
+          if (_IsEnable)
           {
-            LogViewerWindow = new UserWindow(LogTextBox, "UMP - Log");
-            LogViewerWindow.Closed += (_, e) =>
+            if (LogViewerWindow == null)
             {
-              _IsEnable = false;
-              LogViewerWindow = null;
-            };
+              LogViewerWindow = new UserWindow(LogTextBox, "UMP - Log");
+              LogViewerWindow.Closed += (_, e) => { IsEnable = false; };
+            }
+            LogViewerWindow.Show();
           }
-          LogViewerWindow.Show();
-        }
-        else
-        {
-          if(LogViewerWindow!= null)
+          else
           {
-            LogViewerWindow.Close();
-            LogViewerWindow = null;
+            if (LogViewerWindow != null)
+            {
+              LogViewerWindow.Close();
+              LogViewerWindow = null;
+            }
           }
+          PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsEnable"));
         }
       }
     }
@@ -67,6 +68,8 @@ namespace UMP.Core.LogHelper
     }
     private WeakReference _LogViewerWindow;
 
+    public event PropertyChangedEventHandler PropertyChanged;
+
     private PatternLayout Layout { get; }
 
     public void Close()
@@ -77,7 +80,6 @@ namespace UMP.Core.LogHelper
     {
       if (IsEnable)
       {
-        //Paragraph paragraph = LogTextBox.TextBox.Document.ContentEnd.Paragraph;
         Paragraph paragraph = new Paragraph();
 
         Brush foreground;
@@ -102,7 +104,7 @@ namespace UMP.Core.LogHelper
             background = Brushes.Transparent;
             break;
           case "DEBUG":
-            foreground = Brushes.Green;
+            foreground = Brushes.LightGreen;
             background = Brushes.Transparent;
             break;
           default:

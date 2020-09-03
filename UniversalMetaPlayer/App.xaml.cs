@@ -18,11 +18,16 @@ namespace UMP
     public static Log MainLog { get; } = new Log("System");
     public App()
     {
+#if DEBUG
+      Log.LogViewerAppender.IsEnable = true;
+#endif
+
       //#if DEBUG
       //      GlobalEventLogger.IsEnabled = true;
       //#else
       GlobalEventLogger.IsEnabled = false;
       //#endif
+
       MainLog.Info("############### Start application ###############\n" +
         $"Current Version : [{GlobalProperty.Predefine.FileVersion}]\nBit : [{GlobalProperty.Predefine.BitVersion}]",
         $"Start Path : [{AppDomain.CurrentDomain.BaseDirectory}]\nTask Path : [{Environment.CurrentDirectory}]");
