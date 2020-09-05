@@ -16,7 +16,7 @@ namespace UMP.Core.Player.Plugin.Effect
     private readonly float[] soundTouchReadBuffer;
     private bool repositionRequested;
 
-    public VarispeedChanger(ISampleProvider source, SoundTouchProfile soundTouchProfile,VarispeedChangerParameter parameter = null, int readDurationMilliseconds = 100)
+    public VarispeedChanger(ISampleProvider source, SoundTouchProfile soundTouchProfile, VarispeedChangerParameter parameter = new VarispeedChangerParameter(), int readDurationMilliseconds = 100)
     {
       soundTouch = new SoundTouch();
       // explore what the default values are before we change them:
@@ -33,12 +33,9 @@ namespace UMP.Core.Player.Plugin.Effect
       sourceReadBuffer = new float[WaveFormat.SampleRate * Source.WaveFormat.Channels * readDurationMilliseconds / 1000];
       soundTouchReadBuffer = new float[sourceReadBuffer.Length * 10]; // support down to 0.1 speed
 
-      if (parameter != null)
-      {
-        Tempo = parameter.Tempo;
-        Rate = parameter.Rate;
-        Pitch = parameter.Pitch;
-      }
+      Tempo = parameter.Tempo;
+      Rate = parameter.Rate;
+      Pitch = parameter.Pitch;
     }
 
     ~VarispeedChanger()
@@ -159,7 +156,7 @@ namespace UMP.Core.Player.Plugin.Effect
     }
   }
 
-  public class VarispeedChangerParameter
+  public struct VarispeedChangerParameter
   {
     public VarispeedChangerParameter(float tempo = 1.0f, float rate = 1.0f, float pitch = 1.0f)
     {

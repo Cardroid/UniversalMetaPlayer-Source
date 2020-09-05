@@ -16,7 +16,7 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
     {
       GlobalProperty.PropertyChanged += (_, e) =>
       {
-        if (e.PropertyName == "FadeEffect")
+        if (e.PropertyName == "IsUseFadeEffect")
           OnPropertyChanged("FadeEffectIsChecked");
       };
 

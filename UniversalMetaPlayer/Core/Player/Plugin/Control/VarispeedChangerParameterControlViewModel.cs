@@ -12,7 +12,7 @@ namespace UMP.Core.Player.Plugin.Control
   {
     public VarispeedChangerParameterControlViewModel()
     {
-      ApplyTimer = new Timer(1500) { AutoReset = true };
+      ApplyTimer = new Timer(500) { AutoReset = true };
       ApplyTimer.Elapsed += (_, e) => ViewDispatcher.Invoke(() => { ApplyTimer.Stop(); Apply(); });
       ResetCommand = new RelayCommand((o) => Reset());
     }
