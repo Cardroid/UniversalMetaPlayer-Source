@@ -32,14 +32,18 @@ namespace UMP.Core.Player
       // 미디어 재생시간 오류 처리
       TickEvent += (_, e) =>
       {
-        if (MediaLoadedCheck && MediaInformation.Duration < AudioFile.CurrentTime)
+        if (MediaLoadedCheck)
         {
-          WavePlayer.Stop();
-          Tick.Stop();
-          Log.Warn("미디어 재생시간 오류가 감지되어 자동으로 이벤트 처리됨", $"MediaLocation : [{MediaInformation.MediaLocation}]");
-          OnPropertyChanged("PlaybackStopped");
-          PlayStateChanged?.Invoke(PlaybackState);
+          if (MediaInformation.Duration <= AudioFile.CurrentTime + TimeSpan.FromMilliseconds(10))
+          {
+            WavePlayer?.Stop();
+            Tick.Stop();
+            OnPropertyChanged("PlaybackStopped");
+            PlayStateChanged?.Invoke(PlaybackState);
+          }
         }
+        else
+          Tick.Stop();
       };
 
       // 재생 종료후 이벤트
