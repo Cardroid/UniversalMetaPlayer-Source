@@ -6,10 +6,11 @@ using NAudio.Wave;
 
 using UMP.Core.Global;
 using UMP.Core.Model.Func;
+using UMP.Core.Player.Plugin.Effect;
 
-namespace UMP.Core.Player.Aggregator
+namespace UMP.Core.Player.Plugin
 {
-  public class SampleAnalysisAggregator : ISamplePlugin
+  public class SampleAnalyzer : ISamplePlugin
   {
     // volume
     public event EventHandler<MaxSampleEventArgs> MaximumCalculated;
@@ -27,35 +28,24 @@ namespace UMP.Core.Player.Aggregator
     private readonly int fftLength;
     private readonly int m;
 
-    private readonly ISampleProvider source;
+    private readonly ISampleProvider Source;
 
     public bool IsEnabled { get; set; } = true;
-    public bool IsActive { get; private set; } = true;
+    public bool IsActive => IsEnabled;
 
-    public SampleAnalysisAggregator(ISampleProvider source, int fftLength = 1024)
+    public SampleAnalyzer(ISampleProvider source, int fftLength = 1024)
     {
       if (!IsPowerOfTwo(fftLength))
         throw new ArgumentException("FFT 길이는 2의 거듭제곱이어야 합니다");
-
-      GlobalProperty.PropertyChanged += (_, e) =>
-      {
-        if (e.PropertyName == "IsFocusActive")
-        {
-          if (GlobalProperty.Options.Getter<bool>(Enums.ValueName.IsEnableSleepMode))
-            IsActive = GlobalProperty.State.IsFocusActive;
-          else
-            IsActive = true;
-        }
-      };
 
       m = (int)Math.Log(fftLength, 2.0);
       this.fftLength = fftLength;
       fftBuffer = new Complex[fftLength];
       fftArgs = new FftEventArgs(fftBuffer);
-      this.source = source;
+      this.Source = source;
     }
 
-    static bool IsPowerOfTwo(int x)
+    private static bool IsPowerOfTwo(int x)
     {
       return (x & (x - 1)) == 0;
     }
@@ -92,17 +82,21 @@ namespace UMP.Core.Player.Aggregator
       }
     }
 
-    public WaveFormat WaveFormat => source.WaveFormat;
+    public WaveFormat WaveFormat => Source.WaveFormat;
 
-    public int Read(int samplesRead, float[] buffer, int offset, int count)
+    public PluginName Name => PluginName.SampleAnalyzer;
+
+    public int Read(float[] buffer, int offset, int count)
     {
-      if (IsEnabled && IsActive)
+      int samplesRead = Source.Read(buffer, offset, count);
+
+      if (IsActive)
       {
         // n = 0 left
-        for (int n = 0; n < samplesRead; n += source.WaveFormat.Channels)
+        for (int n = 0; n < samplesRead; n += Source.WaveFormat.Channels)
           Add(buffer[n + offset]);
-        if (source.WaveFormat.Channels >= 2)
-          for (int n = 1; n < samplesRead; n += source.WaveFormat.Channels)
+        if (Source.WaveFormat.Channels >= 2)
+          for (int n = 1; n < samplesRead; n += Source.WaveFormat.Channels)
             Add(buffer[n + offset], 1);
       }
       return samplesRead;

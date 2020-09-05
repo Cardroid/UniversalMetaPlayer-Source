@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
 
+using UMP.Core;
 using UMP.Core.Global;
 using UMP.Core.Model.ViewModel;
 using UMP.Utility;
@@ -66,6 +67,12 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
       LyricsSettingsCommand = new RelayCommand((o) => LyricsSettingsChange(o.ToString()));
 
       SetDefaultCommand = new RelayCommand((o) => SetDefault_Click());
+
+      Log.LogViewerAppender.PropertyChanged += (_, e) =>
+      {
+        if (e.PropertyName == "IsEnable")
+          OnPropertyChanged("IsCheckedIsEnableLogViewer");
+      };
     }
 
     #region 저장 경로
@@ -91,22 +98,9 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
 
     public string PrivateLoggingToolTip =>
       $"기본값 : {GlobalProperty.DefaultValue.GetDefaultValue<bool>(Enums.ValueName.IsPrivateLogging)}\n\n" +
+
       "로그에 더 자세한 사항을 기록합니다.\n" +
-      "개인 정보가 포함 될 수 있으나, 모든 정보는 익명으로 저장됩니다.\n" +
-      "(로그정보로 사용자를 특정할 수 없음)";
-    #endregion
-
-    #region 리소스 절약 모드
-    public bool IsCheckedIsEnableSleepMode
-    {
-      get => GlobalProperty.Options.Getter<bool>(Enums.ValueName.IsEnableSleepMode);
-      set => GlobalProperty.Options.Setter(Enums.ValueName.IsEnableSleepMode, value.ToString());
-    }
-
-    public string IsEnableSleepModeToolTip =>
-      $"기본값 : {GlobalProperty.DefaultValue.GetDefaultValue<bool>(Enums.ValueName.IsEnableSleepMode)}\n\n" +
-
-      "사용 중이지 않은 기능들을 종료 및 대기 시킴으로써 리소스를 절약합니다.";
+      "프로그램 경로, 미디어 정보등이 기록됩니다.";
     #endregion
 
     #region 미디어 로드 엔진
@@ -123,7 +117,7 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
 
     public string MediaLoadEngineToolTip =>
       $"기본값 : {GlobalProperty.DefaultValue.GetDefaultValue<Enums.MediaLoadEngineType>(Enums.ValueName.MediaLoadEngine)}\n" +
-      $"클릭후 드래그로 선택해야 합니다\n\n" +
+      $"(클릭후 드래그로 선택해야 합니다)\n\n" +
 
       $"미디어를 불러올 때 사용하는 엔진입니다.";
     #endregion
@@ -142,8 +136,23 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
       $"가사를 볼 수 있는 창을 활성화 합니다.";
     #endregion
 
+    #region 로그 뷰어 활성화
+    public bool IsCheckedIsEnableLogViewer
+    {
+      get => Log.LogViewerAppender.IsEnable;
+      set => Log.LogViewerAppender.IsEnable = value;
+    }
+
+    public string IsEnableLogViewerToolTip =>
+      $"기본값 : {false}\n" +
+      "해당 옵션은 저장되지 않습니다.\n\n" +
+
+      "로그기록을 실시간으로 확인할 수 있는 창을 활성화합니다.";
+    #endregion
+
     #region 옵션 설정 값 초기화
-    public Dispatcher ViewDispatcher { get; set; }
+    public void SetDispatcher(Dispatcher dispatcher) => ViewDispatcher = dispatcher;
+    private Dispatcher ViewDispatcher { get; set; }
     public RelayCommand SetDefaultCommand { get; }
     public Brush SetDefaultButtenForeground { get; set; } = ThemeHelper.IsDarkMode ? Brushes.White : Brushes.Black;
 
@@ -170,9 +179,10 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
     {
       if (IsResetLockTimer == null)
       {
-        IsResetLockTimer = new Timer(3000);
+        IsResetLockTimer = new Timer(3000) { AutoReset = true };
         IsResetLockTimer.Elapsed += (_, e) =>
         {
+          IsResetLockTimer.Stop();
           ViewDispatcher.Invoke(() => { IsReset = false; });
         };
       }

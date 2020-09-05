@@ -1,7 +1,7 @@
 ﻿using System;
 
 using UMP.Controller.Function.AnalysisControl;
-using UMP.Controller.Function.AnalysisControl.AudioFileAnalysis;
+using UMP.Controller.Function.AnalysisControl.MediaFileAnalysis;
 using UMP.Controller.Function.Etc;
 using UMP.Controller.Function.OptionControl;
 
@@ -15,13 +15,13 @@ namespace UMP.Controller.Function
   {
     public FunctionControlViewModel()
     {
-      FunctionPanel = new BasicOption();
-
       GlobalProperty.PropertyChanged += (_, e) =>
       {
         if (e.PropertyName == "SetDefault")
           FunctionControlRefresh();
       };
+
+      FunctionPanel = new BasicOption();
     }
 
     public string Header => FunctionPanel != null ? FunctionPanel.FunctionName : "기능 패널";
@@ -50,7 +50,7 @@ namespace UMP.Controller.Function
 
         // 분석
         "Graph" => new WaveAnalysisControl(),
-        "AudioProperty" => new AudioWaveFormatAnalysisControl(),
+        "AudioProperty" => new MediaAnalysisControl(),
 
         // 정보
         "Information" => new InformationOption(),
@@ -74,6 +74,6 @@ namespace UMP.Controller.Function
         OnPropertyChanged("Header");
       }
     }
-    private WeakReference _FunctionPanel = new WeakReference(new BasicOption());
+    private WeakReference _FunctionPanel;
   }
 }

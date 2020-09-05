@@ -4,8 +4,9 @@ using System.Text;
 
 namespace UMP.Core.Player.Plugin.Effect
 {
-  public enum EffectPluginName
+  public enum PluginName
   {
-    Fade
+    SampleAnalyzer,
+    FadeOutEffect, VarispeedChanger
   }
 }

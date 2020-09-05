@@ -23,7 +23,7 @@ namespace UMP.Controller.Function.OptionControl
     public BasicOption() : base("옵션 - 일반")
     {
       InitializeComponent();
-      ((BasicOptionViewModel)this.DataContext).ViewDispatcher = this.Dispatcher;
+      ((BasicOptionViewModel)this.DataContext).SetDispatcher(this.Dispatcher);
     }
   }
 }

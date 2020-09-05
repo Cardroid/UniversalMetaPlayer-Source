@@ -24,7 +24,8 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
     }
 
     #region 플레이어 설정 값 초기화
-    public Dispatcher ViewDispatcher { get; set; }
+    public void SetDispatcher(Dispatcher dispatcher) => ViewDispatcher = dispatcher;
+    private Dispatcher ViewDispatcher { get; set; }
     public RelayCommand SetDefaultMediaPlayerCommand { get; }
     public Brush SetDefaultMediaPlayerButtenForeground { get; set; } = ThemeHelper.IsDarkMode ? Brushes.White : Brushes.Black;
 
@@ -51,9 +52,10 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
     {
       if (IsResetLockTimer == null)
       {
-        IsResetLockTimer = new Timer(3000);
+        IsResetLockTimer = new Timer(3000) { AutoReset = true };
         IsResetLockTimer.Elapsed += (_, e) =>
         {
+          IsResetLockTimer.Stop();
           ViewDispatcher.Invoke(() => { IsReset = false; });
         };
       }

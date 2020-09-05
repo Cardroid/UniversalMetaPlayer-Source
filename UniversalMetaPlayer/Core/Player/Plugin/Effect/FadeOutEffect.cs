@@ -5,12 +5,20 @@ using UMP.Core.Model.Func;
 
 namespace UMP.Core.Player.Plugin.Effect
 {
-  public class FadeEffect : IEffectPlugin
+  public class FadeOutEffect : ISamplePlugin
   {
-    public EffectPluginName Name { get; } = EffectPluginName.Fade;
-    public FadeEffect(ISampleProvider source, bool initiallySilent = false)
+    public PluginName Name { get; } = PluginName.FadeOutEffect;
+    public FadeOutEffect(ISampleProvider source, bool initiallySilent = false)
     {
-      this.source = source;
+      this.Source = source;
+
+      IsEnabled = GlobalProperty.Options.Getter<bool>(Enums.ValueName.IsUseFadeEffect);
+      GlobalProperty.PropertyChanged += (_, e) =>
+      {
+        if (e.PropertyName == "IsUseFadeEffect")
+          IsEnabled = GlobalProperty.Options.Getter<bool>(Enums.ValueName.IsUseFadeEffect);
+      };
+
       fadeState = initiallySilent ? FadeState.Silence : FadeState.FullVolume;
     }
 
@@ -22,33 +30,22 @@ namespace UMP.Core.Player.Plugin.Effect
       FadingOut,
     }
 
-    private ISampleProvider source { get; }
+    private ISampleProvider Source { get; }
     private readonly object lockObject = new object();
     private int fadeSamplePosition;
     private int fadeSampleCount;
     private FadeState fadeState;
 
-    public bool IsEnabled
-    {
-      get => _IsEnabled;
-      set
-      {
-        _IsEnabled = value;
-        if(!_IsEnabled)
-          IsActive = false;
-      }
-    }
-    public bool _IsEnabled = false;
+    public bool IsEnabled { get; set; }
 
     public bool IsActive
     {
-      get => _IsActive;
+      get => IsEnabled && _IsActive;
       private set
       {
-        if (IsEnabled)
-          _IsActive = value;
+        _IsActive = value;
 
-        if (_IsActive)
+        if (IsActive)
           BeginFadeOut(GlobalProperty.Options.Getter<int>(Enums.ValueName.FadeEffectDelay));
         else
           BeginFadeIn(GlobalProperty.Options.Getter<int>(Enums.ValueName.FadeEffectDelay));
@@ -56,11 +53,13 @@ namespace UMP.Core.Player.Plugin.Effect
     }
     private bool _IsActive = false;
 
-    public WaveFormat WaveFormat => source.WaveFormat;
+    public WaveFormat WaveFormat => Source.WaveFormat;
 
-    public int Read(int samplesRead, float[] buffer, int offset, int count)
+    public int Read(float[] buffer, int offset, int count)
     {
-      if (IsEnabled)
+      int samplesRead = Source.Read(buffer, offset, count);
+
+      if (IsActive)
       {
         lock (lockObject)
         {
@@ -78,7 +77,6 @@ namespace UMP.Core.Player.Plugin.Effect
           }
         }
       }
-
       return samplesRead;
     }
 
@@ -91,7 +89,7 @@ namespace UMP.Core.Player.Plugin.Effect
       lock (lockObject)
       {
         fadeSamplePosition = 0;
-        fadeSampleCount = fadeDurationInMilliseconds * source.WaveFormat.SampleRate / 1000;
+        fadeSampleCount = fadeDurationInMilliseconds * Source.WaveFormat.SampleRate / 1000;
         fadeState = FadeState.FadingIn;
       }
     }
@@ -105,7 +103,7 @@ namespace UMP.Core.Player.Plugin.Effect
       lock (lockObject)
       {
         fadeSamplePosition = 0;
-        fadeSampleCount = fadeDurationInMilliseconds * source.WaveFormat.SampleRate / 1000;
+        fadeSampleCount = fadeDurationInMilliseconds * Source.WaveFormat.SampleRate / 1000;
         fadeState = FadeState.FadingOut;
       }
     }
@@ -122,10 +120,9 @@ namespace UMP.Core.Player.Plugin.Effect
       while (sample < sourceSamplesRead)
       {
         float multiplier = 1.0f - (fadeSamplePosition / (float)fadeSampleCount);
-        for (int ch = 0; ch < source.WaveFormat.Channels; ch++)
-        {
+        for (int ch = 0; ch < Source.WaveFormat.Channels; ch++)
           buffer[offset + sample++] *= multiplier;
-        }
+
         fadeSamplePosition++;
         if (fadeSamplePosition > fadeSampleCount)
         {
@@ -143,10 +140,9 @@ namespace UMP.Core.Player.Plugin.Effect
       while (sample < sourceSamplesRead)
       {
         float multiplier = (fadeSamplePosition / (float)fadeSampleCount);
-        for (int ch = 0; ch < source.WaveFormat.Channels; ch++)
-        {
+        for (int ch = 0; ch < Source.WaveFormat.Channels; ch++)
           buffer[offset + sample++] *= multiplier;
-        }
+
         fadeSamplePosition++;
         if (fadeSamplePosition > fadeSampleCount)
         {
@@ -157,9 +153,6 @@ namespace UMP.Core.Player.Plugin.Effect
       }
     }
 
-    public void Call(bool isActive)
-    {
-      IsActive = isActive;
-    }
+    public void Use(bool isActive) => IsActive = isActive;
   }
 }

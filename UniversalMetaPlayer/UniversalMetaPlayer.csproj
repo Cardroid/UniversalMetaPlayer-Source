@@ -17,7 +17,7 @@
     <PackageId>Universal Meta Player</PackageId>
     <Product>Universal Meta Player</Product>
     <RepositoryUrl>https://github.com/Cardroid/UniversalMetaPlayer</RepositoryUrl>
-    <Platforms>x64;x86;AnyCPU</Platforms>
+    <Platforms>x64;x86</Platforms>
     <AssemblyVersion>2.5.2.0</AssemblyVersion>
     <FileVersion>2.5.5.25</FileVersion>
     <PackageProjectUrl>https://github.com/Cardroid/UniversalMetaPlayer</PackageProjectUrl>
@@ -33,11 +33,6 @@
     <DefineConstants>TRACE;BIT32</DefineConstants>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile />
-    <DefineConstants>TRACE;BITANY</DefineConstants>
-  </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
@@ -48,12 +43,6 @@
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
     <DefineConstants>TRACE;BIT32</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DebugType>none</DebugType>
-    <DebugSymbols>false</DebugSymbols>
-    <DefineConstants>TRACE;BITANY</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -128,12 +117,12 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(Platform)' == 'x64'">
+    <None Include="Resources\Lib\x64\**" Link="\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
   <ItemGroup Condition="'$(Platform)' == 'x86'">
     <None Include="Resources\Lib\x86\**" Link="\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(Platform)' == 'x64'">
-    <None Include="Resources\Lib\x64\**" Link="\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-  
 </Project>

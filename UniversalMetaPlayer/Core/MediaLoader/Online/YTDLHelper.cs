@@ -16,7 +16,7 @@ using UMP.Core.Global;
 using UMP.Core.Model;
 using UMP.Utility;
 
-namespace UMP.Core.Function.Online
+namespace UMP.Core.MediaLoader.Online
 {
   public class YTDLHelper
   {

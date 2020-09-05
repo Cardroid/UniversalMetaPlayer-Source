@@ -10,7 +10,7 @@ using UMP.Core.Model;
 using UMP.Core.Model.Media;
 using UMP.Utility;
 
-namespace UMP.Core.Function
+namespace UMP.Core.MediaLoader
 {
   public class LocalMediaLoader
   {

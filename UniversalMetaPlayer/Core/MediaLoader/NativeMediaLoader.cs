@@ -14,7 +14,7 @@ using YoutubeExplode;
 using YoutubeExplode.Videos;
 using YoutubeExplode.Videos.Streams;
 
-namespace UMP.Core.Function
+namespace UMP.Core.MediaLoader
 {
   public class NativeMediaLoader : IMediaLoader
   {
@@ -155,7 +155,7 @@ namespace UMP.Core.Function
         var streamCachePathResult = LocalMediaLoader.TryGetOnlineMediaCacheAsync((await GetID()).Result, CachePath);
         if (streamCachePathResult)
         {
-          Log.Debug("캐시된 미디어가 확인됨");
+          Log.Debug("미디어 캐시가 확인됨");
           OnProgressChanged(ProgressKind.StreamLoad, 100, "캐시 로드 완료");
           return new GenericResult<string>(true, streamCachePathResult.Result);
         }

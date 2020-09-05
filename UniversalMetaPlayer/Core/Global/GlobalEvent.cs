@@ -14,8 +14,8 @@ namespace UMP.Core.Global
   {
     static GlobalMessageEvent()
     {
-      MessageCloseTimer = new System.Timers.Timer(3000);
-      MessageCloseTimer.Elapsed += (_, e) => { MessageCloseEvent?.Invoke(); };
+      MessageCloseTimer = new System.Timers.Timer(3000) { AutoReset = true };
+      MessageCloseTimer.Elapsed += (_, e) => { MessageCloseTimer.Stop(); MessageCloseEvent?.Invoke(); };
     }
 
     public delegate void UMP_GlobalMessageEventHandler(string message);

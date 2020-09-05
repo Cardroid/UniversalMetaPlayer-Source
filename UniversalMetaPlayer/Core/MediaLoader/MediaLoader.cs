@@ -4,7 +4,7 @@ using UMP.Core.Global;
 using UMP.Core.Model;
 using UMP.Core.Model.Media;
 
-namespace UMP.Core.Function
+namespace UMP.Core.MediaLoader
 {
   public class MediaLoader : IMediaLoader
   {

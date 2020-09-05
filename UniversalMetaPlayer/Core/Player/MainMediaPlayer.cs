@@ -8,13 +8,12 @@ using System.IO;
 
 using NAudio.Wave;
 
-using UMP.Core.Function;
 using UMP.Core.Model;
 using UMP.Utility;
 using UMP.Core.Model.Media;
 using UMP.Core.Global;
-using UMP.Core.Player.Aggregator;
 using UMP.Core.Player.Plugin.Effect;
+using UMP.Core.Player.Plugin;
 
 namespace UMP.Core.Player
 {
@@ -72,32 +71,15 @@ namespace UMP.Core.Player
     /// </summary>
     private static IWavePlayer WavePlayer { get; set; }
 
-    private static IPluginSampleProvider Aggregator { get; set; }
+    private static SampleAggregatorChain Aggregator { get; set; }
 
     /// <summary>
-    /// 효과사용 여부
+    /// 플러그인 조절
     /// </summary>
-    public static bool IsEffectEnabled
-    {
-      get => Aggregator != null && Aggregator.EffectAggregator.IsEnabled;
-      set
-      {
-        if (Aggregator != null)
-          Aggregator.EffectAggregator.IsEnabled = value;
-      }
-    }
-    /// <summary>
-    /// 분석사용 여부
-    /// </summary>
-    public static bool IsAnalyzerEnabled
-    {
-      get => Aggregator != null && Aggregator.AnalysisAggregator.IsEnabled;
-      set
-      {
-        if (Aggregator != null)
-          Aggregator.AnalysisAggregator.IsEnabled = value;
-      }
-    }
+    /// <param name="name">플러그인 구별용 이름</param>
+    /// <param name="isEnabled">플러그인 사용 여부</param>
+    /// <param name="param">파라미터</param>
+    public static T Call<T>(PluginName name) where T : class => Aggregator?.Call<T>(name);
 
     /// <summary>
     /// 플레이어 옵션
@@ -191,6 +173,7 @@ namespace UMP.Core.Player
       set
       {
         AudioFile.CurrentTime = value;
+        Call<VarispeedChanger>(PluginName.VarispeedChanger)?.Reposition();
         PlayStateChanged?.Invoke(PlaybackState);
       }
     }
@@ -247,7 +230,7 @@ namespace UMP.Core.Player
     /// <param name="media">재생할 미디어</param>
     public static async Task<bool> Init(MediaInformation mediainfo)
     {
-      MediaLoader mediaLoader = new MediaLoader(mediainfo);
+      MediaLoader.MediaLoader mediaLoader = new MediaLoader.MediaLoader(mediainfo);
 #if DEBUG
       Debug.WriteLine($"\n\n{mediainfo.Title}   {mediainfo.MediaLocation}");
       mediaLoader.ProgressChanged += (_, e) => { Debug.WriteLine($"{e.ProgressKind}".PadRight(15) + $"{e.Percentage}%".PadLeft(4) + $"   {e.UserMessage}"); };
@@ -315,12 +298,16 @@ namespace UMP.Core.Player
 
 
       // 오디오 분석 및 효과 적용 코드
-      Aggregator = new SampleAggregator(audioFile);
-      Aggregator.AddPlugin(new FadeEffect(Aggregator));
-      Aggregator.NotificationCount = AudioFile.WaveFormat.SampleRate / 100;
-      Aggregator.PerformFFT = true;
-      Aggregator.FftCalculated += (s, a) => FftCalculated?.Invoke(s, a);
-      Aggregator.MaximumCalculated += (s, a) => MaximumCalculated?.Invoke(s, a);
+      Aggregator = new SampleAggregatorChain(audioFile);
+      Aggregator.AddPlugin(new VarispeedChanger(Aggregator.Head, new Utility.SoundTouch.SoundTouchProfile(false, false), TempProperty.VarispeedChangerParameter));
+      Aggregator.AddPlugin(new FadeOutEffect(Aggregator.Head));
+
+      SampleAnalyzer Analyzer = new SampleAnalyzer(Aggregator.Head);
+      Analyzer.NotificationCount = audioFile.WaveFormat.SampleRate / 100;
+      Analyzer.PerformFFT = true;
+      Analyzer.FftCalculated += (s, a) => FftCalculated?.Invoke(s, a);
+      Analyzer.MaximumCalculated += (s, a) => MaximumCalculated?.Invoke(s, a);
+      Aggregator.AddPlugin(Analyzer);
 
 
       // 플래이어 초기화
@@ -393,8 +380,7 @@ namespace UMP.Core.Player
         Tick.Start();
         WavePlayer.Play();
 
-        if (GlobalProperty.Options.Getter<bool>(Enums.ValueName.IsUseFadeEffect))
-          Aggregator.Call(EffectPluginName.Fade, false);
+        Call<FadeOutEffect>(PluginName.FadeOutEffect)?.Use(false);
 
         PlayStateChanged?.Invoke(PlaybackState);
         IsPlayStateChangeWork = false;
@@ -416,7 +402,7 @@ namespace UMP.Core.Player
 
         if (GlobalProperty.Options.Getter<bool>(Enums.ValueName.IsUseFadeEffect))
         {
-          Aggregator.Call(EffectPluginName.Fade, true);
+          Call<FadeOutEffect>(PluginName.FadeOutEffect)?.Use(true);
           await Task.Delay(GlobalProperty.Options.Getter<int>(Enums.ValueName.FadeEffectDelay) + 200);
         }
 
@@ -441,7 +427,7 @@ namespace UMP.Core.Player
 
         if (GlobalProperty.Options.Getter<bool>(Enums.ValueName.IsUseFadeEffect))
         {
-          Aggregator.Call(EffectPluginName.Fade, true);
+          Call<FadeOutEffect>(PluginName.FadeOutEffect)?.Use(true);
           await Task.Delay(GlobalProperty.Options.Getter<int>(Enums.ValueName.FadeEffectDelay) + 200);
         }
 

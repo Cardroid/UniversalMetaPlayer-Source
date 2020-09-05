@@ -6,6 +6,8 @@ using System.Windows.Controls;
 using UMP.Core.Global;
 using UMP.Core.Model.Func;
 using UMP.Core.Player;
+using UMP.Core.Player.Plugin;
+using UMP.Core.Player.Plugin.Effect;
 
 namespace UMP.Controller.Function.AnalysisControl
 {
@@ -15,9 +17,25 @@ namespace UMP.Controller.Function.AnalysisControl
     {
       InitializeComponent();
 
-      this.Loaded += (_, e) => MainMediaPlayer.IsAnalyzerEnabled = true;
-      if (GlobalProperty.Options.Getter<bool>(Enums.ValueName.IsEnableSleepMode))
-        this.Unloaded += (_, e) => MainMediaPlayer.IsAnalyzerEnabled = false;
+      ChangeAnalyserActivation();
+      MainMediaPlayer.PropertyChanged += (_, e) => 
+      {
+        if (e.PropertyName == "MainPlayerInitialized")
+          ChangeAnalyserActivation();
+      };
+    }
+
+    public void ChangeAnalyserActivation()
+    {
+      if (MainMediaPlayer.MediaLoadedCheck)
+      {
+        var sampleAnalyzer = MainMediaPlayer.Call<SampleAnalyzer>(PluginName.SampleAnalyzer);
+        if (sampleAnalyzer != null)
+        {
+          this.Loaded += (_, e) => sampleAnalyzer.IsEnabled = true;
+          this.Unloaded += (_, e) => sampleAnalyzer.IsEnabled = false;
+        }
+      }
     }
   }
 }

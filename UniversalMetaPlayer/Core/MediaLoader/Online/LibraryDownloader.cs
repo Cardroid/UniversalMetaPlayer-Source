@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using UMP.Core.Global;
 using UMP.Utility;
 
-namespace UMP.Core.Function.Online
+namespace UMP.Core.MediaLoader.Online
 {
   public class LibraryDownloader
   {

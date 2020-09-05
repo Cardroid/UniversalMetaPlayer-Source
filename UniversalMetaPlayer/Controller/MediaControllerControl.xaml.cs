@@ -126,10 +126,8 @@ namespace UMP.Controller
       if (MainMediaPlayer.MediaLoadedCheck && GlobalProperty.State.IsControllable)
       {
         if (this.ProgressSlider.IsMouseOver && Mouse.LeftButton == MouseButtonState.Pressed)
-        {
           // 진행 슬라이더를 클릭 또는 드래그 하여 미디어 재생 위치 변경
           MainMediaPlayer.AudioCurrentTime = TimeSpan.FromMilliseconds(e.NewValue);
-        }
       }
     }
   }

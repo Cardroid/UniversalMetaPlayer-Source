@@ -166,29 +166,27 @@ namespace UMP.Controller.ViewModel
 
     private void FunctionWindowOpen()
     {
-      FunctionWindow = new UserWindow(new FunctionControl(), "UMP - Function") { WindowStartupLocation = WindowStartupLocation.CenterOwner };
-      FunctionWindow.Show();
-      FunctionWindow.Closed += (_, e) =>
+      if (FunctionWindow == null)
       {
-        FunctionWindowClose();
-        _IsCheckedFunctionToggleButton = false;
-        OnPropertyChanged("IsCheckedFunctionToggleButton");
-      };
+        FunctionWindow = new UserWindow(new FunctionControl(), "UMP - Function") { WindowStartupLocation = WindowStartupLocation.CenterOwner };
+        FunctionWindow.Closing += (_, e) =>
+        {
+          FunctionWindowClose();
+          _IsCheckedFunctionToggleButton = false;
+          OnPropertyChanged("IsCheckedFunctionToggleButton");
+          e.Cancel = true;
+        };
+      }
+      FunctionWindow.Show();
     }
 
     private void FunctionWindowClose()
     {
       if (FunctionWindow != null)
-        FunctionWindow.Close();
-      FunctionWindow = null;
+        FunctionWindow.Visibility = Visibility.Collapsed;
     }
 
-    private UserWindow FunctionWindow
-    {
-      get => _FunctionWindow.IsAlive ? (UserWindow)_FunctionWindow.Target : null;
-      set => _FunctionWindow = new WeakReference(value);
-    }
-    private WeakReference _FunctionWindow = new WeakReference(null);
+    private UserWindow FunctionWindow { get; set; }
     #endregion
 
     #region PlayListControl
@@ -208,28 +206,26 @@ namespace UMP.Controller.ViewModel
 
     private void PlayListWindowOpen()
     {
-      PlayListWindow = new UserWindow(new PlayListControl(), "UMP - PlayList") { WindowStartupLocation = WindowStartupLocation.CenterOwner };
-      PlayListWindow.Show();
-      PlayListWindow.Closed += (_, e) =>
+      if (PlayListWindow == null)
       {
-        PlayListWindowClose();
-        _IsCheckedPlayListToggleButton = false;
-        OnPropertyChanged("IsCheckedPlayListToggleButton");
-      };
+        PlayListWindow = new UserWindow(new PlayListControl(), "UMP - PlayList") { WindowStartupLocation = WindowStartupLocation.CenterOwner };
+        PlayListWindow.Closing += (_, e) =>
+        {
+          PlayListWindowClose();
+          _IsCheckedPlayListToggleButton = false;
+          OnPropertyChanged("IsCheckedPlayListToggleButton");
+          e.Cancel = true;
+        };
+      }
+      PlayListWindow.Show();
     }
     private void PlayListWindowClose()
     {
       if (PlayListWindow != null)
-        PlayListWindow.Close();
-      PlayListWindow = null;
+        PlayListWindow.Visibility = Visibility.Collapsed;
     }
 
-    private UserWindow PlayListWindow
-    {
-      get => _PlayListWindow.IsAlive ? (UserWindow)_PlayListWindow.Target : null;
-      set => _PlayListWindow = new WeakReference(value);
-    }
-    private WeakReference _PlayListWindow = new WeakReference(null);
+    private UserWindow PlayListWindow { get; set; }
     #endregion
 
     #region 플레이 시간 UI

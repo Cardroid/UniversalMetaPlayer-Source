@@ -31,11 +31,23 @@
                 IsReadOnlyCaretVisible="False"
                 Margin="8" />
         </ScrollViewer>
-        <ToggleButton
-            Content="외부 라이브러리 사용"
-            IsChecked="{Binding IsUseMediaInfoLibrary}"
-            ToolTip="외부 라이브러리(MediaInfo)를 사용하여 미디어 파일을 분석합니다"
-            Margin="5"
-            Grid.Row="1"/>
+
+        <Border
+            BorderThickness="0,2,0,0"
+            BorderBrush="{Binding ControlBorderBrush}"
+            Grid.Row="1">
+            <StackPanel
+                HorizontalAlignment="Left"
+                VerticalAlignment="Bottom"
+                Orientation="Horizontal"
+                ToolTip="외부 라이브러리(MediaInfo)를 사용하여 미디어 파일을 분석합니다"
+                Margin="5">
+                <Label
+                    Content="외부 라이브러리 사용" />
+                <ToggleButton
+                    IsChecked="{Binding IsUseMediaInfoLibrary}"
+                    Margin="5,0,0,0"/>
+            </StackPanel>
+        </Border>
     </Grid>
 </funcmodel:FunctionControlForm>

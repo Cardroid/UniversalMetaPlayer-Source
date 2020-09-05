@@ -15,6 +15,7 @@ using UMP.Utility;
 using UMP.Core.Player;
 using MaterialDesignColors.ColorManipulation;
 using System.Windows.Input;
+using UMP.Core.Player.Plugin.Effect;
 
 namespace UMP.Core.Global
 {
@@ -334,30 +335,28 @@ namespace UMP.Core.Global
     /// </summary>
     public static class DefaultValue
     {
-      public static T GetDefaultValue<T>(Enums.ValueName valueName) =>
-        valueName switch
-        {
-          // 일반
-          Enums.ValueName.FileSavePath => Parser.ChangeType<T, string>("Save"),
-          Enums.ValueName.IsPrivateLogging => Parser.ChangeType<T, bool>(true),
-          Enums.ValueName.MediaLoadEngine => Parser.ChangeType<T, Enums.MediaLoadEngineType>(Enums.MediaLoadEngineType.Native),
-          Enums.ValueName.LyricsSettings => Parser.ChangeType<T, Enums.LyricsSettingsType>(Enums.LyricsSettingsType.Auto),
-          Enums.ValueName.IsEnableSleepMode => Parser.ChangeType<T, bool>(true),
-          // 테마
-          Enums.ValueName.IsDarkMode => Parser.ChangeType<T, bool>(true),
-          Enums.ValueName.PrimaryColor => Parser.ChangeType<T, Color>(Colors.Green.Lighten(3)),
-          Enums.ValueName.SecondaryColor => Parser.ChangeType<T, Color>(Colors.Green.Darken(3)),
-          Enums.ValueName.IsAverageColorTheme => Parser.ChangeType<T, bool>(true),
-          Enums.ValueName.AverageColorProcessingOffset => Parser.ChangeType<T, int>(30),
-          // 키보드
-          Enums.ValueName.HotKey => Parser.ChangeType<T, bool>(true),
-          Enums.ValueName.GlobalKeyboardHook => Parser.ChangeType<T, bool>(true),
-          // 효과
-          Enums.ValueName.IsUseFadeEffect => Parser.ChangeType<T, bool>(true),
-          Enums.ValueName.FadeEffectDelay => Parser.ChangeType<T, int>(200),
+      public static T GetDefaultValue<T>(Enums.ValueName valueName) => valueName switch
+      {
+        // 일반
+        Enums.ValueName.FileSavePath => Parser.ChangeType<T, string>("Save"),
+        Enums.ValueName.IsPrivateLogging => Parser.ChangeType<T, bool>(true),
+        Enums.ValueName.MediaLoadEngine => Parser.ChangeType<T, Enums.MediaLoadEngineType>(Enums.MediaLoadEngineType.Native),
+        Enums.ValueName.LyricsSettings => Parser.ChangeType<T, Enums.LyricsSettingsType>(Enums.LyricsSettingsType.Auto),
+        // 테마
+        Enums.ValueName.IsDarkMode => Parser.ChangeType<T, bool>(true),
+        Enums.ValueName.PrimaryColor => Parser.ChangeType<T, Color>(Colors.Green.Lighten(3)),
+        Enums.ValueName.SecondaryColor => Parser.ChangeType<T, Color>(Colors.Green.Darken(3)),
+        Enums.ValueName.IsAverageColorTheme => Parser.ChangeType<T, bool>(true),
+        Enums.ValueName.AverageColorProcessingOffset => Parser.ChangeType<T, int>(30),
+        // 키보드
+        Enums.ValueName.HotKey => Parser.ChangeType<T, bool>(true),
+        Enums.ValueName.GlobalKeyboardHook => Parser.ChangeType<T, bool>(true),
+        // 효과
+        Enums.ValueName.IsUseFadeEffect => Parser.ChangeType<T, bool>(true),
+        Enums.ValueName.FadeEffectDelay => Parser.ChangeType<T, int>(200),
 
-          _ => default,
-        };
+        _ => default,
+      };
     }
 
     public static class Predefine
@@ -429,14 +428,14 @@ namespace UMP.Core.Global
     public enum ValueName
     {
       // 일반
-      FileSavePath, IsPrivateLogging, MediaLoadEngine, LyricsSettings, IsEnableSleepMode,
+      FileSavePath, IsPrivateLogging, MediaLoadEngine, LyricsSettings,
       // 테마
       IsDarkMode, PrimaryColor, SecondaryColor,
       IsAverageColorTheme, AverageColorProcessingOffset,
       // 키보드
       HotKey, GlobalKeyboardHook,
       // 효과
-      IsUseFadeEffect, FadeEffectDelay
+      IsUseFadeEffect, FadeEffectDelay,
     }
 
     /// <summary>

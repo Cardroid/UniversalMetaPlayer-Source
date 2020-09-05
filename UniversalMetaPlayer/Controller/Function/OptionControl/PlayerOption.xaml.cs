@@ -23,7 +23,7 @@ namespace UMP.Controller.Function.OptionControl
     public PlayerOption() : base("옵션 - 플래이어")
     {
       InitializeComponent();
-      ((PlayerOptionViewModel)this.DataContext).ViewDispatcher = this.Dispatcher;
+      ((PlayerOptionViewModel)this.DataContext).SetDispatcher(this.Dispatcher);
     }
   }
 }

@@ -7,13 +7,13 @@ using System.Windows.Media.Imaging;
 
 using Newtonsoft.Json.Linq;
 
-using UMP.Core.Function.Online;
+using UMP.Core.MediaLoader.Online;
 using UMP.Core.Global;
 using UMP.Core.Model;
 using UMP.Core.Model.Media;
 using UMP.Utility;
 
-namespace UMP.Core.Function
+namespace UMP.Core.MediaLoader
 {
   public class YTDLMediaLoader : IMediaLoader
   {

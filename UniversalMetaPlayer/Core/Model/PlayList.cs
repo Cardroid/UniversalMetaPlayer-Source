@@ -11,7 +11,7 @@ using UMP.Utility;
 
 using PlaylistsNET.Content;
 using PlaylistsNET.Models;
-using UMP.Core.Function;
+using UMP.Core.MediaLoader;
 using UMP.Core.Player;
 using UMP.Core.Model.Media;
 using UMP.Core.Global;
@@ -184,7 +184,7 @@ namespace UMP.Core.Model
         bool loadErrorItemExists = false;
         for (int i = 0; i < paths.Count; i++)
         {
-          var media = new MediaLoader(paths[i]);
+          var media = new MediaLoader.MediaLoader(paths[i]);
           var infoResult = await media.GetInformationAsync(false);
           var info = infoResult.Result;
           base.Add(info);
@@ -220,7 +220,7 @@ namespace UMP.Core.Model
     {
       if (!information.LoadState)
       {
-        var loadResult = await new MediaLoader(information.MediaLocation).GetInformationAsync(false);
+        var loadResult = await new MediaLoader.MediaLoader(information.MediaLocation).GetInformationAsync(false);
         information = loadResult.Result;
 
         if (!loadResult)
@@ -241,7 +241,7 @@ namespace UMP.Core.Model
     /// <param name="mediaLocation">추가할 미디어의 위치</param>
     public async Task Add(string mediaLocation)
     {
-      var loader = new MediaLoader(mediaLocation);
+      var loader = new MediaLoader.MediaLoader(mediaLocation);
 #if DEBUG
       Log.Debug("플레이리스트 항목 추가 시도", $"Path : [{mediaLocation}]");
       Debug.WriteLine($"\n\n{mediaLocation}");
@@ -323,7 +323,7 @@ namespace UMP.Core.Model
           return;
         }
         TotalDuration -= item.Duration;
-        var loader = new MediaLoader(item.MediaLocation);
+        var loader = new MediaLoader.MediaLoader(item.MediaLocation);
 #if DEBUG
         Debug.WriteLine($"\n\n{item.Title}   {item.MediaLocation}");
         loader.ProgressChanged += (_, e) => { Debug.WriteLine($"{e.ProgressKind}".PadRight(15) + $"{e.Percentage}%".PadLeft(4) + $"   {e.UserMessage}"); };
