@@ -10,6 +10,7 @@ using UMP.Controller.WindowHelper;
 using UMP.Core.Global;
 using UMP.Core.Model.Media;
 using UMP.Core.Player;
+using UMP.Core.Player.Plugin.Control;
 
 namespace UMP.Core
 {
@@ -32,7 +33,7 @@ namespace UMP.Core
       LyricsWindowClose();
     }
 
-    #region 가사설정
+    #region 가사 창 설정
     public static bool IsActiveLyricsWindow { get; private set; } = false;
 
     private static void GlobalProperty_PropertyChanged_LyricsWindow(object sender, PropertyChangedEventArgs e)
@@ -107,6 +108,41 @@ namespace UMP.Core
       set => _LyricsWindow = new WeakReference(value);
     }
     private static WeakReference _LyricsWindow = new WeakReference(null);
+    #endregion
+
+    #region 음향 효과 설정 창
+    public static void VarispeedChangerParameterControlWindowOpen()
+    {
+      if (VarispeedChangerParameterControlWindow != null)
+      {
+        VarispeedChangerParameterControlWindow.Visibility = Visibility.Visible;
+        VarispeedChangerParameterControlWindow.Activate();
+      }
+      else
+      {
+        VarispeedChangerParameterControlWindow = VarispeedChangerParameterControlWindow = new UserWindow(new VarispeedChangerParameterControl(), "UMP - AudioEffect")
+        {
+          SizeToContent = SizeToContent.WidthAndHeight,
+          WindowStartupLocation = WindowStartupLocation.CenterOwner
+        }; 
+        VarispeedChangerParameterControlWindow.Show();
+        VarispeedChangerParameterControlWindow.Closed += (_, e) => { VarispeedChangerParameterControlWindow = null; };
+      }
+    }
+
+    public static void VarispeedChangerParameterControlWindowClose()
+    {
+      if (VarispeedChangerParameterControlWindow != null)
+        VarispeedChangerParameterControlWindow.Close();
+      VarispeedChangerParameterControlWindow = null;
+    }
+
+    private static UserWindow VarispeedChangerParameterControlWindow
+    {
+      get => _VarispeedChangerParameterControlWindow.IsAlive ? (UserWindow)_VarispeedChangerParameterControlWindow.Target : null;
+      set => _VarispeedChangerParameterControlWindow = new WeakReference(value);
+    }
+    private static WeakReference _VarispeedChangerParameterControlWindow = new WeakReference(null);
     #endregion
   }
 }

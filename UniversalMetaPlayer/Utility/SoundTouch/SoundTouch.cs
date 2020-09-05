@@ -34,7 +34,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace soundtouch
+namespace UMP.Utility.SoundTouch
 {
   public sealed class SoundTouch : IDisposable
   {
@@ -48,7 +48,7 @@ namespace soundtouch
 #endif
     #endregion
 
-    #region Private 멤버 // 하하하 정말 신기한 지역이다.
+    #region Private 멤버
 
     private readonly object SyncRoot = new object();
     private bool IsDisposed = false;
@@ -186,14 +186,9 @@ namespace soundtouch
     /// <summary>
     /// Get SoundTouch version string
     /// </summary>
-    public static string Version
-    {
-      get
-      {
+    public static string Version =>
         // convert "char *" data to c# string
-        return Marshal.PtrToStringAnsi(NativeMethods.GetVersionString());
-      }
-    }
+        Marshal.PtrToStringAnsi(NativeMethods.GetVersionString());
 
     /// <summary>
     /// Gets a value indicating whether the SoundTouch Library (dll) is available
@@ -286,7 +281,7 @@ namespace soundtouch
     /// </summary>
     public float Rate
     {
-      set { lock (SyncRoot) { NativeMethods.SetTempo(handle, value); } }
+      set { lock (SyncRoot) { NativeMethods.SetRate(handle, value); } }
     }
 
     /// <summary>
@@ -344,14 +339,8 @@ namespace soundtouch
     /// <returns>The value of the setting</returns>
     public int this[Setting settingId]
     {
-      get
-      {
-        lock (SyncRoot) { return NativeMethods.GetSetting(handle, (int)settingId); }
-      }
-      set
-      {
-        lock (SyncRoot) { NativeMethods.SetSetting(handle, (int)settingId, value); }
-      }
+      get { lock (SyncRoot) { return NativeMethods.GetSetting(handle, (int)settingId); } }
+      set { lock (SyncRoot) { NativeMethods.SetSetting(handle, (int)settingId, value); } }
     }
 
     #endregion
@@ -549,7 +538,6 @@ namespace soundtouch
 
     #endregion
   }
-
 
   public sealed class BPMDetect : IDisposable
   {

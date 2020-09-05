@@ -9,7 +9,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using NYoutubeDL;
 
-using UMP.Core.Function;
+using UMP.Core.MediaLoader;
 using UMP.Core.Global;
 using UMP.Core.Model.Media;
 using UMP.Utility;
