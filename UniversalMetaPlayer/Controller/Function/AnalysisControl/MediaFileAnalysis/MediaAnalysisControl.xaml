@@ -1,0 +1,41 @@
+﻿<funcmodel:FunctionControlForm
+    xmlns:funcmodel="clr-namespace:UMP.Core.Model.Func"
+    x:Class="UMP.Controller.Function.AnalysisControl.MediaFileAnalysis.MediaAnalysisControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:UMP.Controller.Function.AnalysisControl.MediaFileAnalysis"
+    mc:Ignorable="d"
+    d:DesignHeight="450"
+    d:DesignWidth="800">
+
+    <funcmodel:FunctionControlForm.DataContext>
+        <local:MediaAnalysisControlViewModel />
+    </funcmodel:FunctionControlForm.DataContext>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition
+                Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ScrollViewer
+            VerticalScrollBarVisibility="Auto"
+            Grid.Row="0">
+            <TextBox
+                Style="{StaticResource MaterialDesignDataGridComboBoxEditableTextBox}"
+                Text="{Binding ResultText, Mode=OneWay}"
+                IsReadOnly="True"
+                IsReadOnlyCaretVisible="False"
+                Margin="8" />
+        </ScrollViewer>
+        <ToggleButton
+            Content="외부 라이브러리 사용"
+            IsChecked="{Binding IsUseMediaInfoLibrary}"
+            ToolTip="외부 라이브러리(MediaInfo)를 사용하여 미디어 파일을 분석합니다"
+            Margin="5"
+            Grid.Row="1"/>
+    </Grid>
+</funcmodel:FunctionControlForm>

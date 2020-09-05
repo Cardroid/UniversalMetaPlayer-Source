@@ -17,9 +17,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-#pragma warning disable 1591 // Disable XML documentation warnings
-
-namespace UMP.Utility.MediaInfoLib
+namespace UMP.Utility.MediaInfoLib.Library
 {
   public enum StreamKind
   {
@@ -69,85 +67,87 @@ namespace UMP.Utility.MediaInfoLib
     Finalized = 0x08,
   }
 
-  public class MediaInfo
+  public class Lib_MediaInfo : IDisposable
   {
+    #region LoadDLL
 #if BIT64
-    private const string DllName = "MediaInfo.64.dll";
+    private const string DLLName = "MediaInfo.64.dll";
 #endif
 
 #if BIT32 || BITANY
-    private const string DllName = "MediaInfo.32.dll";
+    private const string DLLName = "MediaInfo.32.dll";
 #endif
 
     //Import of DLL functions. DO NOT USE until you know what you do (MediaInfo DLL do NOT use CoTaskMemAlloc to allocate memory)
-    [DllImport(DllName)]
+    [DllImport(DLLName)]
     private static extern IntPtr MediaInfo_New();
-    [DllImport(DllName)]
+    [DllImport(DLLName)]
     private static extern void MediaInfo_Delete(IntPtr Handle);
-    [DllImport(DllName)]
+    [DllImport(DLLName)]
     private static extern IntPtr MediaInfo_Open(IntPtr Handle, [MarshalAs(UnmanagedType.LPWStr)] string FileName);
-    [DllImport(DllName)]
+    [DllImport(DLLName)]
     private static extern IntPtr MediaInfoA_Open(IntPtr Handle, IntPtr FileName);
-    [DllImport(DllName)]
+    [DllImport(DLLName)]
     private static extern IntPtr MediaInfo_Open_Buffer_Init(IntPtr Handle, long File_Size, long File_Offset);
-    [DllImport(DllName)]
+    [DllImport(DLLName)]
     private static extern IntPtr MediaInfoA_Open(IntPtr Handle, long File_Size, long File_Offset);
-    [DllImport(DllName)]
+    [DllImport(DLLName)]
     private static extern IntPtr MediaInfo_Open_Buffer_Continue(IntPtr Handle, IntPtr Buffer, IntPtr Buffer_Size);
-    [DllImport(DllName)]
+    [DllImport(DLLName)]
     private static extern IntPtr MediaInfoA_Open_Buffer_Continue(IntPtr Handle, long File_Size, byte[] Buffer, IntPtr Buffer_Size);
-    [DllImport(DllName)]
+    [DllImport(DLLName)]
     private static extern long MediaInfo_Open_Buffer_Continue_GoTo_Get(IntPtr Handle);
-    [DllImport(DllName)]
+    [DllImport(DLLName)]
     private static extern long MediaInfoA_Open_Buffer_Continue_GoTo_Get(IntPtr Handle);
-    [DllImport(DllName)]
+    [DllImport(DLLName)]
     private static extern IntPtr MediaInfo_Open_Buffer_Finalize(IntPtr Handle);
-    [DllImport(DllName)]
+    [DllImport(DLLName)]
     private static extern IntPtr MediaInfoA_Open_Buffer_Finalize(IntPtr Handle);
-    [DllImport(DllName)]
+    [DllImport(DLLName)]
     private static extern void MediaInfo_Close(IntPtr Handle);
-    [DllImport(DllName)]
+    [DllImport(DLLName)]
     private static extern IntPtr MediaInfo_Inform(IntPtr Handle, IntPtr Reserved);
-    [DllImport(DllName)]
+    [DllImport(DLLName)]
     private static extern IntPtr MediaInfoA_Inform(IntPtr Handle, IntPtr Reserved);
-    [DllImport(DllName)]
+    [DllImport(DLLName)]
     private static extern IntPtr MediaInfo_GetI(IntPtr Handle, IntPtr StreamKind, IntPtr StreamNumber, IntPtr Parameter, IntPtr KindOfInfo);
-    [DllImport(DllName)]
+    [DllImport(DLLName)]
     private static extern IntPtr MediaInfoA_GetI(IntPtr Handle, IntPtr StreamKind, IntPtr StreamNumber, IntPtr Parameter, IntPtr KindOfInfo);
-    [DllImport(DllName)]
+    [DllImport(DLLName)]
     private static extern IntPtr MediaInfo_Get(IntPtr Handle, IntPtr StreamKind, IntPtr StreamNumber, [MarshalAs(UnmanagedType.LPWStr)] string Parameter, IntPtr KindOfInfo, IntPtr KindOfSearch);
-    [DllImport(DllName)]
+    [DllImport(DLLName)]
     private static extern IntPtr MediaInfoA_Get(IntPtr Handle, IntPtr StreamKind, IntPtr StreamNumber, IntPtr Parameter, IntPtr KindOfInfo, IntPtr KindOfSearch);
-    [DllImport(DllName)]
+    [DllImport(DLLName)]
     private static extern IntPtr MediaInfo_Option(IntPtr Handle, [MarshalAs(UnmanagedType.LPWStr)] string Option, [MarshalAs(UnmanagedType.LPWStr)] string Value);
-    [DllImport(DllName)]
+    [DllImport(DLLName)]
     private static extern IntPtr MediaInfoA_Option(IntPtr Handle, IntPtr Option, IntPtr Value);
-    [DllImport(DllName)]
+    [DllImport(DLLName)]
     private static extern IntPtr MediaInfo_State_Get(IntPtr Handle);
-    [DllImport(DllName)]
+    [DllImport(DLLName)]
     private static extern IntPtr MediaInfo_Count_Get(IntPtr Handle, IntPtr StreamKind, IntPtr StreamNumber);
+    #endregion
 
-    //MediaInfo class
-    public MediaInfo()
+    public Lib_MediaInfo()
     {
-      try
-      {
-        Handle = MediaInfo_New();
-      }
-      catch
-      {
-        Handle = (IntPtr)0;
-      }
+      try { Handle = MediaInfo_New(); }
+      catch { Handle = IntPtr.Zero; }
+
       if (Environment.OSVersion.ToString().IndexOf("Windows") == -1)
         MustUseAnsi = true;
       else
         MustUseAnsi = false;
     }
-    ~MediaInfo() { if (Handle == (IntPtr)0) return; MediaInfo_Delete(Handle); }
+
+    private const string LIB_NOT_LOADED = "Unable to load MediaInfo library";
+    private readonly IntPtr Handle;
+    private readonly bool MustUseAnsi;
+    private bool disposedValue;
+
     public int Open(string FileName)
     {
-      if (Handle == (IntPtr)0)
-        return 0;
+      if (!IsLibLoaded())
+          return int.MinValue;
+
       if (MustUseAnsi)
       {
         IntPtr FileName_Ptr = Marshal.StringToHGlobalAnsi(FileName);
@@ -160,34 +160,55 @@ namespace UMP.Utility.MediaInfoLib
     }
     public int Open_Buffer_Init(long File_Size, long File_Offset)
     {
-      if (Handle == (IntPtr)0) return 0; return (int)MediaInfo_Open_Buffer_Init(Handle, File_Size, File_Offset);
+      if (!IsLibLoaded())
+          return int.MinValue;
+
+      return (int)MediaInfo_Open_Buffer_Init(Handle, File_Size, File_Offset);
     }
     public int Open_Buffer_Continue(IntPtr Buffer, IntPtr Buffer_Size)
     {
-      if (Handle == (IntPtr)0) return 0; return (int)MediaInfo_Open_Buffer_Continue(Handle, Buffer, Buffer_Size);
+      if (!IsLibLoaded())
+          return int.MinValue;
+
+      return (int)MediaInfo_Open_Buffer_Continue(Handle, Buffer, Buffer_Size);
     }
     public long Open_Buffer_Continue_GoTo_Get()
     {
-      if (Handle == (IntPtr)0) return 0; return MediaInfo_Open_Buffer_Continue_GoTo_Get(Handle);
+      if (!IsLibLoaded())
+        return int.MinValue;
+
+      return MediaInfo_Open_Buffer_Continue_GoTo_Get(Handle);
     }
     public int Open_Buffer_Finalize()
     {
-      if (Handle == (IntPtr)0) return 0; return (int)MediaInfo_Open_Buffer_Finalize(Handle);
+      if (!IsLibLoaded())
+        return int.MinValue;
+
+      return (int)MediaInfo_Open_Buffer_Finalize(Handle);
     }
-    public void Close() { if (Handle == (IntPtr)0) return; MediaInfo_Close(Handle); }
+
+    public void Close()
+    {
+      if (IsLibLoaded())
+        MediaInfo_Close(Handle);
+    }
+
     public string Inform()
     {
-      if (Handle == (IntPtr)0)
-        return "Unable to load MediaInfo library";
+      if (!IsLibLoaded())
+        return LIB_NOT_LOADED;
+
       if (MustUseAnsi)
         return Marshal.PtrToStringAnsi(MediaInfoA_Inform(Handle, (IntPtr)0));
       else
         return Marshal.PtrToStringUni(MediaInfo_Inform(Handle, (IntPtr)0));
     }
+
     public string Get(StreamKind StreamKind, int StreamNumber, string Parameter, InfoKind KindOfInfo, InfoKind KindOfSearch)
     {
-      if (Handle == (IntPtr)0)
-        return "Unable to load MediaInfo library";
+      if (!IsLibLoaded())
+        return LIB_NOT_LOADED;
+
       if (MustUseAnsi)
       {
         IntPtr Parameter_Ptr = Marshal.StringToHGlobalAnsi(Parameter);
@@ -198,19 +219,23 @@ namespace UMP.Utility.MediaInfoLib
       else
         return Marshal.PtrToStringUni(MediaInfo_Get(Handle, (IntPtr)StreamKind, (IntPtr)StreamNumber, Parameter, (IntPtr)KindOfInfo, (IntPtr)KindOfSearch));
     }
+
     public string Get(StreamKind StreamKind, int StreamNumber, int Parameter, InfoKind KindOfInfo)
     {
-      if (Handle == (IntPtr)0)
-        return "Unable to load MediaInfo library";
+      if (!IsLibLoaded())
+        return LIB_NOT_LOADED;
+
       if (MustUseAnsi)
         return Marshal.PtrToStringAnsi(MediaInfoA_GetI(Handle, (IntPtr)StreamKind, (IntPtr)StreamNumber, (IntPtr)Parameter, (IntPtr)KindOfInfo));
       else
         return Marshal.PtrToStringUni(MediaInfo_GetI(Handle, (IntPtr)StreamKind, (IntPtr)StreamNumber, (IntPtr)Parameter, (IntPtr)KindOfInfo));
     }
+
     public string Option(string Option, string Value)
     {
-      if (Handle == (IntPtr)0)
-        return "Unable to load MediaInfo library";
+      if (!IsLibLoaded())
+        return LIB_NOT_LOADED;
+
       if (MustUseAnsi)
       {
         IntPtr Option_Ptr = Marshal.StringToHGlobalAnsi(Option);
@@ -223,72 +248,177 @@ namespace UMP.Utility.MediaInfoLib
       else
         return Marshal.PtrToStringUni(MediaInfo_Option(Handle, Option, Value));
     }
-    public int State_Get() { if (Handle == (IntPtr)0) return 0; return (int)MediaInfo_State_Get(Handle); }
-    public int Count_Get(StreamKind StreamKind, int StreamNumber) { if (Handle == (IntPtr)0) return 0; return (int)MediaInfo_Count_Get(Handle, (IntPtr)StreamKind, (IntPtr)StreamNumber); }
-    private IntPtr Handle;
-    private bool MustUseAnsi;
 
-    //Default values, if you know how to set default values in C#, say me
-    public string Get(StreamKind StreamKind, int StreamNumber, string Parameter, InfoKind KindOfInfo) { return Get(StreamKind, StreamNumber, Parameter, KindOfInfo, InfoKind.Name); }
-    public string Get(StreamKind StreamKind, int StreamNumber, string Parameter) { return Get(StreamKind, StreamNumber, Parameter, InfoKind.Text, InfoKind.Name); }
-    public string Get(StreamKind StreamKind, int StreamNumber, int Parameter) { return Get(StreamKind, StreamNumber, Parameter, InfoKind.Text); }
-    public string Option(string Option_) { return Option(Option_, ""); }
-    public int Count_Get(StreamKind StreamKind) { return Count_Get(StreamKind, -1); }
+    public int State_Get()
+    {
+      if (!IsLibLoaded())
+          return int.MinValue;
+
+      return (int)MediaInfo_State_Get(Handle);
+    }
+
+    public int Count_Get(StreamKind StreamKind, int StreamNumber)
+    {
+      if (!IsLibLoaded())
+          return int.MinValue;
+
+      return (int)MediaInfo_Count_Get(Handle, (IntPtr)StreamKind, (IntPtr)StreamNumber);
+    }
+
+    // 기본 값 정의
+    public string Get(StreamKind StreamKind, int StreamNumber, string Parameter, InfoKind KindOfInfo) =>
+      Get(StreamKind, StreamNumber, Parameter, KindOfInfo, InfoKind.Name);
+
+    public string Get(StreamKind StreamKind, int StreamNumber, string Parameter) =>
+      Get(StreamKind, StreamNumber, Parameter, InfoKind.Text, InfoKind.Name);
+
+    public string Get(StreamKind StreamKind, int StreamNumber, int Parameter) =>
+      Get(StreamKind, StreamNumber, Parameter, InfoKind.Text);
+
+    public string Option(string Option_) =>
+      Option(Option_, "");
+
+    public int Count_Get(StreamKind StreamKind) =>
+      Count_Get(StreamKind, -1);
+
+    public bool IsLibLoaded() => Handle != IntPtr.Zero;
+
+    protected virtual void Dispose(bool disposing)
+    {
+      if (!disposedValue)
+      {
+        if (disposing)
+        {
+        }
+
+        if (IsLibLoaded())
+          MediaInfo_Delete(Handle);
+
+        disposedValue = true;
+      }
+    }
+
+    ~Lib_MediaInfo()
+    {
+      Dispose(disposing: false);
+    }
+
+    public void Dispose()
+    {
+      Dispose(disposing: true);
+      GC.SuppressFinalize(this);
+    }
   }
 
-  public class MediaInfoList
+  public class Lib_MediaInfoList : IDisposable
   {
+    #region LoadDLL
 #if BIT64
-    private const string DllName = "MediaInfo.64.dll";
+    private const string DLLName = "MediaInfo.64.dll";
 #endif
 
 #if BIT32 || BITANY
-    private const string DllName = "MediaInfo.32.dll";
+    private const string DLLName = "MediaInfo.32.dll";
 #endif
 
     //Import of DLL functions. DO NOT USE until you know what you do (MediaInfo DLL do NOT use CoTaskMemAlloc to allocate memory)
-    [DllImport(DllName)]
+    [DllImport(DLLName)]
     private static extern IntPtr MediaInfoList_New();
-    [DllImport(DllName)]
+    [DllImport(DLLName)]
     private static extern void MediaInfoList_Delete(IntPtr Handle);
-    [DllImport(DllName)]
+    [DllImport(DLLName)]
     private static extern IntPtr MediaInfoList_Open(IntPtr Handle, [MarshalAs(UnmanagedType.LPWStr)] string FileName, IntPtr Options);
-    [DllImport(DllName)]
+    [DllImport(DLLName)]
     private static extern void MediaInfoList_Close(IntPtr Handle, IntPtr FilePos);
-    [DllImport(DllName)]
+    [DllImport(DLLName)]
     private static extern IntPtr MediaInfoList_Inform(IntPtr Handle, IntPtr FilePos, IntPtr Reserved);
-    [DllImport(DllName)]
+    [DllImport(DLLName)]
     private static extern IntPtr MediaInfoList_GetI(IntPtr Handle, IntPtr FilePos, IntPtr StreamKind, IntPtr StreamNumber, IntPtr Parameter, IntPtr KindOfInfo);
-    [DllImport(DllName)]
+    [DllImport(DLLName)]
     private static extern IntPtr MediaInfoList_Get(IntPtr Handle, IntPtr FilePos, IntPtr StreamKind, IntPtr StreamNumber, [MarshalAs(UnmanagedType.LPWStr)] string Parameter, IntPtr KindOfInfo, IntPtr KindOfSearch);
-    [DllImport(DllName)]
+    [DllImport(DLLName)]
     private static extern IntPtr MediaInfoList_Option(IntPtr Handle, [MarshalAs(UnmanagedType.LPWStr)] string Option, [MarshalAs(UnmanagedType.LPWStr)] string Value);
-    [DllImport(DllName)]
+    [DllImport(DLLName)]
     private static extern IntPtr MediaInfoList_State_Get(IntPtr Handle);
-    [DllImport(DllName)]
+    [DllImport(DLLName)]
     private static extern IntPtr MediaInfoList_Count_Get(IntPtr Handle, IntPtr FilePos, IntPtr StreamKind, IntPtr StreamNumber);
+    #endregion
 
-    //MediaInfo class
-    public MediaInfoList() { Handle = MediaInfoList_New(); }
-    ~MediaInfoList() { MediaInfoList_Delete(Handle); }
-    public int Open(string FileName, InfoFileOptions Options) { return (int)MediaInfoList_Open(Handle, FileName, (IntPtr)Options); }
-    public void Close(int FilePos) { MediaInfoList_Close(Handle, (IntPtr)FilePos); }
-    public string Inform(int FilePos) { return Marshal.PtrToStringUni(MediaInfoList_Inform(Handle, (IntPtr)FilePos, (IntPtr)0)); }
-    public string Get(int FilePos, StreamKind StreamKind, int StreamNumber, string Parameter, InfoKind KindOfInfo, InfoKind KindOfSearch) { return Marshal.PtrToStringUni(MediaInfoList_Get(Handle, (IntPtr)FilePos, (IntPtr)StreamKind, (IntPtr)StreamNumber, Parameter, (IntPtr)KindOfInfo, (IntPtr)KindOfSearch)); }
-    public string Get(int FilePos, StreamKind StreamKind, int StreamNumber, int Parameter, InfoKind KindOfInfo) { return Marshal.PtrToStringUni(MediaInfoList_GetI(Handle, (IntPtr)FilePos, (IntPtr)StreamKind, (IntPtr)StreamNumber, (IntPtr)Parameter, (IntPtr)KindOfInfo)); }
-    public string Option(string Option, string Value) { return Marshal.PtrToStringUni(MediaInfoList_Option(Handle, Option, Value)); }
-    public int State_Get() { return (int)MediaInfoList_State_Get(Handle); }
-    public int Count_Get(int FilePos, StreamKind StreamKind, int StreamNumber) { return (int)MediaInfoList_Count_Get(Handle, (IntPtr)FilePos, (IntPtr)StreamKind, (IntPtr)StreamNumber); }
-    private IntPtr Handle;
+    // MediaInfo class
+    public Lib_MediaInfoList()
+    {
+      Handle = MediaInfoList_New();
+    }
 
-    //Default values, if you know how to set default values in C#, say me
-    public void Open(string FileName) { Open(FileName, 0); }
-    public void Close() { Close(-1); }
-    public string Get(int FilePos, StreamKind StreamKind, int StreamNumber, string Parameter, InfoKind KindOfInfo) { return Get(FilePos, StreamKind, StreamNumber, Parameter, KindOfInfo, InfoKind.Name); }
-    public string Get(int FilePos, StreamKind StreamKind, int StreamNumber, string Parameter) { return Get(FilePos, StreamKind, StreamNumber, Parameter, InfoKind.Text, InfoKind.Name); }
-    public string Get(int FilePos, StreamKind StreamKind, int StreamNumber, int Parameter) { return Get(FilePos, StreamKind, StreamNumber, Parameter, InfoKind.Text); }
-    public string Option(string Option_) { return Option(Option_, ""); }
-    public int Count_Get(int FilePos, StreamKind StreamKind) { return Count_Get(FilePos, StreamKind, -1); }
+    public int Open(string FileName, InfoFileOptions Options) =>
+      (int)MediaInfoList_Open(Handle, FileName, (IntPtr)Options);
+
+    public void Close(int FilePos) =>
+      MediaInfoList_Close(Handle, (IntPtr)FilePos);
+
+    public string Inform(int FilePos) =>
+      Marshal.PtrToStringUni(MediaInfoList_Inform(Handle, (IntPtr)FilePos, (IntPtr)0));
+
+    public string Get(int FilePos, StreamKind StreamKind, int StreamNumber, string Parameter, InfoKind KindOfInfo, InfoKind KindOfSearch) => Marshal.PtrToStringUni(MediaInfoList_Get(Handle, (IntPtr)FilePos, (IntPtr)StreamKind, (IntPtr)StreamNumber, Parameter, (IntPtr)KindOfInfo, (IntPtr)KindOfSearch));
+
+    public string Get(int FilePos, StreamKind StreamKind, int StreamNumber, int Parameter, InfoKind KindOfInfo) =>
+      Marshal.PtrToStringUni(MediaInfoList_GetI(Handle, (IntPtr)FilePos, (IntPtr)StreamKind, (IntPtr)StreamNumber, (IntPtr)Parameter, (IntPtr)KindOfInfo));
+
+    public string Option(string Option, string Value) =>
+      Marshal.PtrToStringUni(MediaInfoList_Option(Handle, Option, Value));
+
+    public int State_Get() =>
+      (int)MediaInfoList_State_Get(Handle);
+
+    public int Count_Get(int FilePos, StreamKind StreamKind, int StreamNumber) =>
+      (int)MediaInfoList_Count_Get(Handle, (IntPtr)FilePos, (IntPtr)StreamKind, (IntPtr)StreamNumber);
+
+    private readonly IntPtr Handle;
+    private bool disposedValue;
+
+    // 기본 값 정의
+    public void Open(string FileName) =>
+      Open(FileName, 0);
+
+    public void Close() =>
+      Close(-1);
+
+    public string Get(int FilePos, StreamKind StreamKind, int StreamNumber, string Parameter, InfoKind KindOfInfo) =>
+      Get(FilePos, StreamKind, StreamNumber, Parameter, KindOfInfo, InfoKind.Name);
+
+    public string Get(int FilePos, StreamKind StreamKind, int StreamNumber, string Parameter) =>
+      Get(FilePos, StreamKind, StreamNumber, Parameter, InfoKind.Text, InfoKind.Name);
+
+    public string Get(int FilePos, StreamKind StreamKind, int StreamNumber, int Parameter) =>
+      Get(FilePos, StreamKind, StreamNumber, Parameter, InfoKind.Text);
+
+    public string Option(string Option_) =>
+      Option(Option_, "");
+
+    public int Count_Get(int FilePos, StreamKind StreamKind) =>
+      Count_Get(FilePos, StreamKind, -1);
+
+    protected virtual void Dispose(bool disposing)
+    {
+      if (!disposedValue)
+      {
+        if (disposing)
+        {
+        }
+        MediaInfoList_Delete(Handle);
+        disposedValue = true;
+      }
+    }
+
+    ~Lib_MediaInfoList()
+    {
+      Dispose(disposing: false);
+    }
+
+    public void Dispose()
+    {
+      Dispose(disposing: true);
+      GC.SuppressFinalize(this);
+    }
   }
-
-} //NameSpace
+}
