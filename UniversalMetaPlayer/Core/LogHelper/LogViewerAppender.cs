@@ -114,8 +114,12 @@ namespace UMP.Core.LogHelper
         }
 
         paragraph.Inlines.Add(new Run(Layout.Format(loggingEvent)) { Foreground = foreground, Background = background });
-        LogTextBox.TextBox.Document.Blocks.Add(paragraph);
-        LogTextBox.ScrollViewer.ScrollToEnd();
+
+        LogTextBox.Dispatcher.Invoke(() =>
+        {
+          LogTextBox.TextBox.Document.Blocks.Add(paragraph);
+          LogTextBox.ScrollViewer.ScrollToEnd();
+        });
       }
     }
   }
