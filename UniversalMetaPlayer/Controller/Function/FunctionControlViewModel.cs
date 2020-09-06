@@ -20,8 +20,6 @@ namespace UMP.Controller.Function
         if (e.PropertyName == "SetDefault")
           FunctionControlRefresh();
       };
-
-      FunctionPanel = new BasicOption();
     }
 
     public string Header => FunctionPanel != null ? FunctionPanel.FunctionName : "기능 패널";
@@ -74,6 +72,6 @@ namespace UMP.Controller.Function
         OnPropertyChanged("Header");
       }
     }
-    private WeakReference _FunctionPanel;
+    private WeakReference _FunctionPanel = new WeakReference(new BasicOption());
   }
 }

@@ -14,7 +14,7 @@ namespace UMP.Core
       SaveCurrentPlayList = true;
       LoadContinue = false;
       IsUseMediaInfoLibrary = false;
-      VarispeedChangerParameter = new VarispeedChangerParameter();
+      VarispeedChangerParameter = new VarispeedChangerParameter(1.0f, 1.0f, 1.0f);
     }
 
     #region PlayListLoadDialog
