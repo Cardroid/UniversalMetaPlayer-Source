@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:local="clr-namespace:UMP.Core.Player.Plugin.Control"
     mc:Ignorable="d"
     d:DesignHeight="450"
@@ -37,6 +38,7 @@
 
         <Label
             HorizontalAlignment="Right"
+            VerticalAlignment="Center"
             Content="오디오 효과 활성화"
             Grid.Column="0"
             Grid.Row="0" />
@@ -51,25 +53,46 @@
                     Width="*" />
                 <ColumnDefinition
                     Width="Auto" />
+                <ColumnDefinition
+                    Width="Auto" />
+                <ColumnDefinition
+                    Width="Auto" />
             </Grid.ColumnDefinitions>
 
             <ToggleButton
+                VerticalAlignment="Center"
                 IsChecked="{Binding VarispeedChangerIsChecked}"
                 Grid.Column="0" />
+            <Label
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Content="소수점"
+                Margin="5,0,0,0"
+                Grid.Column="1" />
+            <ComboBox
+                VerticalAlignment="Center"
+                Style="{StaticResource MaterialDesignDataGridComboBox}"
+                ItemsSource="{Binding DecimalPointList}"
+                SelectedItem="{Binding SelectDecimalPointComboBoxItem, Mode=OneWay}"
+                Margin="5,0,0,0"
+                Grid.Column="2" />
             <Button
+                VerticalAlignment="Center"
                 Content="초기화"
                 Style="{StaticResource MaterialDesignFlatAccentBgButton}"
                 Command="{Binding ResetCommand}"
-                Grid.Column="2" />
+                Margin="10,0,0,0"
+                Grid.Column="4" />
         </Grid>
 
         <Label
             HorizontalAlignment="Right"
+            VerticalAlignment="Center"
             Content="속도"
             Grid.Column="0"
             Grid.Row="1" />
         <Slider
-            x:Name="Rate"
+            VerticalAlignment="Center"
             Orientation="Horizontal"
             TickPlacement="BottomRight"
             TickFrequency="0.1"
@@ -80,18 +103,21 @@
             Margin="5"
             Grid.Column="1"
             Grid.Row="1" />
-        <Label
-            Content="{Binding RateString}"
+        <TextBox
+            x:Name="RateTextBox"
+            VerticalAlignment="Center"
+            Text="{Binding RateString, Mode=OneWay}"
             Grid.Column="2"
             Grid.Row="1" />
 
         <Label
             HorizontalAlignment="Right"
+            VerticalAlignment="Center"
             Content="템포"
             Grid.Column="0"
             Grid.Row="2" />
         <Slider
-            x:Name="Tempo"
+            VerticalAlignment="Center"
             Orientation="Horizontal"
             TickPlacement="BottomRight"
             TickFrequency="0.1"
@@ -102,18 +128,21 @@
             Margin="5"
             Grid.Column="1"
             Grid.Row="2" />
-        <Label
-            Content="{Binding TempoString}"
+        <TextBox
+            x:Name="TempoTextBox"
+            VerticalAlignment="Center"
+            Text="{Binding TempoString, Mode=OneWay}"
             Grid.Column="2"
             Grid.Row="2" />
 
         <Label
             HorizontalAlignment="Right"
+            VerticalAlignment="Center"
             Content="피치"
             Grid.Column="0"
             Grid.Row="3" />
         <Slider
-            x:Name="Pitch"
+            VerticalAlignment="Center"
             Orientation="Horizontal"
             TickPlacement="BottomRight"
             TickFrequency="0.1"
@@ -124,8 +153,11 @@
             Margin="5"
             Grid.Column="1"
             Grid.Row="3" />
-        <Label
-            Content="{Binding PitchString}"
+        <TextBox
+            x:Name="PitchTextBox"
+            VerticalAlignment="Center"
+            Text="{Binding PitchString, Mode=OneWay}"
+            materialDesign:TransitionAssist.DisableTransitions="True"
             Grid.Column="2"
             Grid.Row="3" />
     </Grid>

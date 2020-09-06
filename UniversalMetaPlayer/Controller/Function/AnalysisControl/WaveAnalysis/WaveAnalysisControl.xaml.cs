@@ -1,10 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-
-using UMP.Core.Global;
-using UMP.Core.Model.Func;
+﻿using UMP.Core.Model.Func;
 using UMP.Core.Player;
 using UMP.Core.Player.Plugin;
 using UMP.Core.Player.Plugin.Effect;
@@ -18,7 +12,7 @@ namespace UMP.Controller.Function.AnalysisControl
       InitializeComponent();
 
       ChangeAnalyserActivation();
-      MainMediaPlayer.PropertyChanged += (_, e) => 
+      MainMediaPlayer.PropertyChanged += (_, e) =>
       {
         if (e.PropertyName == "MainPlayerInitialized")
           ChangeAnalyserActivation();

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Controls;
-using System.Windows.Input;
-
-using UMP.Controller.Function.AnalysisControl.WaveAnalysis;
+﻿using UMP.Controller.Function.AnalysisControl.WaveAnalysis;
 using UMP.Controller.Function.AnalysisControl.WaveAnalysis.Helper;
 using UMP.Core.Model.ViewModel;
 using UMP.Core.Player;
@@ -28,14 +22,14 @@ namespace UMP.Controller.Function.AnalysisControl
     public IVisualizationPlugin PolylineWaveFormRightVisualizationPlugin { get; }
     public IVisualizationPlugin SpectrumAnalyzerVisualizationPlugin { get; }
 
-    void audioGraph_MaximumCalculated(object sender, MaxSampleEventArgs e)
+    private void audioGraph_MaximumCalculated(object sender, MaxSampleEventArgs e)
     {
       this.PolylineWaveFormLeftVisualizationPlugin.OnMaxCalculated(e.MinSample, e.MaxSample, e.Channel);
       this.PolylineWaveFormRightVisualizationPlugin.OnMaxCalculated(e.MinSample, e.MaxSample, e.Channel);
       this.SpectrumAnalyzerVisualizationPlugin.OnMaxCalculated(e.MinSample, e.MaxSample, e.Channel);
     }
 
-    void audioGraph_FftCalculated(object sender, FftEventArgs e)
+    private void audioGraph_FftCalculated(object sender, FftEventArgs e)
     {
       this.PolylineWaveFormLeftVisualizationPlugin.OnFftCalculated(e.Result);
       this.PolylineWaveFormRightVisualizationPlugin.OnFftCalculated(e.Result);

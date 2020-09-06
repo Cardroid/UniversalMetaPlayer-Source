@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Timers;
+using System.Windows.Controls;
 using System.Windows.Threading;
 using UMP.Core.Model.ViewModel;
 using UMP.Core.Player.Plugin.Effect;
@@ -14,6 +15,16 @@ namespace UMP.Core.Player.Plugin.Control
     {
       ApplyTimer = new Timer(500) { AutoReset = true };
       ApplyTimer.Elapsed += (_, e) => ViewDispatcher.Invoke(() => { ApplyTimer.Stop(); Apply(); });
+
+      DecimalPointList = new List<ComboBoxItem>(8);
+      for (int i = 0; i < 3; i++)
+      {
+        var item = new ComboBoxItem() { Content = i };
+        item.PreviewMouseLeftButtonDown += (_, e) => SelectDecimalPointComboBoxItem = item;
+        DecimalPointList.Add(item);
+      }
+      SelectDecimalPointComboBoxItem = DecimalPointList[1];
+
       ResetCommand = new RelayCommand((o) => Reset());
     }
 
@@ -49,13 +60,29 @@ namespace UMP.Core.Player.Plugin.Control
       }
     }
 
+    public List<ComboBoxItem> DecimalPointList { get; }
+    public ComboBoxItem SelectDecimalPointComboBoxItem
+    {
+      get => _SelectDecimalPointComboBoxItem;
+      private set
+      {
+        _SelectDecimalPointComboBoxItem = value;
+        SelectDecimalPoint = int.Parse(_SelectDecimalPointComboBoxItem.Content.ToString());
+        OnPropertyChanged("SelectDecimalPointComboBoxItem");
+      }
+    }
+    private ComboBoxItem _SelectDecimalPointComboBoxItem;
+    private int SelectDecimalPoint;
+
     #region Tempo
     public float Tempo
     {
       get => _Tempo;
       set
       {
-        _Tempo = (float)Math.Round(Math.Clamp(value, MinTempo, MaxTempo), 2);
+        _Tempo = (float)Math.Round(Math.Clamp(value, MinTempo, MaxTempo), SelectDecimalPoint);
+        if (_Tempo <= 0)
+          _Tempo = 0.01f;
         OnPropertyChanged("Tempo");
         OnPropertyChanged("TempoString");
         ApplyTimer.Stop();
@@ -74,7 +101,9 @@ namespace UMP.Core.Player.Plugin.Control
       get => _Rate;
       set
       {
-        _Rate = (float)Math.Round(Math.Clamp(value, MinRate, MaxRate), 2);
+        _Rate = (float)Math.Round(Math.Clamp(value, MinRate, MaxRate), SelectDecimalPoint);
+        if (_Rate <= 0)
+          _Rate = 0.01f;
         OnPropertyChanged("Rate");
         OnPropertyChanged("RateString");
         ApplyTimer.Stop();
@@ -93,7 +122,9 @@ namespace UMP.Core.Player.Plugin.Control
       get => _Pitch;
       set
       {
-        _Pitch = (float)Math.Round(Math.Clamp(value, MinPitch, MaxPitch), 2);
+        _Pitch = (float)Math.Round(Math.Clamp(value, MinPitch, MaxPitch), SelectDecimalPoint);
+        if (_Pitch <= 0)
+          _Pitch = 0.01f;
         OnPropertyChanged("Pitch");
         OnPropertyChanged("PitchString");
         ApplyTimer.Stop();
