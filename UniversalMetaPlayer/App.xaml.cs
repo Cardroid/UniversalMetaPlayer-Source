@@ -9,7 +9,7 @@ using System.Windows.Threading;
 
 using UMP.Core;
 using UMP.Core.Global;
-using UMP.Utility;
+using UMP.Utils;
 
 namespace UMP
 {

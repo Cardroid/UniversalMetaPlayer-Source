@@ -14,9 +14,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
-using UMP.Utility.MediaInfoLib.Library;
+using UMP.Utils.MediaInfoLib.Library;
 
-namespace UMP.Utility.MediaInfoLib.Model
+namespace UMP.Utils.MediaInfoLib.Model
 {
   ///<summary>For inheritance by classes representing media files.</summary>
   [TypeConverter(typeof(ExpandableObjectConverter))]

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using UMP.Core.Global;
 using UMP.Core.Model;
 using UMP.Core.Model.Media;
-using UMP.Utility;
+using UMP.Utils;
 
 using YoutubeExplode;
 using YoutubeExplode.Videos;

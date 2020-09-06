@@ -13,7 +13,7 @@ using System.Windows.Input;
 
 using UMP.Core.Global;
 using UMP.Core.Player;
-using UMP.Utility;
+using UMP.Utils;
 
 using YoutubeExplode;
 using YoutubeExplode.Channels;

@@ -12,7 +12,7 @@ using NYoutubeDL;
 using UMP.Core.MediaLoader;
 using UMP.Core.Global;
 using UMP.Core.Model.Media;
-using UMP.Utility;
+using UMP.Utils;
 
 namespace UnitTestProject
 {

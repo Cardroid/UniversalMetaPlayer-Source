@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Windows.Media;
 
-using UMP.Utility;
+using UMP.Utils;
 
 namespace UMP.Core.Model.ViewModel
 {

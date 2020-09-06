@@ -5,8 +5,8 @@ using System.Text;
 using UMP.Core;
 using UMP.Core.Model.ViewModel;
 using UMP.Core.Player;
-using UMP.Utility;
-using UMP.Utility.MediaInfoLib;
+using UMP.Utils;
+using UMP.Utils.MediaInfoLib;
 
 namespace UMP.Controller.Function.AnalysisControl.MediaFileAnalysis
 {

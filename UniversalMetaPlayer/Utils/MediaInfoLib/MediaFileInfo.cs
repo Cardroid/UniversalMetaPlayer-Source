@@ -32,10 +32,10 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 
-using UMP.Utility.MediaInfoLib.Library;
-using UMP.Utility.MediaInfoLib.Model;
+using UMP.Utils.MediaInfoLib.Library;
+using UMP.Utils.MediaInfoLib.Model;
 
-namespace UMP.Utility.MediaInfoLib
+namespace UMP.Utils.MediaInfoLib
 {
   public sealed class MediaFileInfo
   {

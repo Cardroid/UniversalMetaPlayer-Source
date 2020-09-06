@@ -16,7 +16,7 @@ using Microsoft.Win32;
 using UMP.Core;
 using UMP.Core.Player;
 using UMP.Core.Global;
-using UMP.Utility;
+using UMP.Utils;
 
 namespace UMP.Controller.Dialog
 {

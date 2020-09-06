@@ -17,7 +17,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace UMP.Utility.MediaInfoLib.Library
+namespace UMP.Utils.MediaInfoLib.Library
 {
   public enum StreamKind
   {

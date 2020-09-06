@@ -4,9 +4,9 @@
  * Copyright (C) 2012 Charles N. Burns
  * Copyright (C) 2013 Carsten Schlote
  ******************************************************************************
- * TextStream.cs
+ * ImageStream.cs
  * 
- * Presents information and functionality specific to a text (subtitle) stream.
+ * Presents information and functionality specific to an image stream.
  ******************************************************************************
  */
 
@@ -15,33 +15,33 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 
-using UMP.Utility.MediaInfoLib.Library;
+using UMP.Utils.MediaInfoLib.Library;
 
-namespace UMP.Utility.MediaInfoLib.Model
+namespace UMP.Utils.MediaInfoLib.Model
 {
-  ///<summary>Represents a single text stream.</summary>
+  ///<summary>Represents a single image stream.</summary>
   [TypeConverter(typeof(ExpandableObjectConverter))]
-  public sealed class TextStream : BaseStreamCommons
+  public sealed class ImageStream : BaseStreamCommons
   {
-    ///<summary>TextStream constructor.</summary>
+    ///<summary>ImageStream constructor.</summary>
     ///<param name="mediaInfo">A MediaInfo object.</param>
-    ///<param name="id">The MediaInfo ID for this text stream.</param>
-    public TextStream(Lib_MediaInfo mediaInfo, int id)
-        : base(mediaInfo, StreamKind.Text, id)
+    ///<param name="id">The MediaInfo ID for this image stream.</param>
+    public ImageStream(Lib_MediaInfo mediaInfo, int id)
+        : base(mediaInfo, StreamKind.Image, id)
     {
     }
     /// <summary>Overides base method to provide short summary of stream kind.</summary>
     public override string ToString()
     {
       StringBuilder sb = new StringBuilder();
-      sb.AppendFormat("{0}", string.IsNullOrEmpty(this.Language) ? "ud" : this.Language);
-      sb.AppendFormat(", {0}", this.Format);
+      sb.AppendFormat("{0}", this.Format);
       if (!string.IsNullOrEmpty(this.FormatProfile)) sb.AppendFormat(" {0}", this.FormatProfile);
-      if (this.Default) sb.Append(", Default");
-      if (this.Forced) sb.Append(", Forced");
+      sb.AppendFormat(", {0}x{1} px", this.Width, this.Height);
       if (!string.IsNullOrEmpty(this.Title)) sb.AppendFormat(", '{0}'", this.Title);
+
       return sb.ToString();
     }
+
 
     #region AllStreamsCommon
 
@@ -117,55 +117,6 @@ namespace UMP.Utility.MediaInfoLib.Model
 
     #endregion
 
-    #region GeneralVideoAudioTextMenu
-
-    ///<summary>Stream delay (e.g. to sync audio/video) in ms.</summary>
-    [Description("Stream delay (e.g. to sync audio/video) in ms."), Category("GeneralVideoAudioTextMenu")]
-    public new int Delay => base.Delay;
-
-    ///<summary>Duration of the stream in milliseconds.</summary>
-    [Description("Duration of the stream in milliseconds."), Category("GeneralVideoAudioTextMenu")]
-    public new int Duration => base.Duration;
-
-    #endregion
-
-    #region VideoAudioTextCommon
-
-    ///<summary>The bitrate(s) of this stream, in bits per second, separated by /</summary>
-    [Description("The bitrate(s) of this stream, in bits per second, separated by /"), Category("VideoAudioTextCommon")]
-    public new string BitRate => base.BitRate;
-
-    ///<summary>The maximum bitrate of this stream in BPS.</summary>
-    [Description("The maximum bitrate of this stream in BPS."), Category("VideoAudioTextCommon")]
-    public new int BitRateMaximum => base.BitRateMaximum;
-
-    ///<summary>The minimum bitrate of this stream in BPS.</summary>
-    [Description("The minimum bitrate of this stream in BPS."), Category("VideoAudioTextCommon")]
-    public new int BitRateMinimum => base.BitRateMinimum;
-
-    ///<summary>The maximum allowed bitrate, in BPS, with the encoder
-    /// settings used. Some encoders report the average BPS.</summary>
-    [Description("The maximum allowed bitrate, in BPS, with the encoder settings used. Some encoders report the average BPS."), Category("VideoAudioTextCommon")]
-    public new int BitRateNominal => base.BitRateNominal;
-
-    ///<summary>Mode (CBR, VBR) used for bit allocation.</summary>
-    [Description("Mode (CBR, VBR) used for bit allocation."), Category("VideoAudioTextCommon")]
-    public new string BitRateMode => base.BitRateMode;
-
-    ///<summary>How the stream is muxed into the container.</summary>
-    [Description("How the stream is muxed into the container."), Category("VideoAudioTextCommon")]
-    public new string MuxingMode => base.MuxingMode;
-
-    ///<summary>The total number of frames (e.g. video frames).</summary>
-    [Description("The total number of frames (e.g. video frames)."), Category("VideoAudioTextCommon")]
-    public new int FrameCount => base.FrameCount;
-
-    ///<summary>Frame rate of the stream in frames per second.</summary>
-    [Description("Frame rate of the stream in frames per second."), Category("VideoAudioTextCommon")]
-    public new float FrameRate => base.FrameRate;
-
-    #endregion
-
     #region VideoAudioTextImageCommon
 
     ///<summary>Compression mode (lossy or lossless).</summary>
@@ -190,11 +141,15 @@ namespace UMP.Utility.MediaInfoLib.Model
 
     #endregion
 
-    #region VideoTextCommon
+    #region VideoImageCommon
 
-    ///<summary>Frame rate mode (CFR, VFR) of stream.</summary>
-    [Description("Frame rate mode (CFR, VFR) of stream."), Category("VideoTextCommon")]
-    public new string FrameRateMode => base.FrameRateMode;
+    ///<summary>Ratio of display width to display height.</summary>
+    [Description("Ratio of display width to display height."), Category("VideoImageCommon")]
+    public new float DisplayAspectRatio => base.DisplayAspectRatio;
+
+    ///<summary>Ratio of pixel width to pixel height.</summary>
+    [Description("Ratio of pixel width to pixel height."), Category("VideoImageCommon")]
+    public new float PixelAspectRatio => base.PixelAspectRatio;
 
     #endregion
 
@@ -215,18 +170,6 @@ namespace UMP.Utility.MediaInfoLib.Model
     ///<summary>ChromaSubsampling used for pixel encoding.</summary>
     [Description("ChromaSubsampling used for pixel encoding."), Category("VideoTextImageCommon")]
     public new string ChromaSubsampling => base.ChromaSubsampling;
-
-    #endregion
-
-    #region AudioTextCommon
-
-    ///<summary>The Default flag for this stream.</summary>
-    [Description("The Default flag for this stream."), Category("AudioTextCommon")]
-    public bool Default => base.Default_Track;
-
-    ///<summary>The Forced-Display flag for this stream.</summary>
-    [Description("The Forced-Display flag for this stream."), Category("AudioTextCommon")]
-    public bool Forced => base.Forced_Track;
 
     #endregion
   }

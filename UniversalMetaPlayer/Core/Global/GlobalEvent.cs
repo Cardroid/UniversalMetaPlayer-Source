@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-using UMP.Utility;
+using UMP.Utils;
 
 namespace UMP.Core.Global
 {

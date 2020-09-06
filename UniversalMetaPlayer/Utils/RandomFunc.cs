@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace UMP.Utility
+namespace UMP.Utils
 {
   public class RandomFunc
   {

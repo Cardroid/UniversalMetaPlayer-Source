@@ -8,7 +8,7 @@ using System.Windows.Media.Imaging;
 using UMP.Core.Global;
 using UMP.Core.Model;
 using UMP.Core.Model.Media;
-using UMP.Utility;
+using UMP.Utils;
 
 namespace UMP.Core.MediaLoader
 {

@@ -8,7 +8,7 @@ using System.Windows.Threading;
 using UMP.Core.Global;
 using UMP.Core.Model.ViewModel;
 using UMP.Core.Player;
-using UMP.Utility;
+using UMP.Utils;
 
 namespace UMP.Controller.Function.OptionControl.ViewModel
 {

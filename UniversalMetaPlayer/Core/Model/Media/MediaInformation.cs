@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-using UMP.Utility;
+using UMP.Utils;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using System.Net;

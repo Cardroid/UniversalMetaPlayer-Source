@@ -16,9 +16,9 @@ using System;
 using System.ComponentModel;
 using System.Globalization;
 
-using UMP.Utility.MediaInfoLib.Library;
+using UMP.Utils.MediaInfoLib.Library;
 
-namespace UMP.Utility.MediaInfoLib.Model
+namespace UMP.Utils.MediaInfoLib.Model
 {
   ///<summary>Implements features common to all stream types.</summary>
   [TypeConverter(typeof(ExpandableObjectConverter))]

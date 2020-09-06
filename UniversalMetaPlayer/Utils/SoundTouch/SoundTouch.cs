@@ -34,7 +34,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace UMP.Utility.SoundTouch
+namespace UMP.Utils.SoundTouch
 {
   public sealed class SoundTouch : IDisposable
   {

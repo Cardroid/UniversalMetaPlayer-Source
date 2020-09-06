@@ -11,7 +11,7 @@ using System.ComponentModel;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-using UMP.Utility;
+using UMP.Utils;
 using UMP.Core.Player;
 using MaterialDesignColors.ColorManipulation;
 using System.Windows.Input;

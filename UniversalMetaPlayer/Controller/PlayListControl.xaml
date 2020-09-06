@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:dd="urn:gong-wpf-dragdrop"
     xmlns:model="clr-namespace:UMP.Controller.ViewModel"
-    xmlns:Utility="clr-namespace:UMP.Utility"
+    xmlns:Utility="clr-namespace:UMP.Utils"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     mc:Ignorable="d">
 

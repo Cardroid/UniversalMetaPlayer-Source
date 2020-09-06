@@ -13,7 +13,7 @@ using System.Windows.Shapes;
 
 using UMP.Controller.ViewModel;
 using UMP.Core;
-using UMP.Utility.Effect;
+using UMP.Utils.Effect;
 
 namespace UMP.Controller
 {

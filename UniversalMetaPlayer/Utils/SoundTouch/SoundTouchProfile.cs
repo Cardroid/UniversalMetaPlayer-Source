@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace UMP.Utility.SoundTouch
+namespace UMP.Utils.SoundTouch
 {
   public class SoundTouchProfile
   {

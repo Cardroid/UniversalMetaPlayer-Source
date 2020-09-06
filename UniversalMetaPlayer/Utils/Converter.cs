@@ -13,7 +13,7 @@ using System.Windows.Threading;
 using UMP.Core;
 using UMP.Core.Model;
 
-namespace UMP.Utility
+namespace UMP.Utils
 {
   public class TimeSpanStringConverter : IValueConverter
   {

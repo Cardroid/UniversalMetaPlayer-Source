@@ -6,7 +6,7 @@ using System.Text;
 
 using UMP.Core.Global;
 
-namespace UMP.Utility
+namespace UMP.Utils
 {
   public static class Checker
   {

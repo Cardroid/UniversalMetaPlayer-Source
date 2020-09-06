@@ -5,7 +5,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Interop;
 
-namespace UMP.Utility.Effect
+namespace UMP.Utils.Effect
 {
   /// <summary>
   /// Aero Glass 효과정의

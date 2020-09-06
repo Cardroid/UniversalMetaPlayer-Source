@@ -4,9 +4,9 @@
  * Copyright (C) 2012 Charles N. Burns
  * Copyright (C) 2013 Carsten Schlote
  ******************************************************************************
- * AudioStream.cs
+ * TextStream.cs
  * 
- * Presents information and functionality specific to an audio stream.
+ * Presents information and functionality specific to a text (subtitle) stream.
  ******************************************************************************
  */
 
@@ -15,19 +15,19 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 
-using UMP.Utility.MediaInfoLib.Library;
+using UMP.Utils.MediaInfoLib.Library;
 
-namespace UMP.Utility.MediaInfoLib.Model
+namespace UMP.Utils.MediaInfoLib.Model
 {
-  ///<summary>Represents a single audio stream.</summary>
+  ///<summary>Represents a single text stream.</summary>
   [TypeConverter(typeof(ExpandableObjectConverter))]
-  public sealed class AudioStream : BaseStreamCommons
+  public sealed class TextStream : BaseStreamCommons
   {
-    ///<summary>AudioStream constructor.</summary>
+    ///<summary>TextStream constructor.</summary>
     ///<param name="mediaInfo">A MediaInfo object.</param>
-    ///<param name="id">The MediaInfo ID for this audio stream.</param>
-    public AudioStream(Lib_MediaInfo mediaInfo, int id)
-        : base(mediaInfo, StreamKind.Audio, id)
+    ///<param name="id">The MediaInfo ID for this text stream.</param>
+    public TextStream(Lib_MediaInfo mediaInfo, int id)
+        : base(mediaInfo, StreamKind.Text, id)
     {
     }
     /// <summary>Overides base method to provide short summary of stream kind.</summary>
@@ -37,14 +37,11 @@ namespace UMP.Utility.MediaInfoLib.Model
       sb.AppendFormat("{0}", string.IsNullOrEmpty(this.Language) ? "ud" : this.Language);
       sb.AppendFormat(", {0}", this.Format);
       if (!string.IsNullOrEmpty(this.FormatProfile)) sb.AppendFormat(" {0}", this.FormatProfile);
-      sb.AppendFormat(", {0} Channels", this.Channels);
       if (this.Default) sb.Append(", Default");
       if (this.Forced) sb.Append(", Forced");
       if (!string.IsNullOrEmpty(this.Title)) sb.AppendFormat(", '{0}'", this.Title);
-
       return sb.ToString();
     }
-
 
     #region AllStreamsCommon
 
@@ -193,6 +190,34 @@ namespace UMP.Utility.MediaInfoLib.Model
 
     #endregion
 
+    #region VideoTextCommon
+
+    ///<summary>Frame rate mode (CFR, VFR) of stream.</summary>
+    [Description("Frame rate mode (CFR, VFR) of stream."), Category("VideoTextCommon")]
+    public new string FrameRateMode => base.FrameRateMode;
+
+    #endregion
+
+    #region VideoTextImageCommon
+
+    ///<summary>Height in pixels.</summary>
+    [Description("Height in pixels."), Category("VideoTextImageCommon")]
+    public new int Height => base.Height;
+
+    ///<summary>Width in pixels.</summary>
+    [Description("Width in pixels."), Category("VideoTextImageCommon")]
+    public new int Width => base.Width;
+
+    ///<summary>Colorspace used for pixel encoding.</summary>
+    [Description("Colorspace used for pixel encoding."), Category("VideoTextImageCommon")]
+    public string ColorSpace => base.Colorspace;
+
+    ///<summary>ChromaSubsampling used for pixel encoding.</summary>
+    [Description("ChromaSubsampling used for pixel encoding."), Category("VideoTextImageCommon")]
+    public new string ChromaSubsampling => base.ChromaSubsampling;
+
+    #endregion
+
     #region AudioTextCommon
 
     ///<summary>The Default flag for this stream.</summary>
@@ -202,36 +227,6 @@ namespace UMP.Utility.MediaInfoLib.Model
     ///<summary>The Forced-Display flag for this stream.</summary>
     [Description("The Forced-Display flag for this stream."), Category("AudioTextCommon")]
     public bool Forced => base.Forced_Track;
-
-    #endregion
-
-    #region Audio
-
-    private string _channels = null;
-    ///<summary>Number of audio channels, e.g. 6 for 5.1 audio.</summary>
-    [Description("Number of audio channels, e.g. 6 for 5.1 audio."), Category("Audio")]
-    public string Channels
-    {
-      get
-      {
-        if (string.IsNullOrEmpty(_channels))
-          _channels = GetString("Channel(s)");
-        return _channels;
-      }
-    }
-
-    private int _sampleRate = int.MinValue;
-    ///<summary>Audio sample rate, e.g. 44100 for CD audio.</summary>
-    [Description("Audio sample rate, e.g. 44100 for CD audio."), Category("Audio")]
-    public int SampleRate
-    {
-      get
-      {
-        if (_sampleRate == int.MinValue)
-          _sampleRate = GetInt("SamplingRate");
-        return _sampleRate;
-      }
-    }
 
     #endregion
   }

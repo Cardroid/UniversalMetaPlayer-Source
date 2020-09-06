@@ -15,9 +15,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 
-using UMP.Utility.MediaInfoLib.Library;
+using UMP.Utils.MediaInfoLib.Library;
 
-namespace UMP.Utility.MediaInfoLib.Model
+namespace UMP.Utils.MediaInfoLib.Model
 {
   ///<summary>Represents a single video stream.</summary>
   [TypeConverter(typeof(ExpandableObjectConverter))]

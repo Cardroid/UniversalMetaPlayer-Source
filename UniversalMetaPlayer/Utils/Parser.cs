@@ -5,7 +5,7 @@ using System.Windows.Media;
 
 using UMP.Core.Model;
 
-namespace UMP.Utility
+namespace UMP.Utils
 {
   public static class Parser
   {

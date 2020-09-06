@@ -20,7 +20,8 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
           OnPropertyChanged("FadeEffectIsChecked");
       };
 
-      VarispeedChangerParameterControlOpen = new RelayCommand((o) => { WindowManager.VarispeedChangerParameterControlWindowOpen(); });
+      VarispeedChangerParameterControlOpen = new RelayCommand((o) => WindowManager.VarispeedChangerParameterControlWindowOpen());
+      EqualizerParameterControlOpen = new RelayCommand((o) => WindowManager.EqualizerParameterControlWindowOpen());
     }
 
     #region 흐려짐 효과
@@ -46,6 +47,12 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
     public RelayCommand VarispeedChangerParameterControlOpen { get; }
     public string VarispeedChangerToolTip =>
       $"오디오 효과(속도, 템포, 피치)를 조절합니다.";
+    #endregion
+
+    #region 이퀄라이저
+    public RelayCommand EqualizerParameterControlOpen { get; }
+    public string EqualizerToolTip =>
+      $"오디오의 특정 주파수 폭의 Gain을 조절합니다.";
     #endregion
   }
 }

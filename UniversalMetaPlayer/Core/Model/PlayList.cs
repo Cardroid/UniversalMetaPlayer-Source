@@ -7,7 +7,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
-using UMP.Utility;
+using UMP.Utils;
 
 using PlaylistsNET.Content;
 using PlaylistsNET.Models;

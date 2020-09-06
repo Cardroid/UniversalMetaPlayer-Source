@@ -8,7 +8,7 @@ using System.Windows.Media.Imaging;
 using UMP.Core;
 using UMP.Core.Global;
 
-namespace UMP.Utility
+namespace UMP.Utils
 {
   public static class ImageProcessing
   {

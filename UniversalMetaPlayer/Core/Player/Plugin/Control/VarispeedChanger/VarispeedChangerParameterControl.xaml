@@ -39,7 +39,8 @@
         <Label
             HorizontalAlignment="Right"
             VerticalAlignment="Center"
-            Content="오디오 효과 활성화"
+            Content="활성화"
+            ToolTip="해당 기능을 활성화합니다."
             Grid.Column="0"
             Grid.Row="0" />
         <Grid
@@ -62,6 +63,7 @@
             <ToggleButton
                 VerticalAlignment="Center"
                 IsChecked="{Binding VarispeedChangerIsChecked}"
+                ToolTip="해당 기능을 활성화합니다."
                 Grid.Column="0" />
             <Label
                 HorizontalAlignment="Right"

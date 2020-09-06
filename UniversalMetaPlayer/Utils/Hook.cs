@@ -11,7 +11,7 @@ using NeatInput.Windows.Events;
 using System.Windows.Threading;
 using UMP.Core;
 
-namespace UMP.Utility
+namespace UMP.Utils
 {
   /// <summary>
   /// 전역 마우스 키보드 후킹을 통한 원격 조종 설정

@@ -6,7 +6,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 
 using UMP.Core.Player;
-using UMP.Utility;
+using UMP.Utils;
 
 namespace UMP.Controller.Function.AnalysisControl.WaveAnalysis.Func
 {

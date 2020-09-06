@@ -14,7 +14,7 @@ using NYoutubeDL.Helpers;
 using NYoutubeDL.Options;
 using UMP.Core.Global;
 using UMP.Core.Model;
-using UMP.Utility;
+using UMP.Utils;
 
 namespace UMP.Core.MediaLoader.Online
 {

@@ -4,7 +4,7 @@ using System.Text;
 
 using NAudio.Wave;
 
-using UMP.Utility.SoundTouch;
+using UMP.Utils.SoundTouch;
 
 namespace UMP.Core.Player.Plugin.Effect
 {

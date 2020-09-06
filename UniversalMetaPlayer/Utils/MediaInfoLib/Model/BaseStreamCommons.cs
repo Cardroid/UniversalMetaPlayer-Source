@@ -13,9 +13,9 @@
 using System;
 using System.Collections.Generic;
 
-using UMP.Utility.MediaInfoLib.Library;
+using UMP.Utils.MediaInfoLib.Library;
 
-namespace UMP.Utility.MediaInfoLib.Model
+namespace UMP.Utils.MediaInfoLib.Model
 {
   /// <summary>Functionality common to more than one stream type.</summary>
   public class BaseStreamCommons : Media

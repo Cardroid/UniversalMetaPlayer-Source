@@ -16,7 +16,7 @@ using UMP.Core.Model.ViewModel;
 using UMP.Core.Global;
 using UMP.Controller.Function;
 using UMP.Controller.WindowHelper;
-using UMP.Utility;
+using UMP.Utils;
 
 namespace UMP.Controller.ViewModel
 {

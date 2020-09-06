@@ -12,7 +12,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using UMP.Core;
-using UMP.Utility;
+using UMP.Utils;
 
 namespace UMP.Controller.WindowButton
 {

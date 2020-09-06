@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using UMP.Core.Global;
-using UMP.Utility;
+using UMP.Utils;
 
 namespace UMP.Core.MediaLoader.Online
 {

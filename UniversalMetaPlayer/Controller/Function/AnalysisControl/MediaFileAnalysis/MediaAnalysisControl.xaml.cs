@@ -14,7 +14,7 @@ using System.Windows.Shapes;
 using UMP.Core;
 using UMP.Core.Model.Func;
 using UMP.Core.Player;
-using UMP.Utility.MediaInfoLib;
+using UMP.Utils.MediaInfoLib;
 
 namespace UMP.Controller.Function.AnalysisControl.MediaFileAnalysis
 {

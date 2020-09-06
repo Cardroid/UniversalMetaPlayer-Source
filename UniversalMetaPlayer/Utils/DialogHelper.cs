@@ -7,7 +7,7 @@ using Microsoft.Win32;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using UMP.Core.Model;
 
-namespace UMP.Utility
+namespace UMP.Utils
 {
   public static class DialogHelper
   {

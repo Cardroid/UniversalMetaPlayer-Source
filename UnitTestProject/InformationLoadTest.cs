@@ -8,8 +8,8 @@ using System.Text.RegularExpressions;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using UMP.Utility.MediaInfoLib;
-using UMP.Utility.MediaInfoLib.Library;
+using UMP.Utils.MediaInfoLib;
+using UMP.Utils.MediaInfoLib.Library;
 
 namespace UnitTestProject
 {

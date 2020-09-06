@@ -10,7 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using UMP.Core.Global;
-using UMP.Utility;
+using UMP.Utils;
 
 namespace UMP.Controller.WindowHelper
 {

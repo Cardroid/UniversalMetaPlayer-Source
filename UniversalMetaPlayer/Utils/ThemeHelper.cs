@@ -13,7 +13,7 @@ using UMP.Core;
 using UMP.Core.Global;
 using UMP.Core.Player;
 
-namespace UMP.Utility
+namespace UMP.Utils
 {
   public static class ThemeHelper
   {

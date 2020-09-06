@@ -4,28 +4,28 @@
  * Copyright (C) 2012 Charles N. Burns
  * Copyright (C) 2013 Carsten Schlote
  ******************************************************************************
- * MenuStream.cs
+ * OtherStream.cs
  * 
- * Presents information and functionality specific to a menu stream.
+ * Presents information and functionality specific to a 'other' stream.
  ******************************************************************************
  */
 
 using System.ComponentModel;
 using System.Text;
 
-using UMP.Utility.MediaInfoLib.Library;
+using UMP.Utils.MediaInfoLib.Library;
 
-namespace UMP.Utility.MediaInfoLib.Model
+namespace UMP.Utils.MediaInfoLib.Model
 {
-  ///<summary>Represents a single menu stream.</summary>
+  ///<summary>Represents a single 'other' stream.</summary>
   [TypeConverter(typeof(ExpandableObjectConverter))]
-  public sealed class MenuStream : BaseStreamCommons
+  public sealed class OtherStream : BaseStreamCommons
   {
-    ///<summary>MenuStream constructor.</summary>
-    ///<param name="mediaInfo">A MediaInfo object which has already opened a media file.</param>
-    ///<param name="id">The MediaInfo ID for this menu stream.</param>
-    public MenuStream(Lib_MediaInfo mediaInfo, int id)
-        : base(mediaInfo, StreamKind.Menu, id)
+    ///<summary>OtherStream constructor.</summary>
+    ///<param name="mediaInfo">A MediaInfo object.</param>
+    ///<param name="id">The MediaInfo ID for this other stream.</param>
+    public OtherStream(Lib_MediaInfo mediaInfo, int id)
+        : base(mediaInfo, StreamKind.Other, id)
     {
     }
     /// <summary>Overides base method to provide short summary of stream kind.</summary>
@@ -68,39 +68,6 @@ namespace UMP.Utility.MediaInfoLib.Model
     ///<summary>This stream's globally unique ID (GUID).</summary>
     [Description("This stream's or container's globally unique ID (GUID)."), Category("AllStreamsCommon")]
     public new string UniqueID => base.UniqueID;
-
-    #endregion
-
-    #region GeneralVideoAudioTextImageMenuCommon
-
-    ///<summary>Codec ID available from some codecs.</summary>
-    ///<example>AAC audio:A_AAC, h.264 video:V_MPEG4/ISO/AVC</example>
-    [Description("Codec ID available from some codecs."), Category("GeneralVideoAudioTextImageMenuCommon")]
-    public new string CodecId => base.CodecId;
-
-    ///<summary>Common name of the codec.</summary>
-    [Description("Common name of the codec."), Category("GeneralVideoAudioTextImageMenuCommon")]
-    public new string CodecCommonName => base.CodecCommonName;
-
-    #endregion
-
-    #region GeneralVideoAudioTextMenu
-
-    ///<summary>Stream delay (e.g. to sync audio/video) in ms.</summary>
-    [Description("Stream delay (e.g. to sync audio/video) in ms."), Category("GeneralVideoAudioTextMenu")]
-    public new int Delay => base.Delay;
-
-    ///<summary>Duration of the stream in milliseconds.</summary>
-    [Description("Duration of the stream in milliseconds."), Category("GeneralVideoAudioTextMenu")]
-    public new int Duration => base.Duration;
-
-    #endregion
-
-    #region VideoAudioTextImageMenuCommon
-
-    ///<summary>2-letter (if available) or 3-letter ISO code.</summary>
-    [Description("2-letter (if available) or 3-letter ISO code."), Category("VideoAudioTextImageMenuCommon")]
-    public new string Language => base.Language;
 
     #endregion
   }

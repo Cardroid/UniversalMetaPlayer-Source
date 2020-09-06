@@ -20,7 +20,7 @@ using UMP.Core;
 using UMP.Core.Global;
 using UMP.Core.LogHelper;
 using UMP.Core.Player;
-using UMP.Utility;
+using UMP.Utils;
 
 namespace UMP
 {

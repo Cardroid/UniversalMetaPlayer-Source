@@ -14,7 +14,7 @@ using System.Windows.Threading;
 
 using UMP.Controller.ViewModel;
 using UMP.Core;
-using UMP.Utility;
+using UMP.Utils;
 
 using NeatInput.Windows.Events;
 using NeatInput.Windows.Processing.Keyboard.Enums;

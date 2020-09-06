@@ -6,7 +6,6 @@ namespace UMP.Core.Player.Plugin.Effect
 {
   public enum PluginName
   {
-    SampleAnalyzer,
-    FadeOutEffect, VarispeedChanger
+    SampleAnalyzer, FadeOutEffect, VarispeedChanger, Equalizer
   }
 }
