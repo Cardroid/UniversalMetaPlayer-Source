@@ -89,7 +89,7 @@ namespace UMP.Core
       }
       else
       {
-        LyricsWindow = new UserWindow(new LyricsControl(), "UMP - Lyrics") { WindowStartupLocation = WindowStartupLocation.CenterOwner };
+        LyricsWindow = new UserWindow(new LyricsControl(), "UMP - Lyrics") { WindowStartupLocation = WindowStartupLocation.CenterScreen };
         LyricsWindow.Show();
         LyricsWindow.Closed += (_, e) => { LyricsWindow = null; };
       }
@@ -123,7 +123,7 @@ namespace UMP.Core
         VarispeedChangerParameterControlWindow = VarispeedChangerParameterControlWindow = new UserWindow(new VarispeedChangerParameterControl(), "UMP - AudioEffect")
         {
           SizeToContent = SizeToContent.WidthAndHeight,
-          WindowStartupLocation = WindowStartupLocation.CenterOwner
+          WindowStartupLocation = WindowStartupLocation.CenterScreen
         }; 
         VarispeedChangerParameterControlWindow.Show();
         VarispeedChangerParameterControlWindow.Closed += (_, e) => { VarispeedChangerParameterControlWindow = null; };
@@ -143,6 +143,40 @@ namespace UMP.Core
       set => _VarispeedChangerParameterControlWindow = new WeakReference(value);
     }
     private static WeakReference _VarispeedChangerParameterControlWindow = new WeakReference(null);
+    #endregion
+
+    #region EQ 설정 창
+    public static void EqualizerParameterControlWindowOpen()
+    {
+      if (EqualizerParameterControlWindow != null)
+      {
+        EqualizerParameterControlWindow.Visibility = Visibility.Visible;
+        EqualizerParameterControlWindow.Activate();
+      }
+      else
+      {
+        EqualizerParameterControlWindow = EqualizerParameterControlWindow = new UserWindow(new EqualizerParameterControl(), "UMP - EQ")
+        {
+          WindowStartupLocation = WindowStartupLocation.CenterScreen
+        };
+        EqualizerParameterControlWindow.Show();
+        EqualizerParameterControlWindow.Closed += (_, e) => { EqualizerParameterControlWindow = null; };
+      }
+    }
+
+    public static void EqualizerParameterControlWindowClose()
+    {
+      if (EqualizerParameterControlWindow != null)
+        EqualizerParameterControlWindow.Close();
+      EqualizerParameterControlWindow = null;
+    }
+
+    private static UserWindow EqualizerParameterControlWindow
+    {
+      get => _EqualizerParameterControlWindow.IsAlive ? (UserWindow)_EqualizerParameterControlWindow.Target : null;
+      set => _EqualizerParameterControlWindow = new WeakReference(value);
+    }
+    private static WeakReference _EqualizerParameterControlWindow = new WeakReference(null);
     #endregion
   }
 }

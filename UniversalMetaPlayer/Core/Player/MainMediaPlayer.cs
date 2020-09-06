@@ -9,7 +9,7 @@ using System.IO;
 using NAudio.Wave;
 
 using UMP.Core.Model;
-using UMP.Utility;
+using UMP.Utils;
 using UMP.Core.Model.Media;
 using UMP.Core.Global;
 using UMP.Core.Player.Plugin.Effect;
@@ -250,6 +250,7 @@ namespace UMP.Core.Player
       catch (Exception e)
       {
         Log.Fatal("미디어 정보 로드 실패", e, $"Title : [{info.Title}]\nLocation : [{info.MediaLocation}]");
+        IsWork = false;
         return false;
       }
 
@@ -266,11 +267,13 @@ namespace UMP.Core.Player
       catch (Exception e)
       {
         Log.Fatal("미디어 스트림 로드에 오류가 발생했습니다", e, $"Title : [{info.Title}]\nLocation : [{info.MediaLocation}]");
+        IsWork = false;
         return false;
       }
       if (!streamResult)
       {
         Log.Fatal("미디어 스트림 로드에 실패했습니다", new FileLoadException("Media Stream Path is Null"), $"Title : [{info.Title}]\nLocation : [{info.MediaLocation}]");
+        IsWork = false;
         return false;
       }
 
@@ -293,6 +296,7 @@ namespace UMP.Core.Player
       catch (Exception e)
       {
         Log.Fatal("미디어 파일 로드중 오류가 발생했습니다", e);
+        IsWork = false;
         return false;
       }
       MediaInformation = info;
@@ -303,7 +307,8 @@ namespace UMP.Core.Player
 
       // 오디오 분석 및 효과 적용 코드
       Aggregator = new SampleAggregatorChain(audioFile);
-      Aggregator.AddPlugin(new VarispeedChanger(Aggregator.Head, new Utility.SoundTouch.SoundTouchProfile(false, false), TempProperty.VarispeedChangerParameter));
+      Aggregator.AddPlugin(new VarispeedChanger(Aggregator.Head, new Utils.SoundTouch.SoundTouchProfile(false, false), TempProperty.VarispeedChangerParameter));
+      Aggregator.AddPlugin(new Equalizer(Aggregator.Head, TempProperty.EqualizerBandParameter));
       Aggregator.AddPlugin(new FadeOutEffect(Aggregator.Head));
 
       SampleAnalyzer Analyzer = new SampleAnalyzer(Aggregator.Head);
@@ -327,10 +332,12 @@ namespace UMP.Core.Player
       {
         WavePlayer?.Dispose();
         Log.Fatal("플레이어 초기화 실패", e, $"Title : [{info.Title}]\nLocation : [{info.MediaLocation}]");
+        IsWork = false;
         return false;
       }
 
       OnPropertyChanged("MainPlayerInitialized");
+      IsWork = false;
       return true;
     }
 
