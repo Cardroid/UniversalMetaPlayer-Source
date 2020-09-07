@@ -2,11 +2,11 @@
 
 using UMP.Controller.Function.AnalysisControl;
 using UMP.Controller.Function.AnalysisControl.MediaFileAnalysis;
-using UMP.Controller.Function.Etc;
+using UMP.Controller.Function.Info;
 using UMP.Controller.Function.OptionControl;
 
 using UMP.Core.Global;
-using UMP.Core.Model.Func;
+using UMP.Core.Model.Control;
 using UMP.Core.Model.ViewModel;
 
 namespace UMP.Controller.Function

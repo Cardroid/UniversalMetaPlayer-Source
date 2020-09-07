@@ -16,10 +16,10 @@ using System.Windows.Shapes;
 
 using UMP.Core;
 using UMP.Core.Global;
-using UMP.Core.Model.Func;
+using UMP.Core.Model.Control;
 using UMP.Core.PackageInformation;
 
-namespace UMP.Controller.Function.Etc
+namespace UMP.Controller.Function.Info
 {
   public partial class InformationOption : FunctionControlForm
   {
@@ -43,11 +43,14 @@ namespace UMP.Controller.Function.Etc
       this.ProjectRepositoryUrl.Inlines.Add("프로젝트 리포지토리");
       this.ProjectRepositoryUrl.RequestNavigate += Url_RequestNavigate;
 
-      List<PackageInformation> packages = new List<PackageInformation>();
-      var allPackages = PackageManager.GetFullPackageInfo();
-      foreach (var item in allPackages.Values)
-        packages.Add(item);
-      this.PackageList.ItemsSource = packages;
+      this.Loaded += (_, e) =>
+      {
+        List<PackageInformation> packages = new List<PackageInformation>();
+        var allPackages = PackageManager.GetFullPackageInfo();
+        foreach (var item in allPackages.Values)
+          packages.Add(new PackageInformation(item.Name, $"{item.ProjectUrl} 으로 이동합니다", item.License, $"{item.LicenseUrl} 으로 이동합니다"));
+        this.PackageList.ItemsSource = packages;
+      };
     }
 
     private void Url_RequestNavigate(object sender, RequestNavigateEventArgs e)

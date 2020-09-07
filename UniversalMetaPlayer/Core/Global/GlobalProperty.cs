@@ -76,9 +76,6 @@ namespace UMP.Core.Global
     /// <returns>성공시 true 반환</returns>
     public static void Load()
     {
-      SetDefault();
-      ThemeHelper.SetDefaultTheme();
-
       if (File.Exists("UMP_Options.json"))
       {
         JObject jObj = null;
@@ -118,7 +115,7 @@ namespace UMP.Core.Global
         }
         catch (Exception e)
         {
-          Log.Fatal("메인 설정 불러오기 실패", e);
+          Log.Error("메인 설정 불러오기 실패", e);
           SetDefault();
         }
 
@@ -133,30 +130,36 @@ namespace UMP.Core.Global
         }
         catch (Exception e)
         {
-          Log.Fatal("플레이어 설정 불러오기 실패", e);
+          Log.Error("플레이어 설정 불러오기 실패", e);
           MainMediaPlayer.OptionSetDefault();
         }
 
         // 테마 적용하기
         try
         {
+          ThemeHelper.SetDefaultTheme();
           ThemeHelper.ThemeChangedEvent -= ThemeHelper_ThemeChangedEvent;
           ThemeHelper.IsDarkMode = Options.Getter<bool>(Enums.ValueName.IsDarkMode);
           ThemeHelper.ChangePrimaryColor(Options.Getter<Color>(Enums.ValueName.PrimaryColor));
           ThemeHelper.ChangeSecondaryColor(Options.Getter<Color>(Enums.ValueName.SecondaryColor));
           ThemeHelper.ThemeChangedEvent += ThemeHelper_ThemeChangedEvent;
-          Log.Info("메인 테마 불러오기 완료");
+          Log.Info("테마 불러오기 완료");
         }
         catch (Exception e)
         {
-          Log.Fatal("메인 테마 불러오기 실패", e);
+          Log.Error("테마 불러오기 실패", e);
           ThemeHelper.SetDefaultTheme();
         }
 
         OnPropertyChanged("Loaded");
       }
       else
+      {
         Log.Warn("저장된 메인 설정 파일이 없습니다");
+
+        SetDefault();
+        ThemeHelper.SetDefaultTheme();
+      }
     }
 
     /// <summary>
@@ -252,7 +255,17 @@ namespace UMP.Core.Global
       /// <summary>
       /// 설정을 모두 제거합니다
       /// </summary>
-      public static void Clear() => Settings.Clear();
+      public static void Clear()
+      {
+        Settings.Clear();
+
+        string[] valueNames = Enum.GetNames(typeof(Enums.ValueName));
+        for (int i = 0; i < valueNames.Length; i++)
+        {
+          var valueNameEnum = Enum.Parse<Enums.ValueName>(valueNames[i]);
+          Setter(valueNameEnum, DefaultValue.GetDefaultValue(valueNameEnum));
+        }
+      }
 
       public static class HotKey
       {
@@ -335,25 +348,27 @@ namespace UMP.Core.Global
     /// </summary>
     public static class DefaultValue
     {
-      public static T GetDefaultValue<T>(Enums.ValueName valueName) => valueName switch
+      public static T GetDefaultValue<T>(Enums.ValueName valueName) => Parser.ChangeType<T, string>(GetDefaultValue(valueName));
+
+      public static string GetDefaultValue(Enums.ValueName valueName) => valueName switch
       {
         // 일반
-        Enums.ValueName.FileSavePath => Parser.ChangeType<T, string>("Save"),
-        Enums.ValueName.IsPrivateLogging => Parser.ChangeType<T, bool>(true),
-        Enums.ValueName.MediaLoadEngine => Parser.ChangeType<T, Enums.MediaLoadEngineType>(Enums.MediaLoadEngineType.Native),
-        Enums.ValueName.LyricsSettings => Parser.ChangeType<T, Enums.LyricsSettingsType>(Enums.LyricsSettingsType.Auto),
+        Enums.ValueName.FileSavePath => "Save",
+        Enums.ValueName.IsPrivateLogging => bool.TrueString,
+        Enums.ValueName.MediaLoadEngine => Enums.MediaLoadEngineType.Native.ToString(),
+        Enums.ValueName.LyricsSettings => Enums.LyricsSettingsType.Auto.ToString(),
         // 테마
-        Enums.ValueName.IsDarkMode => Parser.ChangeType<T, bool>(true),
-        Enums.ValueName.PrimaryColor => Parser.ChangeType<T, Color>(Colors.Green.Lighten(3)),
-        Enums.ValueName.SecondaryColor => Parser.ChangeType<T, Color>(Colors.Green.Darken(3)),
-        Enums.ValueName.IsAverageColorTheme => Parser.ChangeType<T, bool>(true),
-        Enums.ValueName.AverageColorProcessingOffset => Parser.ChangeType<T, int>(30),
+        Enums.ValueName.IsDarkMode => bool.TrueString,
+        Enums.ValueName.PrimaryColor => Colors.Green.Lighten(3).ToString(),
+        Enums.ValueName.SecondaryColor => Colors.Green.Darken(3).ToString(),
+        Enums.ValueName.IsAverageColorTheme => bool.TrueString,
+        Enums.ValueName.AverageColorProcessingOffset => "50",
         // 키보드
-        Enums.ValueName.HotKey => Parser.ChangeType<T, bool>(true),
-        Enums.ValueName.GlobalKeyboardHook => Parser.ChangeType<T, bool>(true),
+        Enums.ValueName.HotKey => bool.TrueString,
+        Enums.ValueName.GlobalKeyboardHook => bool.TrueString,
         // 효과
-        Enums.ValueName.IsUseFadeEffect => Parser.ChangeType<T, bool>(true),
-        Enums.ValueName.FadeEffectDelay => Parser.ChangeType<T, int>(200),
+        Enums.ValueName.IsUseFadeEffect => bool.TrueString,
+        Enums.ValueName.FadeEffectDelay => "200",
 
         _ => default,
       };

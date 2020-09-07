@@ -47,12 +47,13 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
     private bool _IsReset = false;
 
     private Timer IsResetLockTimer;
+    private const int TimerInterval = 3000;
 
     private void SetDefault_Click()
     {
       if (IsResetLockTimer == null)
       {
-        IsResetLockTimer = new Timer(3000) { AutoReset = true };
+        IsResetLockTimer = new Timer(TimerInterval) { AutoReset = true };
         IsResetLockTimer.Elapsed += (_, e) =>
         {
           IsResetLockTimer.Stop();
@@ -68,6 +69,7 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
       else
       {
         IsReset = true;
+        GlobalMessageEvent.Invoke($"초기화 하려면 {TimerInterval / 1000}초안에 다시 누르세요", true);
         IsResetLockTimer.Start();
       }
     }

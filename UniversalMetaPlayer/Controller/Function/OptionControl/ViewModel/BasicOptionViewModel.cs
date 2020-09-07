@@ -97,7 +97,7 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
     }
 
     public string PrivateLoggingToolTip =>
-      $"기본값 : {GlobalProperty.DefaultValue.GetDefaultValue<bool>(Enums.ValueName.IsPrivateLogging)}\n\n" +
+      $"기본값 : {GlobalProperty.DefaultValue.GetDefaultValue(Enums.ValueName.IsPrivateLogging)}\n\n" +
 
       "로그에 더 자세한 사항을 기록합니다.\n" +
       "프로그램 경로, 미디어 정보등이 기록됩니다.";
@@ -116,7 +116,7 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
     public List<ComboBoxItem> MediaLoadEngineTypes { get; }
 
     public string MediaLoadEngineToolTip =>
-      $"기본값 : {GlobalProperty.DefaultValue.GetDefaultValue<Enums.MediaLoadEngineType>(Enums.ValueName.MediaLoadEngine)}\n" +
+      $"기본값 : {GlobalProperty.DefaultValue.GetDefaultValue(Enums.ValueName.MediaLoadEngine)}\n" +
       $"(클릭후 드래그로 선택해야 합니다)\n\n" +
 
       $"미디어를 불러올 때 사용하는 엔진입니다.";
@@ -130,7 +130,7 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
     public bool IsCheckedLyricsSettings_On => GlobalProperty.Options.Getter<Enums.LyricsSettingsType>(Enums.ValueName.LyricsSettings) == Enums.LyricsSettingsType.On;
 
     public string LyricsSettingsToolTip =>
-      $"기본값 : {GlobalProperty.DefaultValue.GetDefaultValue<Enums.LyricsSettingsType>(Enums.ValueName.LyricsSettings)}\n" +
+      $"기본값 : {GlobalProperty.DefaultValue.GetDefaultValue(Enums.ValueName.LyricsSettings)}\n" +
       $"On = 항상 열기, Auto = 가사가 있는 경우만 열기, Off = 항상 닫기\n\n" +
 
       $"가사를 볼 수 있는 창을 활성화 합니다.";
@@ -174,12 +174,13 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
     private bool _IsReset = false;
 
     private Timer IsResetLockTimer;
+    private const int TimerInterval = 3000;
 
     private void SetDefault_Click()
     {
       if (IsResetLockTimer == null)
       {
-        IsResetLockTimer = new Timer(3000) { AutoReset = true };
+        IsResetLockTimer = new Timer(TimerInterval) { AutoReset = true };
         IsResetLockTimer.Elapsed += (_, e) =>
         {
           IsResetLockTimer.Stop();
@@ -195,6 +196,7 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
       else
       {
         IsReset = true;
+        GlobalMessageEvent.Invoke($"초기화 하려면 {TimerInterval / 1000}초안에 다시 누르세요", true);
         IsResetLockTimer.Start();
       }
     }

@@ -12,7 +12,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using UMP.Core;
-using UMP.Core.Model.Func;
+using UMP.Core.Model.Control;
 using UMP.Core.Player;
 using UMP.Utils.MediaInfoLib;
 

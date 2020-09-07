@@ -13,7 +13,7 @@ namespace UMP.Core.PackageInformation
       LicenseDictionary = new Dictionary<string, PackageInformation>();
     }
 
-    public void Add(string packageName, string projectUrl, string license, string licenseUrl) => LicenseDictionary.Add(packageName, new PackageInformation() { Name = packageName, ProjectUrl = projectUrl, License = license, LicenseUrl = licenseUrl });
+    public void Add(string packageName, string projectUrl, string license, string licenseUrl) => LicenseDictionary.Add(packageName, new PackageInformation(packageName, projectUrl, license, licenseUrl));
 
     public void Remove(string key) => LicenseDictionary.Remove(key);
 
@@ -32,21 +32,28 @@ namespace UMP.Core.PackageInformation
 
   public struct PackageInformation
   {
+    public PackageInformation(string name, string projectUrl, string license, string licenseUrl)
+    {
+      this.Name = name;
+      this.ProjectUrl = projectUrl;
+      this.License = license;
+      this.LicenseUrl = licenseUrl;
+    }
     /// <summary>
     /// 이름
     /// </summary>
-    public string Name { get; set; }
+    public string Name { get; }
     /// <summary>
     /// 프로젝트 주소
     /// </summary>
-    public string ProjectUrl { get; set; }
+    public string ProjectUrl { get; }
     /// <summary>
     /// 라이센스 명
     /// </summary>
-    public string License { get; set; }
+    public string License { get; }
     /// <summary>
     /// 라이센스 주소
     /// </summary>
-    public string LicenseUrl { get; set; }
+    public string LicenseUrl { get; }
   }
 }

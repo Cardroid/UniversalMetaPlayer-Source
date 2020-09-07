@@ -19,7 +19,7 @@ namespace UMP.Controller.Function.AnalysisControl.WaveAnalysis.Func
       SizeChanged += SpectrumAnalyser_SizeChanged;
     }
 
-    void SpectrumAnalyser_SizeChanged(object sender, SizeChangedEventArgs e)
+    private void SpectrumAnalyser_SizeChanged(object sender, SizeChangedEventArgs e)
     {
       CalculateXScale();
     }

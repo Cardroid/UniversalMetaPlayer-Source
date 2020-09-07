@@ -1,4 +1,4 @@
-﻿using UMP.Core.Model.Func;
+﻿using UMP.Core.Model.Control;
 using UMP.Core.Player;
 using UMP.Core.Player.Plugin;
 using UMP.Core.Player.Plugin.Effect;

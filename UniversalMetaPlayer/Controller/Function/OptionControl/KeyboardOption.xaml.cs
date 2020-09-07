@@ -14,7 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using UMP.Core.Global;
-using UMP.Core.Model.Func;
+using UMP.Core.Model.Control;
 
 namespace UMP.Controller.Function.OptionControl
 {

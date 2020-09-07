@@ -20,7 +20,7 @@ namespace UMP.Controller.WindowHelper
   public partial class UserWindow : Window
   {
     private UserWindowViewModel ViewModel { get; }
-    public UserWindow(UserControl userControl, string title)
+    public UserWindow(UserControl userControl, string title, bool useHotkey = true, bool useMessagePopup = true)
     {
       InitializeComponent();
       ViewModel = (UserWindowViewModel)this.DataContext;
@@ -30,37 +30,43 @@ namespace UMP.Controller.WindowHelper
       this.BorderBrush = new SolidColorBrush(ThemeHelper.PrimaryColor);
       ThemeHelper.ThemeChangedEvent += (e) => this.BorderBrush = new SolidColorBrush(e.PrimaryColor);
 
-      this.PreviewKeyDown += (_, e) =>
+      if (useHotkey)
       {
-        if (GlobalKeyDownEvent.IsEnabled && GlobalProperty.Options.HotKey.IsEnabled && GlobalProperty.Options.HotKey.ContainsKey(e.Key))
+        this.PreviewKeyDown += (_, e) =>
         {
-          e.Handled = true;
-          GlobalKeyDownEvent.Invoke(e);
-        }
-      };
+          if (GlobalKeyDownEvent.IsEnabled && GlobalProperty.Options.HotKey.IsEnabled && GlobalProperty.Options.HotKey.ContainsKey(e.Key))
+          {
+            e.Handled = true;
+            GlobalKeyDownEvent.Invoke(e);
+          }
+        };
+      }
 
-      GlobalMessageEvent.MessageCloseEvent += () =>
+      if (useMessagePopup)
       {
-        Dispatcher.Invoke(new Action(() =>
+        GlobalMessageEvent.MessageCloseEvent += () =>
         {
-          this.GlobalMessageBar.IsActive = false;
-        }));
-      };
+          Dispatcher.Invoke(new Action(() =>
+          {
+            this.GlobalMessageBar.IsActive = false;
+          }));
+        };
 
-      GlobalMessageEvent.MessageEvent += (msg) =>
-      {
-        Dispatcher.Invoke(new Action(() =>
+        GlobalMessageEvent.MessageEvent += (msg) =>
         {
-          this.GlobalMessageBar.IsActive = true;
-          this.GlobalMessage.Content = msg;
-        }));
-      };
+          Dispatcher.Invoke(new Action(() =>
+          {
+            this.GlobalMessageBar.IsActive = true;
+            this.GlobalMessage.Content = msg;
+          }));
+        };
 
-      this.GlobalMessageBar.MouseLeftButtonDown += (_, e) =>
-      {
-        if (this.GlobalMessageBar.IsActive)
-          this.GlobalMessageBar.IsActive = false;
-      };
+        this.GlobalMessageBar.MouseLeftButtonDown += (_, e) =>
+        {
+          if (this.GlobalMessageBar.IsActive)
+            this.GlobalMessageBar.IsActive = false;
+        };
+      }
 
       this.Activated += (_, e) => GlobalProperty.State.IsFocusActive = true;
       this.Deactivated += (_, e) => GlobalProperty.State.IsFocusActive = false;

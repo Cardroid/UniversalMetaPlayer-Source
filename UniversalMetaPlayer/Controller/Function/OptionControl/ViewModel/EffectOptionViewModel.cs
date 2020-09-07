@@ -36,7 +36,7 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
       $"재생, 일시정지 및 정지에 서서히 소리가 변화하는 FadeIn, FadeOut 효과를 넣습니다.";
 
     public string FadeEffectDelayToolTip =>
-      $"기본값 : {GlobalProperty.DefaultValue.GetDefaultValue<int>(Enums.ValueName.FadeEffectDelay)} (최소 : 1 최대 : 3000)\n" +
+      $"기본값 : {GlobalProperty.DefaultValue.GetDefaultValue(Enums.ValueName.FadeEffectDelay)} (최소 : 1 최대 : 3000)\n" +
       $"*흐려짐 효과를 사용해야 합니다.\n\n" +
 
       $"흐려짐 효과의 지연시간입니다. (단위 : Milliseconds)\n" +
