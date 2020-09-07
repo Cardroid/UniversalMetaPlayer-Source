@@ -234,6 +234,7 @@ namespace UMP.Core.Player
     /// <param name="media">재생할 미디어</param>
     public static async Task<bool> Init(MediaInformation mediainfo)
     {
+      IsControllable(false);
       MediaLoader.MediaLoader mediaLoader = new MediaLoader.MediaLoader(mediainfo);
 #if DEBUG
       Debug.WriteLine($"\n\n{mediainfo.Title}   {mediainfo.MediaLocation}");
@@ -251,6 +252,7 @@ namespace UMP.Core.Player
       {
         Log.Fatal("미디어 정보 로드 실패", e, $"Title : [{info.Title}]\nLocation : [{info.MediaLocation}]");
         IsWork = false;
+        IsControllable(true);
         return false;
       }
 
@@ -268,12 +270,14 @@ namespace UMP.Core.Player
       {
         Log.Fatal("미디어 스트림 로드에 오류가 발생했습니다", e, $"Title : [{info.Title}]\nLocation : [{info.MediaLocation}]");
         IsWork = false;
+        IsControllable(true);
         return false;
       }
       if (!streamResult)
       {
         Log.Fatal("미디어 스트림 로드에 실패했습니다", new FileLoadException("Media Stream Path is Null"), $"Title : [{info.Title}]\nLocation : [{info.MediaLocation}]");
         IsWork = false;
+        IsControllable(true);
         return false;
       }
 
@@ -297,6 +301,7 @@ namespace UMP.Core.Player
       {
         Log.Fatal("미디어 파일 로드중 오류가 발생했습니다", e);
         IsWork = false;
+        IsControllable(true);
         return false;
       }
       MediaInformation = info;
@@ -333,11 +338,13 @@ namespace UMP.Core.Player
         WavePlayer?.Dispose();
         Log.Fatal("플레이어 초기화 실패", e, $"Title : [{info.Title}]\nLocation : [{info.MediaLocation}]");
         IsWork = false;
+        IsControllable(true);
         return false;
       }
 
       OnPropertyChanged("MainPlayerInitialized");
       IsWork = false;
+      IsControllable(true);
       return true;
     }
 
@@ -450,6 +457,8 @@ namespace UMP.Core.Player
     }
 
     private static bool IsWork { get; set; } = false;
+
+    private static void IsControllable(bool value) => GlobalProperty.State.IsControllable = value;
 
     /// <summary>
     /// 다음 미디어
