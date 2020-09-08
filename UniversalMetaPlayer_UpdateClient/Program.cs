@@ -51,6 +51,18 @@ namespace UMP.UpdateClient
     static void Main()
     {
       Console.Write("초기화 중...");
+      AppDomain.CurrentDomain.UnhandledException += (_, e) =>
+      {
+        string message = "처리되지 않은 오류가 있습니다.";
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine(message);
+        if (e.ExceptionObject != null)
+        {
+          if (!Directory.Exists("Log"))
+            Directory.CreateDirectory("Log");
+          File.AppendAllText(@"Log\UpdateCrash_Report.log", $"{DateTime.Now} [{message}]\n{e.ExceptionObject as Exception}\n\n");
+        }
+      };
       Console.SetError(ErrorWriter);
       Console.Title = "UniversalMetaPlayer Auto Update Client";
 
@@ -64,10 +76,7 @@ namespace UMP.UpdateClient
       p.Start();
 
       //hold the console so it doesn’t run off the end
-      while (!exitSystem)
-      {
-        Thread.Sleep(500);
-      }
+      while (!exitSystem) { Thread.Sleep(500); }
 
       Console.WriteLine("프로그램 종료 중...");
       Clean();
@@ -197,7 +206,7 @@ namespace UMP.UpdateClient
     private int DownloadCursorPostion { get; set; }
     private bool DownloadComplate { get; set; } = false;
     private string DownloadFilePath { get; set; }
-    private const string DownloadPath = @"Core\Cache\UpdateCache";
+    private const string DownloadPath = @"Cache\UpdateCache";
 
     private bool? GetCurrentVersion()
     {
@@ -423,19 +432,20 @@ namespace UMP.UpdateClient
       Console.WriteLine("완료");
     }
 
-    private void WriteError(string message) => WriteError(message, null);
-    private void WriteError(string message, Exception exception)
+    private static void WriteError(string message) => WriteError(message, null);
+    private static void WriteError(string message, Exception exception)
     {
       IsErrorExist = true;
       var beforeFgColor = Console.ForegroundColor;
       Console.ForegroundColor = ConsoleColor.Red;
-      Console.WriteLine(message);
+      Console.WriteLine($"{DateTime.Now} [{message}]\n{exception}\n\n");
       if (exception != null)
       {
         if (!Directory.Exists("Log"))
           Directory.CreateDirectory("Log");
         File.AppendAllText(@"Log\UpdateCrash_Report.log", $"{DateTime.Now} [{message}]\n{exception}\n\n");
       }
+      ErrorWriter.WriteLine(message);
       Console.ForegroundColor = beforeFgColor;
     }
   }
