@@ -32,41 +32,19 @@ namespace UMP.Core.LogHelper
         if(_IsEnable != value)
         {
           _IsEnable = value;
+
           if (_IsEnable)
-          {
-            if (LogViewerWindow == null)
-            {
-              LogViewerWindow = new UserWindow(LogTextBox, "UMP - Log");
-              LogViewerWindow.Closed += (_, e) => { IsEnable = false; };
-            }
-            LogViewerWindow.Show();
-          }
+            WindowManager.Controller.Open(Model.Control.WindowKind.Log);
           else
-          {
-            if (LogViewerWindow != null)
-            {
-              LogViewerWindow.Close();
-              LogViewerWindow = null;
-            }
-          }
+            WindowManager.Controller.Close(Model.Control.WindowKind.Log);
+
           PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsEnable"));
         }
       }
     }
-    private bool _IsEnable;
-    private LogTextBox LogTextBox { get; }
-    private UserWindow LogViewerWindow
-    {
-      get => _LogViewerWindow != null && _LogViewerWindow.IsAlive ? _LogViewerWindow.Target as UserWindow : null;
-      set
-      {
-        if (value == null)
-          _LogViewerWindow = null;
-        else
-          _LogViewerWindow = new WeakReference(value);
-      }
-    }
-    private WeakReference _LogViewerWindow;
+    private bool _IsEnable = false;
+
+    public LogTextBox LogTextBox { get; }
 
     public event PropertyChangedEventHandler PropertyChanged;
 
@@ -74,6 +52,7 @@ namespace UMP.Core.LogHelper
 
     public void Close()
     {
+      IsEnable = false;
     }
 
     public void DoAppend(LoggingEvent loggingEvent)

@@ -28,7 +28,6 @@ namespace UMP
   {
     public MainWindow()
     {
-      WindowManager.CloseAll();
       GlobalProperty.Load();
 
       InitializeComponent();

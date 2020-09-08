@@ -5,7 +5,7 @@ using NAudio.Dsp;
 using NAudio.Wave;
 
 using UMP.Core.Global;
-using UMP.Core.Model.Func;
+using UMP.Core.Model.Control;
 using UMP.Core.Player.Plugin.Effect;
 
 namespace UMP.Core.Player.Plugin

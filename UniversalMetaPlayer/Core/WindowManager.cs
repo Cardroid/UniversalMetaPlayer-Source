@@ -8,6 +8,7 @@ using System.Windows;
 using UMP.Controller.Function.Lyrics;
 using UMP.Controller.WindowHelper;
 using UMP.Core.Global;
+using UMP.Core.Model.Control;
 using UMP.Core.Model.Media;
 using UMP.Core.Player;
 using UMP.Core.Player.Plugin.Control;
@@ -18,23 +19,35 @@ namespace UMP.Core
   {
     static WindowManager()
     {
+      Controller = new WindowController();
       GlobalProperty.PropertyChanged += GlobalProperty_PropertyChanged_LyricsWindow;
     }
 
-    public static void DeactivateAll()
-    {
-      LyricsWindowClose();
-      MainMediaPlayer.PropertyChanged -= MainMediaPlayer_PropertyChanged_LyricsWindow;
-      IsActiveLyricsWindow = false;
-    }
-    
     public static void CloseAll()
     {
-      LyricsWindowClose();
+      Controller.CloseAll();
     }
 
+    public static WindowController Controller { get; }
+
     #region 가사 창 설정
-    public static bool IsActiveLyricsWindow { get; private set; } = false;
+    public static bool IsActiveLyricsWindow
+    {
+      get => _IsActiveLyricsWindow;
+      private set
+      {
+        if(_IsActiveLyricsWindow != value)
+        {
+          _IsActiveLyricsWindow = value;
+
+          if (!_IsActiveLyricsWindow)
+            MainMediaPlayer.PropertyChanged -= MainMediaPlayer_PropertyChanged_LyricsWindow;
+          else
+            MainMediaPlayer.PropertyChanged += MainMediaPlayer_PropertyChanged_LyricsWindow;
+        }
+      }
+    }
+    private static bool _IsActiveLyricsWindow = false;
 
     private static void GlobalProperty_PropertyChanged_LyricsWindow(object sender, PropertyChangedEventArgs e)
     {
@@ -42,18 +55,9 @@ namespace UMP.Core
       {
         var settingValue = GlobalProperty.Options.Getter<Enums.LyricsSettingsType>(Enums.ValueName.LyricsSettings);
         if (settingValue == Enums.LyricsSettingsType.Off)
-        {
-          if (IsActiveLyricsWindow)
-          {
-            MainMediaPlayer.PropertyChanged -= MainMediaPlayer_PropertyChanged_LyricsWindow;
             IsActiveLyricsWindow = false;
-          }
-        }
-        else if (!IsActiveLyricsWindow)
-        {
-          MainMediaPlayer.PropertyChanged += MainMediaPlayer_PropertyChanged_LyricsWindow;
+        else
           IsActiveLyricsWindow = true;
-        }
         LyricsWindow_RunProcess(settingValue);
       }
     }
@@ -80,103 +84,9 @@ namespace UMP.Core
         LyricsWindowClose();
     }
 
-    private static void LyricsWindowOpen()
-    {
-      if (LyricsWindow != null)
-      {
-        LyricsWindow.Visibility = Visibility.Visible;
-        LyricsWindow.Activate();
-      }
-      else
-      {
-        LyricsWindow = new UserWindow(new LyricsControl(), "UMP - Lyrics") { WindowStartupLocation = WindowStartupLocation.CenterScreen };
-        LyricsWindow.Show();
-        LyricsWindow.Closed += (_, e) => { LyricsWindow = null; };
-      }
-    }
+    private static void LyricsWindowOpen() => Controller.Open(WindowKind.Lyrics);
 
-    private static void LyricsWindowClose()
-    {
-      if (LyricsWindow != null)
-        LyricsWindow.Close();
-      LyricsWindow = null;
-    }
-
-    private static UserWindow LyricsWindow
-    {
-      get => _LyricsWindow.IsAlive ? (UserWindow)_LyricsWindow.Target : null;
-      set => _LyricsWindow = new WeakReference(value);
-    }
-    private static WeakReference _LyricsWindow = new WeakReference(null);
-    #endregion
-
-    #region 음향 효과 설정 창
-    public static void VarispeedChangerParameterControlWindowOpen()
-    {
-      if (VarispeedChangerParameterControlWindow != null)
-      {
-        VarispeedChangerParameterControlWindow.Visibility = Visibility.Visible;
-        VarispeedChangerParameterControlWindow.Activate();
-      }
-      else
-      {
-        VarispeedChangerParameterControlWindow = VarispeedChangerParameterControlWindow = new UserWindow(new VarispeedChangerParameterControl(), "UMP - AudioEffect")
-        {
-          SizeToContent = SizeToContent.WidthAndHeight,
-          WindowStartupLocation = WindowStartupLocation.CenterScreen
-        }; 
-        VarispeedChangerParameterControlWindow.Show();
-        VarispeedChangerParameterControlWindow.Closed += (_, e) => { VarispeedChangerParameterControlWindow = null; };
-      }
-    }
-
-    public static void VarispeedChangerParameterControlWindowClose()
-    {
-      if (VarispeedChangerParameterControlWindow != null)
-        VarispeedChangerParameterControlWindow.Close();
-      VarispeedChangerParameterControlWindow = null;
-    }
-
-    private static UserWindow VarispeedChangerParameterControlWindow
-    {
-      get => _VarispeedChangerParameterControlWindow.IsAlive ? (UserWindow)_VarispeedChangerParameterControlWindow.Target : null;
-      set => _VarispeedChangerParameterControlWindow = new WeakReference(value);
-    }
-    private static WeakReference _VarispeedChangerParameterControlWindow = new WeakReference(null);
-    #endregion
-
-    #region EQ 설정 창
-    public static void EqualizerParameterControlWindowOpen()
-    {
-      if (EqualizerParameterControlWindow != null)
-      {
-        EqualizerParameterControlWindow.Visibility = Visibility.Visible;
-        EqualizerParameterControlWindow.Activate();
-      }
-      else
-      {
-        EqualizerParameterControlWindow = EqualizerParameterControlWindow = new UserWindow(new EqualizerParameterControl(), "UMP - EQ")
-        {
-          WindowStartupLocation = WindowStartupLocation.CenterScreen
-        };
-        EqualizerParameterControlWindow.Show();
-        EqualizerParameterControlWindow.Closed += (_, e) => { EqualizerParameterControlWindow = null; };
-      }
-    }
-
-    public static void EqualizerParameterControlWindowClose()
-    {
-      if (EqualizerParameterControlWindow != null)
-        EqualizerParameterControlWindow.Close();
-      EqualizerParameterControlWindow = null;
-    }
-
-    private static UserWindow EqualizerParameterControlWindow
-    {
-      get => _EqualizerParameterControlWindow.IsAlive ? (UserWindow)_EqualizerParameterControlWindow.Target : null;
-      set => _EqualizerParameterControlWindow = new WeakReference(value);
-    }
-    private static WeakReference _EqualizerParameterControlWindow = new WeakReference(null);
+    private static void LyricsWindowClose() => Controller.Close(WindowKind.Lyrics);
     #endregion
   }
 }

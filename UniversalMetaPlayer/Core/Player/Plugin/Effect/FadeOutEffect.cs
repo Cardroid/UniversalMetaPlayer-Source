@@ -1,7 +1,7 @@
 ﻿using NAudio.Wave;
 
 using UMP.Core.Global;
-using UMP.Core.Model.Func;
+using UMP.Core.Model.Control;
 
 namespace UMP.Core.Player.Plugin.Effect
 {

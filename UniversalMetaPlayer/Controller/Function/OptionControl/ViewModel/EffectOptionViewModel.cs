@@ -20,8 +20,8 @@ namespace UMP.Controller.Function.OptionControl.ViewModel
           OnPropertyChanged("FadeEffectIsChecked");
       };
 
-      VarispeedChangerParameterControlOpen = new RelayCommand((o) => WindowManager.VarispeedChangerParameterControlWindowOpen());
-      EqualizerParameterControlOpen = new RelayCommand((o) => WindowManager.EqualizerParameterControlWindowOpen());
+      VarispeedChangerParameterControlOpen = new RelayCommand((o) => WindowManager.Controller.Open(Core.Model.Control.WindowKind.AudioEffect));
+      EqualizerParameterControlOpen = new RelayCommand((o) => WindowManager.Controller.Open(Core.Model.Control.WindowKind.EQ));
     }
 
     #region 흐려짐 효과

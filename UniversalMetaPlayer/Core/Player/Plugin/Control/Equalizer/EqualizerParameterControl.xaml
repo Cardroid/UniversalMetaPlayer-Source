@@ -72,7 +72,8 @@
             VerticalScrollBarVisibility="Disabled"
             Grid.Column="1">
             <ItemsControl
-                ItemsSource="{Binding ParameterSliders}">
+                ItemsSource="{Binding ParameterSliders}"
+                Margin="5">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <VirtualizingStackPanel

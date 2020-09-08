@@ -31,10 +31,16 @@ namespace UMP.Core.Player.Plugin.Control
     private void Init()
     {
       ParameterSliders.Clear();
-      var equalizer = MainMediaPlayer.Call<Equalizer>(PluginName.Equalizer);
-      if (equalizer != null)
-        for (int i = 0; i < equalizer.Bands.Length; i++)
-          ParameterSliders.Add(new EqualizerParameterSlider(equalizer.Bands[i]));
+      EqualizerBand[] bands = null;
+
+      if (MainMediaPlayer.MediaLoadedCheck)
+        bands = MainMediaPlayer.Call<Equalizer>(PluginName.Equalizer)?.Bands;
+      else
+        bands = TempProperty.EqualizerBandParameter;
+
+      if (bands != null)
+        for (int i = 0; i < bands.Length; i++)
+          ParameterSliders.Add(new EqualizerParameterSlider(bands[i]));
     }
 
     private void Reset()

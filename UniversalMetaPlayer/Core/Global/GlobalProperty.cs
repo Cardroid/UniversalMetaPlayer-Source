@@ -376,7 +376,6 @@ namespace UMP.Core.Global
 
     public static class Predefine
     {
-      #region Not Save
       /// <summary>
       /// 폰트
       /// </summary>
@@ -402,15 +401,15 @@ namespace UMP.Core.Global
       /// <summary>
       /// 캐시 폴더
       /// </summary>
-      public const string CACHE_PATH = @"Core\Cache";
+      public const string CACHE_PATH = @"Cache";
       /// <summary>
       /// 다운로드 캐시
       /// </summary>
-      public const string DownloadCachePath = @"Core\Cache\DownloadCache";
+      public const string DownloadCachePath = @"Cache\DownloadCache";
       /// <summary>
       /// 온라인에서 다운로드한 미디어 저장 캐시
       /// </summary>
-      public const string OnlineMediaCachePath = @"Core\Cache\OnlineMedia";
+      public const string OnlineMediaCachePath = @"Cache\OnlineMedia";
       /// <summary>
       /// YouTube-dl 라이브러리 저장 폴더
       /// </summary>
@@ -419,7 +418,6 @@ namespace UMP.Core.Global
       /// FFmpeg 라이브러리 저장 폴더
       /// </summary>
       public const string FFMPEG_PATH = @"Core\Library\FFmpeg";
-      #endregion
 
       #region Version
       /// <summary>

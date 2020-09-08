@@ -17,6 +17,7 @@ using UMP.Core.Global;
 using UMP.Controller.Function;
 using UMP.Controller.WindowHelper;
 using UMP.Utils;
+using UMP.Core;
 
 namespace UMP.Controller.ViewModel
 {
@@ -155,38 +156,30 @@ namespace UMP.Controller.ViewModel
       get => _IsCheckedFunctionToggleButton;
       set
       {
-        FunctionWindowClose();
+        WindowManager.Controller.Close(Core.Model.Control.WindowKind.Function);
         _IsCheckedFunctionToggleButton = value;
         if (_IsCheckedFunctionToggleButton)
-          FunctionWindowOpen();
+        {
+          var windowProperty = WindowManager.Controller[Core.Model.Control.WindowKind.Function];
+          if (windowProperty == null || windowProperty.IsClosed)
+            FunctionWindowInit();
+          WindowManager.Controller.Open(Core.Model.Control.WindowKind.Function);
+        }
         OnPropertyChanged("IsCheckedFunctionToggleButton");
       }
     }
     private bool _IsCheckedFunctionToggleButton = false;
 
-    private void FunctionWindowOpen()
+    private void FunctionWindowInit()
     {
-      if (FunctionWindow == null)
+      var windowProperty = WindowManager.Controller.Create(Core.Model.Control.WindowKind.Function);
+      windowProperty.IsLocked = true;
+      windowProperty.Window.Closing += (_, e) =>
       {
-        FunctionWindow = new UserWindow(new FunctionControl(), "UMP - Function") { WindowStartupLocation = WindowStartupLocation.CenterOwner };
-        FunctionWindow.Closing += (_, e) =>
-        {
-          FunctionWindowClose();
-          _IsCheckedFunctionToggleButton = false;
-          OnPropertyChanged("IsCheckedFunctionToggleButton");
-          e.Cancel = true;
-        };
-      }
-      FunctionWindow.Show();
+        _IsCheckedFunctionToggleButton = false;
+        OnPropertyChanged("IsCheckedFunctionToggleButton");
+      };
     }
-
-    private void FunctionWindowClose()
-    {
-      if (FunctionWindow != null)
-        FunctionWindow.Visibility = Visibility.Collapsed;
-    }
-
-    private UserWindow FunctionWindow { get; set; }
     #endregion
 
     #region PlayListControl
@@ -195,37 +188,30 @@ namespace UMP.Controller.ViewModel
       get => _IsCheckedPlayListToggleButton;
       set
       {
-        PlayListWindowClose();
+        WindowManager.Controller.Close(Core.Model.Control.WindowKind.PlayList);
         _IsCheckedPlayListToggleButton = value;
         if (_IsCheckedPlayListToggleButton)
-          PlayListWindowOpen();
+        {
+          var windowProperty = WindowManager.Controller[Core.Model.Control.WindowKind.PlayList];
+          if (windowProperty == null || windowProperty.IsClosed)
+            PlayListWindowInit();
+          WindowManager.Controller.Open(Core.Model.Control.WindowKind.PlayList);
+        }
         OnPropertyChanged("IsCheckedPlayListToggleButton");
       }
     }
     private bool _IsCheckedPlayListToggleButton = false;
 
-    private void PlayListWindowOpen()
+    private void PlayListWindowInit()
     {
-      if (PlayListWindow == null)
+      var windowProperty = WindowManager.Controller.Create(Core.Model.Control.WindowKind.PlayList);
+      windowProperty.IsLocked = true;
+      windowProperty.Window.Closing += (_, e) =>
       {
-        PlayListWindow = new UserWindow(new PlayListControl(), "UMP - PlayList") { WindowStartupLocation = WindowStartupLocation.CenterOwner };
-        PlayListWindow.Closing += (_, e) =>
-        {
-          PlayListWindowClose();
-          _IsCheckedPlayListToggleButton = false;
-          OnPropertyChanged("IsCheckedPlayListToggleButton");
-          e.Cancel = true;
-        };
-      }
-      PlayListWindow.Show();
+        _IsCheckedPlayListToggleButton = false;
+        OnPropertyChanged("IsCheckedPlayListToggleButton");
+      };
     }
-    private void PlayListWindowClose()
-    {
-      if (PlayListWindow != null)
-        PlayListWindow.Visibility = Visibility.Collapsed;
-    }
-
-    private UserWindow PlayListWindow { get; set; }
     #endregion
 
     #region 플레이 시간 UI

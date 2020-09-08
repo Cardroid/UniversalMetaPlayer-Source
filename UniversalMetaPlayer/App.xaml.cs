@@ -18,6 +18,7 @@ namespace UMP
     public static Log MainLog { get; } = new Log("System");
     public App()
     {
+      CacheManager.MoveCacheDirectory();
 #if DEBUG
       Log.LogViewerAppender.IsEnable = true;
 #endif
