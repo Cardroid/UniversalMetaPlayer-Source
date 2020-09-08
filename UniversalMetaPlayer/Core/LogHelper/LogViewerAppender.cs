@@ -5,6 +5,7 @@ using System.Text;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 using log4net.Appender;
 using log4net.Core;
@@ -21,12 +22,13 @@ namespace UMP.Core.LogHelper
       Name = "LogViewerAppender";
       Layout = patternLayout;
       this.LogTextBox = logTextBox;
+      IsEnable = false;
     }
 
     public string Name { get; set; }
     public bool IsEnable
     {
-      get => _IsEnable;
+      get => _IsEnable && Dispatcher != null;
       set
       {
         if(_IsEnable != value)
@@ -34,10 +36,15 @@ namespace UMP.Core.LogHelper
           _IsEnable = value;
 
           if (_IsEnable)
-            WindowManager.Controller.Open(Model.Control.WindowKind.Log);
+          {
+            var windowProperty = WindowManager.Controller.Open(Model.Control.WindowKind.Log);
+            this.Dispatcher = windowProperty.Window.Dispatcher;
+          }
           else
+          {
             WindowManager.Controller.Close(Model.Control.WindowKind.Log);
-
+            this.Dispatcher = null;
+          }
           PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsEnable"));
         }
       }
@@ -47,6 +54,7 @@ namespace UMP.Core.LogHelper
     public LogTextBox LogTextBox { get; }
 
     public event PropertyChangedEventHandler PropertyChanged;
+    public Dispatcher Dispatcher { get; private set; }
 
     private PatternLayout Layout { get; }
 
@@ -59,46 +67,38 @@ namespace UMP.Core.LogHelper
     {
       if (IsEnable)
       {
-        Paragraph paragraph = new Paragraph();
-
-        Brush foreground;
-        Brush background;
+        Color foreground;
+        Color background;
 
         switch (loggingEvent.Level.Name.ToUpper())
         {
           case "FATAL":
-            foreground = Brushes.Red;
-            background = Brushes.White;
+            foreground = Colors.Red;
+            background = Colors.White;
             break;
           case "ERROR":
-            foreground = Brushes.Red;
-            background = Brushes.Transparent;
+            foreground = Colors.Red;
+            background = Colors.Transparent;
             break;
           case "WARN":
-            foreground = Brushes.Yellow;
-            background = Brushes.Transparent;
+            foreground = Colors.Yellow;
+            background = Colors.Transparent;
             break;
           case "INFO":
-            foreground = Brushes.White;
-            background = Brushes.Transparent;
+            foreground = Colors.White;
+            background = Colors.Transparent;
             break;
           case "DEBUG":
-            foreground = Brushes.LightGreen;
-            background = Brushes.Transparent;
+            foreground = Colors.LightGreen;
+            background = Colors.Transparent;
             break;
           default:
-            foreground = Brushes.White;
-            background = Brushes.Transparent;
+            foreground = Colors.White;
+            background = Colors.Transparent;
             break;
         }
 
-        paragraph.Inlines.Add(new Run(Layout.Format(loggingEvent)) { Foreground = foreground, Background = background });
-
-        LogTextBox.Dispatcher.Invoke(() =>
-        {
-          LogTextBox.TextBox.Document.Blocks.Add(paragraph);
-          LogTextBox.ScrollViewer.ScrollToEnd();
-        });
+        LogTextBox.AddMessage(new LogMessageStruct(Layout.Format(loggingEvent), foreground, background));
       }
     }
   }

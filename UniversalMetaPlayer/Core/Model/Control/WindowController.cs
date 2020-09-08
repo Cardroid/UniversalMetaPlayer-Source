@@ -27,10 +27,15 @@ namespace UMP.Core.Model.Control
       }
     }
 
-    public IUserWindowProperty Create(WindowKind windowKind)
+    public IUserWindowProperty Create(WindowKind windowKind, bool force = false)
     {
       if (WindowsDictionary.TryGetValue(windowKind, out UserWindowProperty windowProperty))
+      {
+        if (force)
+          windowProperty.Reset();
+
         return windowProperty;
+      }
       else
       {
         var winproperty = new UserWindowProperty(windowKind);
@@ -123,7 +128,7 @@ namespace UMP.Core.Model.Control
           }
         }
       }
-      public bool _IsLocked = false;
+      private bool _IsLocked = false;
 
       private void LockMethod(object sender, System.ComponentModel.CancelEventArgs e)
       {

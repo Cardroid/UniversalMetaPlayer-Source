@@ -237,8 +237,8 @@ namespace UMP.Core.Player
       IsControllable(false);
       MediaLoader.MediaLoader mediaLoader = new MediaLoader.MediaLoader(mediainfo);
 #if DEBUG
-      Debug.WriteLine($"\n\n{mediainfo.Title}   {mediainfo.MediaLocation}");
-      mediaLoader.ProgressChanged += (_, e) => { Debug.WriteLine($"{e.ProgressKind}".PadRight(15) + $"{e.Percentage}%".PadLeft(4) + $"   {e.UserMessage}"); };
+      Log.Debug($"\n\n{mediainfo.Title}   {mediainfo.MediaLocation}");
+      mediaLoader.ProgressChanged += (_, e) => Log.Debug($"{e.ProgressKind}".PadRight(15) + $"{e.Percentage}%".PadLeft(4) + $"   {e.UserMessage}");
 #endif
       MediaInformation info = new MediaInformation();
 
@@ -350,10 +350,7 @@ namespace UMP.Core.Player
 
     private static bool IsPlayStateChangeWork
     {
-      get
-      {
-        return !IsWork && _IsPlayStateChangeWork;
-      }
+      get => !IsWork && _IsPlayStateChangeWork;
       set => _IsPlayStateChangeWork = value;
     }
     private static bool _IsPlayStateChangeWork = false;
