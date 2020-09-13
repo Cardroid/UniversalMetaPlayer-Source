@@ -153,7 +153,7 @@ namespace UMP.Core.Player
     public static MediaInformation NotChangedMediaInformation { get; private set; }
 
     /// <summary>
-    /// 오디오 파일 (약한참조)
+    /// 오디오 파일
     /// </summary>
     private static WaveStream AudioFile
     {

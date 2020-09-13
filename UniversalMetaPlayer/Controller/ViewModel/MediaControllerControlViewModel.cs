@@ -18,6 +18,7 @@ using UMP.Controller.Function;
 using UMP.Controller.WindowHelper;
 using UMP.Utils;
 using UMP.Core;
+using System.Timers;
 
 namespace UMP.Controller.ViewModel
 {
@@ -173,7 +174,6 @@ namespace UMP.Controller.ViewModel
     private void FunctionWindowInit()
     {
       var windowProperty = WindowManager.Controller.Create(Core.Model.Control.WindowKind.Function);
-      windowProperty.IsLocked = true;
       windowProperty.Window.Closing += (_, e) =>
       {
         _IsCheckedFunctionToggleButton = false;
@@ -202,12 +202,44 @@ namespace UMP.Controller.ViewModel
     }
     private bool _IsCheckedPlayListToggleButton = false;
 
+    private bool PlayListCloseCount
+    {
+      get => _PlayListCloseCount;
+      set
+      {
+        _PlayListCloseCount = value;
+
+        if(_PlayListCloseCount)
+        {
+          if(PlayListCloseCountTimer == null)
+          {
+            PlayListCloseCountTimer = new Timer(3000) { AutoReset = true };
+            PlayListCloseCountTimer.Elapsed += (_, e) =>
+            {
+              _PlayListCloseCount = false;
+              PlayListCloseCountTimer.Stop();
+            };
+          }
+          PlayListCloseCountTimer.Start();
+        }
+      }
+    }
+    private bool _PlayListCloseCount = false;
+
+    private Timer PlayListCloseCountTimer;
+
     private void PlayListWindowInit()
     {
       var windowProperty = WindowManager.Controller.Create(Core.Model.Control.WindowKind.PlayList);
-      windowProperty.IsLocked = true;
       windowProperty.Window.Closing += (_, e) =>
       {
+        if (!PlayListCloseCount && ((PlayListControlViewModel)windowProperty.Window.ViewModel.UserControl.DataContext).PlayList.NeedSave)
+        {
+          GlobalMessageEvent.Invoke("플래이 리스트에 변경사항이 있습니다 (저장 필요)\n(무시하고 닫으려면 다시 시도하세요)", true);
+          PlayListCloseCount = true;
+          e.Cancel = true;
+          return;
+        }
         _IsCheckedPlayListToggleButton = false;
         OnPropertyChanged("IsCheckedPlayListToggleButton");
       };

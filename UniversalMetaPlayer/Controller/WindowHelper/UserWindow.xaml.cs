@@ -19,7 +19,7 @@ namespace UMP.Controller.WindowHelper
   /// </summary>
   public partial class UserWindow : Window
   {
-    private UserWindowViewModel ViewModel { get; }
+    public UserWindowViewModel ViewModel { get; }
     public UserWindow(UserControl userControl, string title, bool useHotkey = true, bool useMessagePopup = true)
     {
       InitializeComponent();

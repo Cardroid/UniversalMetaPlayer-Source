@@ -31,6 +31,9 @@ namespace UMP.Core.Model.Control
     {
       if (WindowsDictionary.TryGetValue(windowKind, out UserWindowProperty windowProperty))
       {
+        if(windowProperty.IsClosed)
+          windowProperty.CreateWindow();
+
         if (force)
           windowProperty.Reset();
 
@@ -39,6 +42,7 @@ namespace UMP.Core.Model.Control
       else
       {
         var winproperty = new UserWindowProperty(windowKind);
+        winproperty.CreateWindow();
         WindowsDictionary[windowKind] = winproperty;
         return winproperty;
       }
@@ -106,7 +110,18 @@ namespace UMP.Core.Model.Control
       public UserWindowProperty(WindowKind windowKind) { this.WindowKind = windowKind; }
 
       public WindowKind WindowKind { get; }
-      public UserWindow Window { get; private set; }
+      public UserWindow Window
+      {
+        get => _Window != null && _Window.TryGetTarget(out UserWindow window) ? window : null;
+        private set
+        {
+          if (_Window == null)
+            _Window = new WeakReference<UserWindow>(value);
+          else
+            _Window.SetTarget(value);
+        }
+      }
+      private WeakReference<UserWindow> _Window = null;
 
       public bool IsClosed => this.Window == null;
       public bool IsLocked
@@ -136,7 +151,7 @@ namespace UMP.Core.Model.Control
         e.Cancel = true;
       }
 
-      private void CreateWindow()
+      public void CreateWindow()
       {
         Reset();
 
@@ -147,7 +162,10 @@ namespace UMP.Core.Model.Control
       public void Reset()
       {
         if (!IsClosed)
+        {
           this.Window.Close();
+          this.Window = null;
+        }
       }
 
       public void Open()
@@ -157,13 +175,9 @@ namespace UMP.Core.Model.Control
 
         if (!this.Window.IsVisible)
         {
-          if (this.Window.ShowActivated)
-          {
-            this.Window.Visibility = Visibility.Visible;
-            this.Window.Activate();
-          }
-          else
-            this.Window.Show();
+          this.Window.Show();
+          if (this.Window.WindowState == WindowState.Minimized)
+            this.Window.WindowState = WindowState.Normal;
         }
       }
 
@@ -172,7 +186,7 @@ namespace UMP.Core.Model.Control
         if (!IsClosed)
         {
           if (IsLocked)
-            this.Window.Visibility = Visibility.Collapsed;
+            this.Window.Hide();
           else
             this.Window.Close();
         }

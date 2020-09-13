@@ -23,12 +23,13 @@ namespace UMP.Core.LogHelper
       Layout = patternLayout;
       this.LogTextBox = logTextBox;
       IsEnable = false;
+      LogTextBox.Unloaded += (_, e) => IsEnable = false;
     }
 
     public string Name { get; set; }
     public bool IsEnable
     {
-      get => _IsEnable && Dispatcher != null;
+      get => _IsEnable;
       set
       {
         if(_IsEnable != value)
@@ -36,15 +37,10 @@ namespace UMP.Core.LogHelper
           _IsEnable = value;
 
           if (_IsEnable)
-          {
-            var windowProperty = WindowManager.Controller.Open(Model.Control.WindowKind.Log);
-            this.Dispatcher = windowProperty.Window.Dispatcher;
-          }
+            WindowManager.Controller.Open(Model.Control.WindowKind.Log);
           else
-          {
             WindowManager.Controller.Close(Model.Control.WindowKind.Log);
-            this.Dispatcher = null;
-          }
+
           PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsEnable"));
         }
       }
@@ -54,7 +50,6 @@ namespace UMP.Core.LogHelper
     public LogTextBox LogTextBox { get; }
 
     public event PropertyChangedEventHandler PropertyChanged;
-    public Dispatcher Dispatcher { get; private set; }
 
     private PatternLayout Layout { get; }
 

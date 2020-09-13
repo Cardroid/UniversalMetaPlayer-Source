@@ -23,11 +23,6 @@ namespace UMP.Core
       GlobalProperty.PropertyChanged += GlobalProperty_PropertyChanged_LyricsWindow;
     }
 
-    public static void CloseAll()
-    {
-      Controller.CloseAll();
-    }
-
     public static WindowController Controller { get; }
 
     #region 가사 창 설정

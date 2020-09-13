@@ -70,9 +70,6 @@ namespace UMP.Controller
       this.PlayListPopupBox.MouseEnter += (_, e) => { UnselectActive = false; };
       this.PlayListPopupBox.MouseLeave += (_, e) => { UnselectActive = true; };
 
-      Window parentWindow = Window.GetWindow(this.Parent);
-      parentWindow.Closing += ParentWindow_Closing;
-
       // 로그 설정
       Log.Debug("초기화 완료");
     }
@@ -195,20 +192,6 @@ namespace UMP.Controller
         var deleteItemList = this.PlayList.SelectedItems;
         for (int i = deleteItemList.Count - 1; i >= 0; i--)
           MainMediaPlayer.PlayList.Remove((MediaInformation)deleteItemList[i]);
-      }
-    }
-
-    private bool CloseCount = false;
-
-    private async void ParentWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-    {
-      if (!CloseCount && ((PlayListControlViewModel)this.DataContext).PlayList.NeedSave)
-      {
-        GlobalMessageEvent.Invoke("플래이 리스트에 변경사항이 있습니다 (저장 필요)\n(무시하고 닫으려면 다시 시도하세요)", true);
-        CloseCount = true;
-        e.Cancel = true;
-        await Task.Delay(3000);
-        CloseCount = false;
       }
     }
   }
