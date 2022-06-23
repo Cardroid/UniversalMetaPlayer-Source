@@ -97,7 +97,7 @@
     <PackageReference Include="System.Net.Primitives" Version="4.3.0" />
     <PackageReference Include="System.Runtime.Extensions" Version="4.3.0" />-->
     <PackageReference Include="gong-wpf-dragdrop" Version="2.2.0" />
-    <PackageReference Include="log4net" Version="2.0.8" />
+    <PackageReference Include="log4net" Version="2.0.10" />
     <PackageReference Include="MaterialDesignColors" Version="1.2.6" />
     <PackageReference Include="MaterialDesignExtensions" Version="3.2.0" />
     <PackageReference Include="MaterialDesignThemes" Version="3.1.3" />
